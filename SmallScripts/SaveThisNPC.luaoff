@@ -1,0 +1,185 @@
+﻿-- Таблица с сохраненными NPC
+local savedNpc = {}
+local savedNpcLastTimeCheck = {}
+
+--[[	ВИД ТАБЛИЦЫ
+savedNpc = {
+	entry = {
+		guid = {
+			animation = 1
+			size = 1
+			mount = 0
+			...
+		}
+		guid = {
+		...
+		}
+	}
+	entry = {
+	...
+	}
+}
+]]
+
+-- В БД хранятся:
+-- id,entry,guid,animation,size,mount,byte1,byte2,auras,gm_account_id,date
+
+-- Получение списка NPC из БД при старте Элуны
+local savedNpcQ = WorldDBQuery("SELECT entry,guid,animation,size,mount,byte1,byte2,auras FROM saved_npc")
+if savedNpcQ then
+	for i = 1, savedNpcQ:GetRowCount() do
+		local entry = savedNpcQ:GetInt32(0)
+		local guid = savedNpcQ:GetInt32(1)
+		if not savedNpc[entry] then -- Такой entry уже есть в загруженной таблице?
+			savedNpc[entry] = {}
+		end
+		if savedNpcQ:GetString(7) then -- У NPC есть ауры?
+			local auras = savedNpcQ:GetString(7)
+			if(string.find(auras, " ")) then
+				local aurasT = {}
+				local aurasT = string.split(auras, " ")
+			else
+				aurasT = auras -- Если аура только одна
+			end
+		end
+		-- Сохранение всего этого дерьма
+		savedNpc[entry][guid] = {
+			animation = savedNpcQ:GetInt32(2),
+			size = savedNpcQ:GetInt32(3),
+			mount = savedNpcQ:GetInt32(4),
+			byte1 = savedNpcQ:GetInt32(5),
+			byte2 = savedNpcQ:GetInt32(6),
+			auras = aurasT,
+		}
+		savedNpcQ:NextRow()
+	end
+end
+
+	--
+	-- Обновление параметров NPC при его прогрузке
+	--
+
+function savedNpcUpdate(event, creature, diff)
+	if ( not savedNpcLastTimeCheck[creature:GetDBTableGUIDLow()] or (  os.time() - savedNpcLastTimeCheck[creature:GetDBTableGUIDLow()]  ) > 15 ) then
+		savedNpcLastTimeCheck[creature:GetDBTableGUIDLow()] = os.time()
+		local entry = creature:GetEntry()
+		local guid = creature:GetDBTableGUIDLow()
+		for k, v in pairs(savedNpc[entry]) do
+			if savedNpc[entry][guid] then
+				creature:EmoteState(savedNpc[entry][guid]["animation"]) -- Анимация
+				creature:SetScale(savedNpc[entry][guid]["size"]) -- Размер
+				if not creature:IsMounted() then -- Маунт
+					creature:Mount(savedNpc[entry][guid]["mount"])
+				end
+				creature:SetByteValue(6+68,0,savedNpc[entry][guid]["byte1"]) -- Byte1 (Сидит/Лежит/Умер)
+				creature:SetByteValue(6+116,0,savedNpc[entry][guid]["byte2"]) -- Byte2 (Оружие)
+				if type(savedNpc[entry][guid]["auras"]) == "table" then -- Ауры
+					for i = 1,#savedNpc[entry][guid]["auras"] do
+						if not creature:HasAura(savedNpc[entry][guid]["auras"][i]) then
+							creature:AddAura(savedNpc[entry][guid]["auras"][i],creature)
+						end
+					end
+				else
+					if savedNpc[entry][guid]["auras"] then
+						if not creature:HasAura(savedNpc[entry][guid]["auras"]) then
+							creature:AddAura(savedNpc[entry][guid]["auras"],creature)
+						end
+					end
+				end
+				break
+			end
+		end
+	end
+end
+
+	--
+	-- Сохрание параметров NPC в БД и временную таблицу
+	-- Entry, Guid, Анимация, Размер, Маунт, Байт 1, Байт 2, Ауры, ID аккаунта ГМа
+	
+function savedNpcSAVE(event, player, command)
+	if ( (command == "savenpc" or command == "npcsave") and player:GetGMRank() > 0 ) then
+		local PlayerTarget = player:GetSelection()
+		if PlayerTarget then
+			if PlayerTarget:ToCreature() then
+				local entry = PlayerTarget:GetEntry()
+				local guid = PlayerTarget:GetDBTableGUIDLow()
+				if not savedNpc[entry] then
+					savedNpc[entry] = {}
+				end
+				if not savedNpc[entry][guid] then
+					savedNpc[entry][guid] = {}
+				end
+					-- Анимация
+					savedNpc[entry][guid]["animation"] = PlayerTarget:GetByteValue(6+77,0)
+					-- Размер
+					savedNpc[entry][guid]["size"] = PlayerTarget:GetScale()
+					-- Маунт
+					if PlayerTarget:IsMounted() then
+						savedNpc[entry][guid]["mount"] = PlayerTarget:GetMountId()
+					else
+						savedNpc[entry][guid]["mount"] = 0
+					end
+					-- Байт 1 (Сидит/Лежит/Умер)
+					savedNpc[entry][guid]["byte1"] = PlayerTarget:GetByteValue(6+68,0)
+					-- Байт 2 (Оружие)
+					savedNpc[entry][guid]["byte2"] = PlayerTarget:GetByteValue(6+116,0)
+					-- Ауры
+					savedNpc[entry][guid]["auras"] = {}
+					local aurasForDB = ""
+					for k,v in pairs(aura_whitelist) do
+						if PlayerTarget:HasAura(v) then
+							table.insert(savedNpc[entry][guid]["auras"],v)
+							aurasForDB = v.." "..aurasForDB
+						end
+					end
+					if aurasForDB == "" then -- Если аур нет
+						savedNpc[entry][guid]["auras"] = 0
+						aurasForDB = "0"
+					end
+					-- ID аккаунта ГМа
+					local gm_account_id = player:GetAccountId()
+				-- Сохранение инфы в БД
+				local NPCAlreadySavedQ = WorldDBQuery('SELECT id FROM saved_npc WHERE entry = '..entry..' AND guid = '..guid)
+				if NPCAlreadySavedQ then
+					local id = NPCAlreadySavedQ:GetInt32(0)
+					WorldDBQuery('UPDATE saved_npc SET animation = '..savedNpc[entry][guid]["animation"]..',size = '..savedNpc[entry][guid]["size"]..',mount = '..savedNpc[entry][guid]["mount"]..',byte1 = '..savedNpc[entry][guid]["byte1"]..',byte2 = '..savedNpc[entry][guid]["byte2"]..',auras = "'..aurasForDB..'",gm_account_id = '..gm_account_id..' WHERE id = '..id)
+					player:SendBroadcastMessage("Сохранённый NPC обновлён.")
+				else
+					WorldDBQuery('INSERT INTO saved_npc (entry, guid, animation, size, mount, byte1, byte2, auras, gm_account_id) VALUES ('..entry..','..guid..','..savedNpc[entry][guid]["animation"]..','..savedNpc[entry][guid]["size"]..','..savedNpc[entry][guid]["mount"]..','..savedNpc[entry][guid]["byte1"]..','..savedNpc[entry][guid]["byte2"]..',"'..aurasForDB..'",'..gm_account_id..')')
+					player:SendBroadcastMessage("NPC сохранён.")
+				end
+				savedNpcUpdateTable()
+			else player:SendBroadcastMessage("Возьмите NPC в таргет.") end
+		else player:SendBroadcastMessage("Возьмите NPC в таргет.") end
+	end
+	
+	--
+	-- Снятие NPC с сохранения. Рассинхранение!!
+	--
+	
+	if ( (command == "unsavenpc" or command == "unnpcsave") and player:GetGMRank() > 0 ) then
+		local PlayerTarget = player:GetSelection()
+		if PlayerTarget then
+			if PlayerTarget:ToCreature() then
+				local entry = PlayerTarget:GetEntry()
+				local guid = PlayerTarget:GetDBTableGUIDLow()
+				if savedNpc[entry][guid] then
+					savedNpc[entry][guid] = nil
+					WorldDBQuery('DELETE FROM saved_npc WHERE entry = '..entry..' AND guid = '..guid)
+					player:SendBroadcastMessage("NPC перестал сохраняться.")
+				else player:SendBroadcastMessage("Данный NPC ещё не сохранён.") end
+			else player:SendBroadcastMessage("Возьмите NPC в таргет.") end
+		else player:SendBroadcastMessage("Возьмите NPC в таргет.") end
+	end
+end
+
+RegisterPlayerEvent( 42, savedNpcSAVE )
+
+
+
+function savedNpcUpdateTable() -- Отдельная функция вызываемая при обновлении временной таблицы.
+	for k,v in pairs(savedNpc) do
+		RegisterCreatureEvent(k,7,savedNpcUpdate) -- Ждёт AIupdate у каждого из entry NPC в таблице
+	end
+end
+savedNpcUpdateTable() -- Первый вызов этой функции после прогрузки таблицы.

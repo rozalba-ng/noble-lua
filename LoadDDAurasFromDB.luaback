@@ -1,0 +1,10 @@
+local qNames = CharDBQuery("SELECT * FROM dd_chars")
+for i = 1, qNames:GetRowCount() do
+	local name = qNames:GetString(0)
+	local qGuid = CharDBQuery("SELECT guid FROM characters WHERE name = '"..name.."'")
+	if qGuid then
+		local guid = qGuid:GetString(0)
+		CharDBExecute("INSERT INTO `characters`.`character_aura` (`guid`, `casterGuid`, `spell`, `effectMask`, `recalculateMask`, `amount0`, `base_amount0`, `maxDuration`, `remainTime`, `date`) VALUES ("..guid..", "..guid..", '88033', '1', '1', '2', '1', '-1', '-1', '2019-08-11 16:09:59');")
+	end
+	qNames:NextRow()
+end

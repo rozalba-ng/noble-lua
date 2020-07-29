@@ -1,0 +1,73 @@
+EasyGossipStartId = 990000
+ButtonsIntins = 990000
+
+menuList = {}
+
+associationMenuList = {}
+bindedFunctionToButtons = {}
+bindedInfoToButtons = {}
+--GID - Gossip ID
+
+function SendGossip(name,player)
+	player:GossipClearMenu()
+	for i, bInfo in pairs(menuList[name].buttonInfo) do
+		player:GossipMenuAddItem(bInfo[1],bInfo[2],1,bInfo[5],bInfo[3],bInfo[4])
+	end
+	player:GossipMenuAddItem(1, "Закрыть", 1, 100)
+	print(menuList[name].id)
+	local plr = player:ToPlayer()
+	plr:GossipSendMenu(1, player,menuList[name].id)
+end
+local function OnSelectGossip (event, player, object, sender, intid, code)
+	if intid == 100 then
+		player:GossipComplete()
+	
+	end
+
+	local func = bindedFunctionToButtons[intid]
+	local btnName = bindedInfoToButtons[intid].name
+	local gossipName = bindedInfoToButtons[intid].gossipName
+	if bindedInfoToButtons[intid].oneShoot == false then 
+		SendGossip(gossipName,player)
+	else
+		player:GossipComplete()
+	end
+	func(player,btnName,gossipName,code)
+	
+	
+
+
+end
+
+function NewGossip(name)
+	menuList[name] = { id = EasyGossipStartId, buttonInfo = {} }
+	RegisterPlayerGossipEvent(EasyGossipStartId,2, OnSelectGossip)
+	associationMenuList[EasyGossipStartId] = name
+	EasyGossipStartId = EasyGossipStartId + 1
+	return true
+end
+
+function AddButtonToGossip(name,btnLabel,iconId,withCode,notificateLabel,func,isOneshoot)
+	table.insert(menuList[name].buttonInfo,{iconId,btnLabel,withCode,notificateLabel,ButtonsIntins})
+	bindedFunctionToButtons[ButtonsIntins] = func
+	bindedInfoToButtons[ButtonsIntins] = {name = btnLabel,gossipName = name,oneShoot = isOneshoot}
+	ButtonsIntins = ButtonsIntins + 1
+end
+
+
+
+local function myfunc(player,data,buttonId)
+	player:SendBroadcastMessage(data)
+end
+
+
+local function OnPlayerCommandWithArg(event, player, code)
+    if code == "test" then
+		SendGossip("TestGossip",player)
+	end
+	
+end
+
+
+
+RegisterPlayerEvent(42, OnPlayerCommandWithArg)

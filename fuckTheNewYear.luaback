@@ -1,0 +1,18 @@
+local votesQuery = CharDBQuery("select z.guid from characters z where name in (select min(b.name) from characters b join(select sum(c.leveltime) as slt, c.account from characters c group by c.account having slt > 7200 and c.account > 0) x on b.account = x.account group by b.account)");
+if (votesQuery ~= nil) then
+	local rowCount = votesQuery:GetRowCount();		
+	local playerId = 0;
+	for var=1,rowCount,1 do
+		playerId = votesQuery:GetString(0);
+		-- проверяем отправил ли пользователь имя персонажа
+		--local characterQuery = CharDBQuery('SELECT guid FROM characters where name = "' .. characterName .. '"');		
+		--playerId = characterQuery:GetString(0);		
+		if (playerId ~= 0) then
+			SendMail('С 23 февраля!', 'Дорогие ребята проекта Noblegarden! От всей души поздравляем вас с 23 февраля! Будьте сильными, стойкими, мужественными и такими же креативными, как всегда! Спасибо, что вы с нами :)', playerId, 36, 61, 20, 0, 0, 211184, 1);
+		end		
+		votesQuery:NextRow();
+		print(1);
+	end
+end	
+
+---- test edit -----

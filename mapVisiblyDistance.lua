@@ -1,0 +1,13 @@
+﻿SetMapVisibilityRange(0,0, 400);
+SetMapVisibilityRange(801,0, 400);
+SetMapVisibilityRange(904,0, 400);
+SetMapVisibilityRange(907,0, 400);
+SetMapVisibilityRange(909,0, 400);
+SetMapVisibilityRange(900,0, 400);
+SetMapVisibilityRange(911,0, 400);
+--SetMapVisibilityRange(911,0, 2105);
+SetMapVisibilityRange(2105,0, 400);
+SetMapVisibilityRange(901,0, 150);
+SetMapVisibilityRange(1,0, 150);
+SetMapVisibilityRange(13,0, 50);
+--SetMapVisibilityRange(901,0, 400);

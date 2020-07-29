@@ -1,0 +1,24 @@
+-- by Ezil
+remCreatures = {}
+
+function saveCreature(creature)
+	local creatureData = {}
+	creatureData.guid = creature:GetGUIDLow()
+	creatureData.entry = creature:GetEntry()
+	creatureData.map = creature:GetMapId()
+	remCreatures[creature:GetDBTableGUIDLow()] = creatureData
+	return creature:GetDBTableGUIDLow()
+end
+
+function loadCreature(guid)
+	local creatureData = remCreatures[guid]
+	local map = GetMapById(creatureData.map)
+	local lowguid = creatureData.guid
+	local entry = creatureData.entry
+	local creature = map:GetWorldObject(GetUnitGUID(lowguid,entry))
+	if creature then
+		return creature
+	else
+		return nil
+	end
+end
