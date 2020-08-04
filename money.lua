@@ -1,13 +1,13 @@
---[[Every 15 minutes player recieve 10 copper. If pleyer is in guild, he auto-deposit 3 copper to guild, but resieve 1 additional copper]]
+--[[Every 15 minutes player recieve 10 copper. If pleyer is in guild, he auto-deposit 10 copper to guild, but resieve 5 additional copper]]
 local function calculateMoney()
 	local onlinePlayers = GetPlayersInWorld( 2 ); --[[ 2-neutral, both horde and aliance]]		
 	for _, player in ipairs(onlinePlayers) do	
 		if (player:IsAFK() == false) then
-			player:ModifyMoney( 10 );
+			player:ModifyMoney( 30 );
 			local guild = player:GetGuild();
 			if (guild ~= nil) then		
-				player:ModifyMoney( 2 );
-				guild:DepositBankMoney( player, 5 )				
+				player:ModifyMoney( 25 );
+				guild:DepositBankMoney( player, 10 )
 			end			
 		end;	  
 	end

@@ -17,6 +17,12 @@ aura_whitelist = {16592,88053, 34807, 48083, 52663, 54141, 56327, 64785, 68855, 
 
 ---- Кельдорайский белый конь
 mount_white_horse_id = 1200006;
+---- Козлик
+mount_black_goat_id = 1200023;
+mount_gold_goat_id = 1200024;
+mount_white_goat_id = 1200025;
+
+
 function checkWhiteHorseDonations(player)
 	local accountId = player:GetAccountId();
 	local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='white_horse'");
@@ -33,7 +39,54 @@ function checkWhiteHorseDonations(player)
 		end	
     end
 end
+function checkBlackGoatDonations(player)
+	local accountId = player:GetAccountId();
+	local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='black_goat'");
+	if(result ~= nil) then
 
+		if((player:HasItem(mount_black_goat_id) or player:HasSpell(mount_black_goat_id)) == false) then
+			local added = player:AddItem(mount_black_goat_id);
+			if(added == nil)then
+				SendMail( "Черный козлик", "Мы не смогли разместить спутника в вашем инвентаре. Спасибо за помощь проекту!", player:GetGUIDLow(), 0, 61, 0, 0, 0, mount_black_goat_id, 1 )
+				player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Приобретенный вами ездовой спутник - Черный козлик - отправлен по почте. Спасибо за помощь проекту!");
+			else
+				player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентарь добавлен приобретенный вами ездовой спутник - Черный козлик. Спасибо за помощь проекту!");
+			end
+		end
+    end
+end
+function checkGoldGoatDonations(player)
+	local accountId = player:GetAccountId();
+	local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='gold_goat'");
+	if(result ~= nil) then
+
+		if((player:HasItem(mount_gold_goat_id) or player:HasSpell(mount_gold_goat_id)) == false) then
+			local added = player:AddItem(mount_gold_goat_id);
+			if(added == nil)then
+				SendMail( "Золотой козлик", "Мы не смогли разместить спутника в вашем инвентаре. Спасибо за помощь проекту!", player:GetGUIDLow(), 0, 61, 0, 0, 0, mount_gold_goat_id, 1 )
+				player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Приобретенный вами ездовой спутник - Золотой козлик - отправлен по почте. Спасибо за помощь проекту!");
+			else
+				player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентарь добавлен приобретенный вами ездовой спутник - Золотой козлик. Спасибо за помощь проекту!");
+			end
+		end
+    end
+end
+function checkWhiteGoatDonations(player)
+	local accountId = player:GetAccountId();
+	local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='white_goat'");
+	if(result ~= nil) then
+
+		if((player:HasItem(mount_white_goat_id) or player:HasSpell(mount_white_goat_id)) == false) then
+			local added = player:AddItem(mount_white_goat_id);
+			if(added == nil)then
+				SendMail( "Белый козлик", "Мы не смогли разместить спутника в вашем инвентаре. Спасибо за помощь проекту!", player:GetGUIDLow(), 0, 61, 0, 0, 0, mount_white_goat_id, 1 )
+				player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Приобретенный вами ездовой спутник - Белый козлик - отправлен по почте. Спасибо за помощь проекту!");
+			else
+				player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентарь добавлен приобретенный вами ездовой спутник - Белый козлик. Спасибо за помощь проекту!");
+			end
+		end
+    end
+end
 
 ----------------- Обновление способностей персонажа BEGIN -----------------
 local skill_version = 4;
@@ -114,6 +167,9 @@ function loginEvent(event, player, arg2, arg3, arg4)
 --------- ДОНАТЫ НАЧАЛО --------------------------------
 	
 	checkWhiteHorseDonations(player);
+	checkBlackGoatDonations(player);
+	checkGoldGoatDonations(player);
+	checkWhiteGoatDonations(player);
 	
 --------- ДОНАТЫ - ОКОНЧАНИЕ ---------------------------
 --------------------------------------------------------
