@@ -6,7 +6,7 @@ local function calculateMoney()
 			player:ModifyMoney( 30 );
 			local guild = player:GetGuild();
 			if (guild ~= nil) then		
-				player:ModifyMoney( 25 );
+				player:ModifyMoney( -5 );
 				guild:DepositBankMoney( player, 10 )
 			end			
 		end;	  
