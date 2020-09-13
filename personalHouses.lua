@@ -426,7 +426,10 @@ local function checkLockedDoor(object, player)
     end    
     if(bit_and(allow_flags,2) == 2)then
         local ownerGroupIdQuery = CharDBQuery('SELECT guid, subgroup FROM characters.group_member WHERE memberGuid = '..lockedDoorArray[door_GUID].ownerID);
-        if(ownerGroupIdQuery:GetRowCount() > 0)then
+
+		if (ownerGroupIdQuery == nil) then
+			print('Nil value error');
+		elseif (ownerGroupIdQuery:GetRowCount() > 0) then
             groupID = ownerGroupIdQuery:GetUInt32(0);
             subGroupID = ownerGroupIdQuery:GetUInt32(1);
             group = player:GetGroup()
