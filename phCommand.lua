@@ -53,7 +53,7 @@ local function PhCommand(event, player, command)
 				return
 			end
 			--	Одиночный переход в фазу
-			if target then
+			if target and target:GetName() ~= player:GetName() then
 				target:SetPhaseMask( phase )
 			else
 				player:SetPhaseMask( phase )
