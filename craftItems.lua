@@ -4,6 +4,27 @@
 
 local spell_placeholder = 30433 -- Спелл для прикрепления к предметам-рецептам.
 local default_spell_cooldown = 2500 -- Перезарядка спелла
+local crafts = {	-- Профессии которые могут требоваться для использования рецепта.
+--	>30 элементов в списке требуют функционала перелистывания страничек.
+--	{ ID из SkillLine.dbc, Название },
+	{ 0, "Без профессии" },
+	{ 129, "Первая помощь" },
+	{ 164, "Кузнечное дело" },
+	{ 165, "Кожевничество" },
+	{ 171, "Алхимия" },
+	{ 182, "Травничество" },
+	{ 185, "Кулинария" },
+	{ 186, "Горное дело" },
+	{ 197, "Портняжное дело" },
+	{ 202, "Инженерное дело" },
+	{ 333, "Наложение чар" },
+	{ 356, "Рыбная ловля" },
+	{ 393, "Снятие шкур" },
+	{ 755, "Ювелирное дело" },
+	{ 773, "Начертание" },
+	{ 830, "Плотничество" },
+	{ 831, "Гончарное дело" },
+}
 
 local smallfolk = require 'smallfolk'
 
@@ -34,10 +55,8 @@ local function CraftItems_OnItemUse( event, player, item, target )
 		for i = 1, #CraftItems_LoadedTable[entry].resources do
 			if not player:HasItem( CraftItems_LoadedTable[entry].resources[i][1], CraftItems_LoadedTable[entry].resources[i][2] ) then
 				player:SendNotification("Вам нужно иметь "..CraftItems_LoadedTable[entry].resources[i][2].." ["..CraftItems_LoadedTable[entry].resources[i][3].."]")
-				--[[	НЕ РАБОТАЕТ, А ОЧЕНЬ БЫ ХОТЕЛОСЬ СБРАСЫВАТЬ КУЛДАУН ПРЕДМЕТА ПРИ ОТСУТСТВИИ РЕСУРСОВ
-						player:ResetSpellCooldown( item:GetSpellId(1) )
-				]]
-				return
+				player:PlayDirectSound( 12889, player )
+				return false
 			end
 		end
 		for i = 1, #CraftItems_LoadedTable[entry].resources do
@@ -45,6 +64,7 @@ local function CraftItems_OnItemUse( event, player, item, target )
 		end
 		for i = 1, #CraftItems_LoadedTable[entry].result do
 			player:AddItem( CraftItems_LoadedTable[entry].result[i][1], CraftItems_LoadedTable[entry].result[i][2] )
+			player:PlayDirectSound( 12867, player )
 			if not player:HasItem( CraftItems_LoadedTable[entry].result[i][1] ) then
 				SendMail( "Потерянный предмет.", "Этот предмет не влез в ваши сумки при использовании ["..item:GetName().."].", player:GetGUIDLow(), 0, 61, 1500, 0, 0, CraftItems_LoadedTable[entry].result[i][1], CraftItems_LoadedTable[entry].result[i][2] )
 				player:SendBroadcastMessage("|cffFF4500[!!]|r Один из созданных предметов не влез в ваши сумки и был отправлен по почте.\nПерезайдите в игру для отображения письма.")
@@ -69,7 +89,8 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 	elseif event == 2 then -- GOSSIP_EVENT_ON_SELECT
 		if sender == 1 then -- Стартовое меню
 			if intid == 1 then -- Создание предмета
-				local text = "Создание нового рецепта.\n\nВсе предметы для рецепта должны быть уже созданы."
+				-- Установка актуального текста
+				local text = "Все предметы для рецепта должны быть уже созданы."
 				if CraftItems_Table[accountID].trigger_item then
 					text = text.."\n\n- "..CraftItems_Table[accountID].trigger_item.name.." -"
 				end
@@ -90,15 +111,18 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 					end
 				end
 				player:GossipSetText( text, 23092003 )
-				player:GossipMenuAddItem( 4, "Указать ENTRY предмета-рецепта.", 2, 1, true )
+				-- Установка актуальных кнопок
+				player:GossipMenuAddItem( 4, "Указать ID предмета-рецепта", 2, 1, true )
 				player:GossipMenuAddItem( 4, "Добавить ингридиент", 2, 2, true, "Укажите ID ингридиента и его кол-во через пробел." )
 				if CraftItems_Table[accountID].ingredients and #CraftItems_Table[accountID].ingredients > 0 then
 					player:GossipMenuAddItem( 4, "Удалить ингридиент", 2, 3, true, "Укажите номер ингридиента из списка в меню." )
 				end
-				player:GossipMenuAddItem( 4, "Указать ENTRY наград(ы) за крафт", 2, 4, true, "Укажите ID награды и её кол-во через пробел. Если вам нужно несколько наград - разделяйте их точкой с запятой.\nENTRY AMOUNT ; ENTRY AMOUNT" )
+				player:GossipMenuAddItem( 4, "Указать ID наград(ы) за крафт", 2, 4, true, "Укажите ID награды и её кол-во через пробел. Если вам нужно несколько наград - разделяйте их точкой с запятой.\nENTRY AMOUNT ; ENTRY AMOUNT" )
 				-- Проверка на добавленные пункты.
 				if CraftItems_Table[accountID].trigger_item and ( CraftItems_Table[accountID].ingredients and #CraftItems_Table[accountID].ingredients > 0 ) and CraftItems_Table[accountID].reward then
-					player:GossipMenuAddItem( 1, "Завершить создание рецепта", 2, 5 )
+					player:GossipMenuAddItem( 6, "Указать требуемый навык профессии", 2, 5 )
+					player:GossipMenuAddItem( 6, "Указать время перезарядки", 2, 6, true, "Укажите время перезарядки в секундах." )
+					player:GossipMenuAddItem( 1, "Завершить создание рецепта", 2, 7 )
 				end
 				player:GossipMenuAddItem( 0, "Вернуться назад |cffa60702(ОТМЕНА)", 2, 6 )
 				player:GossipSendMenu( 23092003, player, 23092001 )
@@ -220,17 +244,40 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 				end
 				player:SendAreaTriggerMessage("Вы указали награду за крафт.")
 				CraftItems_Menu( 2, player, _, 1, 1 )
-			elseif intid == 5 then -- Завершение создания предмета
-				-- ПРИВЯЗЫВАЕМ СПЕЛЛ-ПЛЕЙСХОЛДЕР К ПРЕДМЕТУ, СТАВИМ ДЕФОЛТНЫЙ КУЛДАУН В 2.5 СЕКУНДЫ И НУЖНЫЕ ФЛАГИ ДЛЯ ИСПОЛЬЗОВАНИЯ СПЕЛЛА
-				local itemQ = WorldDBQuery( 'SELECT Flags, spellid_1, spellcooldown_1 FROM item_template WHERE entry = '..( CraftItems_Table[accountID].trigger_item.entry ) )
+			elseif intid == 5 then -- Выбор требуемой профессии
+				if #crafts > 30 then -- >30 вызывает краш сервера
+					player:SendBroadcastMessage("|cffFF4500[!!]|r Произошла ОЧЕНЬ критическая ошибка:\nДлина списка доступных профессий превышает 30 элементов.")
+					CraftItems_Menu( 2, player, _, 1, 1 )
+					return
+				end
+				player:GossipSetText( "Выберите одну профессию:", 02102001 )
+				player:GossipMenuAddItem( 4, crafts[1][2], 3, 1 ) -- Без профессии
+				for i = 2, #crafts do
+					player:GossipMenuAddItem( 0, crafts[i][2], 3, i, true, "Укажите требуемый уровень навыка." )
+				end
+				player:GossipSendMenu( 02102001, player, 23092001 )
+			elseif intid == 6 then -- Указание времени перезарядки
+				if code and tonumber(code) and tonumber(code) >= 0 then
+					code = tonumber(code)
+					CraftItems_Table[accountID].reload = code * 1000
+					player:SendAreaTriggerMessage("Время перезарядки в |cff00FF7F"..code.."|rс указано.")
+					CraftItems_Menu( 2, player, _, 1, 1 )
+				else player:SendAreaTriggerMessage("|cffFF4500[!!]|r Вы указали некорректное время.") CraftItems_Menu( 2, player, _, 1, 1 ) end
+			elseif intid == 7 then -- Завершение создания предмета
+				-- ПРИВЯЗЫВАЕМ СПЕЛЛ-ПЛЕЙСХОЛДЕР К ПРЕДМЕТУ, СТАВИМ КУЛДАУН И НУЖНЫЕ ФЛАГИ ДЛЯ ИСПОЛЬЗОВАНИЯ СПЕЛЛА
+				local itemQ = WorldDBQuery( 'SELECT Flags, spellid_1 FROM item_template WHERE entry = '..( CraftItems_Table[accountID].trigger_item.entry ) )
 				if itemQ then
 					local Flags = itemQ:GetUInt32(0)
 					if not FindFlag( Flags, 64 ) then Flags = Flags + 64 end
+					
 					local spellid_1 = itemQ:GetInt32(1)
 					if not spellid_1 or spellid_1 == 0 then spellid_1 = spell_placeholder end
-					local spellcooldown_1 = itemQ:GetInt32(2)
-					if not spellcooldown_1 or spellcooldown_1 == 0 then spellcooldown_1 = default_spell_cooldown end
-					WorldDBQuery( 'UPDATE item_template SET Flags = '..Flags..', spellid_1 = '..spellid_1..', spellcooldown_1 = '..spellcooldown_1..' WHERE entry = '..( CraftItems_Table[accountID].trigger_item.entry ) )
+					
+					local spellcooldown_1 = CraftItems_Table[accountID].reload or default_spell_cooldown
+					
+					if not CraftItems_Table[accountID].requiredSkill then CraftItems_Table[accountID].requiredSkill = { 0, 0 } end
+					
+					WorldDBQuery( 'UPDATE item_template SET Flags = '..Flags..', RequiredSkill = '..CraftItems_Table[accountID].requiredSkill[1]..', RequiredSkillRank = '..CraftItems_Table[accountID].requiredSkill[2]..', spellid_1 = '..spellid_1..', spellcooldown_1 = '..spellcooldown_1..' WHERE entry = '..( CraftItems_Table[accountID].trigger_item.entry ) )
 					local entry = CraftItems_Table[accountID].trigger_item.entry
 					CraftItems_LoadedTable[entry] = {}
 					-- ДЕЛАЕМ ЗАПИСЬ В ТАБЛИЦУ ПОД ПРЕДМЕТЫ-РЕЦЕПТЫ
@@ -264,6 +311,20 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 			elseif intid == 6 then -- Вернуться назад
 				CraftItems_Menu( 1, player, _, 0 )
 			end
+		elseif sender == 3 then -- Выбор профессии
+			if intid == 1 then
+				CraftItems_Table[accountID].requiredSkill = { 0, 0 }
+				player:SendAreaTriggerMessage("Рецепт не требует наличия профессии.")
+			else
+				if code and tonumber(code) and tonumber(code) > 0 then
+					CraftItems_Table[accountID].requiredSkill = {
+						crafts[intid][1],	-- ID профессии
+						tonumber(code),		-- Уровень профессии
+					}
+					player:SendAreaTriggerMessage( "Рецепт требует |cff00FF7F"..crafts[intid][2].."|r [|cff00FF7F"..code.."|r]." )
+				else player:SendAreaTriggerMessage("|cffFF4500[!!]|r Вы указали некорректный уровень навыка.") CraftItems_Menu( 2, player, _, 2, 5 ) return end
+			end
+			CraftItems_Menu( 2, player, _, 1, 1 )
 		end
 	end
 end
