@@ -55,7 +55,7 @@ local function CraftItems_OnItemUse( event, player, item, target )
 	if CraftItems_LoadedTable[entry] then
 		for i = 1, #CraftItems_LoadedTable[entry].resources do
 			if not player:HasItem( CraftItems_LoadedTable[entry].resources[i][1], CraftItems_LoadedTable[entry].resources[i][2] ) then
-				player:SendNotification("Вам нужно иметь "..CraftItems_LoadedTable[entry].resources[i][2].." ["..CraftItems_LoadedTable[entry].resources[i][3].."]")
+				player:SendNotification( "Вам нужно иметь "..CraftItems_LoadedTable[entry].resources[i][2].." "..GetItemLink( CraftItems_LoadedTable[entry].resources[i][1], 8 ) )
 				player:PlayDirectSound( 12889, player )
 				return false
 			end
@@ -137,12 +137,13 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 						if itemQ2 then
 							local Flags = itemQ:GetUInt32(0)
 							if FindFlag( Flags, 64 ) then Flags = Flags - 64 end
-							WorldDBQuery( 'UPDATE item_template SET Flags = '..Flags..', spellid_1 = 0, spellcooldown_1 = 0 WHERE entry = '..code )
+							WorldDBQuery( 'UPDATE item_template SET Flags = '..Flags..', RequiredSkill = 0, RequiredSkillRank = 0, spellid_1 = 0, spellcharges_1 = 0, spellcooldown_1 = 0 WHERE entry = '..code )
 							local id = itemQ2:GetUInt32(0)
 							WorldDBQuery( 'DELETE FROM craftable_items WHERE id = '..id )
 							ClearItemEvents( code )
 							CraftItems_LoadedTable[code] = nil
 							player:SendBroadcastMessage("Рецепт с ID |cff00FF7F"..id.."|r удалён.\nДля завершения удаления рецепта перезагрузите базу предметов ( .reload all_item_template ) и при необходимости удалите папку Cache.")
+							CraftItems_Menu( 1, player, _, 0 )
 						else player:SendAreaTriggerMessage("|cffFF4500[!!]|r Рецепт не найден.") CraftItems_Menu( 1, player, _, 0 ) end
 					else player:SendAreaTriggerMessage("|cffFF4500[!!]|r Предмет не найден.") CraftItems_Menu( 1, player, _, 0 ) end
 				else player:SendAreaTriggerMessage("|cffFF4500[!!]|r Вы должны указать ID (entry) предмета.") CraftItems_Menu( 1, player, _, 0 ) end
@@ -303,7 +304,7 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 					-- ДЕЛАЕМ ЗАПИСЬ В ТАБЛИЦУ ПОД ПРЕДМЕТЫ-РЕЦЕПТЫ
 					local resources = {}
 					for i = 1, #CraftItems_Table[accountID].ingredients do
-						table.insert( resources, { CraftItems_Table[accountID].ingredients[i].entry, CraftItems_Table[accountID].ingredients[i].amount, CraftItems_Table[accountID].ingredients[i].name } )
+						table.insert( resources, { CraftItems_Table[accountID].ingredients[i].entry, CraftItems_Table[accountID].ingredients[i].amount } )
 					end
 					CraftItems_LoadedTable[entry].resources = resources
 					resources = smallfolk.dumps( resources )
