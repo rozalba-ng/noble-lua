@@ -82,7 +82,7 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 		if event == 42 or sender == 0 then
 			CraftItems_Table[accountID] = {}
 			player:GossipClearMenu()
-			player:GossipSetText( "Выберите опцию:", 23092002 )
+			player:GossipSetText( "Если что-то не добавляется - попробуйте нажимать кнопку ПРИНЯТЬ мышкой, а не через Enter.\n\nВыберите опцию:", 23092002 )
 			player:GossipMenuAddItem( 4, "Новый рецепт", 1, 1 )
 			player:GossipMenuAddItem( 0, "Удалить рецепт", 1, 2, true, "Укажите ID (entry) предмета вызывающего крафт." )
 			player:GossipSendMenu( 23092002, player, 23092001 )
@@ -91,7 +91,7 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 		if sender == 1 then -- Стартовое меню
 			if intid == 1 then -- Создание предмета
 				-- Установка актуального текста
-				local text = "Все предметы для рецепта должны быть уже созданы.\nЕсли что-то не добавляется - попробуйте нажимать кнопку ПРИНЯТЬ мышкой, а не через Enter."
+				local text = "Все предметы для рецепта должны быть уже созданы."
 				if CraftItems_Table[accountID].trigger_item then
 					text = text.."\n\n- "..CraftItems_Table[accountID].trigger_item.name.." -"
 				end
@@ -126,7 +126,7 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 					player:GossipMenuAddItem( 6, "Указать количество зарядов", 2, 7, true, "Укажите количество использований предмета.\nИспользуйте 0 для бесконечных зарядов.\nОтрицательные значения удаляют предмет когда кончаются заряды, положительные сохраняют его." )
 					player:GossipMenuAddItem( 1, "Завершить создание рецепта", 2, 8 )
 				end
-				player:GossipMenuAddItem( 0, "Вернуться назад |cffa60702(ОТМЕНА)", 2, 6 )
+				player:GossipMenuAddItem( 0, "Вернуться назад |cffa60702(ОТМЕНА)", 2, 9 )
 				player:GossipSendMenu( 23092003, player, 23092001 )
 			elseif intid == 2 then -- Удаление предмета
 				if code and tonumber(code) and tonumber(code) > 0 then
@@ -328,7 +328,7 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 					player:SendBroadcastMessage("Рецепт создан.\nENTRY предмета-рецепта: |cff00FF7F"..CraftItems_Table[accountID].trigger_item.entry.."\n|cffFF4500[!!]|rДля завершения создания рецептов перезагрузите базу предметов ( .reload all_item_template ) и при необходимости удалите папку Cache.")
 					CraftItems_Menu( 1, player, _, 0 )
 				else player:SendBroadcastMessage("|cffFF4500[!!]|r Произошла серьёзная ошибка. Свяжитесь с отделом разработки!") return end -- Предмет успел пропасть из БД?
-			elseif intid == 6 then -- Вернуться назад
+			elseif intid == 9 then -- Вернуться назад
 				CraftItems_Menu( 1, player, _, 0 )
 			end
 		elseif sender == 3 then -- Выбор профессии
