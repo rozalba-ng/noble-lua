@@ -4,7 +4,8 @@
 
 local spell_placeholder = 30433 -- Спелл для прикрепления к предметам-рецептам.
 local default_spell_cooldown = 2500 -- Перезарядка спелла
-local crafts = {	-- Профессии которые могут требоваться для использования рецепта.
+local crafts = {
+--	Профессии которые могут требоваться для использования рецепта.
 --	>30 элементов в списке требуют функционала перелистывания страничек.
 --	{ ID из SkillLine.dbc, Название },
 	{ 0, "Без профессии" },
@@ -23,7 +24,7 @@ local crafts = {	-- Профессии которые могут требова�
 	{ 755, "Ювелирное дело" },
 	{ 773, "Начертание" },
 	{ 830, "Плотничество" },
-	{ 831, "Гончарное дело" },
+	{ 831, "Гончарное дело" }, --17
 }
 
 local smallfolk = require 'smallfolk'
@@ -90,7 +91,7 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 		if sender == 1 then -- Стартовое меню
 			if intid == 1 then -- Создание предмета
 				-- Установка актуального текста
-				local text = "Все предметы для рецепта должны быть уже созданы."
+				local text = "Все предметы для рецепта должны быть уже созданы.\nЕсли что-то не добавляется - попробуйте нажимать кнопку ПРИНЯТЬ мышкой, а не через Enter."
 				if CraftItems_Table[accountID].trigger_item then
 					text = text.."\n\n- "..CraftItems_Table[accountID].trigger_item.name.." -"
 				end
@@ -122,7 +123,8 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 				if CraftItems_Table[accountID].trigger_item and ( CraftItems_Table[accountID].ingredients and #CraftItems_Table[accountID].ingredients > 0 ) and CraftItems_Table[accountID].reward then
 					player:GossipMenuAddItem( 6, "Указать требуемый навык профессии", 2, 5 )
 					player:GossipMenuAddItem( 6, "Указать время перезарядки", 2, 6, true, "Укажите время перезарядки в секундах." )
-					player:GossipMenuAddItem( 1, "Завершить создание рецепта", 2, 7 )
+					player:GossipMenuAddItem( 6, "Указать количество зарядов", 2, 7, true, "Укажите количество использований предмета.\nИспользуйте 0 для бесконечных зарядов.\nОтрицательные значения удаляют предмет когда кончаются заряды, положительные сохраняют его." )
+					player:GossipMenuAddItem( 1, "Завершить создание рецепта", 2, 8 )
 				end
 				player:GossipMenuAddItem( 0, "Вернуться назад |cffa60702(ОТМЕНА)", 2, 6 )
 				player:GossipSendMenu( 23092003, player, 23092001 )
@@ -263,7 +265,23 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 					player:SendAreaTriggerMessage("Время перезарядки в |cff00FF7F"..code.."|rс указано.")
 					CraftItems_Menu( 2, player, _, 1, 1 )
 				else player:SendAreaTriggerMessage("|cffFF4500[!!]|r Вы указали некорректное время.") CraftItems_Menu( 2, player, _, 1, 1 ) end
-			elseif intid == 7 then -- Завершение создания предмета
+			elseif intid == 7 then -- Указание количества зарядов
+				if code and tonumber(code) then
+					code = math.floor( tonumber(code) )
+					CraftItems_Table[accountID].spellcharges = code
+					if code == 0 then
+						player:SendAreaTriggerMessage("Предмет можно использовать бесконечно.")
+					else
+						if code > 0 then
+							player:SendAreaTriggerMessage("Предмет сохранится после того как заряды закончатся.")
+						else
+							player:SendAreaTriggerMessage("Предмет исчезнет после того как заряды закончатся.")
+						end
+						player:SendAreaTriggerMessage( "Количество зарядов равняется |cff00FF7F"..code )
+					end
+					CraftItems_Menu( 2, player, _, 1, 1 )
+				else player:SendAreaTriggerMessage("|cffFF4500[!!]|r Вы указали некорректное число.") CraftItems_Menu( 2, player, _, 1, 1 ) end
+			elseif intid == 8 then -- Завершение создания предмета
 				-- ПРИВЯЗЫВАЕМ СПЕЛЛ-ПЛЕЙСХОЛДЕР К ПРЕДМЕТУ, СТАВИМ КУЛДАУН И НУЖНЫЕ ФЛАГИ ДЛЯ ИСПОЛЬЗОВАНИЯ СПЕЛЛА
 				local itemQ = WorldDBQuery( 'SELECT Flags, spellid_1 FROM item_template WHERE entry = '..( CraftItems_Table[accountID].trigger_item.entry ) )
 				if itemQ then
@@ -275,9 +293,11 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 					
 					local spellcooldown_1 = CraftItems_Table[accountID].reload or default_spell_cooldown
 					
+					if not CraftItems_Table[accountID].spellcharges then CraftItems_Table[accountID].spellcharges = 0 end
+					
 					if not CraftItems_Table[accountID].requiredSkill then CraftItems_Table[accountID].requiredSkill = { 0, 0 } end
 					
-					WorldDBQuery( 'UPDATE item_template SET Flags = '..Flags..', RequiredSkill = '..CraftItems_Table[accountID].requiredSkill[1]..', RequiredSkillRank = '..CraftItems_Table[accountID].requiredSkill[2]..', spellid_1 = '..spellid_1..', spellcooldown_1 = '..spellcooldown_1..' WHERE entry = '..( CraftItems_Table[accountID].trigger_item.entry ) )
+					WorldDBQuery( 'UPDATE item_template SET Flags = '..Flags..', RequiredSkill = '..( CraftItems_Table[accountID].requiredSkill[1] )..', RequiredSkillRank = '..( CraftItems_Table[accountID].requiredSkill[2] )..', spellid_1 = '..spellid_1..', spellcharges_1 = '..( CraftItems_Table[accountID].spellcharges )..', spellcooldown_1 = '..spellcooldown_1..' WHERE entry = '..( CraftItems_Table[accountID].trigger_item.entry ) )
 					local entry = CraftItems_Table[accountID].trigger_item.entry
 					CraftItems_LoadedTable[entry] = {}
 					-- ДЕЛАЕМ ЗАПИСЬ В ТАБЛИЦУ ПОД ПРЕДМЕТЫ-РЕЦЕПТЫ
