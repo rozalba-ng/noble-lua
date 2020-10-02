@@ -123,7 +123,7 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 				if CraftItems_Table[accountID].trigger_item and ( CraftItems_Table[accountID].ingredients and #CraftItems_Table[accountID].ingredients > 0 ) and CraftItems_Table[accountID].reward then
 					player:GossipMenuAddItem( 6, "Указать требуемый навык профессии", 2, 5 )
 					player:GossipMenuAddItem( 6, "Указать время перезарядки", 2, 6, true, "Укажите время перезарядки в секундах." )
-					player:GossipMenuAddItem( 6, "Указать количество зарядов", 2, 7, true, "Укажите количество использований предмета.\nИспользуйте 0 для бесконечных зарядов.\nОтрицательные значения удаляют предмет когда кончаются заряды, положительные сохраняют его." )
+					player:GossipMenuAddItem( 6, "Указать время существования предмета", 2, 7, true, "Укажите время существования предмета в часах.\nНеделя - 168ч\n2 недели - 336ч\nМесяц - 720ч" )
 					player:GossipMenuAddItem( 1, "Завершить создание рецепта", 2, 8 )
 				end
 				player:GossipMenuAddItem( 0, "Вернуться назад |cffa60702(ОТМЕНА)", 2, 9 )
@@ -137,7 +137,7 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 						if itemQ2 then
 							local Flags = itemQ:GetUInt32(0)
 							if FindFlag( Flags, 64 ) then Flags = Flags - 64 end
-							WorldDBQuery( 'UPDATE item_template SET Flags = '..Flags..', RequiredSkill = 0, RequiredSkillRank = 0, spellid_1 = 0, spellcharges_1 = 0, spellcooldown_1 = 0 WHERE entry = '..code )
+							WorldDBQuery( 'UPDATE item_template SET Flags = '..Flags..', RequiredSkill = 0, RequiredSkillRank = 0, spellid_1 = 0, spellcooldown_1 = 0 WHERE entry = '..code )
 							local id = itemQ2:GetUInt32(0)
 							WorldDBQuery( 'DELETE FROM craftable_items WHERE id = '..id )
 							ClearItemEvents( code )
@@ -266,22 +266,18 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 					player:SendAreaTriggerMessage("Время перезарядки в |cff00FF7F"..code.."|rс указано.")
 					CraftItems_Menu( 2, player, _, 1, 1 )
 				else player:SendAreaTriggerMessage("|cffFF4500[!!]|r Вы указали некорректное время.") CraftItems_Menu( 2, player, _, 1, 1 ) end
-			elseif intid == 7 then -- Указание количества зарядов
-				if code and tonumber(code) then
-					code = math.floor( tonumber(code) )
-					CraftItems_Table[accountID].spellcharges = code
-					if code == 0 then
-						player:SendAreaTriggerMessage("Предмет можно использовать бесконечно.")
+			elseif intid == 7 then -- Указания времени существования предмета в часах
+				if code and tonumber(code) and tonumber(code) >= 0 then
+					code = tonumber(code)
+					if code ~= 0 then
+						CraftItems_Table[accountID].duration = code * 3600 -- Секунды в часы
+						player:SendAreaTriggerMessage("Время существования предмета в |cff00FF7F"..code.."|rч указано.")
 					else
-						if code > 0 then
-							player:SendAreaTriggerMessage("Предмет сохранится после того как заряды закончатся.")
-						else
-							player:SendAreaTriggerMessage("Предмет исчезнет после того как заряды закончатся.")
-						end
-						player:SendAreaTriggerMessage( "Количество зарядов равняется |cff00FF7F"..code )
+						CraftItems_Table[accountID].duration = nil
+						player:SendAreaTriggerMessage("Предмет не будет пропадать со временем.")
 					end
 					CraftItems_Menu( 2, player, _, 1, 1 )
-				else player:SendAreaTriggerMessage("|cffFF4500[!!]|r Вы указали некорректное число.") CraftItems_Menu( 2, player, _, 1, 1 ) end
+				else player:SendAreaTriggerMessage("|cffFF4500[!!]|r Вы указали некорректное время.") CraftItems_Menu( 2, player, _, 1, 1 ) end
 			elseif intid == 8 then -- Завершение создания предмета
 				-- ПРИВЯЗЫВАЕМ СПЕЛЛ-ПЛЕЙСХОЛДЕР К ПРЕДМЕТУ, СТАВИМ КУЛДАУН И НУЖНЫЕ ФЛАГИ ДЛЯ ИСПОЛЬЗОВАНИЯ СПЕЛЛА
 				local itemQ = WorldDBQuery( 'SELECT Flags, spellid_1 FROM item_template WHERE entry = '..( CraftItems_Table[accountID].trigger_item.entry ) )
@@ -292,13 +288,18 @@ local function CraftItems_Menu( event, player, command, sender, intid, code, men
 					local spellid_1 = itemQ:GetInt32(1)
 					if not spellid_1 or spellid_1 == 0 then spellid_1 = spell_placeholder end
 					
-					local spellcooldown_1 = CraftItems_Table[accountID].reload or default_spell_cooldown
+					local flagsCustom = 0
+					if CraftItems_Table[accountID].duration then
+						flagsCustom = 1
+					else
+						CraftItems_Table[accountID].duration = 0
+					end
 					
-					if not CraftItems_Table[accountID].spellcharges then CraftItems_Table[accountID].spellcharges = 0 end
+					local spellcooldown_1 = CraftItems_Table[accountID].reload or default_spell_cooldown
 					
 					if not CraftItems_Table[accountID].requiredSkill then CraftItems_Table[accountID].requiredSkill = { 0, 0 } end
 					
-					WorldDBQuery( 'UPDATE item_template SET Flags = '..Flags..', RequiredSkill = '..( CraftItems_Table[accountID].requiredSkill[1] )..', RequiredSkillRank = '..( CraftItems_Table[accountID].requiredSkill[2] )..', spellid_1 = '..spellid_1..', spellcharges_1 = '..( CraftItems_Table[accountID].spellcharges )..', spellcooldown_1 = '..spellcooldown_1..' WHERE entry = '..( CraftItems_Table[accountID].trigger_item.entry ) )
+					WorldDBQuery( 'UPDATE item_template SET Flags = '..Flags..', RequiredSkill = '..( CraftItems_Table[accountID].requiredSkill[1] )..', RequiredSkillRank = '..( CraftItems_Table[accountID].requiredSkill[2] )..', stackable = 1, spellid_1 = '..spellid_1..', spellcooldown_1 = '..spellcooldown_1..', duration = '..( CraftItems_Table[accountID].duration )..', flagsCustom = '..flagsCustom..' WHERE entry = '..( CraftItems_Table[accountID].trigger_item.entry ) )
 					local entry = CraftItems_Table[accountID].trigger_item.entry
 					CraftItems_LoadedTable[entry] = {}
 					-- ДЕЛАЕМ ЗАПИСЬ В ТАБЛИЦУ ПОД ПРЕДМЕТЫ-РЕЦЕПТЫ
