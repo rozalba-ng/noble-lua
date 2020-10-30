@@ -107,7 +107,7 @@ function GoMovable.onCustomSignGOSSIP(event,player,gob)
 end
 
 function GoMovable.assignCustomSignGossipEvents()
-	local CustomSignQuery = WorldDBQuery('SELECT entry FROM gameobject_template WHERE entry > 500050 AND entry < 500100'); -- diapason for tradable chairs type
+	local CustomSignQuery = WorldDBQuery('SELECT entry FROM gameobject_template WHERE (entry > 500050 AND entry < 500100) or (entry > 499000 AND entry < 499101)'); -- diapason for tradable chairs type
 	local rowCount = CustomSignQuery:GetRowCount();
 	local entry;
 	for var=1,rowCount,1 do	
