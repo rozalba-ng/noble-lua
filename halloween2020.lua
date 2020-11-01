@@ -431,6 +431,11 @@ local function AllowedArea_BroomFly( _,_,_, player )
 	end
 end
 
+local function OnSpawn_Eye( event, creature )
+	creature:SetDisableGravity( true )
+end
+RegisterCreatureEvent( entry_eye, 5, OnSpawn_Eye ) -- CREATURE_EVENT_ON_SPAWN
+
 local function Trigger_Eye( event, player, creature )
 	if player:IsOnVehicle() and not player:HasItem( item_eye, 12 ) and player:HasQuest(quest_broom) then
 		if not creature:GetData("Killed") then
