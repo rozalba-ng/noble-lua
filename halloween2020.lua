@@ -481,6 +481,8 @@ RegisterPlayerEvent( 38, OnQuestAbandon_Eye ) -- PLAYER_EVENT_ON_QUEST_ABANDON
 --[[	ПРИЗРАКИ	]]--
 
 local function OnQuestFinished_Cauldron( event, player, object, quest )
+	print(quest)
+	print(quest_cauldron)
 	if quest == quest_cauldron then
 		player:SetData( "Halloween2020Stage", 2 )
 		player:SetPhaseMask(5)
@@ -490,3 +492,4 @@ local function OnQuestFinished_Cauldron( event, player, object, quest )
 	end
 end
 RegisterGameObjectEvent( entry_cauldron, 5, OnQuestFinished_Cauldron ) -- GAMEOBJECT_EVENT_ON_QUEST_REWARD
+print("debug")
