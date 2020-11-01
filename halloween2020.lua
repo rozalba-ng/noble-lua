@@ -482,6 +482,7 @@ RegisterPlayerEvent( 38, OnQuestAbandon_Eye ) -- PLAYER_EVENT_ON_QUEST_ABANDON
 
 local function OnQuestFinished_Cauldron( event, player, object, quest )
 	print(player:GetQuestRewardStatus(quest_cauldron))
+	print(player:HasQuest(quest_cauldron))
 	if player:GetQuestRewardStatus(quest_cauldron) then
 		player:SetData( "Halloween2020Stage", 2 )
 		player:SetPhaseMask(5)
