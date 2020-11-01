@@ -97,7 +97,7 @@ end
 local function Ambient_ScaredCrow( _,_,_, player )
 	if not player:IsGM() and player:IsGMVisible() and player:GetMapId() == 9001 then
 		player:RegisterEvent( Ambient_ScaredCrow, 2000, 1 )
-		local creature = player:GetNearestCreature( 6 )
+		local creature = player:GetNearestCreature( 6, entry_crow )
 		if creature and not creature:GetData("Fear") then
 			local x, y, z = creature:GetLocation()
 			x, y, z = math.random(-10,10) + x, math.random(-10,10) + y, 12 + z
