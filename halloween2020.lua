@@ -74,7 +74,6 @@ local allowed_area_sphere = {
 }
 local function AllowedArea_StartQuest( _,_,_, player )
 	player:SendBroadcastMessage("Проверка")
-	player:SetData( "BugFix", false )
 	if player:GetMapId() == 9001 and player:GetData("Halloween2020Stage") == 0 then
 		player:RegisterEvent( AllowedArea_StartQuest, 5000, 1 )
 		if player:GetDistance( allowed_area_sphere.x, allowed_area_sphere.y, allowed_area_sphere.z ) > allowed_area_sphere.radius then
@@ -171,7 +170,6 @@ local function PlayerData( event, player )
 		player:SetData( "Halloween2020Stage", 0 )
 		player:SetData( "HalloweenMap", true )
 		player:SetPhaseMask(2)
-		player:RegisterEvent( AllowedArea_StartQuest, 15000, 1 )
 	end
 	if event == 3 then
 	--	Заход в игру
@@ -192,10 +190,7 @@ local function PlayerData( event, player )
 			local stage = player:GetData("Halloween2020Stage")
 			if stage == 0 then
 				player:SetPhaseMask(2)
-				if not player:GetData("BugFix") then
-					player:SetData( "BugFix", true )
-					player:RegisterEvent( AllowedArea_StartQuest, 5000, 1 )
-				end
+				player:RegisterEvent( AllowedArea_StartQuest, 15000, 1 )
 			elseif stage == 1 then
 				player:SetPhaseMask(1)
 			elseif stage == 2 then
