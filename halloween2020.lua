@@ -93,12 +93,13 @@ end
 
 --[[	УЛЕТАЮЩИЕ ВОРОНЫ	]]--
 
-local function Ambient_ScaredCrow( event, creature )
-	if not creature:GetData("Fear") then
-		local player = creature:GetNearestPlayer( 6 )
-		if player and not player:IsGM() then
+local function Ambient_ScaredCrow( _,_,_, player )
+	if not player:IsGM() and player:IsGMVisible() and player:GetMapId() == 9001 then
+		player:RegisterEvent( Ambient_ScaredCrow, 2000, 1 )
+		local creature = player:GetNearestCreature( 6 )
+		if creature and not creature:GetData("Fear") then
 			local x, y, z = creature:GetLocation()
-			x, y, z = math.random(-8,8) + x, math.random(-8,8) + y, 10 + z
+			x, y, z = math.random(-10,10) + x, math.random(-10,10) + y, 12 + z
 			creature:SetByteValue( 6+68, 0, 0 )
 			creature:SetDisableGravity( true )
 			creature:MoveTo( 02102001, x, y, z )
@@ -107,7 +108,6 @@ local function Ambient_ScaredCrow( event, creature )
 		end
 	end
 end
-RegisterCreatureEvent( entry_crow, 7, Ambient_ScaredCrow )
 
 --[[	ХРУСТЯЩИЕ ТАРАКАНЫ	]]--
 
@@ -200,9 +200,14 @@ local function PlayerData( event, player )
 				player:SetPhaseMask(5)
 			end
 			player:SetData( "HalloweenMap", true )
+			if not player:GetData("CrowTrigger") then
+				player:SetData( "CrowTrigger", true )
+				player:RegisterEvent( Ambient_ScaredCrow, 5000, 1 )
+			end
 		elseif player:GetData("HalloweenMap") then
 			player:SetData( "HalloweenMap", false )
 			player:SetData( "StartQuestArea", false )
+			player:SetData( "CrowTrigger", false )
 			player:SetPhaseMask(1)
 		end
 	end
@@ -385,12 +390,12 @@ RegisterCreatureGossipEvent( entry_pumpkinGod, 2, Gossip_PumpkinGod ) -- GOSSIP_
 
 local allowed_areas = {
 	{
-		x = { 46.5, 391.7 },
+		x = { 46.5, 415 },
 		y = { -33, 223.6 },
 		z = { -1, 68 },
 	},
 	{
-		x = { 200, 391.7 },
+		x = { 200, 415 },
 		y = { -66, 223.6 },
 		z = { -1, 68 },
 	},
