@@ -418,3 +418,8 @@ local function CAPTAIN_Gossip( event, player, creature, sender, intid )
 end
 RegisterCreatureGossipEvent( entry_captain, 1, CAPTAIN_Gossip ) -- GOSSIP_EVENT_ON_HELLO
 RegisterCreatureGossipEvent( entry_captain, 2, CAPTAIN_Gossip ) -- GOSSIP_EVENT_ON_SELECT
+
+local function STAGECOACH_OnSpawn( event, creature )
+	creature:SetData( "Active", false )
+end
+RegisterCreatureEvent( entry_stagecoach, 5, STAGECOACH_OnSpawn ) -- CREATURE_EVENT_ON_SPAWN
