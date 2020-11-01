@@ -37,7 +37,6 @@ local function OnNPCSelectSpawn(event, creature, summoner)
 end
 local function OnNPCCommandSpawn(event, creature, summoner)
 	local creatureEntry = creature:GetEntry()
-	print("!@#!@#")
 	local xPos,yPos,zPos = creature:GetHomePosition()
 	creature:DespawnOrUnsummon()
 	if creatureEntry == RUN_NPC_COMMAND then
@@ -95,15 +94,12 @@ function ArmyHandlers.CommandToNPC(player,npcToCommand,commandType,xPos,yPos,zPo
 	endVector.x = xPos - center.x 
 	endVector.y = yPos - center.y
 	endVector.z = zPos - center.z
-	print(123)
 	if #npcToCommand > 0 then
-		print("1")
 		for i = 1, #npcToCommand do
 			local startVector = { x =0, y = 0, z = 0}
 			local creatureGUID = GetUnitGUID(npcToCommand[i].guid, npcToCommand[i].entry)
 			local map = player:GetMap()
 			local creatureToMove = map:GetWorldObject(creatureGUID)
-			print("a123")
 			if (creatureToMove:GetOwner() == player) or (player:GetDmLevel()>2 and player:GetPhaseMask()==1024) or (player:GetGMRank()>0) then
 				crPosX, crPosY, crPosZ, crPosO = creatureToMove:GetHomePosition()
 				startVector.x = crPosX - center.x 
