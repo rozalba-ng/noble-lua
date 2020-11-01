@@ -73,7 +73,6 @@ local allowed_area_sphere = {
 	radius = 55,
 }
 local function AllowedArea_StartQuest( _,_,_, player )
-	player:SendBroadcastMessage("Проверка")
 	if player:GetMapId() == 9001 and player:GetData("Halloween2020Stage") == 0 then
 		player:RegisterEvent( AllowedArea_StartQuest, 5000, 1 )
 		if player:GetDistance( allowed_area_sphere.x, allowed_area_sphere.y, allowed_area_sphere.z ) > allowed_area_sphere.radius then
