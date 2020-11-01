@@ -94,6 +94,11 @@ end
 
 --[[	УЛЕТАЮЩИЕ ВОРОНЫ	]]--
 
+local function OnSpawn_ScaredCrow( event, creature )
+	creature:SetData( "Fear", false )
+end
+RegisterCreatureEvent( entry_eye, 5, OnSpawn_ScaredCrow )
+
 local function Ambient_ScaredCrow( _,_,_, player )
 	if player:GetMapId() == 9001 then
 		player:RegisterEvent( Ambient_ScaredCrow, 2000, 1 )
@@ -144,7 +149,7 @@ local function Quest_ScaredCockroach( event, player, creature, quest )
 end
 RegisterCreatureEvent( entry_vlad, 31, Quest_ScaredCockroach ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
 
---[[	ТЫКВА НА ЛУННОЙ ПОЛЯНЕ	]]
+--[[	ТЫКВА НА ЛУННОЙ ПОЛЯНЕ	]]--
 
 local function Gossip_Pumpkin( event, player, creature, sender, intid )
 	if event == 1 then
@@ -431,6 +436,11 @@ local function AllowedArea_BroomFly( _,_,_, player )
 	end
 end
 
+local function OnSpawn_Eye( event, creature )
+	creature:SetData( "Killed", false )
+end
+RegisterCreatureEvent( entry_eye, 5, OnSpawn_Eye )
+
 local function Trigger_Eye( _,_,_, player )
 	if player:IsOnVehicle() and not player:HasItem( item_eye, 12 ) and player:HasQuest(quest_broom) then
 		player:RegisterEvent( Trigger_Eye, 1000, 1 )
@@ -481,7 +491,7 @@ RegisterPlayerEvent( 38, OnQuestAbandon_Eye ) -- PLAYER_EVENT_ON_QUEST_ABANDON
 --[[	ПРИЗРАКИ	]]--
 
 local function OnQuestFinished_Cauldron( event, player, object, quest )
-	if quest:GetEntry() == quest_cauldron then
+	if quest:GetId() == quest_cauldron then
 		player:SetData( "Halloween2020Stage", 2 )
 		player:SetPhaseMask(5)
 		local guid = tostring( player:GetGUID() )
