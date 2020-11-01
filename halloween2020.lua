@@ -42,10 +42,11 @@ local welcome_messages = {
 	"Мимо вас пролетает летучая мышь. Вы вспоминаете Владика.",
 	'"На колени перед Тыквенным богом, смертный!" - звучит в вашей голове.',
 	"Ночью вам приснилась большая тыква наполненная тараканами. Ужас.",
-	"Вы думаете о том, что в Страхвилле должны быть секретные задания.",
+	"Вы думаете о том, что в Страхвилле должны быть секретные задания. Но их пока что нет.",
 	"В Страхвилле все знают ваше имя, но что если представиться наоборот?",
 	"Над Страхвиллем почти зашло блеклое солнце... С тех пор прошли уже тысячи лет.",
 	"Постучите по тыкве, если хотите проверить степень её спелости.",
+	"Полёты на метле - весело. Так думает Владик.",
 }
 --		Полёт на карту
 local taxiTable = { { 1, 7887.3, -2581.1, 489.5 }, { 1, 7889.7, -2578.0, 493.3 }, { 1, 7897.8, -2574.0, 502.8 }, { 1, 7897.7, -2560.3, 511.6 }, { 1, 7886.3, -2562.5, 517.4 }, { 1, 7894.8, -2569.7, 522.2 }, { 1, 7900.0, -2569.2, 525.0 }, { 1, 7901.1, -2564.0, 528.9 }, { 1, 7896.5, -2560.5, 535.8 }, { 1, 7891.4, -2562.1, 543.0 }, { 9001, 102.1, -33.0, 24.1 }, { 9001, 113.5, -1.5, 7.8 }, { 9001, 115.8, 20.7, 4.2 }, { 9001, 107.8, 50.2, 8.5 }, { 9001, 96.2, 43.0, 12.8 }, { 9001, 97.6, 32.7, 16.5 }, { 9001, 97.4, 22.2, 25.9 }, { 9001, 96.2, 20.0, 28.3 }, { 9001, 97.6, 18.8, 29.6 }, { 9001, 106.9, 11.8, 28.7 }, { 9001, 122.7, 4.5, 27.3 }, { 9001, 139.4, 7.7, 26.1 }, { 9001, 150.9, 22.1, 24.8 }, { 9001, 160.1, 50.5, 11.8 }, { 9001, 172.2, 84.8, 6.7 }, { 9001, 166.5, 109.2, 4.2 }, { 9001, 130.2, 132.8, 5.2 }, { 9001, 100.8, 128.1, 7.9 }, { 9001, 83.6, 112.2, 10.4 }, { 9001, 74.1, 87.2, 11.5 }, { 9001, 67.1, 64.9, 12.2 }, { 9001, 64.8, 54.1, 11.5 }, }
@@ -422,6 +423,19 @@ local function AllowedArea_BroomFly( _,_,_, player )
 	end
 end
 
+local function Trigger_Eye( _,_,_, player )
+	if player:IsOnVehicle() and not player:HasItem( item_eye, 12 ) and player:HasQuest(quest_broom) then
+		player:RegisterEvent( Trigger_Eye, 1000, 1 )
+		local eye = player:GetNearestCreature( 4, entry_eye )
+		if eye and not eye:GetData("Killed") then
+			eye:SetData( "Killed", true )
+			eye:CastSpell( eye, spell_eye )
+			eye:DespawnOrUnsummon(1000)
+			player:AddItem( item_eye )
+		end
+	end
+end
+
 local function WhenPlayerMountedOnBroom( event, player, spell )
 	if spell:GetEntry() == 43671 and player:GetMapId() == 9001 then -- Управление техникой
 		player:RegisterEvent( AllowedArea_BroomFly, 1000, 1 )
@@ -445,19 +459,6 @@ local function SpawnBroom( _,_, player )
 	end
 end
 RegisterGameObjectEvent( entry_gameobject_broom, 14, SpawnBroom ) -- GAMEOBJECT_EVENT_ON_USE
-
-local function Trigger_Eye( _,_,_, player )
-	if player:IsOnVehicle() and not player:HasItem( item_eye, 16 ) and player:HasQuest(quest_broom) then
-		player:RegisterEvent( Trigger_Eye, 1000, 1 )
-		local eye = player:GetNearestCreature( 4, entry_eye )
-		if eye and not eye:GetData("Killed") then
-			eye:SetData( "Killed", true )
-			eye:CastSpell( eye, spell_eye )
-			eye:DespawnOrUnsummon(1000)
-			player:AddItem( item_eye )
-		end
-	end
-end
 
 local function OnQuestAbandon_Eye( event, player, questId )
 	if questId == quest_cockroach then
