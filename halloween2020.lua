@@ -435,6 +435,9 @@ local function Trigger_Eye( _,_,_, player )
 	if player:IsOnVehicle() and not player:HasItem( item_eye, 12 ) and player:HasQuest(quest_broom) then
 		player:RegisterEvent( Trigger_Eye, 1000, 1 )
 		local eye = player:GetNearestCreature( 4, entry_eye )
+		if eye and eye:GetData("Killed") then
+			player:SendBroadcastMessage("Отладка: Этот глаз уже убит.")
+		end
 		if eye and not eye:GetData("Killed") then
 			eye:SetData( "Killed", true )
 			eye:CastSpell( eye, spell_eye )
