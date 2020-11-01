@@ -442,7 +442,7 @@ end
 RegisterCreatureEvent( entry_eye, 5, OnSpawn_Eye )
 
 local function Trigger_Eye( _,_,_, player )
-	if player:IsOnVehicle() and not player:HasItem( item_eye, 12 ) and player:HasQuest(quest_broom) then
+	if player:IsOnVehicle() and not player:HasItem( item_eye, 10 ) and player:HasQuest(quest_broom) then
 		player:RegisterEvent( Trigger_Eye, 1000, 1 )
 		local eye = player:GetNearestCreature( 4, entry_eye )
 		if eye and not eye:GetData("Killed") then
