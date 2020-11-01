@@ -480,10 +480,8 @@ RegisterPlayerEvent( 38, OnQuestAbandon_Eye ) -- PLAYER_EVENT_ON_QUEST_ABANDON
 
 --[[	ПРИЗРАКИ	]]--
 
-local function OnQuestFinished_CauldronBUGFIX( _,_,_, player )
-	print(player:GetQuestStatus(quest_cauldron))
-	print(player:GetQuestRewardStatus(quest_cauldron))
-	if player:GetQuestRewardStatus(quest_cauldron) then
+local function OnQuestFinished_Cauldron( event, player, object, quest )
+	if quest:GetId() == quest_cauldron then
 		player:SetData( "Halloween2020Stage", 2 )
 		player:SetPhaseMask(5)
 		local guid = tostring( player:GetGUID() )
@@ -491,8 +489,4 @@ local function OnQuestFinished_CauldronBUGFIX( _,_,_, player )
 		player:SendBroadcastMessage("|cffff7588Вы чувствуете на себе уставшие взгляды...")
 	end
 end
-local function OnQuestFinished_Cauldron( event, player )
-	player:RegisterEvent( OnQuestFinished_CauldronBUGFIX, 1000, 1 )
-end
 RegisterGameObjectEvent( entry_cauldron, 5, OnQuestFinished_Cauldron ) -- GAMEOBJECT_EVENT_ON_QUEST_REWARD
-print("debug")
