@@ -14,7 +14,6 @@ local entry_attackedPumpkin = 9928229
 --		Задание с поиском книги рецептов
 local entry_book = 5049130
 local quest_book = 110021
-local item_book = 2114449
 --		Задание с призраками
 local entry_cauldron = 5049154
 local quest_cauldron = 110029
@@ -95,17 +94,19 @@ end
 --[[	УЛЕТАЮЩИЕ ВОРОНЫ	]]--
 
 local function Ambient_ScaredCrow( _,_,_, player )
-	if not player:IsGM() and player:IsGMVisible() and player:GetMapId() == 9001 then
+	if player:GetMapId() == 9001 then
 		player:RegisterEvent( Ambient_ScaredCrow, 2000, 1 )
-		local creature = player:GetNearestCreature( 6, entry_crow )
-		if creature and not creature:GetData("Fear") then
-			local x, y, z = creature:GetLocation()
-			x, y, z = math.random(-10,10) + x, math.random(-10,10) + y, 12 + z
-			creature:SetByteValue( 6+68, 0, 0 )
-			creature:SetDisableGravity( true )
-			creature:MoveTo( 02102001, x, y, z )
-			creature:SetData( "Fear", true )
-			creature:DespawnOrUnsummon( 3000 )
+		if not player:IsGM() then
+			local creature = player:GetNearestCreature( 6, entry_crow )
+			if creature and not creature:GetData("Fear") then
+				local x, y, z = creature:GetLocation()
+				x, y, z = math.random(-10,10) + x, math.random(-10,10) + y, 12 + z
+				creature:SetByteValue( 6+68, 0, 0 )
+				creature:SetDisableGravity( true )
+				creature:MoveTo( 02102001, x, y, z )
+				creature:SetData( "Fear", true )
+				creature:DespawnOrUnsummon( 3000 )
+			end
 		end
 	end
 end
@@ -284,8 +285,8 @@ local function OnRead_Book( event, objectORplayer, player )
 		objectORplayer:SetPhaseMask(1)
 		local guid = tostring( objectORplayer:GetGUID() )
 		WorldDBQuery("UPDATE Halloween2020 SET quest_stage = 1 WHERE player_guid = '"..guid.."'")
+		objectORplayer:CompleteQuest(quest_book)
 		objectORplayer:GossipComplete()
-		objectORplayer:AddItem( item_book, 1 )
 	end
 end
 RegisterGameObjectEvent( entry_book, 14, OnRead_Book ) -- GAMEOBJECT_EVENT_ON_USE
