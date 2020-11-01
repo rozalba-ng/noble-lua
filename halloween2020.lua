@@ -14,6 +14,7 @@ local entry_attackedPumpkin = 9928229
 --		Задание с поиском книги рецептов
 local entry_book = 5049130
 local quest_book = 110021
+local item_book = 2114449
 --		Задание с призраками
 local entry_cauldron = 5049154
 local quest_cauldron = 110029
@@ -283,8 +284,8 @@ local function OnRead_Book( event, objectORplayer, player )
 		objectORplayer:SetPhaseMask(1)
 		local guid = tostring( objectORplayer:GetGUID() )
 		WorldDBQuery("UPDATE Halloween2020 SET quest_stage = 1 WHERE player_guid = '"..guid.."'")
-		objectORplayer:CompleteQuest(quest_book)
 		objectORplayer:GossipComplete()
+		objectORplayer:AddItem( item_book, 1 )
 	end
 end
 RegisterGameObjectEvent( entry_book, 14, OnRead_Book ) -- GAMEOBJECT_EVENT_ON_USE
