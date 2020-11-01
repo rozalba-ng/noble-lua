@@ -142,6 +142,7 @@ local function PlayerData( event, player )
 		player:SetData( "Halloween2020Stage", 0 )
 		player:SetData( "HalloweenMap", true )
 		player:SetPhaseMask(2)
+		player:RegisterEvent( AllowedArea_StartQuest, 15000, 1 )
 	end
 	if event == 3 then
 	--	Заход в игру
@@ -162,6 +163,7 @@ local function PlayerData( event, player )
 			local stage = player:GetData("Halloween2020Stage")
 			if stage == 0 then
 				player:SetPhaseMask(2)
+				player:RegisterEvent( AllowedArea_StartQuest, 5000, 1 )
 			elseif stage == 1 then
 				player:SetPhaseMask(1)
 			elseif stage == 2 then
@@ -456,3 +458,29 @@ local function OnQuestFinished_Cauldron( event, player, object, quest )
 	end
 end
 RegisterGameObjectEvent( entry_cauldron, 5, OnQuestFinished_Cauldron ) -- GAMEOBJECT_EVENT_ON_QUEST_REWARD
+
+--[[	ОГРАНИЧЕНИЕ СТАРТОВОЙ ЗОНЫ	]]--
+
+local allowed_area_sphere = {
+	x = 55.3,
+	y = 43.5,
+	z = 9,
+	radius = 55,
+}
+local function AllowedArea_StartQuest( _,_,_, player )
+	if player:GetMapId() = 9001 and player:GetData("Halloween2020Stage") == 0 then
+		player:RegisterEvent( AllowedArea_StartQuest, 5000, 1 )
+		if player:GetDistance( allowed_area_sphere.x, allowed_area_sphere.y, allowed_area_sphere.z ) > allowed_area_sphere.radius then
+			if not player:GetData("StartQuest_Warning") then
+				player:SendAreaTriggerMessage("|cffff7588Вернитесь обратно, а иначе не-вампир Владик вернёт вас сам!")
+				player:SetData( "StartQuest_Warning", true )
+			else
+				player:SetData( "StartQuest_Warning", false )
+				player:Teleport( 9001, 52.4, 39, 11, 0.8 )
+				player:CastSpell( player, 39568 )
+			end
+		else
+			player:SetData( "StartQuest_Warning", false )
+		end
+	end
+end
