@@ -295,9 +295,11 @@ RegisterCreatureEvent( entry_spider, 1, OnDamageTaken_Spider ) -- CREATURE_EVENT
 
 local function AntiGM( event, player )
 	if player:GetGMRank() == 1 and player:GetMapId() == 9001 then
-		player:SendBroadcastMessage("|cffff7588Увы, не-вампир Владик не позвал вас на свою крутую вечеринку..\n|cffff7588Попробуйте зайти с игрового аккаунта.")
-		player:Teleport( 1, 7796, -2574, 489, 0 )
-		player:SetPhaseMask(1)
+		if not player:GetAccountId() == 8828 then -- Если НЕ игровая поддержка
+			player:SendBroadcastMessage("|cffff7588Увы, не-вампир Владик не позвал вас на свою крутую вечеринку..\n|cffff7588Попробуйте зайти с игрового аккаунта.")
+			player:Teleport( 1, 7796, -2574, 489, 0 )
+			player:SetPhaseMask(1)
+		end
 	end
 end
 RegisterPlayerEvent( 28, AntiGM ) -- PLAYER_EVENT_ON_MAP_CHANGE
