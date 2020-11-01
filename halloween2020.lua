@@ -431,26 +431,23 @@ local function AllowedArea_BroomFly( _,_,_, player )
 	end
 end
 
-local function OnSpawn_Eye( event, creature )
-	creature:SetDisableGravity( true )
-end
-RegisterCreatureEvent( entry_eye, 5, OnSpawn_Eye ) -- CREATURE_EVENT_ON_SPAWN
-
-local function Trigger_Eye( event, player, creature )
+local function Trigger_Eye( _,_,_, player )
 	if player:IsOnVehicle() and not player:HasItem( item_eye, 12 ) and player:HasQuest(quest_broom) then
-		if not creature:GetData("Killed") then
-			creature:SetData( "Killed", true )
-			creature:CastSpell( creature, spell_eye )
-			creature:DespawnOrUnsummon(1000)
+		player:RegisterEvent( Trigger_Eye, 1000, 1 )
+		local eye = player:GetNearestCreature( 4, entry_eye )
+		if eye and not eye:GetData("Killed") then
+			eye:SetData( "Killed", true )
+			eye:CastSpell( eye, spell_eye )
+			eye:DespawnOrUnsummon(1000)
 			player:AddItem( item_eye )
 		end
 	end
 end
-RegisterCreatureGossipEvent( entry_eye, 1, Trigger_Eye ) -- GOSSIP_EVENT_ON_HELLO
 
 local function WhenPlayerMountedOnBroom( event, player, spell )
 	if spell:GetEntry() == 43671 and player:GetMapId() == 9001 then -- Управление техникой
 		player:RegisterEvent( AllowedArea_BroomFly, 1000, 1 )
+		player:RegisterEvent( Trigger_Eye, 1000, 1 )
 	end
 end
 RegisterPlayerEvent( 5, WhenPlayerMountedOnBroom ) -- PLAYER_EVENT_ON_SPELL_CAST
