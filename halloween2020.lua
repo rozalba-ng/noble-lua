@@ -190,7 +190,10 @@ local function PlayerData( event, player )
 			local stage = player:GetData("Halloween2020Stage")
 			if stage == 0 then
 				player:SetPhaseMask(2)
-				player:RegisterEvent( AllowedArea_StartQuest, 15000, 1 )
+				if not player:GetData("StartQuestArea") then
+					player:SetData( "StartQuestArea", true )
+					player:RegisterEvent( AllowedArea_StartQuest, 15000, 1 )
+				end
 			elseif stage == 1 then
 				player:SetPhaseMask(1)
 			elseif stage == 2 then
@@ -199,6 +202,7 @@ local function PlayerData( event, player )
 			player:SetData( "HalloweenMap", true )
 		elseif player:GetData("HalloweenMap") then
 			player:SetData( "HalloweenMap", false )
+			player:SetData( "StartQuestArea", false )
 			player:SetPhaseMask(1)
 		end
 	end
