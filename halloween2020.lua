@@ -481,7 +481,7 @@ RegisterPlayerEvent( 38, OnQuestAbandon_Eye ) -- PLAYER_EVENT_ON_QUEST_ABANDON
 --[[	ПРИЗРАКИ	]]--
 
 local function OnQuestFinished_Cauldron( event, player, object, quest )
-	if quest:GetEntry() == quest_cauldron then
+	if quest == quest_cauldron then
 		player:SetData( "Halloween2020Stage", 2 )
 		player:SetPhaseMask(5)
 		local guid = tostring( player:GetGUID() )
