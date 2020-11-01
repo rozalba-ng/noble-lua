@@ -237,6 +237,7 @@ local function BANDITLEADER_Gossip( event, player, creature, sender, intid )
 				for i = 1, #players do
 					if players[i]:HasQuest(quest_id) then
 						players[i]:FailQuest(quest_id)
+						players[i]:RemoveQuest(quest_id)
 					end
 				end
 			end
@@ -413,7 +414,8 @@ local function CAPTAIN_Gossip( event, player, creature, sender, intid )
 			stagecoach:SetRooted(false)
 			stagecoach:MoveWaypoint()
 			stagecoach:SetData( "Active", true )
-		else player:SendBroadcastMessage("Произошла ошибка. Свяжитесь с администрацией.") end
+			player:SendAreaTriggerMessage("Дилижанс отправляется. Сопроводите его!")
+		end
 	end
 end
 RegisterCreatureGossipEvent( entry_captain, 1, CAPTAIN_Gossip ) -- GOSSIP_EVENT_ON_HELLO
@@ -421,5 +423,14 @@ RegisterCreatureGossipEvent( entry_captain, 2, CAPTAIN_Gossip ) -- GOSSIP_EVENT_
 
 local function STAGECOACH_OnSpawn( event, creature )
 	creature:SetData( "Active", false )
+	local guard = creature:GetNearestCreature( 25, entry_captain )
+	if guard then
+		guard:SendUnitSay( "Новая повозка прибыла! Всем храбрецам - готовсь. Поговорите со мной, когда будете готовы.", 0 )
+	end
 end
 RegisterCreatureEvent( entry_stagecoach, 5, STAGECOACH_OnSpawn ) -- CREATURE_EVENT_ON_SPAWN
+
+local function CAPTAIN_WhenPlayerTakenQuest( event, player, creature, quest )
+	player:SendBroadcastMessage("Поговорите с повозчиком, когда будете готовы начать поездку.")
+end
+RegisterCreatureEvent( entry_captain, 31, CAPTAIN_WhenPlayerTakenQuest )
