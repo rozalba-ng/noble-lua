@@ -16,7 +16,7 @@ local entry_book = 5049130
 local quest_book = 110021
 --		Задание с призраками
 local entry_cauldron = 5049154
-local quest_cauldron = 110029
+local quest_cauldron = 110028
 --		Ежедневное задание с убийством скелетов на кладбище
 local entry_skeleton = 9928230
 local entry_skeleton2 = 9928231
@@ -26,6 +26,7 @@ local entry_gameobject_broom = 5049153
 local quest_broom = 110026
 local entry_eye = 9928271
 local spell_eye = 51695
+local item_eye = 2114448
 --		Необязательное задание с убийством паука
 local entry_spider = 9928232
 --		Тыквенный Бог (Воскрешает и телепортирует на карту)
@@ -41,10 +42,12 @@ local welcome_messages = {
 	"Мимо вас пролетает летучая мышь. Вы вспоминаете Владика.",
 	'"На колени перед Тыквенным богом, смертный!" - звучит в вашей голове.',
 	"Ночью вам приснилась большая тыква наполненная тараканами. Ужас.",
-	"Вы думаете о том, что в Страхвилле должны быть секретные задания.",
+	"Вы думаете о том, что в Страхвилле должны быть секретные задания. Но их пока что нет.",
 	"В Страхвилле все знают ваше имя, но что если представиться наоборот?",
 	"Над Страхвиллем почти зашло блеклое солнце... С тех пор прошли уже тысячи лет.",
 	"Постучите по тыкве, если хотите проверить степень её спелости.",
+	"Полёты на метле - весело. Так думает Владик.",
+	"Иногда в воздухе пролетают оранжевые глаза. Интересно, куда они летят?",
 }
 --		Полёт на карту
 local taxiTable = { { 1, 7887.3, -2581.1, 489.5 }, { 1, 7889.7, -2578.0, 493.3 }, { 1, 7897.8, -2574.0, 502.8 }, { 1, 7897.7, -2560.3, 511.6 }, { 1, 7886.3, -2562.5, 517.4 }, { 1, 7894.8, -2569.7, 522.2 }, { 1, 7900.0, -2569.2, 525.0 }, { 1, 7901.1, -2564.0, 528.9 }, { 1, 7896.5, -2560.5, 535.8 }, { 1, 7891.4, -2562.1, 543.0 }, { 9001, 102.1, -33.0, 24.1 }, { 9001, 113.5, -1.5, 7.8 }, { 9001, 115.8, 20.7, 4.2 }, { 9001, 107.8, 50.2, 8.5 }, { 9001, 96.2, 43.0, 12.8 }, { 9001, 97.6, 32.7, 16.5 }, { 9001, 97.4, 22.2, 25.9 }, { 9001, 96.2, 20.0, 28.3 }, { 9001, 97.6, 18.8, 29.6 }, { 9001, 106.9, 11.8, 28.7 }, { 9001, 122.7, 4.5, 27.3 }, { 9001, 139.4, 7.7, 26.1 }, { 9001, 150.9, 22.1, 24.8 }, { 9001, 160.1, 50.5, 11.8 }, { 9001, 172.2, 84.8, 6.7 }, { 9001, 166.5, 109.2, 4.2 }, { 9001, 130.2, 132.8, 5.2 }, { 9001, 100.8, 128.1, 7.9 }, { 9001, 83.6, 112.2, 10.4 }, { 9001, 74.1, 87.2, 11.5 }, { 9001, 67.1, 64.9, 12.2 }, { 9001, 64.8, 54.1, 11.5 }, }
@@ -63,23 +66,51 @@ ENGINE=InnoDB
 ]]
 WorldDBQuery( SQL_databaseCreation )
 
---[[	УЛЕТАЮЩИЕ ВОРОНЫ	]]--
+--[[	ОГРАНИЧЕНИЕ СТАРТОВОЙ ЗОНЫ	]]--
 
-local function Ambient_ScaredCrow( event, creature )
-	if not creature:GetData("Fear") then
-		local player = creature:GetNearestPlayer( 6 )
-		if player and not player:IsGM() then
-			local x, y, z = creature:GetLocation()
-			x, y, z = math.random(-8,8) + x, math.random(-8,8) + y, 10 + z
-			creature:SetByteValue( 6+68, 0, 0 )
-			creature:SetDisableGravity( true )
-			creature:MoveTo( 02102001, x, y, z )
-			creature:SetData( "Fear", true )
-			creature:DespawnOrUnsummon( 3000 )
+local allowed_area_sphere = {
+	x = 55.3,
+	y = 43.5,
+	z = 9,
+	radius = 55,
+}
+local function AllowedArea_StartQuest( _,_,_, player )
+	if player:GetMapId() == 9001 and player:GetData("Halloween2020Stage") == 0 then
+		player:RegisterEvent( AllowedArea_StartQuest, 5000, 1 )
+		if player:GetDistance( allowed_area_sphere.x, allowed_area_sphere.y, allowed_area_sphere.z ) > allowed_area_sphere.radius then
+			if not player:GetData("StartQuest_Warning") then
+				player:SendAreaTriggerMessage("|cffff7588Вернитесь обратно, а иначе не-вампир Владик вернёт вас сам!")
+				player:SetData( "StartQuest_Warning", true )
+			else
+				player:SetData( "StartQuest_Warning", false )
+				player:Teleport( 9001, 52.4, 39, 11, 0.8 )
+				player:CastSpell( player, 39568 )
+			end
+		else
+			player:SetData( "StartQuest_Warning", false )
 		end
 	end
 end
-RegisterCreatureEvent( entry_crow, 7, Ambient_ScaredCrow )
+
+--[[	УЛЕТАЮЩИЕ ВОРОНЫ	]]--
+
+local function Ambient_ScaredCrow( _,_,_, player )
+	if player:GetMapId() == 9001 then
+		player:RegisterEvent( Ambient_ScaredCrow, 2000, 1 )
+		if not player:IsGM() then
+			local creature = player:GetNearestCreature( 6, entry_crow )
+			if creature and not creature:GetData("Fear") then
+				local x, y, z = creature:GetLocation()
+				x, y, z = math.random(-10,10) + x, math.random(-10,10) + y, 12 + z
+				creature:SetByteValue( 6+68, 0, 0 )
+				creature:SetDisableGravity( true )
+				creature:MoveTo( 02102001, x, y, z )
+				creature:SetData( "Fear", true )
+				creature:DespawnOrUnsummon( 3000 )
+			end
+		end
+	end
+end
 
 --[[	ХРУСТЯЩИЕ ТАРАКАНЫ	]]--
 
@@ -94,17 +125,24 @@ local function Gossip_ScaredCockroach( event, player, creature )
 		amount = amount + 1
 		player:SetData( "Cockroach", amount )
 		if amount == 24 then
-			player:SendAreaTriggerMessage("Мерзкие таракашки раздавлены!")
+			player:SendAreaTriggerMessage("|cffff7588Мерзкие таракашки раздавлены!")
 			player:CompleteQuest(quest_cockroach)
 			player:RewardQuest(quest_cockroach)
 		else
-			player:SendAreaTriggerMessage( "Таракан хрустит. Осталось раздавить: "..(24 - amount) )
+			player:SendAreaTriggerMessage( "|cffff7588Таракан хрустит. Осталось раздавить: "..(24 - amount) )
 		end
 	else
 		player:SendBroadcastMessage("|cffff7588Не-вампир Владик не одобрил бы этого. Кто знает, может эти тараканы - его лучшие друзья?")
 	end
 end
 RegisterCreatureGossipEvent( entry_cockroach, 1, Gossip_ScaredCockroach )
+
+local function Quest_ScaredCockroach( event, player, creature, quest )
+	if quest == quest_cockroach then
+		player:SetData( "Cockroach", 0 )
+	end
+end
+RegisterCreatureEvent( entry_vlad, 31, Quest_ScaredCockroach ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
 
 --[[	ТЫКВА НА ЛУННОЙ ПОЛЯНЕ	]]
 
@@ -155,14 +193,24 @@ local function PlayerData( event, player )
 			local stage = player:GetData("Halloween2020Stage")
 			if stage == 0 then
 				player:SetPhaseMask(2)
+				if not player:GetData("StartQuestArea") then
+					player:SetData( "StartQuestArea", true )
+					player:RegisterEvent( AllowedArea_StartQuest, 15000, 1 )
+				end
 			elseif stage == 1 then
 				player:SetPhaseMask(1)
 			elseif stage == 2 then
 				player:SetPhaseMask(5)
 			end
 			player:SetData( "HalloweenMap", true )
+			if not player:GetData("CrowTrigger") then
+				player:SetData( "CrowTrigger", true )
+				player:RegisterEvent( Ambient_ScaredCrow, 5000, 1 )
+			end
 		elseif player:GetData("HalloweenMap") then
 			player:SetData( "HalloweenMap", false )
+			player:SetData( "StartQuestArea", false )
+			player:SetData( "CrowTrigger", false )
 			player:SetPhaseMask(1)
 		end
 	end
@@ -288,9 +336,11 @@ RegisterCreatureEvent( entry_spider, 1, OnDamageTaken_Spider ) -- CREATURE_EVENT
 
 local function AntiGM( event, player )
 	if player:GetGMRank() == 1 and player:GetMapId() == 9001 then
-		player:SendBroadcastMessage("|cffff7588Увы, не-вампир Владик не позвал вас на свою крутую вечеринку..\n|cffff7588Попробуйте зайти с игрового аккаунта.")
-		player:Teleport( 1, 7796, -2574, 489, 0 )
-		player:SetPhaseMask(1)
+		if not player:GetAccountId() == 8828 then -- Если НЕ игровая поддержка
+			player:SendBroadcastMessage("|cffff7588Увы, не-вампир Владик не позвал вас на свою крутую вечеринку..\n|cffff7588Попробуйте зайти с игрового аккаунта.")
+			player:Teleport( 1, 7796, -2574, 489, 0 )
+			player:SetPhaseMask(1)
+		end
 	end
 end
 RegisterPlayerEvent( 28, AntiGM ) -- PLAYER_EVENT_ON_MAP_CHANGE
@@ -343,12 +393,12 @@ RegisterCreatureGossipEvent( entry_pumpkinGod, 2, Gossip_PumpkinGod ) -- GOSSIP_
 
 local allowed_areas = {
 	{
-		x = { 46.5, 391.7 },
+		x = { 46.5, 415 },
 		y = { -33, 223.6 },
 		z = { -1, 68 },
 	},
 	{
-		x = { 200, 391.7 },
+		x = { 200, 415 },
 		y = { -66, 223.6 },
 		z = { -1, 68 },
 	},
@@ -381,9 +431,23 @@ local function AllowedArea_BroomFly( _,_,_, player )
 	end
 end
 
+local function Trigger_Eye( _,_,_, player )
+	if player:IsOnVehicle() and not player:HasItem( item_eye, 12 ) and player:HasQuest(quest_broom) then
+		player:RegisterEvent( Trigger_Eye, 1000, 1 )
+		local eye = player:GetNearestCreature( 4, entry_eye )
+		if eye and not eye:GetData("Killed") then
+			eye:SetData( "Killed", true )
+			eye:CastSpell( eye, spell_eye )
+			eye:DespawnOrUnsummon(1000)
+			player:AddItem( item_eye )
+		end
+	end
+end
+
 local function WhenPlayerMountedOnBroom( event, player, spell )
 	if spell:GetEntry() == 43671 and player:GetMapId() == 9001 then -- Управление техникой
 		player:RegisterEvent( AllowedArea_BroomFly, 1000, 1 )
+		player:RegisterEvent( Trigger_Eye, 1000, 1 )
 	end
 end
 RegisterPlayerEvent( 5, WhenPlayerMountedOnBroom ) -- PLAYER_EVENT_ON_SPELL_CAST
@@ -404,28 +468,6 @@ local function SpawnBroom( _,_, player )
 end
 RegisterGameObjectEvent( entry_gameobject_broom, 14, SpawnBroom ) -- GAMEOBJECT_EVENT_ON_USE
 
-local function AIUPD_Eye( event, creature )
-	if not creature:GetData("Killed") then
-		local player = creature:GetNearestPlayer(4)
-		if player and player:HasQuest(quest_broom) and not player:IsGM() and player:IsOnVehicle() then
-			creature:SetData( "Killed", true )
-			creature:CastSpell( creature, spell_eye )
-			creature:DespawnOrUnsummon(1000)
-			local killedEyes = player:GetData("KilledEyes") or 0
-			killedEyes = killedEyes + 1
-			player:SetData( "KilledEyes", killedEyes )
-			if killedEyes >= 12 then
-				player:CompleteQuest(quest_broom)
-				player:RewardQuest(quest_broom)
-				player:SendAreaTriggerMessage("|cffff7588Пускай враг закроет свои глаза!")
-			else
-				player:SendAreaTriggerMessage("|cffff7588"..killedEyes.." из 12")
-			end
-		end
-	end
-end
-RegisterCreatureEvent( entry_eye, 7, AIUPD_Eye )
-
 local function OnQuestAbandon_Eye( event, player, questId )
 	if questId == quest_cockroach then
 		player:SetData( "Cockroach", 0 )
@@ -444,6 +486,7 @@ local function OnQuestFinished_Cauldron( event, player, object, quest )
 		player:SetPhaseMask(5)
 		local guid = tostring( player:GetGUID() )
 		WorldDBQuery("UPDATE Halloween2020 SET quest_stage = 2 WHERE player_guid = '"..guid.."'")
+		player:SendBroadcastMessage("|cffff7588Вы чувствуете на себе уставшие взгляды...")
 	end
 end
 RegisterGameObjectEvent( entry_cauldron, 5, OnQuestFinished_Cauldron ) -- GAMEOBJECT_EVENT_ON_QUEST_REWARD
