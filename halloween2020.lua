@@ -26,6 +26,7 @@ local entry_gameobject_broom = 5049153
 local quest_broom = 110026
 local entry_eye = 9928271
 local spell_eye = 51695
+local item_eye = 2114448
 --		Необязательное задание с убийством паука
 local entry_spider = 9928232
 --		Тыквенный Бог (Воскрешает и телепортирует на карту)
@@ -395,6 +396,7 @@ end
 local function WhenPlayerMountedOnBroom( event, player, spell )
 	if spell:GetEntry() == 43671 and player:GetMapId() == 9001 then -- Управление техникой
 		player:RegisterEvent( AllowedArea_BroomFly, 1000, 1 )
+		player:RegisterEvent( Trigger_Eye, 1000, 1 )
 	end
 end
 RegisterPlayerEvent( 5, WhenPlayerMountedOnBroom ) -- PLAYER_EVENT_ON_SPELL_CAST
@@ -415,27 +417,18 @@ local function SpawnBroom( _,_, player )
 end
 RegisterGameObjectEvent( entry_gameobject_broom, 14, SpawnBroom ) -- GAMEOBJECT_EVENT_ON_USE
 
-local function AIUPD_Eye( event, creature )
-	if not creature:GetData("Killed") then
-		local player = creature:GetNearestPlayer(4)
-		if player and player:HasQuest(quest_broom) and not player:IsGM() and player:IsOnVehicle() then
-			creature:SetData( "Killed", true )
-			creature:CastSpell( creature, spell_eye )
-			creature:DespawnOrUnsummon(1000)
-			local killedEyes = player:GetData("KilledEyes") or 0
-			killedEyes = killedEyes + 1
-			player:SetData( "KilledEyes", killedEyes )
-			if killedEyes >= 12 then
-				player:CompleteQuest(quest_broom)
-				player:RewardQuest(quest_broom)
-				player:SendAreaTriggerMessage("|cffff7588Пускай враг закроет свои глаза!")
-			else
-				player:SendAreaTriggerMessage("|cffff7588"..killedEyes.." из 12")
-			end
+local function Trigger_Eye( _,_,_, player )
+	if player:IsOnVehicle() and not player:HasItem( item_eye, 16 ) and player:HasQuest(quest_broom) then
+		player:RegisterEvent( Trigger_Eye, 1000, 1 )
+		local eye = player:GetNearestCreature( 4, entry_eye )
+		if eye and not eye:GetData("Killed") then
+			eye:SetData( "Killed", true )
+			eye:CastSpell( eye, spell_eye )
+			eye:DespawnOrUnsummon(1000)
+			player:AddItem( item_eye )
 		end
 	end
 end
-RegisterCreatureEvent( entry_eye, 7, AIUPD_Eye )
 
 local function OnQuestAbandon_Eye( event, player, questId )
 	if questId == quest_cockroach then
