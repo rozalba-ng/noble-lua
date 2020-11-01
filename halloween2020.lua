@@ -97,7 +97,7 @@ end
 local function OnSpawn_ScaredCrow( event, creature )
 	creature:SetData( "Fear", false )
 end
-RegisterCreatureEvent( entry_eye, 5, OnSpawn_Eye )
+RegisterCreatureEvent( entry_eye, 5, OnSpawn_ScaredCrow )
 
 local function Ambient_ScaredCrow( _,_,_, player )
 	if player:GetMapId() == 9001 then
