@@ -94,17 +94,24 @@ local function Gossip_ScaredCockroach( event, player, creature )
 		amount = amount + 1
 		player:SetData( "Cockroach", amount )
 		if amount == 24 then
-			player:SendAreaTriggerMessage("Мерзкие таракашки раздавлены!")
+			player:SendAreaTriggerMessage("|cffff7588Мерзкие таракашки раздавлены!")
 			player:CompleteQuest(quest_cockroach)
 			player:RewardQuest(quest_cockroach)
 		else
-			player:SendAreaTriggerMessage( "Таракан хрустит. Осталось раздавить: "..(24 - amount) )
+			player:SendAreaTriggerMessage( "|cffff7588Таракан хрустит. Осталось раздавить: "..(24 - amount) )
 		end
 	else
 		player:SendBroadcastMessage("|cffff7588Не-вампир Владик не одобрил бы этого. Кто знает, может эти тараканы - его лучшие друзья?")
 	end
 end
 RegisterCreatureGossipEvent( entry_cockroach, 1, Gossip_ScaredCockroach )
+
+local function Quest_ScaredCockroach( event, player, creature, quest )
+	if quest == quest_cockroach then
+		player:SetData( "Cockroach", 0 )
+	end
+end
+RegisterCreatureEvent( entry_vlad, 31, Quest_ScaredCockroach ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
 
 --[[	ТЫКВА НА ЛУННОЙ ПОЛЯНЕ	]]
 
