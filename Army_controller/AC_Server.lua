@@ -28,8 +28,10 @@ local function OnNPCSelectSpawn(event, creature, summoner)
 	end
 	creature:DespawnOrUnsummon()
 	for i = 1, #SelectedNPCInRange do
-		local creatureGuid = SelectedNPCInRange[i]:GetGUIDLow()
-		SelectedNPCToPlayer[i] = { guid = creatureGuid, entry = SelectedNPCInRange[i]:GetEntry() }
+		if (SelectedNPCInRange[i]:GetOwner() == summoner) or (summoner:GetDmLevel()>2 and summoner:GetPhaseMask()==1024) or (summoner:GetGMRank()>0) then
+			local creatureGuid = SelectedNPCInRange[i]:GetGUIDLow()
+			SelectedNPCToPlayer[i] = { guid = creatureGuid, entry = SelectedNPCInRange[i]:GetEntry() }
+		end
 	end
 	AIO.Handle(summoner,"ArmyHandlers","SelectNewNPCs",SelectedNPCToPlayer)
 end
@@ -37,7 +39,6 @@ local function OnNPCCommandSpawn(event, creature, summoner)
 	local creatureEntry = creature:GetEntry()
 	local xPos,yPos,zPos = creature:GetHomePosition()
 	creature:DespawnOrUnsummon()
-
 	if creatureEntry == RUN_NPC_COMMAND then
 		AIO.Handle(summoner,"ArmyHandlers","CallTableToCommand",1,xPos,yPos,zPos)
 	elseif creatureEntry == WALK_NPC_COMMAND then
@@ -45,15 +46,17 @@ local function OnNPCCommandSpawn(event, creature, summoner)
 	elseif creatureEntry == ROTATE_NPC_COMMAND then
 		AIO.Handle(summoner,"ArmyHandlers","CallTableToCommand",3,xPos,yPos,zPos)
 	end
-	
 end
 function ArmyHandlers.DeleteAllNpcInGroup(player,arr)
+
 	for i = 1, #arr do
 		local creatureGUID = GetUnitGUID(arr[i].guid, arr[i].entry)
 		if creatureGUID then
 			local map = player:GetMap()
 			local creatureToDel = map:GetWorldObject(creatureGUID)
-			creatureToDel:DespawnOrUnsummon()
+			if (creatureToDel:GetOwner() == player) or (player:GetDmLevel()>2 and player:GetPhaseMask()==1024) or (player:GetGMRank()>0) then
+				creatureToDel:DespawnOrUnsummon()
+			end
 		end
 	end
 end
@@ -62,7 +65,9 @@ function ArmyHandlers.SetEmoteToNPC(player,npcToCommand,emoteID)
 	for i = 1, #npcToCommand do
 		local creatureGUID = GetUnitGUID(npcToCommand[i].guid, npcToCommand[i].entry)
 		local creature = map:GetWorldObject(creatureGUID)
-		creature:EmoteState(tonumber(emoteID))
+		if (creature:GetOwner() == player) or (player:GetDmLevel()>2 and player:GetPhaseMask()==1024) or (player:GetGMRank()>0) then
+			creature:EmoteState(tonumber(emoteID))
+		end
 	end
 end
 
@@ -95,54 +100,58 @@ function ArmyHandlers.CommandToNPC(player,npcToCommand,commandType,xPos,yPos,zPo
 			local creatureGUID = GetUnitGUID(npcToCommand[i].guid, npcToCommand[i].entry)
 			local map = player:GetMap()
 			local creatureToMove = map:GetWorldObject(creatureGUID)
-			crPosX, crPosY, crPosZ, crPosO = creatureToMove:GetHomePosition()
-			startVector.x = crPosX - center.x 
-			startVector.y = crPosY - center.y
-			startVector.z = crPosZ - center.z
+			if (creatureToMove:GetOwner() == player) or (player:GetDmLevel()>2 and player:GetPhaseMask()==1024) or (player:GetGMRank()>0) then
+				crPosX, crPosY, crPosZ, crPosO = creatureToMove:GetHomePosition()
+				startVector.x = crPosX - center.x 
+				startVector.y = crPosY - center.y
+				startVector.z = crPosZ - center.z
 
-			local startVectorAngle	= math.atan2(startVector.y,startVector.x)
-			local endVectorAngle = math.atan2(endVector.y,endVector.x)
-			local AngleToRotate = endVectorAngle - crPosO
-			local ca = math.cos(AngleToRotate)
-			local sa = math.sin(AngleToRotate)
-			local rotatedVector = { x = ca*startVector.x - sa*startVector.y, y = sa*startVector.x + ca*startVector.y }
-			local rotatedVectorAngle = math.atan2(rotatedVector.y,rotatedVector.x)
-			if commandType == 1 then
-				creatureToMove:SetWalk(false)
-				creatureToMove:SetHomePosition(xPos + rotatedVector.x,yPos + rotatedVector.y,zPos + startVector.z, endVectorAngle)
-				creatureToMove:MoveHome()
-			elseif commandType == 2 then
-				creatureToMove:SetWalk(true)
-				creatureToMove:MoveTo(i,xPos + rotatedVector.x,yPos + rotatedVector.y,zPos + startVector.z)
-				creatureToMove:SetHomePosition(xPos + rotatedVector.x,yPos + rotatedVector.y,zPos + startVector.z, endVectorAngle)
+				local startVectorAngle	= math.atan2(startVector.y,startVector.x)
+				local endVectorAngle = math.atan2(endVector.y,endVector.x)
+				local AngleToRotate = endVectorAngle - crPosO
+				local ca = math.cos(AngleToRotate)
+				local sa = math.sin(AngleToRotate)
+				local rotatedVector = { x = ca*startVector.x - sa*startVector.y, y = sa*startVector.x + ca*startVector.y }
+				local rotatedVectorAngle = math.atan2(rotatedVector.y,rotatedVector.x)
+				if commandType == 1 then
+					creatureToMove:SetWalk(false)
+					creatureToMove:SetHomePosition(xPos + rotatedVector.x,yPos + rotatedVector.y,zPos + startVector.z, endVectorAngle)
+					creatureToMove:MoveHome()
+				elseif commandType == 2 then
+					creatureToMove:SetWalk(true)
+					creatureToMove:MoveTo(i,xPos + rotatedVector.x,yPos + rotatedVector.y,zPos + startVector.z)
+					creatureToMove:SetHomePosition(xPos + rotatedVector.x,yPos + rotatedVector.y,zPos + startVector.z, endVectorAngle)
 
-			elseif commandType == 3 then
-				
-				creatureToMove:SetHomePosition(center.x  +rotatedVector.x,center.y  +rotatedVector.y, center.z  +startVector.z, endVectorAngle)
-				creatureToMove:MoveHome()
+				elseif commandType == 3 then
+					
+					creatureToMove:SetHomePosition(center.x  +rotatedVector.x,center.y  +rotatedVector.y, center.z  +startVector.z, endVectorAngle)
+					creatureToMove:MoveHome()
+				end
 			end
 		end
 	elseif player:GetTargetCreature() then
 		local creatureToMove = player:GetTargetCreature()
-		endVector.x = xPos - creatureToMove:GetX()
-		endVector.y = yPos - creatureToMove:GetY()
-		endVector.z = zPos - creatureToMove:GetZ()
-		local endVectorAngle = math.atan2(endVector.y,endVector.x)
-		if commandType == 1 then
-			creatureToMove:SetWalk(false)
-			creatureToMove:SetHomePosition(xPos,yPos,zPos, endVectorAngle)
-			creatureToMove:MoveHome()
-		elseif commandType == 2 then
-			creatureToMove:SetWalk(true)
-			creatureToMove:MoveTo(1,xPos,yPos,zPos)
-			creatureToMove:SetHomePosition(xPos,yPos,zPos, endVectorAngle)
-
-		elseif commandType == 3 then
+		if (creatureToMove:GetOwner() == player) or (player:GetDmLevel()>2 and player:GetPhaseMask()==1024) or (player:GetGMRank()>0) then
 			
-			creatureToMove:SetHomePosition(creatureToMove:GetX(),creatureToMove:GetY(),creatureToMove:GetZ(), endVectorAngle)
-			creatureToMove:MoveHome()
+			endVector.x = xPos - creatureToMove:GetX()
+			endVector.y = yPos - creatureToMove:GetY()
+			endVector.z = zPos - creatureToMove:GetZ()
+			local endVectorAngle = math.atan2(endVector.y,endVector.x)
+			if commandType == 1 then
+				creatureToMove:SetWalk(false)
+				creatureToMove:SetHomePosition(xPos,yPos,zPos, endVectorAngle)
+				creatureToMove:MoveHome()
+			elseif commandType == 2 then
+				creatureToMove:SetWalk(true)
+				creatureToMove:MoveTo(1,xPos,yPos,zPos)
+				creatureToMove:SetHomePosition(xPos,yPos,zPos, endVectorAngle)
+
+			elseif commandType == 3 then
+				
+				creatureToMove:SetHomePosition(creatureToMove:GetX(),creatureToMove:GetY(),creatureToMove:GetZ(), endVectorAngle)
+				creatureToMove:MoveHome()
+			end
 		end
-	
 	end
 
 end
@@ -151,8 +160,11 @@ function ArmyHandlers.DeleteAllNpcInGroupPerm(player,arr)
 		local creatureGUID = GetUnitGUID(arr[i].guid, arr[i].entry)
 		if creatureGUID then
 			local map = player:GetMap()
+
 			local creatureToDel = map:GetWorldObject(creatureGUID)
-			creatureToDel:Delete()
+			if (creatureToDel:GetOwner() == player) or (player:GetDmLevel()>2 and player:GetPhaseMask()==1024) or (player:GetGMRank()>0) then
+				creatureToDel:Delete()
+			end
 		end
 	end
 end
@@ -170,12 +182,14 @@ local function OnSpellCast(event, player, spell, skipCheck)
 	elseif spellEntry == 540636 then
 		SelectedNPCToPlayer = {}
 		local selection = player:GetSelection()
-		SelectedNPCToPlayer[1] = { guid = selection:GetGUIDLow(), entry = selection:GetEntry() }
-		AIO.Handle(player,"ArmyHandlers","SelectNewNPCs",SelectedNPCToPlayer)
+		if (selection:GetOwner() == player) or (player:GetDmLevel()>2 and player:GetPhaseMask()==1024) or (player:GetGMRank()>0) then
+			SelectedNPCToPlayer[1] = { guid = selection:GetGUIDLow(), entry = selection:GetEntry() }
+			AIO.Handle(player,"ArmyHandlers","SelectNewNPCs",SelectedNPCToPlayer)
+		end
 	end
 end
 local function OnPlayerCommand(event, player,command)
-	if(player:GetGMRank() > 0)then
+	if(player:GetGMRank() > 0 or player:GetDmLevel() > 1)then
         if(string.find(command, " "))then
             local arguments = {}
             local arguments = string.split(command, " ")
@@ -200,3 +214,4 @@ RegisterCreatureEvent(1001171,22,OnNPCCommandSpawn)
 RegisterCreatureEvent(1001172,22,OnNPCCommandSpawn)
 RegisterCreatureEvent(1001173,22,OnNPCSelectSpawn)
 RegisterCreatureEvent(1001174,22,OnNPCSelectSpawn)
+
