@@ -148,7 +148,11 @@ function SCENE_CabbieDeath()
 			banditLeader = player:GetNearestCreature( 30, entry_banditLeader )
 			banditStagecoach = player:GetNearestCreature( 30, entry_stagecoach_banditsBranch )
 			if banditLeader and banditStagecoach then
-				player:AddQuest(quest_id2)
+				if player:GetData("HasStagecoachRideQuest") then
+					player:AddQuest(quest_id2)
+					player:SendAreaTriggerMessage("Сопроводите украденный дилижанс.")
+					player:SetData( "HasStagecoachRideQuest", false )
+				end
 			end
 		end
 	end
@@ -414,7 +418,15 @@ local function CAPTAIN_Gossip( event, player, creature, sender, intid )
 			stagecoach:SetRooted(false)
 			stagecoach:MoveWaypoint()
 			stagecoach:SetData( "Active", true )
-			player:SendAreaTriggerMessage("Дилижанс отправляется. Сопроводите его!")
+			local players = creature:GetPlayersInRange(30)
+			if players then
+				for i = 1, #players do
+					if players[i]:HasQuest(quest_id) then
+						players[i]:SendAreaTriggerMessage("Дилижанс отправляется. Сопроводите его!")
+						players[i]:SetData( "HasStagecoachRideQuest", true )
+					end
+				end
+			end
 		end
 	end
 end
@@ -433,4 +445,4 @@ RegisterCreatureEvent( entry_stagecoach, 5, STAGECOACH_OnSpawn ) -- CREATURE_EVE
 local function CAPTAIN_WhenPlayerTakenQuest( event, player, creature, quest )
 	player:SendBroadcastMessage("Поговорите с повозчиком, когда будете готовы начать поездку.")
 end
-RegisterCreatureEvent( entry_captain, 31, CAPTAIN_WhenPlayerTakenQuest )
+RegisterCreatureEvent( entry_captain, 31, CAPTAIN_WhenPlayerTakenQuest ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
