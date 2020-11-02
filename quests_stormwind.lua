@@ -147,9 +147,9 @@ function SCENE_CabbieDeath()
 		if player then
 			banditLeader = player:GetNearestCreature( 30, entry_banditLeader )
 			banditStagecoach = player:GetNearestCreature( 30, entry_stagecoach_banditsBranch )
-			if banditLeader and banditStagecoach and player:HasQuest(quest_id) then
+			if banditLeader and banditStagecoach then
 				player:AddQuest(quest_id2)
-			elseif banditLeader then break end
+			end
 		end
 	end
 	if banditLeader and not banditStagecoach then
