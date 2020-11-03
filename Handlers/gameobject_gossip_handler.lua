@@ -339,11 +339,12 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 				local x, y, z, o = gob:GetLocation()
 				local newGob = gob:MoveGameObject(x, y, z, o);
 				local guid = newGob:GetGUID();
+				local guidLow = newGob:GetDBTableGUIDLow();
+			print(guidLow)
 				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid;
 				local result = num/10;
 				newGob:SetScale(result);
-			print(guid);
-				WorldDBQuery("UPDATE gameobject SET custom_scale = " .. result .. " WHERE GUID = " .. guid);
+				WorldDBQuery("UPDATE gameobject SET custom_scale = " .. result .. " WHERE GUID = " .. guidLow);
 			end
 		end
 		GoMovable.OnChangeLocation(player, object);
