@@ -443,13 +443,12 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                     local phase = player:GetPhaseMask();
                     local obj = PerformIngameSpawn( 2, gobEntry, map, 0, x, y, z, o, true, pid, 0, phase);
                     obj:SetScale(gobSize);
-                    obj:SaveToDB();
                 end
 				return false
             elseif (arguments[1] == 'gobsize' and #arguments == 3 and (player:GetGMRank() > 0 or IsThirdDM(player))) then
 				local guidLow = tostring(arguments[2])
                 local gobSize = tonumber(arguments[3])
-				local gobjects = plagityer:GetGameObjectsInRange(533);
+				local gobjects = player:GetGameObjectsInRange(533);
 				local rowCount = #gobjects;
 				for var=1,rowCount,1 do	
 					local targuid = tostring(gobjects[var]:GetDBTableGUIDLow());
@@ -458,7 +457,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 							local map = player:GetMap();	
 							local gob = gobjects[var];
 							gob:SetScale(gobSize)
-                            gob:SaveToDB();
+                            WorldDBQuery("UPDATE gameobject SET custom_scale = " .. gobSize .. " WHERE GUID = " .. guidLow);
 							local phase = player:GetPhaseMask()
 							gob:SetPhaseMask(4096)
 							gob:SetPhaseMask(phase)
