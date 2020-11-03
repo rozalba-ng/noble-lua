@@ -337,10 +337,14 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid;
 				local result = num/100;
 				print(gob);
-				gob:SetScale(1.2)
+				gob:SetScale(result)
 				print(result)
 				print("UPDATE gameobject SET custom_scale = " .. result .. " WHERE GUID = " .. guidLow);
 				WorldDBQuery("UPDATE gameobject SET custom_scale = " .. result .. " WHERE GUID = " .. guidLow);
+				local phase = player:GetPhaseMask()
+				gob:SetPhaseMask(4096)
+				gob:SetPhaseMask(phase)
+				player:SendBroadcastMessage('Объект увеличен.');
 			end
 		end
 		GoMovable.OnChangeLocation(player, object);
