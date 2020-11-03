@@ -214,7 +214,7 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 				local gob = map:GetWorldObject(gobGUID);
 				local x, y, z, o = gob:GetLocation()
 				local result = z+num/100;			
-				local newGob = gob:MoveGameObject(x, y, result, o);		
+				local newGob = gob:MoveGameObject(x, y, result, o);
 				local guid = newGob:GetGUID()
 				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid			
 			end  		
@@ -332,17 +332,14 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 			elseif(num < 10) then
 				player:SendBroadcastMessage("ОШИБКА: минимальное значение: 10")
 			else
-				local pid = player:GetGUIDLow();
-				local map = player:GetMap();
-				local gobGUID = PlayerBuild.targetgobject[pid];
-				local gob = map:GetWorldObject(gobGUID);
+				local gob = GoMovable.formTargetGob(object);
 				local guidLow = gob:GetDBTableGUIDLow();
-			print(guidLow)
 				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid;
 				local result = num/100;
+				print(gob);
 				gob:SetScale(result);
-			print(result)
-			print("UPDATE gameobject SET custom_scale = " .. result .. " WHERE GUID = " .. guidLow);
+				print(result)
+				print("UPDATE gameobject SET custom_scale = " .. result .. " WHERE GUID = " .. guidLow);
 				WorldDBQuery("UPDATE gameobject SET custom_scale = " .. result .. " WHERE GUID = " .. guidLow);
 			end
 		end
