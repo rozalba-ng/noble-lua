@@ -443,6 +443,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                     local phase = player:GetPhaseMask();
                     local obj = PerformIngameSpawn( 2, gobEntry, map, 0, x, y, z, o, true, pid, 0, phase);
                     obj:SetScale(gobSize);
+                    obj:SaveToDB();
                 end
 				return false
             elseif (arguments[1] == 'gobsize' and #arguments == 3 and (player:GetGMRank() > 0 or IsThirdDM(player))) then
