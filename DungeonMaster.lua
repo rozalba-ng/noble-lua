@@ -449,7 +449,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
             elseif (arguments[1] == 'gobsize' and #arguments == 3 and (player:GetGMRank() > 0 or IsThirdDM(player))) then
 				local guidLow = tostring(arguments[2])
                 local gobSize = tonumber(arguments[3])
-				local gobjects = player:GetGameObjectsInRange(533);
+				local gobjects = plagityer:GetGameObjectsInRange(533);
 				local rowCount = #gobjects;
 				for var=1,rowCount,1 do	
 					local targuid = tostring(gobjects[var]:GetDBTableGUIDLow());
@@ -458,6 +458,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 							local map = player:GetMap();	
 							local gob = gobjects[var];
 							gob:SetScale(gobSize)
+                            gob:SaveToDB();
 							local phase = player:GetPhaseMask()
 							gob:SetPhaseMask(4096)
 							gob:SetPhaseMask(phase)
