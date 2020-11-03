@@ -334,6 +334,7 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 			else
 				local pid = player:GetGUIDLow();
 				local gobGUID = PlayerBuild.targetgobject[pid];
+				local map = player:GetMap();
 				local gob = map:GetWorldObject(gobGUID);
 				local result = num/10;
 				PlayerBuild.targetgobject[player:GetGUIDLow()] = gobGUID;
