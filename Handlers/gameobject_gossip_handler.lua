@@ -154,6 +154,7 @@ function GoMovable.OnChangeLocation(player, object)
 	player:GossipMenuAddItem(1, "Подвинуть на север/юг (север: +, юг: -)", 1, 5, true)
 	player:GossipMenuAddItem(1, "Подвинуть на запад/восток (запад: +, восток: -)", 1, 6, true)
 	player:GossipMenuAddItem(1, "Переместить по направлению взгляда персонажа (вперед: +, назад: -)", 1, 7, true)
+	player:GossipMenuAddItem(1, "Изменить размер", 1, 20, true)
 	player:GossipMenuAddItem(0, "Назад ..", 1, 8)
 	player:GossipSendMenu(1, object, GoMovable.MenuId)
 end
@@ -312,15 +313,36 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 				local gobGUID = PlayerBuild.targetgobject[pid];			
 				local gob = map:GetWorldObject(gobGUID);
 				local x, y, z, o = gob:GetLocation()
-				local resultx = x+num/10*(math.cos(po));	
-				local resulty = y+num/10*(math.sin(po));			
+				local resultx = x+num/10*(math.cos(po));
+				local resulty = y+num/10*(math.sin(po));
 				local newGob = gob:MoveGameObject(resultx, resulty, z, o);		
 				local guid = newGob:GetGUID();
-				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid;		
+				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid;
 			end  		
 		end		      
-		GoMovable.OnChangeLocation(player, object);			
-	-- case 5 - закрыть меню
+		GoMovable.OnChangeLocation(player, object);
+	elseif (intid == 20) then
+		local numX = tonumber(code)
+		if(numX == nil) then
+			player:SendBroadcastMessage("ОШИБКА: некорректное значение! Допустимы только целые числа")
+		else
+			local num = math.floor(numX);
+			if(num > 300) then
+				player:SendBroadcastMessage("ОШИБКА: максимальное значение: 300")
+			elseif(num < 100) then
+				player:SendBroadcastMessage("ОШИБКА: минимальное значение: 100")
+			else
+				local pid = player:GetGUIDLow();
+				local gobGUID = PlayerBuild.targetgobject[pid];
+				local gob = map:GetWorldObject(gobGUID);
+				local result = num/10;
+				PlayerBuild.targetgobject[player:GetGUIDLow()] = gobGUID;
+				gob:SetScale(result)
+				WorldDBQuery("UPDATE gameobject SET custom_scale = " .. result .. " WHERE GUID = " .. gobGUID);
+			end
+		end
+		GoMovable.OnChangeLocation(player, object);
+		-- case 5 - закрыть меню
     --elseif (intid == 5) then 
         --player:GossipComplete()
 		
