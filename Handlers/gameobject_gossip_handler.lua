@@ -329,17 +329,20 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 			local num = math.floor(numX);
 			if(num > 300) then
 				player:SendBroadcastMessage("ОШИБКА: максимальное значение: 300")
-			elseif(num < 100) then
-				player:SendBroadcastMessage("ОШИБКА: минимальное значение: 100")
+			elseif(num < 10) then
+				player:SendBroadcastMessage("ОШИБКА: минимальное значение: 10")
 			else
 				local pid = player:GetGUIDLow();
-				local gobGUID = PlayerBuild.targetgobject[pid];
 				local map = player:GetMap();
+				local gobGUID = PlayerBuild.targetgobject[pid];
 				local gob = map:GetWorldObject(gobGUID);
-				local result = num/10;
-				PlayerBuild.targetgobject[player:GetGUIDLow()] = gobGUID;
-				gob:SetScale(result)
-				WorldDBQuery("UPDATE gameobject SET custom_scale = " .. result .. " WHERE GUID = " .. gobGUID);
+				local x, y, z, o = gob:GetLocation()
+				local newGob = gob:MoveGameObject(x, y, z, o);
+				local guid = newGob:GetGUID();
+				local guidLow = newGob:GetGUIDLow()
+				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid
+				newGob:SetScale(result);
+				WorldDBQuery("UPDATE gameobject SET custom_scale = " .. result .. " WHERE GUID = " .. guidLow);
 			end
 		end
 		GoMovable.OnChangeLocation(player, object);
