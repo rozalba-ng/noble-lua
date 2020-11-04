@@ -457,6 +457,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 							local map = player:GetMap();	
 							local gob = gobjects[var];
 							gob:SetGoScale(gobSize);
+                            player:SendBroadcastMessage('1: Scale set');
                             print('1: Scale set');
 							local phase = player:GetPhaseMask()
 							gob:SetPhaseMask(4096)
