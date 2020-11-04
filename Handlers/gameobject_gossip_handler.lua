@@ -154,7 +154,7 @@ function GoMovable.OnChangeLocation(player, object)
 	player:GossipMenuAddItem(1, "Подвинуть на север/юг (север: +, юг: -)", 1, 5, true)
 	player:GossipMenuAddItem(1, "Подвинуть на запад/восток (запад: +, восток: -)", 1, 6, true)
 	player:GossipMenuAddItem(1, "Переместить по направлению взгляда персонажа (вперед: +, назад: -)", 1, 7, true)
-	player:GossipMenuAddItem(1, "Изменить размер", 1, 20, true)
+	player:GossipMenuAddItem(1, "Изменить размер (доступны размеры от 10 до 300 процентов от стандартного)", 1, 20, true)
 	player:GossipMenuAddItem(0, "Назад ..", 1, 8)
 	player:GossipSendMenu(1, object, GoMovable.MenuId)
 end
@@ -328,9 +328,9 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 		else
 			local num = math.floor(numX);
 			if(num > 300) then
-				player:SendBroadcastMessage("ОШИБКА: максимальное значение: 300")
+				player:SendBroadcastMessage("ОШИБКА: максимальное значение: 300 процентов")
 			elseif(num < 10) then
-				player:SendBroadcastMessage("ОШИБКА: минимальное значение: 10")
+				player:SendBroadcastMessage("ОШИБКА: минимальное значение: 10 процентов")
 			else
 				local gob = GoMovable.formTargetGob(object);
 				local guidLow = gob:GetDBTableGUIDLow();
