@@ -339,6 +339,7 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 				gob:SetPhaseMask(4096)
 				gob:SetPhaseMask(phase)
 				player:SendBroadcastMessage('Размер изменен');
+                local guid = gob:GetGUID();
 				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid;
 			end
 		end
