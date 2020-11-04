@@ -445,7 +445,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                     obj:SetScale(gobSize);
                 end
 				return false
-            elseif (arguments[1] == 'gobsize' and #arguments == 3 and (player:GetGMRank() > 0 or IsThirdDM(player))) then
+            elseif (arguments[1] == 'gobsize' and #arguments == 3 and (player:GetGMRank() > 0 or IsThirdDM(player) or player:GetDmLevel() == 2)) then
 				local guidLow = tostring(arguments[2])
                 local gobSize = tonumber(arguments[3])
 				local gobjects = player:GetGameObjectsInRange(533);
@@ -453,7 +453,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 				for var=1,rowCount,1 do	
 					local targuid = tostring(gobjects[var]:GetDBTableGUIDLow());
 					if( targuid == guidLow) then
-						if((gobjects[var]:GetOwner() == player or player:GetGMRank() > 0) and gobSize >= 0.01 and gobSize <= 3)then
+						if((gobjects[var]:GetOwner() == player or player:GetGMRank() > 0) and gobSize >= 0.05 and gobSize <= 3)then
 							local map = player:GetMap();	
 							local gob = gobjects[var];
 							gob:SetScale(gobSize)
@@ -463,7 +463,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 							player:SendBroadcastMessage('Объект увеличен.');
                             return false;                            
 						else
-							player:SendBroadcastMessage('Ошибка: объект Вам не принадлежит или введены неверные данные.');
+							player:SendBroadcastMessage('Ошибка: объект Вам не принадлежит или введены неверные данные. Данная команда принимает дробные значения от 0.05 до 3');
                             return false;
 						end
 					end
