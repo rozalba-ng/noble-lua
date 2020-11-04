@@ -333,14 +333,13 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 				player:SendBroadcastMessage("ОШИБКА: минимальное значение: 10 процентов")
 			else
 				local gob = GoMovable.formTargetGob(object);
-				local guidLow = gob:GetDBTableGUIDLow();
-				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid;
 				local result = num/100;
 				gob:SetGoScale(result)
 				local phase = player:GetPhaseMask()
 				gob:SetPhaseMask(4096)
 				gob:SetPhaseMask(phase)
 				player:SendBroadcastMessage('Размер изменен');
+				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid;
 			end
 		end
 		GoMovable.OnChangeLocation(player, object);
