@@ -456,9 +456,8 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 						if((gobjects[var]:GetOwner() == player or player:GetGMRank() > 0) and gobSize >= 0.01 and gobSize <= 3)then
 							local map = player:GetMap();	
 							local gob = gobjects[var];
-                        print(gob);
-							gob:SetScale(gobSize)
-                            WorldDBQuery("UPDATE gameobject SET custom_scale = " .. gobSize .. " WHERE GUID = " .. guidLow);
+							gob:SetGoScale(gobSize);
+                            print('1: Scale set');
 							local phase = player:GetPhaseMask()
 							gob:SetPhaseMask(4096)
 							gob:SetPhaseMask(phase)
