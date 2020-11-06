@@ -29,6 +29,25 @@ local ColorTable = {
 "|cffec9c22",
 "|cffc169d2",
 }
+
+--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+--[[                                     Logs                                ]]
+--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
+local DeleteLog = {}
+	
+function DeleteLog:Init(player)
+	if not player then return end
+	local Log_file = io.open("DeletedGobLog.txt", "a")
+	Log_file:write("Player:" .. player:GetName() .. " Account: ".. player:GetAccountName() .. " Time: " .. os.date("%d.%m %H:%M:%S"))
+	Log_file:close()
+end
+
+function DeleteLog:Save(gobNum)
+	if not gobNum then return end
+	local Log_file = io.open("DeletedGobLog.txt", "a")
+	Log_file:write("GUID: " .. gobNum)
+	Log_file:close()
+end
 --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 --[[                             Secure funcs                                ]]
 --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  
@@ -185,6 +204,8 @@ function AddonNDMHandlers.UndoPhaseGobjects(player, UndoRadius)
                 if( GobPhase == PlayerPhase) then
                 local DeletedGobject = GobjectTable[var];
 					if(player:GetGMRank() > 0 ) then
+						DeleteLog:Init(player)
+						DeleteLog:Save(DeletedGobject:GetDBTableGUIDLow())
 						DeletedGobject:RemoveFromWorld(true)
                     elseif player:GetDmLevel() > 0 then
                         if DeletedGobject:GetOwner() == player then
@@ -217,6 +238,8 @@ function AddonNDMHandlers.UndoPhaseNameGobjects(player, GobjName, UndoRadius)
 						local DeletedGobject = GobjectTable[var];
                         if string.lower(DeletedGobject:GetName()):find(string.lower(tostring(GobjName))) then
                             if(player:GetGMRank() > 0 ) then
+								DeleteLog:Init(player)
+								DeleteLog:Save(DeletedGobject:GetDBTableGUIDLow())
                                 DeletedGobject:RemoveFromWorld(true)
                                 DeleteCount = DeleteCount + 1
                             elseif player:GetDmLevel() > 0 then
