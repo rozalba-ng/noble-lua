@@ -41,7 +41,7 @@ function DeleteLog:Init(player)
 	x,y,z = string.format("%.1f", x), string.format("%.1f", y), string.format("%.1f", z)
 	
 	local Log_file = io.open("DeletedGobLog.txt", "a")
-	Log_file:write("Player: " .. player:GetName() .. " Account: ".. player:GetAccountName() .. " Time: [" .. os.date("%d.%m %H:%M:%S") .. "] MapID: " .. player:GetMapId() .. "GPS: [" .. " ".. x .. " " .. y .. " " .. z .. "]\n")
+	Log_file:write("Player: " .. player:GetName() .. " Account: ".. player:GetAccountName() .. " Time: [" .. os.date("%d.%m %H:%M:%S") .. "] MapID: " .. player:GetMapId() .. " GPS: [" .. x .. " " .. y .. " " .. z .. "]\n")
 	Log_file:close()
 end
 
@@ -202,12 +202,12 @@ function AddonNDMHandlers.UndoPhaseGobjects(player, UndoRadius)
         player:SendBroadcastMessage("Удаляются GOB из фазы [" .. PlayerPhase .. "]. Радиус ".. tonumber(UndoRadius) .." ярдов.");
         local GobjectTable = player:GetGameObjectsInRange(tonumber(UndoRadius))
 		local GetRowGob = #GobjectTable;
-        for var=1,GetRowGob,1 do	
+        if GobjectTable then DeleteLog:Init(player) end
+		for var=1,GetRowGob,1 do	
             local GobPhase = tonumber(GobjectTable[var]:GetPhaseMask());
                 if( GobPhase == PlayerPhase) then
                 local DeletedGobject = GobjectTable[var];
 					if(player:GetGMRank() > 0 ) then
-						DeleteLog:Init(player)
 						DeleteLog:Save(DeletedGobject:GetDBTableGUIDLow())
 						DeletedGobject:RemoveFromWorld(true)
                     elseif player:GetDmLevel() > 0 then
@@ -235,13 +235,13 @@ function AddonNDMHandlers.UndoPhaseNameGobjects(player, GobjName, UndoRadius)
         player:SendBroadcastMessage("Удаляются GOB с содержанием (" .. tostring(GobjName) .. ") из фазы [" .. PlayerPhase .. "]. Радиус ".. tonumber(UndoRadius) .." ярдов.");
         local GobjectTable = player:GetGameObjectsInRange(tonumber(UndoRadius))
 		local GetRowGob = #GobjectTable;
-        for var=1,GetRowGob,1 do	
+        if GobjectTable then DeleteLog:Init(player) end
+		for var=1,GetRowGob,1 do	
             local GobPhase = tonumber(GobjectTable[var]:GetPhaseMask());
                 if( GobPhase == PlayerPhase) then
 						local DeletedGobject = GobjectTable[var];
                         if string.lower(DeletedGobject:GetName()):find(string.lower(tostring(GobjName))) then
                             if(player:GetGMRank() > 0 ) then
-								DeleteLog:Init(player)
 								DeleteLog:Save(DeletedGobject:GetDBTableGUIDLow())
                                 DeletedGobject:RemoveFromWorld(true)
                                 DeleteCount = DeleteCount + 1
