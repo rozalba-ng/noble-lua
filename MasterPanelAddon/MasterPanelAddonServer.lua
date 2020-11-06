@@ -37,15 +37,18 @@ local DeleteLog = {}
 	
 function DeleteLog:Init(player)
 	if not player then return end
+	local x,y,z = player:GetLocation()
+	x,y,z = string.format("%.1f", x), string.format("%.1f", y), string.format("%.1f", z)
+	
 	local Log_file = io.open("DeletedGobLog.txt", "a")
-	Log_file:write("Player:" .. player:GetName() .. " Account: ".. player:GetAccountName() .. " Time: " .. os.date("%d.%m %H:%M:%S"))
+	Log_file:write("Player: " .. player:GetName() .. " Account: ".. player:GetAccountName() .. " Time: [" .. os.date("%d.%m %H:%M:%S") .. "] MapID: " .. player:GetMapId() .. "GPS: [" .. " ".. x .. " " .. y .. " " .. z .. "]\n")
 	Log_file:close()
 end
 
 function DeleteLog:Save(gobNum)
 	if not gobNum then return end
 	local Log_file = io.open("DeletedGobLog.txt", "a")
-	Log_file:write("GUID: " .. gobNum)
+	Log_file:write("GUID: " .. gobNum .. "\n")
 	Log_file:close()
 end
 --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
