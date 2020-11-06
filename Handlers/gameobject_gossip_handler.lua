@@ -128,7 +128,7 @@ function GoMovable.OnGossipMovable(event, player, object)
 	local map = player:GetMap();
 	local gobGUID = PlayerBuild.targetgobject[pid];			
 	local gob = map:GetWorldObject(gobGUID);
-	--player:SendBroadcastMessage(gameObject:GetDBTableGUIDLow());
+	player:SendBroadcastMessage("Выбран объект GUID: " .. tostring(gameObject:GetDBTableGUIDLow()));
 	
     player:GossipClearMenu() -- required for player gossip
     player:GossipMenuAddItem(1, "Переместить объект", 1, 1, false, nil, nil, false)
