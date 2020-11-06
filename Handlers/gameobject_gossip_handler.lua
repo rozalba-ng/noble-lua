@@ -128,7 +128,7 @@ function GoMovable.OnGossipMovable(event, player, object)
 	local map = player:GetMap();
 	local gobGUID = PlayerBuild.targetgobject[pid];			
 	local gob = map:GetWorldObject(gobGUID);
-	player:SendBroadcastMessage("Выбран объект GUID: " .. tostring(gob:GetDBTableGUIDLow()));
+	player:GossipSetText( "GUID |cff360009(Уникальный номер ГОшки)|r\n"..tostring( gob:GetDBTableGUIDLow() ).."\n\n|cff360009Быстрое перемещение|r\n.gob move GUID x y z\n\n|cff360009Наклон по осям|r\n.gob turn GUID x y z", 07112001 )
 	
     player:GossipClearMenu() -- required for player gossip
     player:GossipMenuAddItem(1, "Переместить объект", 1, 1, false, nil, nil, false)
@@ -145,7 +145,7 @@ function GoMovable.OnGossipMovable(event, player, object)
 	    player:GossipMenuAddItem(1, "Бур", 1, 10, false, "Бур тест")
         end
     end
-    player:GossipSendMenu(1, object, GoMovable.MenuId) -- MenuId required for player gossip
+    player:GossipSendMenu( 07112001, object, GoMovable.MenuId ) -- MenuId required for player gossip
 end
 
 function GoMovable.OnChangeLocation(player, object)
