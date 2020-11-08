@@ -40,8 +40,6 @@ local function PlayerData( event, player )
 			local quest_stage = playerQ:GetUInt8(0)
 			if quest_stage == 2 then
 				WorldDBQuery("UPDATE Halloween2020 SET quest_stage = 3 WHERE player_guid = '"..guid.."'")
-				local lowguid = player:GetGUIDLow()
-				SendMail( "Письмо от Владика", "Дорогой друг, Тыквовин закончился и я улетаю в тёплые края! Спасибо за помощь с моим огородом и с прочими мелкими проблемами. Кто знает, быть может судьба снова сведёт нас через несколько столетий?\n\nНе-вампир Владик.", lowguid, 0, 41, 5000, 0, 0, 33226, 2 )
 			elseif quest_stage == 3 then return
 			else
 				WorldDBQuery("DELETE FROM Halloween2020 WHERE player_guid = '"..guid.."'")
