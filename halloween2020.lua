@@ -46,7 +46,7 @@ local function PlayerData( event, player )
 			player:SendBroadcastMessage( "|cffff7588Ужасы Страхвилля отпускают вас." )
 		end
 	else
-		if player:GetMapId() == 9001 and not player:GetGMRank() > 1 then
+		if player:GetMapId() == 9001 and player:GetGMRank() < 2 then
 		--	Выбрасывание игрока с карты, если он не ГМ2+
 			player:SendBroadcastMessage("|cffff7588Не-вампир Владик куда-то пропал, а вместе с ним и весь городок.")
 			player:Teleport( 1, 7796, -2574, 489, 0 )
