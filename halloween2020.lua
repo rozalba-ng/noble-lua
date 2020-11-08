@@ -33,11 +33,7 @@ local function PlayerData( event, player )
 		local guid = tostring( player:GetGUID() )
 		local playerQ = WorldDBQuery( "SELECT quest_stage FROM Halloween2020 WHERE player_guid = '"..guid.."'" )
 		if playerQ then
-			if player:GetMapId() == 9001 and not player:GetGMRank() > 1 then
-			--	Выбрасывание игрока с карты, если он не ГМ2+
-				player:SendBroadcastMessage("|cffff7588Не-вампир Владик куда-то пропал, а вместе с ним и весь городок.")
-				player:Teleport( 1, 7796, -2574, 489, 0 )
-			end
+			PlayerData( 28, player )
 			local quest_stage = playerQ:GetUInt8(0)
 			if quest_stage == 2 then
 				WorldDBQuery("UPDATE Halloween2020 SET quest_stage = 3 WHERE player_guid = '"..guid.."'")
@@ -48,6 +44,12 @@ local function PlayerData( event, player )
 				WorldDBQuery("DELETE FROM Halloween2020 WHERE player_guid = '"..guid.."'")
 			end
 			player:SendBroadcastMessage( "|cffff7588Ужасы Страхвилля отпускают вас." )
+		end
+	else
+		if player:GetMapId() == 9001 and not player:GetGMRank() > 1 then
+		--	Выбрасывание игрока с карты, если он не ГМ2+
+			player:SendBroadcastMessage("|cffff7588Не-вампир Владик куда-то пропал, а вместе с ним и весь городок.")
+			player:Teleport( 1, 7796, -2574, 489, 0 )
 		end
 	end
 end
