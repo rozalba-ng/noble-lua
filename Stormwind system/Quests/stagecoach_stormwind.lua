@@ -347,7 +347,7 @@ local function Battle_DefeatCondition( event, creature, victim )
 			player:FailQuest(quest_id)
 			--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
 				local Log_file = io.open("StagecoachLog.txt", "a")
-				Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player[i]:GetName().." не смог защитить дилижанс.\n")
+				Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player:GetName().." не смог защитить дилижанс.\n")
 				Log_file:close()
 			--	--
 		end
@@ -409,7 +409,7 @@ local function STAGECOACH_RideBanditsBranch( event, creature, type, id )
 				player:CompleteQuest( quest_id2 )
 				--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
 					local Log_file = io.open("StagecoachLog.txt", "a")
-					Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player[i]:GetName().." Выполнил задание у бандитов.\n")
+					Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player:GetName().." Выполнил задание у бандитов.\n")
 					Log_file:close()
 				--	--
 			end
