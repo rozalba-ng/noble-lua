@@ -30,7 +30,7 @@ local cabbie_phrases = {
 local function STAGECOACH_Ride( event, creature, type, id )
 	--	ФРАЗЫ
 	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
-		local x,y,z = player:GetLocation()
+		local x,y,z = creature:GetLocation()
 		x,y,z = string.format("%.1f", x), string.format("%.1f", y), string.format("%.1f", z)
 		local Log_file = io.open("StagecoachLog.txt", "a")
 		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] .go " ..x.." "..y.." "..z.." "..creature:GetMapId().." | Waypoint: "..id.."\n")
@@ -64,7 +64,7 @@ RegisterCreatureEvent( entry_stagecoach, 6, STAGECOACH_Ride ) -- CREATURE_EVENT_
 local function STAGECOACH_RideGuardsBranch( event, creature, type, id )
 	--	ФРАЗЫ
 	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
-		local x,y,z = player:GetLocation()
+		local x,y,z = creature:GetLocation()
 		x,y,z = string.format("%.1f", x), string.format("%.1f", y), string.format("%.1f", z)
 		local Log_file = io.open("StagecoachLog.txt", "a")
 		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] .go " ..x.." "..y.." "..z.." "..creature:GetMapId().." | Waypoint: "..id.."\n")
@@ -396,7 +396,7 @@ RegisterCreatureEvent( entry_banditLeader, 4, Battle_WinCondition ) -- CREATURE_
 
 local function STAGECOACH_RideBanditsBranch( event, creature, type, id )
 	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
-		local x,y,z = player:GetLocation()
+		local x,y,z = creature:GetLocation()
 		x,y,z = string.format("%.1f", x), string.format("%.1f", y), string.format("%.1f", z)
 		local Log_file = io.open("StagecoachLog.txt", "a")
 		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] .go " ..x.." "..y.." "..z.." "..creature:GetMapId().." | Waypoint: "..id.."\n")
@@ -469,7 +469,7 @@ local function STAGECOACH_OnSpawn( event, creature )
 	if guard then
 		guard:SendUnitSay( "Новая повозка прибыла! Всем храбрецам - готовсь. Поговорите со мной, когда будете готовы.", 0 )
 		--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
-			local x,y,z = player:GetLocation()
+			local x,y,z = creature:GetLocation()
 			x,y,z = string.format("%.1f", x), string.format("%.1f", y), string.format("%.1f", z)
 			local Log_file = io.open("StagecoachLog.txt", "a")
 			Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] .go " ..x.." "..y.." "..z.." "..creature:GetMapId().." | Дилижанс заспавнился.\n")
