@@ -87,6 +87,11 @@ local function STAGECOACH_RideGuardsBranch( event, creature, type, id )
 			local player = GetPlayerByName(savedPlayers[i])
 			if player then
 				player:CompleteQuest( quest_id )
+				--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+					local Log_file = io.open("StagecoachLog.txt", "a")
+					Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player:GetName().." Выполнил задание у стражи.\n")
+					Log_file:close()
+				--	--
 			end
 		end
 	end
