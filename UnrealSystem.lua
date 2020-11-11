@@ -10,6 +10,7 @@ local entry_spell = 65929 -- Оглушение
 
 local function WhenTheMovementOver_Player( _,_,_, player )
 	local phase = player:GetPhaseMask() - 2^(player:GetData("UNREAL_ID"))
+	print("PHASE: "..phase)
 	player:SetPhaseMask(phase)
 	table.remove(active_players)
 	player:SetData( "UNREAL_ID", false )
@@ -75,6 +76,7 @@ local function OnUse_Item( event, player, item, target )
 			local object = PerformIngameSpawn( 2, entry_sphere, player:GetMapId(), 0, x, y, z, o, true, 0, newPhase )
 			object:SetPhaseMask(newPhase)
 			object:SetData( "Creator", player:GetName() )
+			print(object:GetData("Creator"))
 			object:RegisterEvent( Despawn_Sphere, timetomove, 1  )
 			player:RegisterEvent( WhenTheMovementOver_Player, timetomove+500, 1 )
 			return true
