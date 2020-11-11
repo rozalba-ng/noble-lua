@@ -69,7 +69,7 @@ local function OnUse_Item( event, player, item, target )
 			else newPhase = 134217728 end
 			player:SetPhaseMask( phase+newPhase )
 			local x,y,z,o = player:GetLocation()
-			local object = PerformIngameSpawn( 2, entry_sphere, player:GetMapId(), 0, x, y, z, o, false, 0, newPhase )
+			local object = PerformIngameSpawn( 2, entry_sphere, player:GetMapId(), 0, x, y, z, o, true, 0, newPhase )
 			object:SetPhaseMask(newPhase)
 			object:SetData( "Creator", player:GetName() )
 			object:RegisterEvent( Despawn_Sphere, timetomove, 1  )
