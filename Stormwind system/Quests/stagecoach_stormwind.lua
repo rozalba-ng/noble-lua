@@ -1,65 +1,5 @@
 ﻿--	СКРИПТОВАННЫЕ ЧАСТИ ШТОРМГРАДСКИХ КВЕСТОВ
---	Охота за контрабандой - Навсегда исчезающие после сбора лута сундуки.
 --	Сопровождение дилижанса - Квест, нужно сопроводить дилижанс из Штормграда и ограбить/защитить его.
-
---[[	ОХОТА ЗА КОНТРАБАНДОЙ	]]--
-
-local SQL_databaseCreation = [[
-CREATE TABLE IF NOT EXISTS `gameobject_chest_events` (
-	`entry` INT(11) UNSIGNED NOT NULL COMMENT 'Chest entry'
-)
-COMMENT='Used for quests_stormwind.lua'
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-;
-]]
-WorldDBQuery( SQL_databaseCreation )
-
-local function STQ_OnChestLooted( event, object, state )
-	if state == 1 then
-	--	Когда все предметы в сундуке закончились.
-		object:RemoveFromWorld( true ) -- Удаляем предмет из мира и из базы данных.
-	end
-end
-
-local function STQ_ChestCommand( event, player, command )
-	if( string.find( command, " " ) ) then
-		command = string.split(command, " ")
-		if command[1] == "chestevent" and player:GetGMRank() > 1 then
-			if command[2] then
-				if command[2] == "reload" then
-					local chestQ = WorldDBQuery("SELECT entry FROM gameobject_chest_events")
-					if chestQ then
-						for i = 1, chestQ:GetRowCount() do
-							local entry = chestQ:GetUInt32(0)
-							RegisterGameObjectEvent( entry, 9, STQ_OnChestLooted ) -- GAMEOBJECT_EVENT_ON_LOOT_STATE_CHANGE
-							chestQ:NextRow()
-						end
-						player:SendBroadcastMessage("Таблица загружена.")
-					end
-				elseif command[2] == "add" then
-					if command[3] and tonumber(command[3]) then
-						command[3] = tonumber(command[3])
-						WorldDBQuery( "INSERT INTO gameobject_chest_events ( entry ) VALUES ("..command[3]..")" )
-						player:SendBroadcastMessage("ГОшка добавлена в базу данных.")
-					else player:SendBroadcastMessage(".chestevent add [ENTRY]\n.chestevent reload") end
-				end
-			else player:SendBroadcastMessage(".chestevent add [ENTRY]\n.chestevent reload") end
-		end
-	elseif command == "chestevent" then
-		player:SendBroadcastMessage(".chestevent add [ENTRY]\n.chestevent reload")
-	end
-end
-RegisterPlayerEvent( 42, STQ_ChestCommand ) -- PLAYER_EVENT_ON_COMMAND
-
-local chestQ = WorldDBQuery("SELECT entry FROM gameobject_chest_events")
-if chestQ then
-	for i = 1, chestQ:GetRowCount() do
-		local entry = chestQ:GetUInt32(0)
-		RegisterGameObjectEvent( entry, 9, STQ_OnChestLooted ) -- GAMEOBJECT_EVENT_ON_LOOT_STATE_CHANGE
-		chestQ:NextRow()
-	end
-end
 
 --[[	СОПРОВОЖДЕНИЕ ДИЛИЖАНСА		]]--
 
@@ -89,6 +29,13 @@ local cabbie_phrases = {
 
 local function STAGECOACH_Ride( event, creature, type, id )
 	--	ФРАЗЫ
+	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+		local x,y,z = creature:GetLocation()
+		x,y,z = string.format("%.1f", x), string.format("%.1f", y), string.format("%.1f", z)
+		local Log_file = io.open("StagecoachLog.txt", "a")
+		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] .go " ..x.." "..y.." "..z.." "..creature:GetMapId().." | Waypoint: "..id.."\n")
+		Log_file:close()
+	--	--
 	if id == 41 then
 	--	Появление главаря разбойников
 		local banditLeader = creature:SpawnCreature( entry_banditLeader, -9657.7, 250.1, 48, 0.1, 2, 600000 ) -- Деспавн после смерти или через 10 минут
@@ -116,6 +63,13 @@ RegisterCreatureEvent( entry_stagecoach, 6, STAGECOACH_Ride ) -- CREATURE_EVENT_
 
 local function STAGECOACH_RideGuardsBranch( event, creature, type, id )
 	--	ФРАЗЫ
+	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+		local x,y,z = creature:GetLocation()
+		x,y,z = string.format("%.1f", x), string.format("%.1f", y), string.format("%.1f", z)
+		local Log_file = io.open("StagecoachLog.txt", "a")
+		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] .go " ..x.." "..y.." "..z.." "..creature:GetMapId().." | Waypoint: "..id.."\n")
+		Log_file:close()
+	--	--
 	if id == 10 then
 		local cabbie = creature:GetNearestCreature( 10, entry_cabbie )
 		cabbie:SendUnitSay( "Не знаю, что случилось бы со мной, если бы я поехал один. Даже думать о таком страшно.", 0 )
@@ -133,6 +87,11 @@ local function STAGECOACH_RideGuardsBranch( event, creature, type, id )
 			local player = GetPlayerByName(savedPlayers[i])
 			if player then
 				player:CompleteQuest( quest_id )
+				--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+					local Log_file = io.open("StagecoachLog.txt", "a")
+					Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player:GetName().." Выполнил задание у стражи.\n")
+					Log_file:close()
+				--	--
 			end
 		end
 	end
@@ -142,6 +101,11 @@ RegisterCreatureEvent( entry_stagecoach_guardsBranch, 6, STAGECOACH_RideGuardsBr
 function SCENE_CabbieDeath()
 --	Костыльное получение NPC (loadCreature не работает с маунтами?)
 	local banditLeader, banditStagecoach
+	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+		local Log_file = io.open("StagecoachLog.txt", "a")
+		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] Убийство извозчика.\n")
+		Log_file:close()
+	--	--
 	for i = 1, #savedPlayers do
 		local player = GetPlayerByName(savedPlayers[i])
 		if player then
@@ -158,6 +122,15 @@ function SCENE_CabbieDeath()
 	end
 	if banditLeader and not banditStagecoach then
 	--	Функционал
+	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+		local Log_file = io.open("StagecoachLog.txt", "a")
+		if banditLeader:GetData("Scene") then
+			Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..banditLeader:GetData("Scene").." этап.\n")
+		else
+			Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] 1 этап.\n")
+		end
+		Log_file:close()
+	--	--
 		if not banditLeader:GetData("Scene") and not addQuest then
 		--	1 этап, убийство.
 			local cabbie = banditLeader:GetNearestCreature( 30, entry_cabbie )
@@ -205,6 +178,11 @@ local function BANDITLEADER_Gossip( event, player, creature, sender, intid )
 	if creature:GetData("DialogueCompleted") then return end
 	if event == 1 then
 	--	Первый разговор
+	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+		local Log_file = io.open("StagecoachLog.txt", "a")
+		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] GOSSIP бандита вызван "..player:GetName().."\n")
+		Log_file:close()
+	--	--
 		player:GossipClearMenu()
 		if player:HasQuest( quest_id ) then
 			player:GossipSetText( "У меня тут в кустах парочка ребят и они шустро намнут вам бока, приятель. В этих ящиках лежит оружие для тупоголовых вояк, но оно нужно нам.\n\nМожет договоримся? Я щедро заплачу.", 27102002 )
@@ -218,6 +196,11 @@ local function BANDITLEADER_Gossip( event, player, creature, sender, intid )
 		end
 	else
 	--	Реакция на выбранный вариант
+		--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+		local Log_file = io.open("StagecoachLog.txt", "a")
+		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] Вариант "..intid.." GOSSIPa выбрал "..player:GetName().."\n")
+		Log_file:close()
+	--	--
 		if intid == 1 then
 		--	Сражение
 			creature:SetFaction(411)
@@ -242,6 +225,11 @@ local function BANDITLEADER_Gossip( event, player, creature, sender, intid )
 					if players[i]:HasQuest(quest_id) then
 						players[i]:FailQuest(quest_id)
 						players[i]:RemoveQuest(quest_id)
+						--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+							local Log_file = io.open("StagecoachLog.txt", "a")
+							Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] Переход на ветку бандитов "..players[i]:GetName().."\n")
+							Log_file:close()
+						--	--
 					end
 				end
 			end
@@ -273,6 +261,11 @@ local function BANDITLEADER_Gossip( event, player, creature, sender, intid )
 						cabbie:SendUnitSay( "Запрыгивай ко мне! Мы должны срочно доложить об этом в гарнизон!", 0 )
 						guardsStagecoach:MoveWaypoint()
 					end
+					--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+						local Log_file = io.open("StagecoachLog.txt", "a")
+						Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player:GetName().." удачно даёт взятку. Бревно: "..tostring(logOnRoad).."\n")
+						Log_file:close()
+					--	--
 				end
 			else
 			--	Не прокатило. Драка
@@ -285,12 +278,22 @@ local function BANDITLEADER_Gossip( event, player, creature, sender, intid )
 					bandit:Attack(player)
 				end
 				defeatedPlayers = {}
+				--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+					local Log_file = io.open("StagecoachLog.txt", "a")
+					Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player:GetName().." неудачно даёт взятку.\n")
+					Log_file:close()
+				--	--
 			end
 		end
 		local players = creature:GetPlayersInRange(50)
 		savedPlayers = {}
 		for i = 1, #players do
 			table.insert( savedPlayers, players[i]:GetName() )
+			--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+				local Log_file = io.open("StagecoachLog.txt", "a")
+				Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..players[i]:GetName().." сохранён.\n")
+				Log_file:close()
+			--	--
 		end
 		player:GossipComplete()
 		creature:SetData( "DialogueCompleted", true )
@@ -326,6 +329,11 @@ local function LOG_Despawn( event, object, player )
 	end
 	player:Emote(389)
 	player:CastSpell( player, 33016)
+	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+		local Log_file = io.open("StagecoachLog.txt", "a")
+		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player:GetName().." ломает бревно.\n")
+		Log_file:close()
+	--	--
 end
 RegisterGameObjectEvent( entry_log, 14, LOG_Despawn ) -- GAMEOBJECT_EVENT_ON_USE
 
@@ -342,6 +350,11 @@ local function Battle_DefeatCondition( event, creature, victim )
 		local player = GetPlayerByName(defeatedPlayers[i])
 		if player then
 			player:FailQuest(quest_id)
+			--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+				local Log_file = io.open("StagecoachLog.txt", "a")
+				Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player:GetName().." не смог защитить дилижанс.\n")
+				Log_file:close()
+			--	--
 		end
 	end
 end
@@ -375,6 +388,11 @@ local function Battle_WinCondition( event, creature, player )
 				cabbie:SendUnitSay( "Запрыгивай ко мне! Мы должны срочно доложить об этом в гарнизон!", 0 )
 				guardsStagecoach:MoveWaypoint()
 			end
+			--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+				local Log_file = io.open("StagecoachLog.txt", "a")
+				Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] Дилижанс защищён.\n")
+				Log_file:close()
+			--	--
 		end
 	end
 end
@@ -382,11 +400,23 @@ RegisterCreatureEvent( entry_bandit, 4, Battle_WinCondition ) -- CREATURE_EVENT_
 RegisterCreatureEvent( entry_banditLeader, 4, Battle_WinCondition ) -- CREATURE_EVENT_ON_DIED
 
 local function STAGECOACH_RideBanditsBranch( event, creature, type, id )
+	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+		local x,y,z = creature:GetLocation()
+		x,y,z = string.format("%.1f", x), string.format("%.1f", y), string.format("%.1f", z)
+		local Log_file = io.open("StagecoachLog.txt", "a")
+		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] .go " ..x.." "..y.." "..z.." "..creature:GetMapId().." | Waypoint: "..id.."\n")
+		Log_file:close()
+	--	--
 	if id == 9 then
 		for i = 1, #savedPlayers do
 			local player = GetPlayerByName(savedPlayers[i])
 			if player then
 				player:CompleteQuest( quest_id2 )
+				--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+					local Log_file = io.open("StagecoachLog.txt", "a")
+					Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player:GetName().." Выполнил задание у бандитов.\n")
+					Log_file:close()
+				--	--
 			end
 		end
 		creature:MoveStop()
@@ -424,6 +454,11 @@ local function CAPTAIN_Gossip( event, player, creature, sender, intid )
 					if players[i]:HasQuest(quest_id) then
 						players[i]:SendAreaTriggerMessage("Дилижанс отправляется. Сопроводите его!")
 						players[i]:SetData( "HasStagecoachRideQuest", true )
+						--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+							local Log_file = io.open("StagecoachLog.txt", "a")
+							Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..players[i]:GetName().." начал сопровождение.\n")
+							Log_file:close()
+						--	--
 					end
 				end
 			end
@@ -438,11 +473,26 @@ local function STAGECOACH_OnSpawn( event, creature )
 	local guard = creature:GetNearestCreature( 25, entry_captain )
 	if guard then
 		guard:SendUnitSay( "Новая повозка прибыла! Всем храбрецам - готовсь. Поговорите со мной, когда будете готовы.", 0 )
+		--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+			local x,y,z = creature:GetLocation()
+			x,y,z = string.format("%.1f", x), string.format("%.1f", y), string.format("%.1f", z)
+			local Log_file = io.open("StagecoachLog.txt", "a")
+			Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] .go " ..x.." "..y.." "..z.." "..creature:GetMapId().." | Дилижанс заспавнился.\n")
+			if creature:GetData("Active") then
+				Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] .go " ..x.." "..y.." "..z.." "..creature:GetMapId().." | Дилижанс заспавнился в активном состоянии.\n")
+			end
+			Log_file:close()
+		--	--
 	end
 end
 RegisterCreatureEvent( entry_stagecoach, 5, STAGECOACH_OnSpawn ) -- CREATURE_EVENT_ON_SPAWN
 
 local function CAPTAIN_WhenPlayerTakenQuest( event, player, creature, quest )
 	player:SendBroadcastMessage("Поговорите с повозчиком, когда будете готовы начать поездку.")
+	--	--	ВРЕМЕННОЕ ЛОГИРОВАНИЕ ПРОИСХОДЯЩЕГО
+		local Log_file = io.open("StagecoachLog.txt", "a")
+		Log_file:write("Time: ["..os.date("%d.%m %H:%M:%S").."] "..player:GetName().." взял стартовый квест.\n")
+		Log_file:close()
+	--	--
 end
 RegisterCreatureEvent( entry_captain, 31, CAPTAIN_WhenPlayerTakenQuest ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
