@@ -4,7 +4,7 @@
 --	Время дающееся на передвижение:
 local timetomove = 8000
 --	Радиус сферы:
-local sphere_radius = 1
+local sphere_radius = 2
 --	Айдишники
 local entry_item = 2114498
 local entry_sphere = 5049273
