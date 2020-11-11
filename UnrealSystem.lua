@@ -9,15 +9,10 @@ local active_players = {}
 local entry_spell = 65929 -- Оглушение
 
 local function WhenTheMovementOver_Player( _,_,_, player )
-	local phase = player:GetPhaseMask() - 2^( 20 + player:GetData("UNREAL_ID") )
-	player:SetPhaseMask(phase)
-	table.remove(active_players)
-	player:SetData( "UNREAL_ID", false )
 	local guidLow = player:GetData("UNREAL_Guid")
 	local objects = player:GetGameObjectsInRange( 25, entry_sphere )
 	local warn
 	if objects then for i = 1, #objects do
-		print(i)
 		if objects[i]:GetGUIDLow() == guidLow then
 			if player:GetDistance(object) > sphere_radius+0.3 then
 				local angle = object:GetAngle(player)
@@ -32,6 +27,12 @@ local function WhenTheMovementOver_Player( _,_,_, player )
 			break
 		end
 	end end
+	
+	local phase = player:GetPhaseMask() - 2^( 20 + player:GetData("UNREAL_ID") )
+	player:SetPhaseMask(phase)
+	table.remove(active_players)
+	player:SetData( "UNREAL_ID", false )
+	
 	local group = player:GetGroup()
 	local players = group:GetMembers()
 	for i = 1, #players do
