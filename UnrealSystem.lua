@@ -58,6 +58,7 @@ local function OnUse_Item( event, player, item, target )
 				permission = true
 			end
 		end
+		if player:GetPhaseMask() == 8 then permission = true end
 		if permission then
 			local phase = player:GetPhaseMask()
 			table.insert( active_players, player:GetName() )
