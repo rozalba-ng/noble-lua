@@ -10,6 +10,10 @@ local entry_spell = 65929 -- Оглушение
 
 local function WhenTheMovementOver_Player( _,_,_, player )
 	local phase = player:GetPhaseMask() - 2^(player:GetData("UNREAL_ID"))
+	print( player:GetPhaseMask() )
+	print( player:GetData("UNREAL_ID") )
+	print( 2^player:GetData("UNREAL_ID") )
+	print( player:GetPhaseMask() - 2^player:GetData("UNREAL_ID") )
 	print("PHASE: "..phase)
 	player:SetPhaseMask(phase)
 	table.remove(active_players)
