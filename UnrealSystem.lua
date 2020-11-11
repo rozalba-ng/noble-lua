@@ -25,7 +25,10 @@ end
 local function Despawn_Sphere( _,_,_, object )
 	local players = object:GetPlayersInRange( 25 )
 	local creator = object:GetData("Creator")
+	print(creator)
+	print(#players)
 	for i = 1, #players do
+		print(players[i]:GetName())
 		if players[i]:GetName() == creator then
 			if players[i]:GetDistance(object) > sphere_radius+0.3 then
 				local group = players[i]:GetGroup()
