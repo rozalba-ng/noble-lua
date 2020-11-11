@@ -73,6 +73,7 @@ local function OnUse_Item( event, player, item, target )
 			object:SetData( "Creator", player:GetName() )
 			object:RegisterEvent( Despawn_Sphere, timetomove, 1  )
 			player:RegisterEvent( WhenTheMovementOver_Player, timetomove+500, 1 )
+			return true
 		end
 	end
 	player:SendBroadcastMessage("|cff00b7ff:::|r Сейчас вы не можете использовать этот предмет.")
