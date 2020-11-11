@@ -15,9 +15,8 @@ local function WhenTheMovementOver_Player( _,_,_, player )
 	if objects then for i = 1, #objects do
 		if objects[i]:GetGUIDLow() == guidLow then
 			local object = objects[i]
-			if player:GetDistance(object) > sphere_radius+0.1 then
-				local angle = object:GetAngle(player)
-				local x,y,z = object:GetRelativePoint( sphere_radius, angle )
+			if player:GetDistance(object) > sphere_radius-1 then
+				local x,y,z = object:GetLocation()
 				local o = player:GetO()
 				player:NearTeleport( x,y,z,o )
 				player:AddAura( entry_spell, player )
