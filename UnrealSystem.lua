@@ -14,6 +14,7 @@ local function WhenTheMovementOver_Player( _,_,_, player )
 	local warn
 	if objects then for i = 1, #objects do
 		if objects[i]:GetGUIDLow() == guidLow then
+			local object = objects[i]
 			if player:GetDistance(object) > sphere_radius+0.3 then
 				local angle = object:GetAngle(player)
 				local x,y,z = object:GetRelativePoint( sphere_radius, angle )
