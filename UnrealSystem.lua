@@ -73,9 +73,10 @@ local function OnUse_Item( event, player, item, target )
 			player:SetPhaseMask( phase+newPhase )
 			local x,y,z,o = player:GetLocation()
 			local object = PerformIngameSpawn( 2, entry_sphere, player:GetMapId(), 0, x, y, z, o, true, 0 )
+			local eventID = object:RegisterEvent( Despawn_Sphere, timetomove, 1  )
+			print(eventID)
 			object:SetPhaseMask(newPhase)
 			object:SetData( "Creator", player:GetName() )
-			object:RegisterEvent( Despawn_Sphere, timetomove-500, 1  )
 			player:RegisterEvent( WhenTheMovementOver_Player, timetomove+500, 1 )
 			return true
 		end
