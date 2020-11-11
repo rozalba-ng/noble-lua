@@ -1,12 +1,16 @@
 --	СИСТЕМА АНРИЛА - Хитрый казах попросил сделать ему предмет, с помощью которого игроки смогут передвигаться на ограниченное расстояние.
 --	Акостар сделал.
 
+--	Время дающееся на передвижение:
 local timetomove = 8000
+--	Радиус сферы:
+local sphere_radius = 1
+--	Айдишники
 local entry_item = 2114498
 local entry_sphere = 5049273
-local sphere_radius = 3
-local active_players = {}
 local entry_spell = 65929 -- Оглушение
+
+local active_players = {}
 
 local function WhenTheMovementOver_Player( _,_,_, player )
 	local guidLow = player:GetData("UNREAL_Guid")
@@ -15,10 +19,10 @@ local function WhenTheMovementOver_Player( _,_,_, player )
 	if objects then for i = 1, #objects do
 		if objects[i]:GetGUIDLow() == guidLow then
 			local object = objects[i]
-			if player:GetDistance(object) > sphere_radius-1 then
+			if player:GetDistance(object) > sphere_radius then
 				local x,y,z = object:GetLocation()
 				local o = player:GetO()
-				player:NearTeleport( x,y,z,o )
+				player:NearTeleport( x,y,z+0.2,o )
 				player:AddAura( entry_spell, player )
 				player:SendBroadcastMessage("|cff00b7ff:::|r Вы ушли слишком далеко.")
 				warn = true
