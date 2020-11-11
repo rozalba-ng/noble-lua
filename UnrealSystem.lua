@@ -17,6 +17,7 @@ local function WhenTheMovementOver_Player( _,_,_, player )
 	local objects = player:GetGameObjectsInRange( 25, entry_sphere )
 	local warn
 	if objects then for i = 1, #objects do
+		print(i)
 		if objects[i]:GetGUIDLow() == guidLow then
 			if player:GetDistance(object) > sphere_radius+0.3 then
 				local angle = object:GetAngle(player)
