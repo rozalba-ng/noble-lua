@@ -13,42 +13,32 @@ local function WhenTheMovementOver_Player( _,_,_, player )
 	player:SetPhaseMask(phase)
 	table.remove(active_players)
 	player:SetData( "UNREAL_ID", false )
+	local guidLow = player:GetData("UNREAL_Guid")
+	local objects = player:GetGameObjectsInRange( 25, entry_sphere )
+	local warn
+	if objects then for i = 1, #objects do
+		if objects[i]::GetGUIDLow() == guidLow then
+			if player:GetDistance(object) > sphere_radius+0.3 then
+				local angle = object:GetAngle(player)
+				local x,y,z = object:GetRelativePoint( sphere_radius, angle )
+				local o = player:GetO()
+				player:NearTeleport( x,y,z,o )
+				player:CastSpell( player, entry_spell, true )
+				player:SendBroadcastMessage("|cff00b7ff:::|r Вы ушли слишком далеко.")
+				warn = true
+			end
+			object:RemoveFromWorld(true)
+			break
+		end
+	end end
 	local group = player:GetGroup()
 	local players = group:GetMembers()
 	for i = 1, #players do
 		if players[i]:GetGMRank() > 0 then
-			players[i]:SendBroadcastMessage("|cff00b7ff:::|r "..player:GetName().." завершает передвижение.")
+			if warn then players[i]:SendBroadcastMessage("|cff00b7ff:::|r "..players[i]:GetName().." уходит слишком далеко.")
+			else players[i]:SendBroadcastMessage("|cff00b7ff:::|r "..player:GetName().." завершает передвижение.") end
 		end
 	end
-end
-
-local function Despawn_Sphere( _,_,_, object )
-	local players = object:GetPlayersInRange( 25 )
-	local creator = object:GetData("Creator")
-	print(creator)
-	print(#players)
-	for i = 1, #players do
-		print(players[i]:GetName())
-		if players[i]:GetName() == creator then
-			if players[i]:GetDistance(object) > sphere_radius+0.3 then
-				local group = players[i]:GetGroup()
-				local players2 = group:GetMembers()
-				for i = 1, #players do
-					if players2[i]:GetGMRank() > 0 then
-						players2[i]:SendBroadcastMessage("|cff00b7ff:::|r "..players2[i]:GetName().." уходит слишком далеко.")
-					end
-				end
-				local angle = object:GetAngle(players[i])
-				local x,y,z = object:GetRelativePoint( sphere_radius, angle )
-				local o = players[i]:GetO()
-				players[i]:NearTeleport( x,y,z,o )
-				players[i]:CastSpell( players[i], entry_spell, true )
-				players[i]:SendBroadcastMessage("|cff00b7ff:::|r Вы ушли слишком далеко.")
-			end
-			break
-		end
-	end
-	object:RemoveFromWorld(true)
 end
 
 local function OnUse_Item( event, player, item, target )
@@ -73,11 +63,9 @@ local function OnUse_Item( event, player, item, target )
 			player:SetPhaseMask( phase+newPhase )
 			local x,y,z,o = player:GetLocation()
 			local object = PerformIngameSpawn( 2, entry_sphere, player:GetMapId(), 0, x, y, z, o, true, 0 )
-			local eventID = object:RegisterEvent( Despawn_Sphere, timetomove, 1  )
-			print(eventID)
 			object:SetPhaseMask(newPhase)
-			object:SetData( "Creator", player:GetName() )
-			player:RegisterEvent( WhenTheMovementOver_Player, timetomove+500, 1 )
+			player:SetData( "UNREAL_Guid", object:GetGUIDLow() )
+			player:RegisterEvent( WhenTheMovementOver_Player, timetomove, 1 )
 			return true
 		end
 	end
