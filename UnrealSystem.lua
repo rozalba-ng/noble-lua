@@ -15,12 +15,12 @@ local function WhenTheMovementOver_Player( _,_,_, player )
 	if objects then for i = 1, #objects do
 		if objects[i]:GetGUIDLow() == guidLow then
 			local object = objects[i]
-			if player:GetDistance(object) > sphere_radius+0.3 then
+			if player:GetDistance(object) > sphere_radius+0.1 then
 				local angle = object:GetAngle(player)
 				local x,y,z = object:GetRelativePoint( sphere_radius, angle )
 				local o = player:GetO()
 				player:NearTeleport( x,y,z,o )
-				player:CastSpell( player, entry_spell, true )
+				player:AddAura( entry_spell, player )
 				player:SendBroadcastMessage("|cff00b7ff:::|r Вы ушли слишком далеко.")
 				warn = true
 			end
