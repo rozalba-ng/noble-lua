@@ -352,7 +352,7 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
                 savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_start, 1)
                 player:SendBroadcastMessage("Покупка прошла успешно.");
             elseif ((lockedDoorArray[gobDBID].cost_type == 2 and player:HasItem(storm_currency, lockedDoorArray[gobDBID].cost_start)) or lockedDoorArray[gobDBID].cost_start == 0) then
-                player:RemoveItem(andoral_currency, lockedDoorArray[gobDBID].cost_start);
+                player:RemoveItem(storm_currency, lockedDoorArray[gobDBID].cost_start);
                 lockedDoorArray[gobDBID].ownerID = playerGUID;
                 lockedDoorArray[gobDBID].owner_type = 0;
                 lockedDoorArray[gobDBID].expTime = os.time() + 604800;
@@ -403,7 +403,7 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
                 savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_start, 1)
                 player:SendBroadcastMessage("Покупка прошла успешно.");
             elseif ((lockedDoorArray[gobDBID].cost_type == 2 and player:HasItem(storm_currency, lockedDoorArray[gobDBID].cost_start)) or lockedDoorArray[gobDBID].cost_start == 0) then
-                player:RemoveItem(andoral_currency, lockedDoorArray[gobDBID].cost_start);
+                player:RemoveItem(storm_currency, lockedDoorArray[gobDBID].cost_start);
                 lockedDoorArray[gobDBID].ownerID = playerGUID;
                 lockedDoorArray[gobDBID].owner_type = 2;
                 lockedDoorArray[gobDBID].expTime = os.time() + 604800;
