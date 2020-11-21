@@ -31,8 +31,10 @@ local function OnMount( event, player, spell )
 		local creature = spell:GetTarget()
 		local entry = creature:GetEntry()
 		local Q = WorldDBQuery( "SELECT walk, run, runBack, swim, swimBack, turnRate, flight, flightBack, pitchRate FROM creature_template_speed WHERE npc_entry = "..entry )
-		for i = 0, 8 do
-			creature:SetSpeed( i, Q:GetUInt32(i), true )
+		if Q then
+			for i = 0, 8 do
+				creature:SetSpeed( i, Q:GetUInt32(i), true )
+			end
 		end
 	end
 end
