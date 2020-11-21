@@ -32,7 +32,7 @@ local function OnMount( event, player, spell )
 		local entry = creature:GetEntry()
 		local Q = WorldDBQuery( "SELECT walk, run, runBack, swim, swimBack, turnRate, flight, flightBack, pitchRate FROM creature_template_speed WHERE npc_entry = "..entry )
 		for i = 0, 8 do
-			creature:SetSpeed( Q:GetUInt(i) )
+			creature:SetSpeed( Q:GetUInt32(i) )
 		end
 	end
 end
