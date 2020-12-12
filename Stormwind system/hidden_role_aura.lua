@@ -16,17 +16,13 @@ local function WhenItemUsed( _, player, item )
 	if player:HasItem( entry_item, 1 ) then
 		local nearestPlayers = player:GetPlayersInRange( 30 )
 		if nearestPlayers then
-			if player:IsInGroup() then
-			--	Игрок в группе, нужно проверить всех ближайших игроков на вхождение в эту группу.
-				for i = 1, #nearestPlayers do
-					if not player:IsInSameGroupWith( nearestPlayers[i] ) then
+			for i = 1, #nearestPlayers do
+				if nearestPlayers[i] ~= player then
+					if not player:IsInGroup() or not player:IsInSameGroupWith(nearestPlayers[i]) then
 						player:SendNotification("Неподалёку от вас есть игроки.")
 						return false
 					end
 				end
-			else
-				player:SendNotification("Неподалёку от вас есть игроки.")
-				return false
 			end
 		end
 		for i = 1, #aura.class do
