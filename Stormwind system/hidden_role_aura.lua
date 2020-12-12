@@ -42,6 +42,14 @@ RegisterItemEvent( entry_item, 2, WhenItemUsed ) -- ITEM_EVENT_ON_USE
 local function WhenPlayerEnterGame( _, player )
 	if player:HasAura( aura.camouflage ) then
 		player:SetData( "Camouflage", true )
+	else
+		local Q = CharDBQuery( "SELECT city_class FROM character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
+		if Q then
+			local aura = Q:GetUInt32(0)
+			if not player:HasAura( aura ) then
+				player:AddAura( aura, player )
+			end
+		end
 	end
 end
 RegisterPlayerEvent( 3, WhenPlayerEnterGame )
