@@ -54,7 +54,7 @@ local function AuraCancelled( _, packet, player )
 		local Q = CharDBQuery( "SELECT city_class FROM character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
 		if Q then
 			local aura = Q:GetUInt32(0)
-			player:AddAura( aura )
+			player:AddAura( aura, player )
 		else player:SendBroadcastMessage("Произошла ошибка и вы не смогли получить ауру своей социальной роли. Сделайте скриншот этого сообщения, пожалуйста, и свяжитесь с администрацией.") end
 	end
 end
