@@ -8,11 +8,11 @@ local aura = {
 	},
 	camouflage = 91062,
 }
-local entry_item = 123
+local entry_item = 600106
 
 --[[	НАВЕШИВАНИЕ АУРЫ АНОНИМНОСТИ	]]--
 
-local function WhenItemUsed( event, player, item )
+local function WhenItemUsed( _, player, item )
 	if player:HasItem( entry_item, 1 ) then
 		local nearestPlayers = player:GetPlayersInRange( 30 )
 		if nearestPlayers then
@@ -34,6 +34,7 @@ local function WhenItemUsed( event, player, item )
 			--	Определена классовая принадлежность игрока.
 				player:RemoveAura( aura.class[i] )
 				player:AddAura( aura.camouflage, player )
+				player:SetData( "Camouflage", true )
 				player:RemoveItem( entry_item, 1 )
 				return true
 			end
@@ -42,9 +43,23 @@ local function WhenItemUsed( event, player, item )
 end
 RegisterItemEvent( entry_item, 2, WhenItemUsed ) -- ITEM_EVENT_ON_USE
 
+local function WhenPlayerEnterGame( _, player )
+	if player:HasAura( aura.camouflage ) then
+		player:SetData( "Camouflage", true )
+	end
+end
+RegisterPlayerEvent( 3, WhenPlayerEnterGame )
+
 --[[	СНЯТИЕ АУРЫ ИГРОКОМ ИЛИ СЕРВЕРОМ	]]--
 
-local function AuraCancelled( event, packet, player )
-	-- Nothing
+local function AuraCancelled( _, packet, player )
+	if player:GetData("Camouflage") and not player:HasAura( aura.camouflage ) then
+		player:SetData( "Camouflage", nil )
+		local Q = CharDBQuery( "SELECT city_class FROM character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
+		if Q then
+			local aura = Q:GetUInt32(0)
+			player:AddAura( aura )
+		else player:SendBroadcastMessage("Произошла ошибка и вы не смогли получить ауру своей социальной роли. Сделайте скриншот этого сообщения, пожалуйста, и свяжитесь с администрацией.") end
+	end
 end
 RegisterPacketEvent( 0x496, 7, AuraCancelled ) -- PACKET_EVENT_ON_PACKET_SEND, 0x496 - SMSG_AURA_UPDATE
