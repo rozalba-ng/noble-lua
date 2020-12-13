@@ -48,18 +48,10 @@ local function calculateMoney()
 					end
 					--	Начисление репутации
 					player:SetReputation( f, player:GetReputation( f ) + r )
-					--	Снятие репутации
-					if f == thiefs_faction then
-					--	Снятие репутации у законников
-						player:SetReputation( law_faction, player:GetReputation( law_faction ) - r )
-					else
-					--	Снятие репутации у плохишей
-						player:SetReputation( thiefs_faction, player:GetReputation( thiefs_faction ) - r )
-					end
 				end
 			end
 		end;	  
 	end
 end
-CreateLuaEvent( calculateMoney, 2000, 0 )
+CreateLuaEvent( calculateMoney, 10000, 0 )
 --CreateLuaEvent( calculateMoney, 900000, 0 )
