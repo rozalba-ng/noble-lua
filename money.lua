@@ -29,11 +29,11 @@ local function calculateMoney()
 				if f and player:GetPhaseMask() == 1 then
 				--	Игрок выполнил один из квестов и находится в 1 фазе
 					local zone, trueZone, r = player:GetZoneId(), false, 0
-					if zone == 1519 then
+					if ( zone == 1519 or player:GetNearestCreature( 25, entry_npc ) ) then
 					--	Игрок в Штормграде
 						r = 3
 						trueZone = true
-					elseif zone == 10237 or zone == 10214 or zone == 10197 or zone == 10160 or zone == 10179 or zone == 10232 or player:GetNearestCreature( 25, entry_npc ) then
+					elseif ( zone == 10237 or zone == 10214 or zone == 10197 or zone == 10160 or zone == 10179 or zone == 10232 ) then
 					--	Игрок играет на полигоне
 						r = 2
 						trueZone = true
@@ -48,9 +48,18 @@ local function calculateMoney()
 					end
 					--	Начисление репутации
 					player:SetReputation( f, player:GetReputation( f ) + r )
+					--	Снятие репутации
+					if f == thiefs_faction then
+					--	Снятие репутации у законников
+						player:SetReputation( law_faction, player:GetReputation( law_faction ) - r )
+					else
+					--	Снятие репутации у плохишей
+						player:SetReputation( thiefs_faction, player:GetReputation( thiefs_faction ) - r )
+					end
 				end
 			end
 		end;	  
 	end
 end
-CreateLuaEvent( calculateMoney, 900000, 0 )
+CreateLuaEvent( calculateMoney, 2000, 0 )
+--CreateLuaEvent( calculateMoney, 900000, 0 )
