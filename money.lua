@@ -1,8 +1,8 @@
 
 --	NPC заменяющий зону Штормграда (Если есть в радиусе 25 ярдов)
-local entry_npc = 123
+local entry_npc = 1211001
 --	NPC создающий зону с бонусом (Для общесерв ивентов)
-local entry_bonus_npc = 123
+local entry_bonus_npc = 1211002
 
 --[[Every 15 minutes player recieve 10 copper. If pleyer is in guild, he auto-deposit 10 copper to guild, but resieve 5 additional copper]]
 local function calculateMoney()
@@ -28,19 +28,21 @@ local function calculateMoney()
 				end
 				if f and player:GetPhaseMask() == 1 then
 				--	Игрок выполнил один из квестов и находится в 1 фазе
-					local zone, r = player:GetZoneId(), 0
+					local zone, trueZone, r = player:GetZoneId(), false, 0
 					if zone == 1519 then
 					--	Игрок в Штормграде
 						r = 3
-					elseif zone == 10237 or zone == 10214 or zone == 10197 or zone == 10160 or player:GetNearestCreature( 25, entry_npc ) then
+						trueZone = true
+					elseif zone == 10237 or zone == 10214 or zone == 10197 or zone == 10160 or zone == 10179 or zone == 10232 or player:GetNearestCreature( 25, entry_npc ) then
 					--	Игрок играет на полигоне
 						r = 2
+						trueZone = true
 					end
-					if ActionTime() then
+					if trueZone and ActionTime() then
 					--	Если время суперактива - идёт маленький бонус.
 						r = r + 2
 					end
-					if player:GetNearestCreature( 30, entry_bonus_npc ) then
+					if trueZone and player:GetNearestCreature( 30, entry_bonus_npc ) then
 					--	Если рядом есть НПС дарующий бонус
 						r = r + 2
 					end
@@ -51,5 +53,4 @@ local function calculateMoney()
 		end;	  
 	end
 end
-CreateLuaEvent(calculateMoney, 5000, 0);
---CreateLuaEvent(calculateMoney, 900000, 0);
+CreateLuaEvent( calculateMoney, 900000, 0 )
