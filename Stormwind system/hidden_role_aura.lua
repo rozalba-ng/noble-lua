@@ -32,6 +32,7 @@ local function WhenItemUsed( _, player, item )
 				player:AddAura( aura.camouflage, player )
 				player:SetData( "Camouflage", true )
 				player:RemoveItem( entry_item, 1 )
+				player:PlayDirectSound( 3781, player )
 				return true
 			end
 		end
@@ -63,6 +64,7 @@ local function AuraCancelled( _, packet, player )
 		if Q then
 			local aura = Q:GetUInt32(0)
 			player:AddAura( aura, player )
+			player:PlayDirectSound( 3780, player )
 		else player:SendBroadcastMessage("Произошла ошибка и вы не смогли получить ауру своей социальной роли. Сделайте скриншот этого сообщения, пожалуйста, и свяжитесь с администрацией.") end
 	end
 end
