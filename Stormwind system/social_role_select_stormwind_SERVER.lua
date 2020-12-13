@@ -1,15 +1,15 @@
 local AIO = AIO or require("AIO")
 local MyHandlers = AIO.AddHandlers("SocialClassSelection", {})
 
---	Уголок настроек
+--	РЈРіРѕР»РѕРє РЅР°СЃС‚СЂРѕРµРє
 local entry_creature = 9929463
 local entry_quest = 110031
 local aura = {
-	91055, -- Дворянин
-	91056, -- Духовенство
-	91057, -- Магократия
-	91058, -- Вольный житель
-	91062, -- Аноним
+	91055, -- Р”РІРѕСЂСЏРЅРёРЅ
+	91056, -- Р”СѓС…РѕРІРµРЅСЃС‚РІРѕ
+	91057, -- РњР°РіРѕРєСЂР°С‚РёСЏ
+	91058, -- Р’РѕР»СЊРЅС‹Р№ Р¶РёС‚РµР»СЊ
+	91062, -- РђРЅРѕРЅРёРј
 }
 
 function MyHandlers.ShowMenu( player )
@@ -24,42 +24,42 @@ function MyHandlers.SelectClass( player, class )
 			CharDBQuery("INSERT INTO character_citycraft_config ( character_guid, city_class ) values ("..player:GetGUIDLow()..", "..aura[class]..")")
 			player:AddAura( aura[class], player )
 			player:CompleteQuest( entry_quest )
-			creature:SendChatMessageToPlayer( 12, 0, "Твой путь тернист и жесток к идущему по нему... О чём это я? Рад знакомству!", player )
+			creature:SendChatMessageToPlayer( 12, 0, "Рђ С‚С‹ СѓРјРµРµС€СЊ РІС‹Р±РёСЂР°С‚СЊ Р¶РёР·РЅРµРЅРЅС‹Рµ РїСѓС‚Рё, РґР°? Р Р°Рґ Р·РЅР°РєРѕРјСЃС‚РІСѓ!", player )
 		end
 	end
 end
 
 local function Creaure_Gossip( event, player, creature, sender, intid )
 	if event == 1 then
-	--	Вывод госсипа
+	--	Р’С‹РІРѕРґ РіРѕСЃСЃРёРїР°
 		local text
 		player:GossipAddQuests( creature )
 		if player:HasAura(91055) then
-		--	Обращение к дворянину
-			text = "Рад видеть вас, "..player:GetName().."! Чем я могу вам помочь?"
+		--	РћР±СЂР°С‰РµРЅРёРµ Рє РґРІРѕСЂСЏРЅРёРЅСѓ
+			text = "Р Р°Рґ РІРёРґРµС‚СЊ РІР°СЃ, "..player:GetName().."! Р§РµРј СЏ РјРѕРіСѓ РІР°Рј РїРѕРјРѕС‡СЊ?"
 		elseif player:HasAura(91056) then
-		--	Обращение к священнику
-			text = "Да хранит вас Свет! Чем могу быть полезен?"
+		--	РћР±СЂР°С‰РµРЅРёРµ Рє СЃРІСЏС‰РµРЅРЅРёРєСѓ
+			text = "Р”Р° С…СЂР°РЅРёС‚ РІР°СЃ РЎРІРµС‚! Р§РµРј РјРѕРіСѓ Р±С‹С‚СЊ РїРѕР»РµР·РµРЅ?"
 		elseif player:HasAura(91057) then
-		--	Обращение к магу
-			text = "Ваше чародейство! Чем могу быть полезен?"
+		--	РћР±СЂР°С‰РµРЅРёРµ Рє РјР°РіСѓ
+			text = "Р’Р°С€Рµ С‡Р°СЂРѕРґРµР№СЃС‚РІРѕ! Р§РµРј РјРѕРіСѓ Р±С‹С‚СЊ РїРѕР»РµР·РµРЅ?"
 		elseif player:HasAura(91058) then
-		--	Обращение к вольному жителю
-			text = "Доброго пути, друг! Тебе что-то подсказать?"
+		--	РћР±СЂР°С‰РµРЅРёРµ Рє РІРѕР»СЊРЅРѕРјСѓ Р¶РёС‚РµР»СЋ
+			text = "Р”РѕР±СЂРѕРіРѕ РїСѓС‚Рё, РґСЂСѓРі! РўРµР±Рµ С‡С‚Рѕ-С‚Рѕ РїРѕРґСЃРєР°Р·Р°С‚СЊ?"
 		elseif player:HasAura(91062) then
-		--	Если игрок скрыл свою роль
-			text = "Знакомое лицо, не иначе. Мы раньше не встречались?"
+		--	Р•СЃР»Рё РёРіСЂРѕРє СЃРєСЂС‹Р» СЃРІРѕСЋ СЂРѕР»СЊ
+			text = "Р—РЅР°РєРѕРјРѕРµ Р»РёС†Рѕ, РЅРµ РёРЅР°С‡Рµ. РњС‹ СЂР°РЅСЊС€Рµ РЅРµ РІСЃС‚СЂРµС‡Р°Р»РёСЃСЊ?"
 		else
-		--	Игрок ещё не выбрал класс.
-			text = "Новая персона в наших краях? Ну, и как мне тебя звать-величать?"
+		--	РРіСЂРѕРє РµС‰С‘ РЅРµ РІС‹Р±СЂР°Р» РєР»Р°СЃСЃ.
+			text = "РќРѕРІР°СЏ РїРµСЂСЃРѕРЅР° РІ РЅР°С€РёС… РєСЂР°СЏС…? РќСѓ, Рё РєР°Рє РјРЅРµ С‚РµР±СЏ Р·РІР°С‚СЊ-РІРµР»РёС‡Р°С‚СЊ?"
 			if player:HasQuest( entry_quest ) then
-				player:GossipMenuAddItem( 0, "<Представиться.>", 1, 1 )
+				player:GossipMenuAddItem( 0, "<РџСЂРµРґСЃС‚Р°РІРёС‚СЊСЃСЏ.>", 1, 1 )
 			end
 		end
 		player:GossipSetText( text, 13122001 )
 		player:GossipSendMenu( 13122001, creature )
 	elseif player:HasQuest( entry_quest ) then
-	--	Выбор варианта
+	--	Р’С‹Р±РѕСЂ РІР°СЂРёР°РЅС‚Р°
 		player:GossipComplete()
 		MyHandlers.ShowMenu( player )
 	end
