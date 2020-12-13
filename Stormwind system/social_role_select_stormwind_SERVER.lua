@@ -24,7 +24,8 @@ function MyHandlers.SelectClass( player, class )
 			CharDBQuery("INSERT INTO character_citycraft_config ( character_guid, city_class ) values ("..player:GetGUIDLow()..", "..aura[class]..")")
 			player:AddAura( aura[class], player )
 			player:CompleteQuest( entry_quest )
-			creature:SendChatMessageToPlayer( 12, 0, "А ты умеешь выбирать жизненные пути, да? Рад знакомству!", player )
+			player:TalkingHead( creature, "А ты умеешь выбирать жизненные пути, да? Рад знакомству." )
+			--creature:SendChatMessageToPlayer( 12, 0, "А ты умеешь выбирать жизненные пути, да? Рад знакомству!", player )
 		end
 	end
 end
