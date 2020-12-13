@@ -61,5 +61,4 @@ local function calculateMoney()
 		end;	  
 	end
 end
-CreateLuaEvent( calculateMoney, 10000, 0 )
---CreateLuaEvent( calculateMoney, 900000, 0 )
+CreateLuaEvent( calculateMoney, 900000, 0 )
