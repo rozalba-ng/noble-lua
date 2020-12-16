@@ -91,7 +91,9 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 	--	Выбор варианта
 		if sender == 1 then
 		--	Выбор роли
+			print(intid)
 			if intid == 2 then
+				print(intid)
 				player:SetData( "ChangingSocialRole", true )
 			end
 			player:GossipComplete()
