@@ -6,7 +6,9 @@ local building_quest = 110000;
 local andoral_currency = 43721;
 local storm_currency = 600057;
 local region_stormwind = 1;
+local region_shadow_stormwind = 2;
 local faction_stormwind = 1162;
+local faction_shadow_stormwind = 1163;
 local reputation_honored = 9000;
 local reputation_friendly = 3000;
 
@@ -201,7 +203,11 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
         elseif (intid == 21) then
             -- Достаточно ли у персонажа репутации?
             if (lockedDoorArray[gobDBID].owner_type == 0 and lockedDoorArray[gobDBID].region_id == region_stormwind and player:GetReputation( faction_stormwind ) < reputation_friendly) then
-                player:SendBroadcastMessage("У вас недостаточно репутации для продления владения этим зданием.");
+                player:SendBroadcastMessage("У вас недостаточно репутации для продления владения этим зданием. Требуемая репутация: Королевство Штормград - дружелюбие");
+                return false;
+            end
+            if (lockedDoorArray[gobDBID].owner_type == 0 and lockedDoorArray[gobDBID].region_id == region_shadow_stormwind and player:GetReputation( faction_shadow_stormwind ) < reputation_friendly) then
+                player:SendBroadcastMessage("У вас недостаточно репутации для продления владения этим зданием. Требуемая репутация: Тени Штормграда - дружелюбие");
                 return false;
             end
             if (lockedDoorArray[gobDBID].owner_type == 2 and lockedDoorArray[gobDBID].region_id == region_stormwind and player:GetReputation( faction_stormwind ) < reputation_honored) then
@@ -237,8 +243,8 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
             player:SendBroadcastMessage("|cff71C671Вы успешно отказались от недвижимости.")
         elseif intid == 27 then
             -- Достаточно ли у персонажа репутации?
-            if (lockedDoorArray[gobDBID].region_id == region_stormwind) then
-                player:SendBroadcastMessage("Дома в этой зоне нельзя передавать другим игрокам.");
+            if (lockedDoorArray[gobDBID].region_id == region_stormwind or lockedDoorArray[gobDBID].region_id == region_shadow_stormwind) then
+                player:SendBroadcastMessage("Дома в этой зоне на данный момент нельзя передавать другим игрокам.");
                 return false;
             end
             local charQuery = CharDBQuery("SELECT * FROM characters where name = '" .. codeEscaped .. "' LIMIT 1");
@@ -321,7 +327,11 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
             end
             -- хватает ли персонажу репутации
             if (lockedDoorArray[gobDBID].region_id == region_stormwind and player:GetReputation( faction_stormwind ) < reputation_friendly) then
-                player:SendBroadcastMessage("У вас недостаточно репутации для приобретения личного дома в этой зоне.");
+                player:SendBroadcastMessage("У вас недостаточно репутации для приобретения этого личного дома. Требуемая репутация: Королевство Штормград - дружелюбие");
+                return false;
+            end
+            if (lockedDoorArray[gobDBID].region_id == region_shadow_stormwind and player:GetReputation( faction_shadow_stormwind ) < reputation_friendly) then
+                player:SendBroadcastMessage("У вас недостаточно репутации для приобретения этого личного дома. Требуемая репутация: Тени Штормграда - дружелюбие");
                 return false;
             end
             -- Нет ли у персонажа уже другого личного дома? (кроме домов с нулевой стоимостью)
