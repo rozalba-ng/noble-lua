@@ -126,7 +126,7 @@ local function gossipDoorBuy(event, player, object, guid)
     end
     player:GossipMenuAddItem(0, "Закрыть", 1, 25);
     player:GossipSetText( text, 23122243 )
-    player:GossipSendMenu(1, object, 5500) -- MenuId required for player gossip
+    player:GossipSendMenu( 23122243, object, 5500 ) -- MenuId required for player gossip
 end
 
 local function gossipDoorOption(event, player, object, guid)
