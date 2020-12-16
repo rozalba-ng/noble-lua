@@ -7,6 +7,7 @@ local timetomove = 8000
 local sphere_radius = 4
 --	Айдишники
 local entry_item = 2114498
+local entry_item_antodias = 5057339
 local entry_sphere = 5049273
 local entry_spell = 65929 -- Оглушение
 
@@ -80,3 +81,20 @@ local function OnUse_Item( event, player, item, target )
 	return false
 end
 RegisterItemEvent( entry_item, 2, OnUse_Item ) -- ITEM_EVENT_ON_USE
+RegisterItemEvent( entry_item_antodias, 2, OnUse_Item ) -- ITEM_EVENT_ON_USE
+
+--[[	ТЕХНИЧЕСКАЯ КОМАНДА ДЛЯ АНТОДИАСА, ПОЗВОЛЯЕТ ВЫДАВАТЬ ПРЕДМЕТ ПЕРЕДВИЖЕНИЯ ЛЮДЯМ	]]--
+
+local function OnCommand_Player( _, player, command )
+	if ( command == "kirov" ) and ( player:GetGMRank() > 1 or player:GetAccountId() == 5879 ) then
+		local target = player:GetSelection()
+		if target and target:ToPlayer() then
+			if target:HasItem( entry_item_antodias ) then
+				target:RemoveItem( entry_item_antodias, 1 )
+			end
+			target:AddItem( entry_item_antodias )
+			player:SendBroadcastMessage("|cff00b7ff:::|r "..target:GetName().." получает предмет для передвижения.")
+		else player:SendAreaTriggerMessage("Нет цели.") end
+	end
+end
+RegisterPlayerEvent( 42, OnCommand_Player ) -- PLAYER_EVENT_ON_COMMAND
