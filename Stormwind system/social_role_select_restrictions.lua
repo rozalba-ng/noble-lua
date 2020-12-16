@@ -2,7 +2,7 @@ local entry = {
 	quest = {
 		thief = 110052,
 		law = 110053,
-	}
+	},
 	questgiver = {
 		thief = 9929479,
 		law = 9929478,
