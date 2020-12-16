@@ -24,6 +24,7 @@ function MyHandlers.SelectClass( player, class )
 	if creature and tonumber(class) then
 		class = math.floor( tonumber(class) )
 		if class > 0 and class < 5 then
+			print("DEBUG2")
 			if player:HasQuest( entry_quest ) then
 				CharDBQuery("REPLACE INTO character_citycraft_config ( character_guid, city_class ) values ("..player:GetGUIDLow()..", "..aura[class]..")")
 				player:AddAura( aura[class], player )
@@ -33,6 +34,7 @@ function MyHandlers.SelectClass( player, class )
 			elseif player:GetData("ChangingSocialRole") then
 				player:SetData( "ChangingSocialRole_Selected", aura[class] )
 				Creature_Gossip( 3, player, creature )
+				print("DEBUG")
 			end
 		end
 	end
