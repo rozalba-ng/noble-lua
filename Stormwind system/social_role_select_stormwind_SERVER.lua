@@ -19,37 +19,6 @@ function MyHandlers.ShowMenu( player )
 	AIO.Handle(player, "SocialClassSelection","Storm_ShowMenu")
 end
 
-function MyHandlers.SelectClass( player, class )
-    local creature = player:GetNearestCreature( 15, entry_creature )
-	if creature and tonumber(class) then
-		class = math.floor( tonumber(class) )
-		if class > 0 and class < 5 then
-			print( player:GetData("ChangingSocialRole") )
-			if player:GetData("ChangingSocialRole") then
-				print("Пздец")
-			elseif player:GetData("ChangingSocialRole") == true then
-				print("а почему так")
-			elseif player:GetData("ChangingSocialRole") == "true" then
-				print("всегда же нормально было")
-			end
-			if player:HasQuest( entry_quest ) then
-				CharDBQuery("REPLACE INTO character_citycraft_config ( character_guid, city_class ) values ("..player:GetGUIDLow()..", "..aura[class]..")")
-				player:AddAura( aura[class], player )
-				player:CompleteQuest( entry_quest )
-				player:RewardQuest( entry_quest )
-				player:TalkingHead( creature, "А ты умеешь выбирать жизненные пути, да? Рад знакомству." )
-			elseif player:GetData("ChangingSocialRole") then
-				print("а может тут")
-				player:SetData( "ChangingSocialRole_Selected", aura[class] )
-				Creature_Gossip( 3, player, creature )
-				print("DEBUG")
-			end
-			print("Проебали?")
-			print( player:GetData("ChangingSocialRole") )
-		end
-	end
-end
-
 local function Creature_Gossip( event, player, creature, sender, intid )
 	if event == 1 then
 	--	Вывод госсипа
@@ -167,3 +136,22 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 end
 RegisterCreatureGossipEvent( entry_creature, 1, Creature_Gossip ) -- GOSSIP_EVENT_ON_HELLO
 RegisterCreatureGossipEvent( entry_creature, 2, Creature_Gossip ) -- GOSSIP_EVENT_ON_SELECT
+
+function MyHandlers.SelectClass( player, class )
+    local creature = player:GetNearestCreature( 15, entry_creature )
+	if creature and tonumber(class) then
+		class = math.floor( tonumber(class) )
+		if class > 0 and class < 5 then
+			if player:HasQuest( entry_quest ) then
+				CharDBQuery("REPLACE INTO character_citycraft_config ( character_guid, city_class ) values ("..player:GetGUIDLow()..", "..aura[class]..")")
+				player:AddAura( aura[class], player )
+				player:CompleteQuest( entry_quest )
+				player:RewardQuest( entry_quest )
+				player:TalkingHead( creature, "А ты умеешь выбирать жизненные пути, да? Рад знакомству." )
+			elseif player:GetData("ChangingSocialRole") then
+				player:SetData( "ChangingSocialRole_Selected", aura[class] )
+				Creature_Gossip( 3, player, creature )
+			end
+		end
+	end
+end
