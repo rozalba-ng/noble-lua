@@ -10,16 +10,20 @@ local quests = {
 --[[	ДВОРЯНЕ	- 1 квест	]]--
 --	"Помощь бедным"
 
+global_variable = nil
+
 local function Gossip_HungryBeggar( event, player, creature, sender, intid )
 	local guid = player:GetGUID()
 	if event == 1 then
 		local text
 		if not quests[1].players[guid] then
 			quests[1].players[guid] = 0
+			global_variable = 0
 		--	
 		--	ПРОБЛЕМА
 		--	Тут кладём в таблицу число
 			print(quests[1].players[guid]) -- Тут ноль
+			print(global_variable)
 		end
 		if creature:GetData("Fed") and ( ( os.time() - creature:GetData("Fed") ) > 300 ) then
 		--	Нищий недавно накормлен
@@ -46,6 +50,7 @@ local function Gossip_HungryBeggar( event, player, creature, sender, intid )
 		--	ПРОБЛЕМА
 		--	Тут его уже нет. Вопрос: Где?
 		print(quests[1].players[guid]) -- Тут уже nil
+		print(global_variable)
 		quests[1].players[guid] = quests[1].players[guid] + 1
 		if quests[1].players[guid] >= 5 then
 			player:CompleteQuest( quests[1].entry )
