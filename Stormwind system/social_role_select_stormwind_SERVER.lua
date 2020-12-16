@@ -25,6 +25,13 @@ function MyHandlers.SelectClass( player, class )
 		class = math.floor( tonumber(class) )
 		if class > 0 and class < 5 then
 			print( player:GetData("ChangingSocialRole") )
+			if player:GetData("ChangingSocialRole") then
+				print("Пздец")
+			elseif player:GetData("ChangingSocialRole") == true then
+				print("а почему так")
+			elseif player:GetData("ChangingSocialRole") == "true" then
+				print("всегда же нормально было")
+			end
 			if player:HasQuest( entry_quest ) then
 				CharDBQuery("REPLACE INTO character_citycraft_config ( character_guid, city_class ) values ("..player:GetGUIDLow()..", "..aura[class]..")")
 				player:AddAura( aura[class], player )
@@ -32,10 +39,13 @@ function MyHandlers.SelectClass( player, class )
 				player:RewardQuest( entry_quest )
 				player:TalkingHead( creature, "А ты умеешь выбирать жизненные пути, да? Рад знакомству." )
 			elseif player:GetData("ChangingSocialRole") then
+				print("а может тут")
 				player:SetData( "ChangingSocialRole_Selected", aura[class] )
 				Creature_Gossip( 3, player, creature )
 				print("DEBUG")
 			end
+			print("Проебали?")
+			print( player:GetData("ChangingSocialRole") )
 		end
 	end
 end
