@@ -23,7 +23,6 @@ local function Gossip_HungryBeggar( event, player, creature, sender, intid )
 		--	ПРОБЛЕМА
 		--	Тут кладём в таблицу число
 			print(quests[1].players[guid]) -- Тут ноль
-			print(global_variable)
 		end
 		if creature:GetData("Fed") and ( ( os.time() - creature:GetData("Fed") ) > 300 ) then
 		--	Нищий недавно накормлен
@@ -50,7 +49,7 @@ local function Gossip_HungryBeggar( event, player, creature, sender, intid )
 		--	ПРОБЛЕМА
 		--	Тут его уже нет. Вопрос: Где?
 		print(quests[1].players[guid]) -- Тут уже nil
-		print(global_variable)
+		print(guid)
 		quests[1].players[guid] = quests[1].players[guid] + 1
 		if quests[1].players[guid] >= 5 then
 			player:CompleteQuest( quests[1].entry )
