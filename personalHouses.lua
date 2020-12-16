@@ -104,16 +104,30 @@ end
 local function gossipDoorBuy(event, player, object, guid)
     player:GossipClearMenu() -- required for player gossip
 
+    local text = "Меню покупки помещения"
     if (lockedDoorArray[guid].can_own_user == 1) then
+        if lockedDoorArray[guid].region_id == 1 then
+            --    Обращение к дворянину
+            text = "Для покупки нужна репутация Королевство Штормград: дружелюбие"
+        elseif lockedDoorArray[guid].region_id == 2 then
+            --    Обращение к священнику
+            text = "Для покупки нужна репутация Тени Штормграда: дружелюбие"
+        end
         player:GossipMenuAddItem(10, "Купить дом", 1, 22, false, "Вы желаете приобрести этот личный дом? Это будет стоить " .. lockedDoorArray[guid].cost_start .. " " .. payCurrency[lockedDoorArray[guid].cost_type]);
     end
     if (lockedDoorArray[guid].can_own_faction == 1) then
+        text = "Для покупки нужна репутация Королевство Штормград: уважение"
         player:GossipMenuAddItem(10, "Купить лавку", 1, 23, false, "Вы желаете приобрести эту лавку? Это будет стоить " .. lockedDoorArray[guid].cost_start .. " " .. payCurrency[lockedDoorArray[guid].cost_type]);
     end
     if (lockedDoorArray[guid].can_own_guild == 1) then
+        if lockedDoorArray[guid].region_id ==1 then
+            --    Обращение к дворянину
+            text = "Для покупки гильдия должна быть внесена в реестр ситикрафта Штормград. По всем вопросам обращайтесь на сайт в личные сообщения по нику Розальба либо в наш дискорд, по нику rozalba#8315"
+        end
         player:GossipMenuAddItem(10, "Купить гилдхолл", 1, 24, false, "Вы желаете приобрести этот гилдхолл? Это будет стоить " .. lockedDoorArray[guid].cost_start .. " " .. payCurrency[lockedDoorArray[guid].cost_type]);
     end
     player:GossipMenuAddItem(0, "Закрыть", 1, 25);
+    player:GossipSetText( text, 23122243 )
     player:GossipSendMenu(1, object, 5500) -- MenuId required for player gossip
 end
 
