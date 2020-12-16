@@ -50,20 +50,20 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 		if Q then
 		--	Если игрок уже смешарик
 			if Q:GetUInt8(0) > 0 then
-				player:GossipMenuAddItem( 0, "<Сменить социальную роль.>", 1, 2, false, "ВСЯ РЕПУТАЦИЯ БУДЕТ ПОТЕРЯНА.\nВы не сможете бесплатно сменить социальную роль ещё раз." )
+				player:GossipMenuAddItem( 0, "<Сменить социальный класс.>", 1, 2, false, "ВСЯ РЕПУТАЦИЯ БУДЕТ ПОТЕРЯНА.\nВы не сможете бесплатно сменить социальный класс ещё раз." )
 			end
 		end
 		player:GossipSetText( text, 13122001 )
 		player:GossipSendMenu( 13122001, creature )
 	elseif event == 3 then
 	--	Вывод госсипа при смене социальной роли
-		local text = "Обратите внимание - фракция Теней Штормграда доступна только для Вольных Жителей.\n\n|cff360009Вся накопленная репутация будет потеряна.\n\nВы не сможете бесплатно сменить социальную роль ещё раз.\n\n|rВыберите фракцию:"
+		local text = "Обратите внимание - фракция Теней Штормграда доступна только для Вольных Жителей.\n\n|cff360009Вся накопленная репутация будет потеряна.\n\nВы не сможете бесплатно сменить социальный класс ещё раз.\n\n|rВыберите фракцию:"
 		player:GossipMenuAddItem( 0, "Королевство Штормград", 2, 1, false, "Это ваш окончательный выбор." )
 		if player:GetData("ChangingSocialRole_Selected") == 91058 then
 		--	Игрок выбрал Вольного Жителя
 			player:GossipMenuAddItem( 0, "Тени Штормграда", 2, 2, false, "Это ваш окончательный выбор." )
 		end
-		player:GossipMenuAddItem( 0, "Я хочу выбрать другую социальную роль.", 2, 3 )
+		player:GossipMenuAddItem( 0, "Я хочу выбрать другой социальный класс.", 2, 3 )
 		player:GossipSetText( text, 16122002 )
 		player:GossipSendMenu( 16122002, creature )
 	else
@@ -123,7 +123,7 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 						player:SetData( "ChangingSocialRole", nil )
 						player:SetData( "ChangingSocialRole_Selected", nil )
 						player:TalkingHead( creature, "Все имеют право на второй шанс." )
-						player:SendBroadcastMessage( "Вы изменили свою социальную роль. Осталось смен роли на персонаже: "..allow_role_change )
+						player:SendBroadcastMessage( "Вы изменили свой социальный класс. Осталось смен роли на персонаже: "..allow_role_change )
 					end
 				end
 			else
