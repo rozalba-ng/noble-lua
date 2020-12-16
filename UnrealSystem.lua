@@ -85,7 +85,7 @@ RegisterItemEvent( entry_item_antodias, 2, OnUse_Item ) -- ITEM_EVENT_ON_USE
 
 --[[	ТЕХНИЧЕСКАЯ КОМАНДА ДЛЯ АНТОДИАСА, ПОЗВОЛЯЕТ ВЫДАВАТЬ ПРЕДМЕТ ПЕРЕДВИЖЕНИЯ ЛЮДЯМ	]]--
 
-local OnCommand_Player( _, player, command )
+local function OnCommand_Player( _, player, command )
 	if ( command == "kirov" ) and ( player:GetGMRank() > 1 or player:GetAccountId() == 5879 ) then
 		local target = player:GetSelection()
 		if target and target:ToPlayer() then
