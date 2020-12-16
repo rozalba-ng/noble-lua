@@ -51,7 +51,7 @@ local function Creature2_Gossip( event, player, creature )
 	player:GossipSetText( text, 16122003 )
 	player:GossipSendMenu( 16122003, creature )
 end
-RegisterCreatureGossipEvent( entry.questgiver.law, 1, Creature_Gossip ) -- GOSSIP_EVENT_ON_HELLO
+RegisterCreatureGossipEvent( entry.questgiver.law, 1, Creature2_Gossip ) -- GOSSIP_EVENT_ON_HELLO
 
 --[[	ПРЕДУПРЕЖДЕНИЕ О НЕДОПУСТИМОЙ КОМБИНАЦИИ РОЛИ И ФРАКЦИИ	]]--
 
