@@ -21,16 +21,15 @@ function MyHandlers.SelectClass( player, class )
 	if creature and tonumber(class) then
 		class = math.floor( tonumber(class) )
 		if class > 0 and class < 5 then
-			CharDBQuery("INSERT INTO character_citycraft_config ( character_guid, city_class ) values ("..player:GetGUIDLow()..", "..aura[class]..")")
+			CharDBQuery("REPLACE INTO character_citycraft_config ( character_guid, city_class ) values ("..player:GetGUIDLow()..", "..aura[class]..")")
 			player:AddAura( aura[class], player )
 			player:CompleteQuest( entry_quest )
 			player:TalkingHead( creature, "А ты умеешь выбирать жизненные пути, да? Рад знакомству." )
-			--creature:SendChatMessageToPlayer( 12, 0, "А ты умеешь выбирать жизненные пути, да? Рад знакомству!", player )
 		end
 	end
 end
 
-local function Creaure_Gossip( event, player, creature, sender, intid )
+local function Creature_Gossip( event, player, creature, sender, intid )
 	if event == 1 then
 	--	Вывод госсипа
 		local text
@@ -65,5 +64,5 @@ local function Creaure_Gossip( event, player, creature, sender, intid )
 		MyHandlers.ShowMenu( player )
 	end
 end
-RegisterCreatureGossipEvent( entry_creature, 1, Creaure_Gossip ) -- GOSSIP_EVENT_ON_HELLO
-RegisterCreatureGossipEvent( entry_creature, 2, Creaure_Gossip ) -- GOSSIP_EVENT_ON_SELECT
+RegisterCreatureGossipEvent( entry_creature, 1, Creature_Gossip ) -- GOSSIP_EVENT_ON_HELLO
+RegisterCreatureGossipEvent( entry_creature, 2, Creature_Gossip ) -- GOSSIP_EVENT_ON_SELECT
