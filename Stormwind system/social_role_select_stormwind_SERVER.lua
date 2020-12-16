@@ -69,7 +69,7 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 		if Q then
 		--	Если игрок уже смешарик
 			if Q:GetUInt8(0) > 0 then
-				player:GossipMenuAddItem( 0, "<Сменить социальную роль.>" 1, 2, false, "ВСЯ РЕПУТАЦИЯ БУДЕТ ПОТЕРЯНА.\nВы не сможете бесплатно сменить социальную роль ещё раз." )
+				player:GossipMenuAddItem( 0, "<Сменить социальную роль.>", 1, 2, false, "ВСЯ РЕПУТАЦИЯ БУДЕТ ПОТЕРЯНА.\nВы не сможете бесплатно сменить социальную роль ещё раз." )
 			end
 		end
 		player:GossipSetText( text, 13122001 )
