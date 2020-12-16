@@ -107,10 +107,8 @@ local function gossipDoorBuy(event, player, object, guid)
     local text = "Меню покупки помещения"
     if (lockedDoorArray[guid].can_own_user == 1) then
         if lockedDoorArray[guid].region_id == 1 then
-            --    Обращение к дворянину
             text = "Для покупки нужна репутация Королевство Штормград: дружелюбие"
         elseif lockedDoorArray[guid].region_id == 2 then
-            --    Обращение к священнику
             text = "Для покупки нужна репутация Тени Штормграда: дружелюбие"
         end
         player:GossipMenuAddItem(10, "Купить дом", 1, 22, false, "Вы желаете приобрести этот личный дом? Это будет стоить " .. lockedDoorArray[guid].cost_start .. " " .. payCurrency[lockedDoorArray[guid].cost_type]);
