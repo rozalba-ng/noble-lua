@@ -12,10 +12,12 @@ local quests = {
 
 local function Gossip_HungryBeggar( event, player, creature, sender, intid )
 	local guid = player:GetGUID()
+	print(guid)
 	if event == 1 then
 		local text
 		if not quests[1].players[guid] then
 			quests[1].players[guid] = 0
+			print(quests[1].players[guid])
 		end
 		if creature:GetData("Fed") and ( ( os.time() - creature:GetData("Fed") ) > 300 ) then
 		--	Нищий недавно накормлен
@@ -38,6 +40,7 @@ local function Gossip_HungryBeggar( event, player, creature, sender, intid )
 	else
 		creature:SetData( "Fed", os.time() )
 		player:TalkingHead( creature, Roulette( "Вот это по нашему!", "Спасибо, добрейший человек.", "Сейчас перекусим.", "Благодарю! Всех вам благ!", "Ух... Горяченькое!", "Солички не найдётся?", "Сытым дольго не пробудешь..." ) )
+		print(quests[1].players[guid])
 		quests[1].players[guid] = quests[1].players[guid] + 1
 		if quests[1].players[guid] >= 5 then
 			player:CompleteQuest( quests[1].entry )
