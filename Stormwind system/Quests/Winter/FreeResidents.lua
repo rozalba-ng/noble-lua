@@ -2,7 +2,7 @@
 local quests = {
 	[1] = { --	"Сбить сосульки"
 		entry = 110064,
-		npc = 1211001,
+		npc = 1211003,
 		gameobject = 5049432,
 		spell = 21343,
 		players = {},
@@ -25,7 +25,7 @@ local function OnClick_Icicle( event, go, player )
 		player:SetPhaseMask(524288)
 		player:SetPhaseMask(1)
 	else
-		player:SendAreaTriggerMessage("Сбито "..quests[1].players[name].." сосулек из 10.")
+		player:SendAreaTriggerMessage("Сбито сосулек: "..quests[1].players[name].." из 10.")
 	end
 	local x,y,z = go:GetLocation()
 	local creature = go:SpawnCreature( quests[1].npc, x, y, z, 0, 3, 2000 )
