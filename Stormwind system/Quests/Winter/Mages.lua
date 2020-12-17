@@ -52,6 +52,7 @@ local function Gossip_Elemental( _, player, creature )
 			creature:AddAura( quests[1].spell, creature )
 			creature:SetData( "Reload", os.time() )
 			go:Despawn()
+			local name = player:GetName()
 			quests[1].players[name].score = quests[1].players[name].score + 1
 			if quests[1].players[name].score >= 5 then
 				player:CompleteQuest( quests[1].entry )
