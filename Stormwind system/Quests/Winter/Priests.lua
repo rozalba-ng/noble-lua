@@ -52,5 +52,5 @@ local function Gossip_SickBeggar( event, player, creature, sender, intid )
 		end
 	end
 end
-RegisterCreatureGossipEvent( quests[1].npc, 1, Gossip_HungryBeggar ) -- GOSSIP_EVENT_ON_HELLO
-RegisterCreatureGossipEvent( quests[1].npc, 2, Gossip_HungryBeggar ) -- GOSSIP_EVENT_ON_SELECT
+RegisterCreatureGossipEvent( quests[1].npc, 1, Gossip_SickBeggar ) -- GOSSIP_EVENT_ON_HELLO
+RegisterCreatureGossipEvent( quests[1].npc, 2, Gossip_SickBeggar ) -- GOSSIP_EVENT_ON_SELECT
