@@ -4,12 +4,20 @@ local MyHandlers = AIO.AddHandlers("SocialClassSelection", {})
 --	Уголок настроек
 local entry_creature = 9929463
 local entry_quest = 110031
+
 local aura = {
-	91055, -- Дворянин
+	91055, -- Дворянство
 	91056, -- Духовенство
 	91057, -- Магократия
-	91058, -- Вольный житель
+	91058, -- Вольные жители
 	91062, -- Аноним
+}
+local quests = {
+--	Квесты-костыли обозначающие, какую из ролей выбрал игрок.
+	[91055] = 110061, -- Дворянство
+	[91056] = 110057, -- Духовенство
+	[91057] = 110059, -- Магократия
+	[91058] = 110063, -- Вольные жители
 }
 
 local entry_quest_law = 110053
@@ -94,6 +102,7 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 						end
 					]]
 					--	Настройка выполненных квестов
+						local role = player:GetData("ChangingSocialRole_Selected")
 						if intid == 1 then
 						--	Королевство Штормград
 							player:RemoveQuest( entry_quest_thief )
@@ -101,7 +110,7 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 							player:AddQuest( entry_quest_law )
 							player:CompleteQuest( entry_quest_law )
 							player:RewardQuest( entry_quest_law )
-						elseif ( ( intid == 2 ) and ( player:GetData("ChangingSocialRole_Selected") == 91058 ) ) then
+						elseif ( ( intid == 2 ) and ( role == 91058 ) ) then
 						--	Тени Штормграда
 							player:RemoveQuest( entry_quest_thief )
 							player:RemoveQuest( entry_quest_law )
@@ -109,6 +118,12 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 							player:CompleteQuest( entry_quest_thief )
 							player:RewardQuest( entry_quest_thief )
 						end
+						for _, v in pairs(quests) do
+							player:RemoveQuest(v)
+						end
+						player:AddQuest( quests[ role ] )
+						player:CompleteQuest( quests[ role ] )
+						player:RewardQuest( quests[ role ] )
 					--	Установка нулевой репутации
 						player:SetReputation( thiefs_faction, 0 )
 						player:SetReputation( law_faction, 0 )
@@ -118,12 +133,15 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 						end
 						player:AddAura( player:GetData("ChangingSocialRole_Selected"), player )
 					--	Обновление записи в базе данных
-						CharDBQuery("REPLACE INTO character_citycraft_config ( character_guid, city_class, allow_role_change ) values ("..player:GetGUIDLow()..", "..tonumber(player:GetData("ChangingSocialRole_Selected"))..", "..allow_role_change..")")
+						CharDBQuery("REPLACE INTO character_citycraft_config ( character_guid, city_class, allow_role_change ) values ("..player:GetGUIDLow()..", "..tonumber(role)..", "..allow_role_change..")")
 					--	Подчищаем кеш, выводим уведомление.
 						player:SetData( "ChangingSocialRole", nil )
 						player:SetData( "ChangingSocialRole_Selected", nil )
 						player:TalkingHead( creature, "Все имеют право на второй шанс." )
-						player:SendBroadcastMessage( "Вы изменили свой социальный класс. Осталось смен роли на персонаже: "..allow_role_change )
+						player:SendBroadcastMessage( "Вы изменили свой социальный класс. Осталось смен класса на персонаже: "..allow_role_change )
+					--	Обновление фазы для корректного отображения иконок квестов
+						player:SetPhaseMask(524288)
+						player:SetPhaseMask(1)
 					end
 				end
 			else
@@ -147,6 +165,11 @@ function MyHandlers.SelectClass( player, class )
 				player:AddAura( aura[class], player )
 				player:CompleteQuest( entry_quest )
 				player:RewardQuest( entry_quest )
+				
+				player:AddQuest( quests[ aura[class] ] )
+				player:CompleteQuest( quests[ aura[class] ] )
+				player:RewardQuest( quests[ aura[class] ] )
+				
 				player:TalkingHead( creature, "А ты умеешь выбирать жизненные пути, да? Рад знакомству." )
 			elseif player:GetData("ChangingSocialRole") then
 				player:SetData( "ChangingSocialRole_Selected", aura[class] )
