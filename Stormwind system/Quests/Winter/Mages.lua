@@ -68,7 +68,7 @@ local function Gossip_Elemental( _, player, creature )
 			player:TalkingHead( creature, Roulette( "<Недоумённо оглядывается.>", "<С сочувствием смотрит на вас.>", "<Упорно не замечает замерзшие лужи.>" ) )
 		end
 	else
-		player:TalkingHead( creature, Roulette( "<Фыркает.>", "Грм-м..", "<Элементаль злобно урчит.>", "<Элементаль устало вздыхает.>", "<Элементаль как будто бы чихает.>" ) 
+		player:TalkingHead( creature, Roulette( "<Фыркает.>", "Грм-м..", "<Элементаль злобно урчит.>", "<Элементаль устало вздыхает.>", "<Элементаль как будто бы чихает.>" ) )
 	end
 end
 RegisterCreatureGossipEvent( quests[1].npc, 1, Gossip_Elemental )
