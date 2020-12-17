@@ -36,10 +36,6 @@ local function Gossip_SickBeggar( event, player, creature, sender, intid )
 		player:GossipSetText( text, 17122001 )
 		player:GossipSendMenu( 17122001, creature )
 	else
-		creature:SetData( "Healed", os.time() )
-		creature:CastSpell( creature, 35207, true )
-		creature:SendUnitSay( Roulette( "Надо же, я теперь как новенький!", "Спасибо, добрейший человек.", "Ну и ну... Чудеса да и только.", "Благодарю! Всех вам благ!", "Спасибо Свету! Ну и вам, конечно.", "Уже казалось, что помру тут в холоде.", "Век не забуду!", "Если бы не вы - я бы тогда может и помер.", "Спасибо.", "Я этого не забуду." ), 0 )
-		player:GossipComplete()
 		quests[1].players[name] = quests[1].players[name] + 1
 		if quests[1].players[name] >= 5 then
 			player:CompleteQuest( quests[1].entry )
@@ -50,6 +46,10 @@ local function Gossip_SickBeggar( event, player, creature, sender, intid )
 		else
 			player:SendAreaTriggerMessage("Вылечено "..quests[1].players[name].." нищих из 5.")
 		end
+		creature:SetData( "Healed", os.time() )
+		creature:AddAura( 35207, creature )
+		creature:SendUnitSay( Roulette( "Надо же, я теперь как новенький!", "Спасибо, добрейший человек.", "Ну и ну... Чудеса да и только.", "Благодарю! Всех вам благ!", "Спасибо Свету! Ну и вам, конечно.", "Уже казалось, что помру тут в холоде.", "Век не забуду!", "Если бы не вы - я бы тогда может и помер.", "Спасибо.", "Я этого не забуду." ), 0 )
+		player:GossipComplete()
 	end
 end
 RegisterCreatureGossipEvent( quests[1].npc, 1, Gossip_SickBeggar ) -- GOSSIP_EVENT_ON_HELLO
