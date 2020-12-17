@@ -48,9 +48,10 @@ local function Gossip_Elemental( _, player, creature )
 	creature:MoveFollow( player )
 	if ( not creature:GetData("Reload") or ( os.time() - creature:GetData("Reload") ) > 3 ) then
 		local go = creature:GetNearestGameObject( 5, quests[1].gameobject )
-		if go then
+		if go and ( not go:GetData("Reload") or ( os.time() - go:GetData("Reload") ) > 300 ) then
 			creature:AddAura( quests[1].spell, creature )
 			creature:SetData( "Reload", os.time() )
+			go:SetData( "Reload", os.time() )
 			go:Despawn()
 			local name = player:GetName()
 			quests[1].players[name].score = quests[1].players[name].score + 1
@@ -63,7 +64,7 @@ local function Gossip_Elemental( _, player, creature )
 				creature:SendUnitEmote( "Элементаль гаснет." )
 				creature:DespawnOrUnsummon(2000)
 			else
-				player:SendAreaTriggerMessage("Растоплено "..quests[1].players[name].." луж из 5.")
+				player:SendAreaTriggerMessage("Растоплено "..quests[1].players[name].score.." луж из 5.")
 			end
 		else
 			player:TalkingHead( creature, Roulette( "<Недоумённо оглядывается.>", "<С сочувствием смотрит на вас.>", "<Упорно не замечает замерзшие лужи.>" ) )
