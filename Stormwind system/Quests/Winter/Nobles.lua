@@ -7,7 +7,7 @@ local quests = {
 	},
 }
 
---[[	ДВОРЯНЕ	- 1 квест	]]--
+--[[	ДВОРЯНЕ - 1 квест	]]--
 --	"Помощь бедным"
 
 local function Gossip_HungryBeggar( event, player, creature, sender, intid )

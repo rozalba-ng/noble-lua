@@ -7,7 +7,7 @@ local quests = {
 	},
 }
 
---[[	ДВОРЯНЕ	- 1 квест	]]--
+--[[	ДУХОВЕНСТВО - 1 квест	]]--
 --	"Помощь нуждающимся"
 
 local function Gossip_SickBeggar( event, player, creature, sender, intid )
