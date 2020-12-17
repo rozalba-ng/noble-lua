@@ -12,10 +12,7 @@ local quests = {
 --[[	ВОЛЬНЫЕ ЖИТЕЛИ - 1 квест	]]--
 --	"Сбить сосульки"
 
-local function OnClick_Icicle( event )
-	print(event)
+local function OnClick_Icicle( event, go, player )
+	go:Despawn()
 end
-RegisterGameObjectEvent( quests[1].gameobject, 8, OnClick_Icicle ) -- GAMEOBJECT_EVENT_ON_DAMAGED
-RegisterGameObjectEvent( quests[1].gameobject, 9, OnClick_Icicle ) -- GAMEOBJECT_EVENT_ON_LOOT_STATE_CHANGE
-RegisterGameObjectEvent( quests[1].gameobject, 10, OnClick_Icicle ) -- GAMEOBJECT_EVENT_ON_GO_STATE_CHANGED
 RegisterGameObjectEvent( quests[1].gameobject, 14, OnClick_Icicle ) -- GAMEOBJECT_EVENT_ON_USE
