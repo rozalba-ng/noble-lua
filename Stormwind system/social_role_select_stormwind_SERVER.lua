@@ -138,7 +138,10 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 						player:SetData( "ChangingSocialRole", nil )
 						player:SetData( "ChangingSocialRole_Selected", nil )
 						player:TalkingHead( creature, "Все имеют право на второй шанс." )
-						player:SendBroadcastMessage( "Вы изменили свой социальный класс. Осталось смен роли на персонаже: "..allow_role_change )
+						player:SendBroadcastMessage( "Вы изменили свой социальный класс. Осталось смен класса на персонаже: "..allow_role_change )
+					--	Обновление фазы для корректного отображения иконок квестов
+						player:SetPhaseMask(524288)
+						player:SetPhaseMask(1)
 					end
 				end
 			else
