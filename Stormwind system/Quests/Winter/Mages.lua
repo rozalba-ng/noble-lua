@@ -16,6 +16,7 @@ local function WhenQuestAccepted_QuestGiver( event, player, creature, quest )
 	if quest:GetId() == quests[1].entry then
 		local name = player:GetName()
 		if not quests[1].players[name] then
+			quests[1].players[name] = {}
 			quests[1].players[name].score = 0
 			quests[1].players[name].creature = os.time()
 			local x,y,z,o = player:GetLocation()
