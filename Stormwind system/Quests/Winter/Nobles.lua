@@ -37,7 +37,9 @@ local function Gossip_HungryBeggar( event, player, creature, sender, intid )
 		player:GossipSendMenu( 17122001, creature )
 	else
 		creature:SetData( "Fed", os.time() )
-		creature:SendUnitSay( Roulette( "Вот это по нашему!", "Спасибо, добрейший человек.", "Сейчас перекусим.", "Благодарю! Всех вам благ!", "Ух... Горяченькое!", "Солички не найдётся?", "Сытым дольго не пробудешь..." ), 0 )
+		creature:CastSpell( creature, 65421, true )
+		creature:SendUnitSay( Roulette( "Вот это по нашему!", "Спасибо, добрейший человек.", "Сейчас перекусим.", "Благодарю! Всех вам благ!", "Ух... Горяченькое!", "Солички не найдётся?", "Сытым дольго не пробудешь...", "Мысли о еде ненадолго оставят меня.", "Спасибо.", "Я этого не забуду." ), 0 )
+		player:GossipComplete()
 		quests[1].players[name] = quests[1].players[name] + 1
 		if quests[1].players[name] >= 5 then
 			player:CompleteQuest( quests[1].entry )
