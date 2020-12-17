@@ -37,11 +37,14 @@ local function Gossip_HungryBeggar( event, player, creature, sender, intid )
 		player:GossipSendMenu( 17122001, creature )
 	else
 		creature:SetData( "Fed", os.time() )
-		player:TalkingHead( creature, Roulette( "Вот это по нашему!", "Спасибо, добрейший человек.", "Сейчас перекусим.", "Благодарю! Всех вам благ!", "Ух... Горяченькое!", "Солички не найдётся?", "Сытым дольго не пробудешь..." ) )
+		creature:SendUnitSay( Roulette( "Вот это по нашему!", "Спасибо, добрейший человек.", "Сейчас перекусим.", "Благодарю! Всех вам благ!", "Ух... Горяченькое!", "Солички не найдётся?", "Сытым дольго не пробудешь..." ), 0 )
 		quests[1].players[name] = quests[1].players[name] + 1
 		if quests[1].players[name] >= 5 then
 			player:CompleteQuest( quests[1].entry )
 			player:SendAreaTriggerMessage("Горячие блюда розданы.")
+		--	Обновление фазы для корректного отображения иконок квестов
+			player:SetPhaseMask(524288)
+			player:SetPhaseMask(1)
 		else
 			player:SendAreaTriggerMessage("Накормлено "..quests[1].players[name].." нищих из 5.")
 		end
