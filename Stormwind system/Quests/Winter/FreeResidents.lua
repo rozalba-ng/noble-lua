@@ -5,6 +5,7 @@ local quests = {
 		npc = 1211003,
 		gameobject = 5049432,
 		spell = 21343,
+		questgiver = 9929516,
 		players = {},
 	},
 }
@@ -33,3 +34,11 @@ local function OnClick_Icicle( event, go, player )
 	go:Despawn()
 end
 RegisterGameObjectEvent( quests[1].gameobject, 14, OnClick_Icicle ) -- GAMEOBJECT_EVENT_ON_USE
+
+local function WhenQuestAccepted_QuestGiver( event, player, creature, quest )
+	if quest:GetId() == quests[1].entry then
+		local name = player:GetName()
+		quests[1].players[name] = nil
+	end
+end
+RegisterCreatureEvent( quests[1].questgiver, 31, WhenQuestAccepted_QuestGiver ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
