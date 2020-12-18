@@ -3,6 +3,7 @@ local quests = {
 	[1] = { --	"Помощь бедным"
 		entry = 110062,
 		npc = 9929515,
+		questgiver = 9929517,
 		players = {},
 	},
 }
@@ -54,3 +55,11 @@ local function Gossip_HungryBeggar( event, player, creature, sender, intid )
 end
 RegisterCreatureGossipEvent( quests[1].npc, 1, Gossip_HungryBeggar ) -- GOSSIP_EVENT_ON_HELLO
 RegisterCreatureGossipEvent( quests[1].npc, 2, Gossip_HungryBeggar ) -- GOSSIP_EVENT_ON_SELECT
+
+local function WhenQuestAccepted_QuestGiver( event, player, creature, quest )
+	if quest:GetId() == quests[1].entry then
+		local name = player:GetName()
+		quests[1].players[name] = nil
+	end
+end
+RegisterCreatureEvent( quests[1].questgiver, 31, WhenQuestAccepted_QuestGiver ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
