@@ -11,9 +11,9 @@ local rank_strings = {
 }
 
 local function Command( _, player, command )
-	if ( command == "rep" or command == "reputation" ) and ( player:GetGMRank() > 0 ) then
+	if ( command == "reputation" ) and ( player:GetGMRank() > 0 ) then
 		local target = player:GetSelection()
-		if ( not target ) or ( target:ToPlayer() ) then
+		if ( not target ) or ( not target:ToPlayer() ) then
 			player:SendAreaTriggerMessage("|cffFF4500[!!]|r Выберите игрока в цель.")
 		else
 			local rank_thief = player:GetReputationRank(thiefs_faction)
