@@ -3,7 +3,7 @@ local quests = {
 	[1] = { --	"Помощь бедным"
 		entry = 110062,
 		npc = 9929515,
-		questgiver = 9929517,
+		questgiver = 9929511,
 		players = {},
 	},
 }
