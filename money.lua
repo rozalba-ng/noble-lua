@@ -29,23 +29,23 @@ local function calculateMoney()
 				if f and player:GetPhaseMask() == 1 then
 				--	Игрок выполнил один из квестов и находится в 1 фазе
 					local zone, trueZone, r = player:GetZoneId(), false, 0
-					if ( zone == 1519 or player:GetNearestCreature( 25, entry_npc ) ) then
+					if ( zone == 1519) then
 					--	Игрок в Штормграде
-						r = 3
+						r = 4
 						trueZone = true
 					elseif ( zone == 10237 or zone == 10214 or zone == 10197 or zone == 10160 or zone == 10179 or zone == 10232 ) then
 					--	Игрок играет на полигоне
-						r = 2
+						r = 3
 						trueZone = true
 					end
 					if trueZone and ActionTime() then
 					--	Если время суперактива - идёт маленький бонус.
-						r = r + 2
+						r = r + 3
 					end
-					if trueZone and player:GetNearestCreature( 30, entry_bonus_npc ) then
-					--	Если рядом есть НПС дарующий бонус
-						r = r + 2
-					end
+--					if trueZone and player:GetNearestCreature( 30, entry_bonus_npc ) then
+--					--	Если рядом есть НПС дарующий бонус
+--						r = r + 2
+--					end
 					--	Начисление репутации
 					player:SetReputation( f, player:GetReputation( f ) + r )
 					--	Снятие репутации UPD ROZALBA: отменяем снятие репутации
