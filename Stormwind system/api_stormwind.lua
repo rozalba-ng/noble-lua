@@ -18,6 +18,11 @@ law_faction = 1162
 --	Тени Штормграда
 thiefs_faction = 1163
 
+amount_reputation_friendly = 3000;
+amount_reputation_honored = 9000;
+amount_reputation_revered = 21000;
+amount_reputation_exalted = 42000;
+
 --	Сейчас время актива или нет?
 function ActionTime()
 	local t = tonumber( os.date("%H") )
