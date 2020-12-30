@@ -6,7 +6,7 @@ local faction_shadow_stormwind = 1163;
 local reputation_friendly = 3000;
 local reputation_honored = 9000;
 local reputation_revered = 21000;
-local MenuId = 13213;
+local MenuId = 61218;
 
 local function OnGossipCharger(event, player, object)
     player:GossipClearMenu() -- required for player gossip
