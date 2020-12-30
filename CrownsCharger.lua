@@ -35,12 +35,7 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
         end
 
         if (player:HasItem(crown, crownsNeeded)) then
-            local item = player:AddItem(veksel, num);
-            if(item == nil)then
-                player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет места.|r");
-                player:GossipComplete()
-                return false;
-            end
+            SendMail( "Обмен у казначея", "Приятной игры", player:GetGUIDLow(), 0, 61, 0, 0, 0, veksel, num )
             player:RemoveItem(crown, crownsNeeded);
         else
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно корон для покупки нужного числа векселей. Требуемое число корон: |r" .. tostring(crownsNeeded));
@@ -51,12 +46,7 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
         local num = tonumber(code);
         local crownsToAdd = num * 3;
         if (player:HasItem(veksel, num)) then
-            local item = player:AddItem(crown, crownsToAdd);
-            if(item == nil)then
-                player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет места.|r");
-                player:GossipComplete()
-                return false;
-            end
+            SendMail( "Обмен у казначея", "Приятной игры", player:GetGUIDLow(), 0, 61, 0, 0, 0, crown, crownsToAdd )
             player:RemoveItem(veksel, num);
         else
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно векселей. Требуемое число векселей: |r" .. tostring(num));
