@@ -14,7 +14,7 @@ local function OnGossipCharger(event, player, object)
     player:GossipMenuAddItem(0, "Продать вексели (в поле 'код' вводите желаемое количество)", 1, 3, true, nil)
     player:GossipMenuAddItem(0, "Закрыть", 1, 5)
     player:GossipSetText( 'Приветствую! <br>ООС: Тут вы можете обменять ваши персональные короны на не-персональные вексели и обратно. Векселями можно обмениваться с другими игроками. <br>Курс покупки: <br>- дружелюбие - 5 корон за вексель<br>- уважение - 4 короны за вексель<br>- почтение - 3 короны за вексель', MenuId )
-    player:GossipSendMenu(1, object, MenuId) -- MenuId required for player gossip
+    player:GossipSendMenu(MenuId, object, MenuId) -- MenuId required for player gossip
 end
 
 local function OnGossipChargerSelect(event, player, object, sender, intid, code, menuid)
