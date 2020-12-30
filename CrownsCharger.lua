@@ -49,7 +49,6 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно корон для покупки нужного числа векселей. Требуемое число корон: |r" .. tostring(crownsNeeded));
             player:GossipComplete()
         end
-        OnGossipCharger(event, player, object)
     elseif (intid == 3) then
         local num = tonumber(code);
         if (num > 30) then
@@ -67,7 +66,6 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно векселей. Требуемое число векселей: |r" .. tostring(num));
             player:GossipComplete()
         end
-        OnGossipCharger(event, player, object)
     elseif (intid == 5) then
         player:GossipComplete()
     end
