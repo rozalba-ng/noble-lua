@@ -84,7 +84,7 @@ local function Gossip_Owl( event, player, creature, sender, intid )
 				text = "<Вы заканчиваете своё письмо. Сова готова отнести его.>\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r. Честное слово. И поэтому я хочу попросить у тебя |cff360009"..phrases[2][ T[2] ].."|r, рисовочку \"|cff360009"..phrases[3][ T[3] ].."|r\" и маленького надувного пони.\n\nС любовью, "..player:GetName()
 				player:GossipMenuAddItem( 0, "<Отправить письмо.>", 4, 1, false, "Только один из ваших персонажей может отправить письмо Дедушке Зиме. Вы уверены, что хотите отправить именно это письмо?" )
 			else
-				WorldDBQuery("REPLACE INTO Winter2020 ( account, behavior, companion, item ) values ("..player:GetAccountId()..","..T[1]..","..T[2]..","..T[3]")")
+				WorldDBQuery("REPLACE INTO Winter2020 ( account, behavior, companion, item ) values ("..player:GetAccountId()..","..T[1]..","..T[2]..","..T[3]..")")
 				player:TalkingHead( creature, "Можешь считать, что твоё письмо уже доставлено." )
 				return
 			end
