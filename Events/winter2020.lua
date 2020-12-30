@@ -23,7 +23,7 @@ local phrases = {
 local function Gossip_Owl( event, player, creature, sender, intid )
 	if event == 1 then
 	--	Отображение меню
-		local text = "<Белоснежная сова выглядит весьма устало.>\nХочешь попросить что-то у Дедушки Зимы?\n<Кажется она заметила вас.>\nЯ могу отнести ему твоё письмо, "..player:GetName().."."
+		local text = "<Белоснежная сова выглядит весьма устало.>\n\nХочешь попросить что-то у Дедушки Зимы?\nЯ могу доставить ему твоё письмо, "..player:GetName().."."
 		player:GossipMenuAddItem( 0, "Здравствуйте! Вставить текст.", 0, 0 )
 		player:GossipSetText( text, 30122001 )
 		player:GossipSendMenu( 30122001, creature )
@@ -32,7 +32,7 @@ local function Gossip_Owl( event, player, creature, sender, intid )
 		if sender == 0 then
 		--	Игрок начинает писать письмо.
 			player:SetData( "Winter2020", {0,0,0} )
-			local text = "<В ваших руках оказывается пустой лист бумаги...>\n Дорогой Дедушка Зима! В этом году я вёл себя..."
+			local text = "<В ваших руках оказывается пустой лист бумаги...>\n\nДорогой Дедушка Зима! В этом году я вёл себя..."
 			player:GossipMenuAddItem( 0, "..."..phrases[1][1].."...", 1, 1 )
 			player:GossipMenuAddItem( 0, "..."..phrases[1][2].."...", 1, 2 )
 			player:GossipMenuAddItem( 0, "..."..phrases[1][3].."...", 1, 3 )
@@ -44,17 +44,17 @@ local function Gossip_Owl( event, player, creature, sender, intid )
 			player:SetData( "Winter2020", T )
 			local text
 			if sender == 1 then
-				text = "<Сова подозрительно смотрит на написанное вами...>\n Дорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r. Честное слово. И поэтому я хочу попросить у тебя..."
+				text = "<Сова подозрительно смотрит на написанное вами...>\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r. Честное слово. И поэтому я хочу попросить у тебя..."
 				player:GossipMenuAddItem( 0, "..."..phrases[2][1].."...", 2, 1 )
 				player:GossipMenuAddItem( 0, "..."..phrases[2][2].."...", 2, 2 )
 				player:GossipMenuAddItem( 0, "..."..phrases[2][3].."...", 2, 3 )
 			elseif sender == 2 then
-				text = "<Кажется Сова немного поседела...>\n Дорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r. Честное слово. И поэтому я хочу попросить у тебя |cff360009"..phrases[2][ T[2] ].."|r, рисовочку..."
+				text = "<Кажется Сова немного поседела...>\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r. Честное слово. И поэтому я хочу попросить у тебя |cff360009"..phrases[2][ T[2] ].."|r, рисовочку..."
 				player:GossipMenuAddItem( 0, "..."..phrases[3][1].."...", 3, 1 )
 				player:GossipMenuAddItem( 0, "..."..phrases[3][2].."...", 3, 2 )
 				player:GossipMenuAddItem( 0, "..."..phrases[3][3].."...", 3, 3 )
 			elseif sender == 3 then
-				text = "<Вы заканчиваете своё письмо. Сова готова отнести его.>\n Дорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r. Честное слово. И поэтому я хочу попросить у тебя |cff360009"..phrases[2][ T[2] ].."|r, рисовочку |cff360009"..phrases[3][ T[3] ].."|r и маленького надувного пони.\n\nС любовью, "..player:GetName()
+				text = "<Вы заканчиваете своё письмо. Сова готова отнести его.>\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r. Честное слово. И поэтому я хочу попросить у тебя |cff360009"..phrases[2][ T[2] ].."|r, рисовочку \"|cff360009"..phrases[3][ T[3] ].."|r\" и маленького надувного пони.\n\nС любовью, "..player:GetName()
 				player:GossipMenuAddItem( 0, "<Отправить письмо.>", 4, 1, false, "Только один из ваших персонажей может отправить письмо Дедушке Зиме.\nВы уверены, что хотите отправить именно это письмо?" )
 			else
 				player:TalkingHead( creature, "Тут какой-то текст." )
