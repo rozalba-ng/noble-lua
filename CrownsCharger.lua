@@ -13,7 +13,7 @@ local function OnGossipCharger(event, player, object)
     player:GossipMenuAddItem(0, "Купить вексели (в поле 'код' вводите желаемое количество)", 1, 2, true, nil)
     player:GossipMenuAddItem(0, "Продать вексели (в поле 'код' вводите желаемое количество)", 1, 3, true, nil)
     player:GossipMenuAddItem(0, "Закрыть", 1, 5)
-    player:GossipSetText( '— Приветствую!\n\nООС: Тут вы можете обменять ваши персональные короны на не-персональные вексели и обратно. Векселями можно обмениваться с другими игроками. \nКурс покупки векселя у казначея: \n- дружелюбие - 5 корон за вексель\n- уважение - 4 короны за вексель\n- почтение - 3 короны за вексель \nКурс продажи векселя казначею: за один вексель вы получите 3 короны на любом уровне репутации', MenuId )
+    player:GossipSetText( '— Приветствую!\n\nООС: Тут вы можете обменять ваши персональные короны на не-персональные вексели и обратно. Векселями можно обмениваться с другими игроками. \n\nКурс покупки векселя у казначея: \n- дружелюбие - 5 корон за вексель\n- уважение - 4 короны за вексель\n- почтение - 3 короны за вексель \nКурс продажи векселя казначею: за один вексель вы получите 3 короны на любом уровне репутации', MenuId )
     player:GossipSendMenu(MenuId, object, MenuId) -- MenuId required for player gossip
 end
 
@@ -29,7 +29,7 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
         elseif ((player:GetReputation( faction_stormwind ) >= reputation_friendly) or (player:GetReputation( faction_shadow_stormwind ) >= reputation_friendly)) then
             crownsNeeded = num*5;
         else
-            player:SendBroadcastMessage("У вас недостаточно репутации для покупки векселей. Минимальная репутация: дружелюбие в одной из фракций Штормграда");
+            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFУ вас недостаточно репутации для покупки векселей. Минимальная репутация: дружелюбие в одной из фракций Штормграда|r");
             return false;
         end
 
