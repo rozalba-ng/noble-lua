@@ -13,7 +13,7 @@ local function OnGossipCharger(event, player, object)
     player:GossipMenuAddItem(0, "КУПИТЬ вексели (максимум 30 за раз, вводить количество в поле <код>)", 1, 2, true, nil)
     player:GossipMenuAddItem(0, "ПРОДАТЬ вексели (максимум 30 за раз, вводить количество в поле <код>))", 1, 3, true, nil)
     player:GossipMenuAddItem(0, "Закрыть", 1, 5)
-    player:GossipSetText( 'ООС: Тут вы можете обменять короны на вексели и обратно. Векселями можно обмениваться с другими игроками.\n\n После обмены короны/вексели иридут на почту. \n\nКурс покупки векселя у казначея: \n- дружелюбие - 5 корон за вексель\n- уважение - 4 короны за вексель\n- почтение - 3 короны за вексель \nКурс продажи векселя казначею: за один вексель вы получите 3 короны на любом уровне репутации', MenuId )
+    player:GossipSetText( 'ООС: Тут вы можете обменять короны на вексели и обратно. Векселями можно обмениваться с другими игроками.\n\n После обмены короны/вексели придут на почту. \n\nКурс покупки векселя у казначея: \n- дружелюбие - 5 корон за вексель\n- уважение - 4 короны за вексель\n- почтение - 3 короны за вексель \nКурс продажи векселя казначею: за один вексель вы получите 3 короны на любом уровне репутации', MenuId )
     player:GossipSendMenu(MenuId, object, MenuId) -- MenuId required for player gossip
 end
 
@@ -23,6 +23,7 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
         if (num > 30) then
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОШИБКА! Нельзя покупать или продавать более 30 векселей за раз |r");
             player:GossipComplete()
+            return false;
         end
 
         local crownsNeeded;
@@ -53,7 +54,8 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
         local num = tonumber(code);
         if (num > 30) then
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОШИБКА! Нельзя покупать или продавать более 30 векселей за раз |r");
-            player:GossipComplete()
+            player:GossipComplete();
+            return false;
         end
         local crownsToAdd = num * 3;
         if (player:HasItem(veksel, num)) then
