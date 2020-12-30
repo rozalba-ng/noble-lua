@@ -58,14 +58,14 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 		if Q then
 		--	Если игрок уже смешарик
 			if Q:GetUInt8(0) > 0 then
-				player:GossipMenuAddItem( 0, "<Сменить социальный класс.>", 1, 2, false, "ВСЯ РЕПУТАЦИЯ БУДЕТ ПОТЕРЯНА.\nВы не сможете бесплатно сменить социальный класс ещё раз." )
+				player:GossipMenuAddItem( 0, "<Сменить социальный класс.>", 1, 2, false, "Вы не сможете бесплатно сменить социальный класс ещё раз." )
 			end
 		end
 		player:GossipSetText( text, 13122001 )
 		player:GossipSendMenu( 13122001, creature )
 	elseif event == 3 then
 	--	Вывод госсипа при смене социальной роли
-		local text = "Обратите внимание - фракция Теней Штормграда доступна только для Вольных Жителей.\n\n|cff360009Вся накопленная репутация будет потеряна.\n\nВы не сможете бесплатно сменить социальный класс ещё раз.\n\n|rВыберите фракцию:"
+		local text = "Обратите внимание - фракция Теней Штормграда доступна только для Вольных Жителей.\n\n|cff360009При смене фракции вся накопленная репутация будет потеряна. Если вы не хотите менять фракцию - выберите ту, в которой находитесь сейчас.\n\nВы не сможете бесплатно сменить социальный класс ещё раз.\n\n|rВыберите доступную для данного социального класса фракцию:"
 		player:GossipMenuAddItem( 0, "Королевство Штормград", 2, 1, false, "Это ваш окончательный выбор." )
 		if player:GetData("ChangingSocialRole_Selected") == 91058 then
 		--	Игрок выбрал Вольного Жителя
@@ -103,8 +103,15 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 					]]
 					--	Настройка выполненных квестов
 						local role = player:GetData("ChangingSocialRole_Selected")
+						--	[!] Заметка к сбросу репутации:
+						--	Репутация сбрасывается только если игрок выбрал противоположную текущей фракцию.
 						if intid == 1 then
 						--	Королевство Штормград
+							if player:GetQuestStatus( entry_quest_thief ) == 6 then
+							--	Если игрок ранее был в "Тени Штормграда"
+								player:SetReputation( thiefs_faction, 0 )
+								player:SetReputation( law_faction, 0 )
+							end
 							player:RemoveQuest( entry_quest_thief )
 							player:RemoveQuest( entry_quest_law )
 							player:AddQuest( entry_quest_law )
@@ -112,6 +119,11 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 							player:RewardQuest( entry_quest_law )
 						elseif ( ( intid == 2 ) and ( role == 91058 ) ) then
 						--	Тени Штормграда
+							if player:GetQuestStatus( entry_quest_law ) == 6 then
+							--	Если игрок ранее был в "Королевство Штормград"
+								player:SetReputation( thiefs_faction, 0 )
+								player:SetReputation( law_faction, 0 )
+							end
 							player:RemoveQuest( entry_quest_thief )
 							player:RemoveQuest( entry_quest_law )
 							player:AddQuest( entry_quest_thief )
@@ -124,9 +136,6 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 						player:AddQuest( quests[ role ] )
 						player:CompleteQuest( quests[ role ] )
 						player:RewardQuest( quests[ role ] )
-					--	Установка нулевой репутации
-						player:SetReputation( thiefs_faction, 0 )
-						player:SetReputation( law_faction, 0 )
 					--	Махинации с аурами
 						for i = 1, #aura do
 							player:RemoveAura( aura[i] )
