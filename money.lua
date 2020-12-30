@@ -4,10 +4,12 @@ local entry_npc = 1211001
 --	NPC создающий зону с бонусом (Для общесерв ивентов)
 local entry_bonus_npc = 1211002
 
+local guildzone_aura = 91065
+
 --[[Every 15 minutes player recieve 10 copper. If pleyer is in guild, he auto-deposit 10 copper to guild, but resieve 5 additional copper]]
 local function calculateMoney()
 	local onlinePlayers = GetPlayersInWorld( 2 ); --[[ 2-neutral, both horde and aliance]]		
-	for _, player in ipairs( onlinePlayers ) do	
+	for _, player in ipairs( onlinePlayers ) do
 		if ( player:IsAFK() == false ) then
 		--	Добавление денег
 			player:ModifyMoney( 40 );
@@ -29,7 +31,7 @@ local function calculateMoney()
 				if f and player:GetPhaseMask() == 1 then
 				--	Игрок выполнил один из квестов и находится в 1 фазе
 					local zone, trueZone, r = player:GetZoneId(), false, 0
-					if ( zone == 1519) then
+					if ( zone == 1519 or player:HasAura(guildzone_aura) ) then
 					--	Игрок в Штормграде
 						r = 4
 						trueZone = true
@@ -42,7 +44,7 @@ local function calculateMoney()
 					--	Если время суперактива - идёт маленький бонус.
 						r = r + 3
 					end
---					if trueZone and player:GetNearestCreature( 30, entry_bonus_npc ) then
+--					if trueZone and player:HasAura(CREATIVE_PHASE_AURA) then
 --					--	Если рядом есть НПС дарующий бонус
 --						r = r + 2
 --					end
