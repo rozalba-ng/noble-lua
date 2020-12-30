@@ -30,6 +30,7 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
             crownsNeeded = num*5;
         else
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFУ вас недостаточно репутации для покупки векселей. Минимальная репутация: дружелюбие в одной из фракций Штормграда|r");
+            player:GossipComplete()
             return false;
         end
 
@@ -37,11 +38,13 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
             local item = player:AddItem(veksel, num);
             if(item == nil)then
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет места.|r");
+                player:GossipComplete()
                 return false;
             end
             player:RemoveItem(crown, crownsNeeded);
         else
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно корон для покупки нужного числа векселей. Требуемое число корон: |r" .. tostring(crownsNeeded));
+            player:GossipComplete()
         end
         OnGossipCharger(event, player, object)
     elseif (intid == 3) then
@@ -51,11 +54,13 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
             local item = player:AddItem(crown, crownsToAdd);
             if(item == nil)then
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет места.|r");
+                player:GossipComplete()
                 return false;
             end
             player:RemoveItem(veksel, num);
         else
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно векселей. Требуемое число векселей: |r" .. tostring(num));
+            player:GossipComplete()
         end
         OnGossipCharger(event, player, object)
     elseif (intid == 5) then
