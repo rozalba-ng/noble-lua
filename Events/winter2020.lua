@@ -2,6 +2,7 @@
 local SQL_databaseCreation = [[
 CREATE TABLE IF NOT EXISTS `Winter2020` (
 	`account` INT(10) UNSIGNED NOT NULL,
+	`character` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 	`behavior` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
 	`companion` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
 	`item` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
@@ -85,7 +86,7 @@ local function Gossip_Owl( event, player, creature, sender, intid )
 				text = "\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r, честное слово, и поэтому я хочу попросить у тебя |cff360009"..phrases[2][ T[2] ].."|r, рисовочку \"|cff360009"..phrases[3][ T[3] ].."|r\" и маленького надувного пони.\n\nС любовью, "..player:GetName()
 				player:GossipMenuAddItem( 0, "<Отправить письмо.>", 4, 1, false, "Только один из ваших персонажей может отправить письмо Дедушке Зиме. Вы уверены, что хотите отправить именно это письмо?" )
 			else
-				WorldDBQuery("REPLACE INTO Winter2020 ( account, behavior, companion, item ) values ("..player:GetAccountId()..","..T[1]..","..T[2]..","..T[3]..")")
+				WorldDBQuery("REPLACE INTO Winter2020 ( account, character, behavior, companion, item ) values ("..player:GetAccountId()..", "..player:GetGUIDLow()..", "..T[1]..","..T[2]..","..T[3]..")")
 				player:TalkingHead( creature, "Можешь считать, что твоё письмо уже доставлено." )
 				return
 			end
@@ -142,12 +143,13 @@ local items = {
 }
 
 local function OnLogin_Player( _, player )
-	local Q = WorldDBQuery( "SELECT account FROM Winter2020 WHERE account = "..player:GetAccountId().." AND issued = 0 " )
+	local Q = WorldDBQuery( "SELECT behavior, companion, item FROM Winter2020 WHERE character = "..player:GetGUIDLow().." AND issued = 0" )
 	if Q then
 		local text = Q:GetUInt8(0)
 		local companion = Q:GetUInt8(1)
 		local item = Q:GetUInt8(2)
-		SendMail( "Посылка от Дедушки Зимы.", items[1][text], player:GetGUIDLow(), 0, 65, 20, 0, 0, items[2][companion], 1, items[3][companion], 1, 600158, 1 )
+		SendMail( "Посылка от Дедушки Зимы.", items[1][text], player:GetGUIDLow(), 0, 65, 20, 0, 0, items[2][companion], 1, items[3][item], 1, 600158, 1 )
+		WorldDBQuery( "UPDATE winter2020 SET issued = 1 WHERE account = "..player:GetAccountId() )
 	end
 end
 RegisterPlayerEvent( 3, OnLogin_Player ) -- PLAYER_EVENT_ON_LOGIN
