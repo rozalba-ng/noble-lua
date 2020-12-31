@@ -268,7 +268,7 @@ local function Stage5( _, _, player )
 		UPQuestStage(player) --> 16
 	elseif stage == 16 then
 	--	Игрок снова нажимает на какао.
-		player:SendBroadcastMessage("|cff80d2ff\Вы забираете подарок.")
+		player:SendBroadcastMessage("|cff80d2ffВы забираете подарок.")
 		UPQuestStage(player) --> 17
 		player:RegisterEvent( Stage6, 300000, 1 )
 	else
