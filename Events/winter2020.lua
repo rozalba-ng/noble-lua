@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS `Winter2020` (
 	`behavior` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
 	`companion` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
 	`item` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
+	`issued` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
 	PRIMARY KEY (`account`)
 )
 COMMENT='Used for winter2020.lua'
@@ -41,15 +42,15 @@ local function Gossip_Owl( event, player, creature, sender, intid )
 	--	Отображение меню
 		if not ( player:GetTotalPlayedTime() > 14400 ) then
 		--	Игрок наиграл менее 4 часов на персонаже.
-			player:TalkingHead( creature, "Дедушка Зима тебя не знает." )
+			player:TalkingHead( creature, "Дедушка Зима ещё не знает тебя." )
 		else
 			local Q = WorldDBQuery( "SELECT account FROM Winter2020 WHERE account = "..player:GetAccountId() )
 			if Q then
 			--	Игрок уже отправлял письмо.
-				player:TalkingHead( creature, "Ты уже отправлял письмо Дедушке Зиме, "..player:GetName().."." )
+				player:TalkingHead( creature, "Дедушка Зима уже получил твое письмо, "..player:GetName().."." )
 			else
 				local text = "<Белоснежная сова выглядит весьма уставшей.>\n\nХочешь попросить что-то у Дедушки Зимы?\nЯ могу доставить ему твоё письмо, "..player:GetName().."."
-				player:GossipMenuAddItem( 0, "Здравствуйте! Вставить текст.", 0, 0 )
+				player:GossipMenuAddItem( 0, "Я хочу написать письмо Дедушке Зиме!", 0, 0 )
 				player:GossipSetText( text, 30122001 )
 				player:GossipSendMenu( 30122001, creature )
 			end
@@ -71,17 +72,17 @@ local function Gossip_Owl( event, player, creature, sender, intid )
 			player:SetData( "Winter2020", T )
 			local text
 			if sender == 1 then
-				text = "<Сова подозрительно смотрит на написанное вами...>\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r. Честное слово. И поэтому я хочу попросить у тебя..."
+				text = "\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r, честное слово, и поэтому я хочу попросить у тебя..."
 				player:GossipMenuAddItem( 0, "..."..phrases[2][1].."...", 2, 1 )
 				player:GossipMenuAddItem( 0, "..."..phrases[2][2].."...", 2, 2 )
 				player:GossipMenuAddItem( 0, "..."..phrases[2][3].."...", 2, 3 )
 			elseif sender == 2 then
-				text = "<Кажется Сова немного поседела...>\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r. Честное слово. И поэтому я хочу попросить у тебя |cff360009"..phrases[2][ T[2] ].."|r, рисовочку..."
+				text = "\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r, честное слово, и поэтому я хочу попросить у тебя |cff360009"..phrases[2][ T[2] ].."|r, рисовочку..."
 				player:GossipMenuAddItem( 0, "..."..phrases[3][1].."...", 3, 1 )
 				player:GossipMenuAddItem( 0, "..."..phrases[3][2].."...", 3, 2 )
 				player:GossipMenuAddItem( 0, "..."..phrases[3][3].."...", 3, 3 )
 			elseif sender == 3 then
-				text = "<Вы заканчиваете своё письмо. Сова готова отнести его.>\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r. Честное слово. И поэтому я хочу попросить у тебя |cff360009"..phrases[2][ T[2] ].."|r, рисовочку \"|cff360009"..phrases[3][ T[3] ].."|r\" и маленького надувного пони.\n\nС любовью, "..player:GetName()
+				text = "\n\nДорогой Дедушка Зима! В этом году я вёл себя |cff360009"..phrases[1][ T[1] ].."|r, честное слово, и поэтому я хочу попросить у тебя |cff360009"..phrases[2][ T[2] ].."|r, рисовочку \"|cff360009"..phrases[3][ T[3] ].."|r\" и маленького надувного пони.\n\nС любовью, "..player:GetName()
 				player:GossipMenuAddItem( 0, "<Отправить письмо.>", 4, 1, false, "Только один из ваших персонажей может отправить письмо Дедушке Зиме. Вы уверены, что хотите отправить именно это письмо?" )
 			else
 				WorldDBQuery("REPLACE INTO Winter2020 ( account, behavior, companion, item ) values ("..player:GetAccountId()..","..T[1]..","..T[2]..","..T[3]..")")
@@ -119,3 +120,34 @@ for i = 1, #creatures do
 	RegisterCreatureGossipEvent( creatures[i], 1, Gossip_WinterPet ) -- GOSSIP_EVENT_ON_HELLO
 	RegisterCreatureGossipEvent( creatures[i], 2, Gossip_WinterPet ) -- GOSSIP_EVENT_ON_SELECT
 end
+
+--[[	ВХОД ИГРОКА В МИР	]]--
+
+local items = {
+	[1] = {
+		"Дорогой друг! Я с радостью слежу за твоими успехами и желаю тебе дальнейших процветаний! Пускай эти подарки принесут тебе праздничное настроение.\n\n  Дедушка Зима.",
+		"Дорогой друг! Я вижу, кое-кто в этом году вел себя не самым лучшим образом, чем сильно огорчил мое старческое сердце. По правде сказать, сначала я хотел положить в твой подарок большой кусок угля, но в последний момент передумал. Этот год был непростым, так что каждый заслужил немного новогоднего настроения. Счастливого зимнего покрова!",
+		"Дорогой друг! Я рад, что ты стойко движешься к своим целям и не сворачиваешь с пути! Пускай эти подарки принесут тебе праздничное настроение.\n\n  Дедушка Зима.",
+	},
+	[2] = {
+		1000100,
+		1000101,
+		1000102,
+	},
+	[3] = {
+		5057393,
+		5057394,
+		5057392,
+	},
+}
+
+local function OnLogin_Player( _, player )
+	local Q = WorldDBQuery( "SELECT account FROM Winter2020 WHERE account = "..player:GetAccountId().." AND issued = 0 " )
+	if Q then
+		local text = Q:GetUInt8(0)
+		local companion = Q:GetUInt8(1)
+		local item = Q:GetUInt8(2)
+		SendMail( "Посылка от Дедушки Зимы.", items[1][text], player:GetGUIDLow(), 0, 65, 20, 0, 0, items[2][companion], 1, items[3][companion], 1, 600158, 1 )
+	end
+end
+RegisterPlayerEvent( 3, OnLogin_Player ) -- PLAYER_EVENT_ON_LOGIN
