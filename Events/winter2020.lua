@@ -7,7 +7,9 @@ CREATE TABLE IF NOT EXISTS `Winter2020` (
 	`companion` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
 	`item` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
 	`issued` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
-	PRIMARY KEY (`account`)
+	`quest_stage` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY (`account`),
+	UNIQUE INDEX `character_guid` (`character_guid`)
 )
 COMMENT='Used for winter2020.lua'
 COLLATE='latin1_swedish_ci'
@@ -103,10 +105,12 @@ RegisterCreatureGossipEvent( entry_owl, 2, Gossip_Owl ) -- GOSSIP_EVENT_ON_SELEC
 local function Gossip_WinterPet( event, player, creature )
 	if event == 1 then
 		local text = "<Дедушка Зима прислал вам это маленькое существо.>"
-		player:GossipSetText( text, 30122004 )
 		if ( not player:GetData("WinterPet2020") ) or (  ( os.time() - player:GetData("WinterPet2020") ) > 60  ) then
 			player:GossipMenuAddItem( 0, "<Использовать безобидную зимнюю магию.>", 1, 1 )
+		else
+			text = text.."\n\n<Зимняя магия перезаряжается.>"
 		end
+		player:GossipSetText( text, 30122004 )
 		player:GossipSendMenu( 30122004, creature )
 	else
 		player:GossipComplete()
@@ -153,3 +157,111 @@ local function OnLogin_Player( _, player )
 	end
 end
 RegisterPlayerEvent( 3, OnLogin_Player ) -- PLAYER_EVENT_ON_LOGIN
+
+--[[	СУПЕРСЕКРЕТНЫЙ КВЕСТ	]]--
+
+local entry_ice = 5049499
+local entry_trampoline = 5049500
+local entry_cacao = 5049501
+local entry_gnome = 9929896
+local entry_hammer = 5049502
+--	|cff3da9e3
+
+local function GetQuestStage( player )
+	local Q = WorldDBQuery( "SELECT quest_stage FROM Winter2020 WHERE account = "..player:GetAccountId() )
+	if Q then
+		return Q:UInt8(0)
+	end
+	return 0
+end
+
+local function UPQuestStage( player )
+	local stage = GetQuestStage(player)
+	WorldDBQuery( "REPLACE INTO Winter2020 ( account, quest_stage ) VALUES ( "..player:GetAccountId()..", "..(stage-1).." )" )
+end
+
+local function Stage1( _, _, player )
+	local stage = GetQuestStage(player)
+	if stage == 0 then
+	--	Игрок начинает квест.
+		player:SendBroadcastMessage("|cff3da9e3\"Это что, сосулька? Откуда она здесь? Сбить бы её, да вот только чем..\"")
+		UPQuestStage(player) --> 1
+	elseif stage == 2 then
+	--	Игрок пришел с молотком.
+		player:SendBroadcastMessage("|cff3da9e3Сосулька не поддаётся, но круто звенит, когда вы ударяете по ней.")
+		UPQuestStage(player) --> 3
+	elseif stage == 3 then
+	--	Игрок дубасит сосульку.
+		player:SendBroadcastMessage("|cff3da9e3Вы довольно ударяете по сосульке ещё несколько раз.")
+		UPQuestStage(player) --> 4
+	elseif stage == 4 then
+	--	Игрок дубасит сосульку 2.
+		player:SendBroadcastMessage("|cff3da9e3Кажется она начала звенеть громче.")
+		UPQuestStage(player) --> 5
+	elseif stage == 5 then
+	--	Игрок дубасит сосульку 3.
+		player:SendBroadcastMessage("|cff3da9e3...")
+		UPQuestStage(player) --> 6
+	elseif stage == 6 then
+	--	Игрок дубасит сосульку 4.
+		player:SendBroadcastMessage("|cff3da9e3Кажется звон исходит из стоящего рядом портала. В вашей голове возникают два слова: \n\"Старый мир\".")
+		UPQuestStage(player) --> 7
+	else
+	--	Игрок тут чисто по приколу.
+		player:SendBroadcastMessage("|cff3da9e3Сосулька всё ещё здесь.")
+	end
+end
+RegisterGameObjectEvent( entry_ice, 14, Stage1 ) -- GAMEOBJECT_EVENT_ON_USE
+
+local function Stage2( _, _, player )
+	local stage = GetQuestStage(player)
+	if stage == 1 then
+	--	Игрок нашёл молоток.
+		player:SendBroadcastMessage("|cff3da9e3\"Молоток выглядит крепким. Может теперь стукнуть им по сосульке?\"")
+		UPQuestStage(player) --> 2
+	elseif stage == 2 then
+	--	Игрок уже с молотком.
+		player:SendBroadcastMessage("|cff3da9e3Вы уже взяли молоток. Теперь надо найти то что можно хорошо стукнуть.")
+	else
+	--	Игрок тут чисто по приколу.
+		player:SendBroadcastMessage("|cff3da9e3\"Воровать чужие молотки - не самая лучшая идея.\"")
+	end
+end
+RegisterGameObjectEvent( entry_hammer, 14, Stage2 ) -- GAMEOBJECT_EVENT_ON_USE
+
+local function Stage3( _, object, player )
+	math.randomseed( os.time()+player:GetAccountId() )
+	local x,y,z = object:GetLocation()
+	x = x + math.random(-1,1)
+	y = y + math.random(-1,1)
+	z = z + 1.4
+	player:MoveJump( x, y, z, 0.2, 40 )
+	local creature = player:GetNearestCreature( 40, entry_gnome )
+	if creature then
+		local stage = GetQuestStage(player)
+		if stage == 7 then
+		--	Игрок только пришёл.
+			player:TalkingHead( creature, "Эй! Эй, ты!.." )
+			UPQuestStage(player) --> 8
+		elseif stage == 8 then
+		--	Игрок прыгает 1.
+			player:TalkingHead( creature, "...Послушай, кажется я застрял тут надолго!.." )
+			UPQuestStage(player) --> 9
+		elseif stage == 9 then
+		--	Игрок прыгает 2.
+			player:TalkingHead( creature, "...Поэтому ты можешь помочь мне, если хочешь!.." )
+			UPQuestStage(player) --> 10
+		elseif stage == 10 then
+		--	Игрок прыгает 3.
+			player:TalkingHead( creature, "...И даже помочь Дедушке Зиме! Мы потеряли некоторые подарки.." )
+			UPQuestStage(player) --> 11
+		elseif stage == 11 then
+			player:TalkingHead( creature, "...Первый подарок находится на Стоянке беженцев.." )
+			UPQuestStage(player) --> 12
+		elseif stage == 12 then
+			player:TalkingHead( creature, "...ищи его в таверне! Он отведёт тебя к остальным!" )
+			UPQuestStage(player) --> 13
+		end
+	end
+end
+RegisterGameObjectEvent( entry_trampoline, 14, Stage3 ) -- GAMEOBJECT_EVENT_ON_USE
