@@ -177,7 +177,7 @@ end
 
 local function UPQuestStage( player )
 	local stage = GetQuestStage(player)
-	WorldDBQuery( "REPLACE INTO Winter2020 ( account, quest_stage ) VALUES ( "..player:GetAccountId()..", "..(stage-1).." )" )
+	WorldDBQuery( "REPLACE INTO Winter2020 ( account, quest_stage ) VALUES ( "..player:GetAccountId()..", "..(stage+1).." )" )
 end
 
 local function Stage1( _, _, player )
