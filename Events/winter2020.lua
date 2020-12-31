@@ -302,7 +302,7 @@ local function Stage7( event, player, creature, sender, intid, code )
 				player:StartTaxi(taxi)
 			else
 				creature:AddAura( 21847, player )
-				creature:SendChatMessageToPlayer( 12, 0, Roulette( "Не-а.", "Не то!", "Безуспешная попытка.", "Не верно.", "Нет.", "Попробуй ещё раз.", "Ух... Не то.", ), player )
+				creature:SendChatMessageToPlayer( 12, 0, Roulette( "Не-а.", "Не то!", "Безуспешная попытка.", "Не верно.", "Нет.", "Попробуй ещё раз.", "Ух... Не то." ), player )
 				player:GossipComplete()
 			end
 		else
