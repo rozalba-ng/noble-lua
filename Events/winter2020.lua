@@ -354,8 +354,8 @@ local function Stage9( event, player, creature, sender, intid )
 	else
 		local Q = WorldDBQuery("SELECT COUNT(*) FROM Winter2020 WHERE quest_stage > 22")
 		local count = Q:GetInt32(0)
-		if count > 30 then
-		-- Квест выполнило > 30 игроков
+		if count > 55 then
+		-- Квест выполнило > 55 игроков
 			UPQuestStage(player, 23) --> 23
 			player:TalkingHead( creature, "А-р-р! Ты вернул все подарки и спас детишек ждущих Зимний Покров. Дедушка Зима этого не забудет, "..player:GetName() )
 		elseif player:HasEmptySlot() then
