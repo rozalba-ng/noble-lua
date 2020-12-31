@@ -170,7 +170,7 @@ local entry_hammer = 5049502
 local function GetQuestStage( player )
 	local Q = WorldDBQuery( "SELECT quest_stage FROM Winter2020 WHERE account = "..player:GetAccountId() )
 	if Q then
-		return Q:UInt8(0)
+		return Q:GetUInt8(0)
 	end
 	return 0
 end
