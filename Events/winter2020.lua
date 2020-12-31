@@ -356,10 +356,17 @@ RegisterPlayerEvent( 3, OnLogin_Player ) -- PLAYER_EVENT_ON_LOGIN
 
 local function AntiGOB(event, player, item, target)
 	local x,y = player:GetX(), player:GetY()
+	print("event")
 	if ( player:GetMapId() == 1 ) and ( x > 7436 and x < 8003 ) and ( y < -3215 and y > -3354 ) then
+		print("yes")
         player:SendBroadcastMessage("|cff80d2ff\"Тут и так полная неразбериха. Не думаю, что установить несколько ГОшек здесь - хорошая идея.\n")
         return false
     end
+	print( player:GetMapId )
+	print( x > 7436 )
+	print( x < 8003 )
+	print( y < -3215 )
+	print( y > -3354 )
 end
 
 local function RegisterEvent_AntiGOB()
@@ -367,6 +374,7 @@ local function RegisterEvent_AntiGOB()
 	for i = 1, Q:GetRowCount() do
 		local entry = Q:GetInt32(0)
 		RegisterItemEvent( entry, 2, AntiGOB )
+		print(i)
 		Q:NextRow()
 	end
 end
