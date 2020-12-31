@@ -165,7 +165,7 @@ local entry_trampoline = 5049500
 local entry_cacao = 5049501
 local entry_gnome = 9929896
 local entry_hammer = 5049502
---	|cff3da9e3
+--	|cff80d2ff
 
 local function GetQuestStage( player )
 	local Q = WorldDBQuery( "SELECT quest_stage FROM Winter2020 WHERE account = "..player:GetAccountId() )
@@ -184,31 +184,31 @@ local function Stage1( _, _, player )
 	local stage = GetQuestStage(player)
 	if stage == 0 then
 	--	Игрок начинает квест.
-		player:SendBroadcastMessage("|cff3da9e3\"Это что, сосулька? Откуда она здесь? Сбить бы её, да вот только чем..\"")
+		player:SendBroadcastMessage("|cff80d2ff\"Это что, сосулька? Откуда она здесь? Сбить бы её, да вот только чем..\"")
 		UPQuestStage(player) --> 1
 	elseif stage == 2 then
 	--	Игрок пришел с молотком.
-		player:SendBroadcastMessage("|cff3da9e3Сосулька не поддаётся, но круто звенит, когда вы ударяете по ней.")
+		player:SendBroadcastMessage("|cff80d2ffСосулька не поддаётся, но круто звенит, когда вы ударяете по ней.")
 		UPQuestStage(player) --> 3
 	elseif stage == 3 then
 	--	Игрок дубасит сосульку.
-		player:SendBroadcastMessage("|cff3da9e3Вы довольно ударяете по сосульке ещё несколько раз.")
+		player:SendBroadcastMessage("|cff80d2ffВы довольно ударяете по сосульке ещё несколько раз.")
 		UPQuestStage(player) --> 4
 	elseif stage == 4 then
 	--	Игрок дубасит сосульку 2.
-		player:SendBroadcastMessage("|cff3da9e3Кажется она начала звенеть громче.")
+		player:SendBroadcastMessage("|cff80d2ffКажется она начала звенеть громче.")
 		UPQuestStage(player) --> 5
 	elseif stage == 5 then
 	--	Игрок дубасит сосульку 3.
-		player:SendBroadcastMessage("|cff3da9e3...")
+		player:SendBroadcastMessage("|cff80d2ff...")
 		UPQuestStage(player) --> 6
 	elseif stage == 6 then
 	--	Игрок дубасит сосульку 4.
-		player:SendBroadcastMessage("|cff3da9e3Кажется звон исходит из стоящего рядом портала. В вашей голове возникают два слова: \n\"Старый мир\".")
+		player:SendBroadcastMessage("|cff80d2ffКажется звон исходит из стоящего рядом портала. В вашей голове возникают два слова: \n\"Старый мир\".")
 		UPQuestStage(player) --> 7
 	else
 	--	Игрок тут чисто по приколу.
-		player:SendBroadcastMessage("|cff3da9e3Сосулька всё ещё здесь.")
+		player:SendBroadcastMessage("|cff80d2ffСосулька всё ещё здесь.")
 	end
 end
 RegisterGameObjectEvent( entry_ice, 14, Stage1 ) -- GAMEOBJECT_EVENT_ON_USE
@@ -217,14 +217,14 @@ local function Stage2( _, _, player )
 	local stage = GetQuestStage(player)
 	if stage == 1 then
 	--	Игрок нашёл молоток.
-		player:SendBroadcastMessage("|cff3da9e3\"Молоток выглядит крепким. Может теперь стукнуть им по сосульке?\"")
+		player:SendBroadcastMessage("|cff80d2ff\"Молоток выглядит крепким. Может теперь стукнуть им по сосульке?\"")
 		UPQuestStage(player) --> 2
 	elseif stage == 2 then
 	--	Игрок уже с молотком.
-		player:SendBroadcastMessage("|cff3da9e3Вы уже взяли молоток. Теперь надо найти то что можно хорошо стукнуть.")
+		player:SendBroadcastMessage("|cff80d2ffВы уже взяли молоток. Теперь надо найти то что можно хорошо стукнуть.")
 	else
 	--	Игрок тут чисто по приколу.
-		player:SendBroadcastMessage("|cff3da9e3\"Воровать чужие молотки - не самая лучшая идея.\"")
+		player:SendBroadcastMessage("|cff80d2ff\"Воровать чужие молотки - не самая лучшая идея.\"")
 	end
 end
 RegisterGameObjectEvent( entry_hammer, 14, Stage2 ) -- GAMEOBJECT_EVENT_ON_USE
