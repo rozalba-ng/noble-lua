@@ -135,6 +135,8 @@ local entry_gnome = 9929896
 local entry_hammer = 5049502
 local entry_gift = 5049503
 local entry_acostar = 9921754
+local entry_money = 5049504
+local entry_yeti = 9929897
 --	|cff80d2ff
 
 local function GetQuestStage( player )
@@ -145,9 +147,8 @@ local function GetQuestStage( player )
 	return 0
 end
 
-local function UPQuestStage( player )
-	local stage = GetQuestStage(player)
-	WorldDBQuery( "REPLACE INTO Winter2020 ( account, quest_stage ) VALUES ( "..player:GetAccountId()..", "..(stage+1).." )" )
+local function UPQuestStage( player, stage )
+	WorldDBQuery( "REPLACE INTO Winter2020 ( account, quest_stage ) VALUES ( "..player:GetAccountId()..", "..stage.." )" )
 end
 
 local function Stage1( _, _, player )
@@ -158,27 +159,27 @@ local function Stage1( _, _, player )
 	if stage == 0 then
 	--	Игрок начинает квест.
 		player:SendBroadcastMessage("|cff80d2ff\"Это что, сосулька? Откуда она здесь? Сбить бы её, да вот только чем..\"")
-		UPQuestStage(player) --> 1
+		UPQuestStage(player,1) --> 1
 	elseif stage == 2 then
 	--	Игрок пришел с молотком.
 		player:SendBroadcastMessage("|cff80d2ffСосулька не поддаётся, но круто звенит, когда вы ударяете по ней.")
-		UPQuestStage(player) --> 3
+		UPQuestStage(player,3) --> 3
 	elseif stage == 3 then
 	--	Игрок дубасит сосульку.
 		player:SendBroadcastMessage("|cff80d2ffВы довольно ударяете по сосульке ещё несколько раз.")
-		UPQuestStage(player) --> 4
+		UPQuestStage(player,4) --> 4
 	elseif stage == 4 then
 	--	Игрок дубасит сосульку 2.
 		player:SendBroadcastMessage("|cff80d2ffКажется она начала звенеть громче.")
-		UPQuestStage(player) --> 5
+		UPQuestStage(player,5) --> 5
 	elseif stage == 5 then
 	--	Игрок дубасит сосульку 3.
 		player:SendBroadcastMessage("|cff80d2ff...")
-		UPQuestStage(player) --> 6
+		UPQuestStage(player,6) --> 6
 	elseif stage == 6 then
 	--	Игрок дубасит сосульку 4.
 		player:SendBroadcastMessage("|cff80d2ffКажется звон исходит из стоящего рядом портала. В вашей голове возникают два слова: \n\"|cff8880ffСтарый мир|r\".")
-		UPQuestStage(player) --> 7
+		UPQuestStage(player,7) --> 7
 	else
 	--	Игрок тут чисто по приколу.
 		player:SendBroadcastMessage("|cff80d2ffСосулька всё ещё здесь.")
@@ -191,7 +192,7 @@ local function Stage2( _, _, player )
 	if stage == 1 then
 	--	Игрок нашёл молоток.
 		player:SendBroadcastMessage("|cff80d2ff\"Молоток выглядит крепким. Может теперь стукнуть им по сосульке?\"")
-		UPQuestStage(player) --> 2
+		UPQuestStage(player,2) --> 2
 	elseif stage == 2 then
 	--	Игрок уже с молотком.
 		player:SendBroadcastMessage("|cff80d2ffВы уже взяли молоток. Теперь надо найти то, что можно хорошо стукнуть.")
@@ -215,25 +216,25 @@ local function Stage3( _, object, player )
 		if stage == 7 then
 		--	Игрок только пришёл.
 			player:TalkingHead( creature, "Эй! Эй, ты!.." )
-			UPQuestStage(player) --> 8
+			UPQuestStage(player,8) --> 8
 		elseif stage == 8 then
 		--	Игрок прыгает 1.
 			player:TalkingHead( creature, "...Послушай, кажется я застрял тут надолго!.." )
-			UPQuestStage(player) --> 9
+			UPQuestStage(player,9) --> 9
 		elseif stage == 9 then
 		--	Игрок прыгает 2.
 			player:TalkingHead( creature, "...Поэтому ты можешь помочь мне, если хочешь!.." )
-			UPQuestStage(player) --> 10
+			UPQuestStage(player,10) --> 10
 		elseif stage == 10 then
 		--	Игрок прыгает 3.
 			player:TalkingHead( creature, "...И даже помочь Дедушке Зиме! Мы потеряли некоторые подарки.." )
-			UPQuestStage(player) --> 11
+			UPQuestStage(player,11) --> 11
 		elseif stage == 11 then
 			player:TalkingHead( creature, "...Первый подарок находится на Стоянке беженцев.." )
-			UPQuestStage(player) --> 12
+			UPQuestStage(player,12) --> 12
 		elseif stage == 12 then
 			player:TalkingHead( creature, "...ищи его в таверне! Он отведёт тебя к остальным!" )
-			UPQuestStage(player) --> 13
+			UPQuestStage(player,13) --> 13
 		end
 	end
 end
@@ -244,11 +245,11 @@ local function Stage4( _, _, player )
 	if stage == 13 then
 	--	Игрок только пришёл.
 		player:SendBroadcastMessage("|cff80d2ffВокруг мрачно, будто вы снова попали в Гилнеас.")
-		UPQuestStage(player) --> 14
+		UPQuestStage(player,14) --> 14
 	elseif stage == 14 then
 	--	Игрок снова нажимает на какао.
 		player:SendBroadcastMessage("|cff80d2ff\"Это какао - единственное, что походит на подарок к Зимнему Покрову. Я возьму его.\"")
-		UPQuestStage(player) --> 15
+		UPQuestStage(player,15) --> 15
 	else
 	--	Игрок тут чисто по приколу.
 		player:SendBroadcastMessage("|cff80d2ff...")
@@ -259,7 +260,7 @@ RegisterGameObjectEvent( entry_cacao, 14, Stage4 ) -- GAMEOBJECT_EVENT_ON_USE
 local function Stage6( _,_,_, player )
 	if GetQuestStage(player) == 17 then
 		player:SendBroadcastMessage("|cff80d2ff\"Ну и что делать дальше? А главное - кто украл эти подарки и зачем разбросал их по миру?\"\n|cff80d2ff...\n|cff80d2ff\"Может задание не работает? Мне нужно найти Акостара на лунной поляне.\"")
-		UPQuestStage(player) --> 18
+		UPQuestStage(player,18) --> 18
 	end
 end
 
@@ -268,11 +269,11 @@ local function Stage5( _, _, player )
 	if stage == 15 then
 	--	Игрок только пришёл.
 		player:SendBroadcastMessage("|cff80d2ff\"Подарок тикает, а значит внутри бомба или часы, но наверное всё же бомба..\"")
-		UPQuestStage(player) --> 16
+		UPQuestStage(player,16) --> 16
 	elseif stage == 16 then
 	--	Игрок снова нажимает на какао.
 		player:SendBroadcastMessage("|cff80d2ffВы забираете подарок.")
-		UPQuestStage(player) --> 17
+		UPQuestStage(player,17) --> 17
 		player:RegisterEvent( Stage6, 300000, 1 )
 	else
 	--	Игрок тут чисто по приколу.
@@ -300,7 +301,7 @@ local function Stage7( event, player, creature, sender, intid, code )
 			if code == "7819" then
 				if GetQuestStage(player) == 18 then
 					player:TalkingHead( creature, "Добро пожаловать в следующий этап!" )
-					UPQuestStage(player) --> 19
+					UPQuestStage(player,19) --> 19
 				end
 				player:StartTaxi(taxi)
 			else
@@ -315,6 +316,57 @@ local function Stage7( event, player, creature, sender, intid, code )
 end
 RegisterCreatureGossipEvent( entry_acostar, 1, Stage7 ) -- GOSSIP_EVENT_ON_HELLO
 RegisterCreatureGossipEvent( entry_acostar, 2, Stage7 ) -- GOSSIP_EVENT_ON_SELECT
+
+local function Stage8( _, _, player )
+	local stage = GetQuestStage(player)
+	if stage == 19 then
+	--	Игрок нашёл монетки.
+		player:SendBroadcastMessage("|cff80d2ff\"Ого! Да эти монеты будто бы ледяные.\"")
+		UPQuestStage(player,20) --> 20
+	elseif stage == 20 then
+	--	Игрок снова нажимает на какао.
+		player:SendBroadcastMessage("|cff80d2ffВы забираете одну из монет и оглядываетесь по сторонам.")
+		UPQuestStage(player,21) --> 21
+	elseif stage == 21 then
+		player:SendBroadcastMessage("|cff80d2ff\"Кто мог всё это украсть, а потом выбросить? Ну конечно йети с лунной поляны. Нужно найти его и хорошенько проучить.\"")
+		UPQuestStage(player,22) --> 22
+	else
+	--	Игрок тут чисто по приколу.
+		player:SendBroadcastMessage("|cff80d2ffОчень холодные.")
+	end
+end
+RegisterGameObjectEvent( entry_money, 14, Stage5 ) -- GAMEOBJECT_EVENT_ON_USE
+
+local function Stage9( event, player, creature, sender, intid )
+	if event == 1 then
+		local text = "Что я здесь делаю? Прячусь, конечно! Кхм..."
+		if ( GetQuestStage(player) >= 18 and GetQuestStage(player) <= 20 ) then
+			text = text.."\n\nА-р-р! О нет, ладно, я сдаюсь. Ты победил, храбрый герой."
+			player:GossipMenuAddItem( 0, "<Завершить задание.>", 1, 1, true )
+		else
+			text = text.."\n\nНе мешайте, пожалуйста. Мы с вами не знакомы."
+		end
+		player:GossipSetText( text, 31122001 )
+		player:GossipSendMenu( 31122001, creature )
+	else
+		local Q = WorldDBQuery("SELECT COUNT(*) FROM Winter2020 WHERE quest_stage > 22")
+		local count = Q:GetInt32(0)
+		if count > 2 then
+		-- Квест выполнило > 50 игроков
+			UPQuestStage(player, 23) --> 23
+			player:TalkingHead( creature, "А-р-р! Ты вернул все подарки и спас детишек ждущих Зимний Покров. Дедушка Зима этого не забудет, "..player:GetName() )
+		elseif player:HasEmptySlot() then
+			UPQuestStage(player, 24) --> 24
+			player:TalkingHead( creature, "А-р-р! Одним из первых ты вернул все подарки и спас детишек ждущих Зимний Покров. У меня есть награда для тебя..." )
+			player:AddItem( 499937, 1 )
+		else
+			player:GossipComplete()
+			player:TalkingHead( creature, "Вот твоя награда! Постой... В твоих сумках совсем не осталось места." )
+		end
+	end
+end
+RegisterCreatureGossipEvent( entry_yeti, 1, Stage7 ) -- GOSSIP_EVENT_ON_HELLO
+RegisterCreatureGossipEvent( entry_yeti, 2, Stage7 ) -- GOSSIP_EVENT_ON_SELECT
 
 --[[	ВХОД ИГРОКА В МИР	]]--
 
