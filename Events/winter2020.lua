@@ -114,7 +114,7 @@ local function Gossip_WinterPet( event, player, creature )
 		player:AddAura( 56137, player )
 	end
 end
-local creatures = { 1000197, 1000196, 1000198 }
+local creatures = { 1000200, 1000201, 1000202 }
 for i = 1, #creatures do
 	RegisterCreatureGossipEvent( creatures[i], 1, Gossip_WinterPet ) -- GOSSIP_EVENT_ON_HELLO
 	RegisterCreatureGossipEvent( creatures[i], 2, Gossip_WinterPet ) -- GOSSIP_EVENT_ON_SELECT
