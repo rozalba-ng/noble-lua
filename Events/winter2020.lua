@@ -362,7 +362,7 @@ local function AntiGOB(event, player, item, target)
         player:SendBroadcastMessage("|cff80d2ff\"Тут и так полная неразбериха. Не думаю, что установить несколько ГОшек здесь - хорошая идея.\n")
         return false
     end
-	print( player:GetMapId )
+	print( player:GetMapId() )
 	print( x > 7436 )
 	print( x < 8003 )
 	print( y < -3215 )
