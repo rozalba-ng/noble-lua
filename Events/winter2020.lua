@@ -152,6 +152,9 @@ end
 
 local function Stage1( _, _, player )
 	local stage = GetQuestStage(player)
+	if player:GetGMRank() == 1 then
+		return
+	end
 	if stage == 0 then
 	--	Игрок начинает квест.
 		player:SendBroadcastMessage("|cff80d2ff\"Это что, сосулька? Откуда она здесь? Сбить бы её, да вот только чем..\"")
@@ -255,7 +258,7 @@ RegisterGameObjectEvent( entry_cacao, 14, Stage4 ) -- GAMEOBJECT_EVENT_ON_USE
 
 local function Stage6( _,_,_, player )
 	if GetQuestStage(player) == 17 then
-		player:SendBroadcastMessage("|cff80d2ff\"Ну и что делать дальше? А главное - кто украл эти подарки и зачем разбросал их по миру?\"\n|cff80d2ff\"Может задание не работает? Мне нужно найти Акостара на лунной поляне.\"")
+		player:SendBroadcastMessage("|cff80d2ff\"Ну и что делать дальше? А главное - кто украл эти подарки и зачем разбросал их по миру?\"\n|cff80d2ff...\n|cff80d2ff\"Может задание не работает? Мне нужно найти Акостара на лунной поляне.\"")
 		UPQuestStage(player) --> 18
 	end
 end
@@ -348,3 +351,23 @@ local function OnLogin_Player( _, player )
 	end
 end
 RegisterPlayerEvent( 3, OnLogin_Player ) -- PLAYER_EVENT_ON_LOGIN
+
+--[[	ОГРАНИЧЕНИЕ СТРОИТЕЛЬСТВА	]]--
+
+local function AntiGOB(event, player, item, target)
+	local x,y = player:GetX(), player:GetY()
+	if ( player:GetMapId() == 1 ) and ( x > 7436 and x < 8003 ) and ( y < -3215 and y > -3354 ) then
+        player:SendBroadcastMessage("|cff80d2ff\"Тут и так полная неразбериха. Не думаю, что установить несколько ГОшек здесь - хорошая идея.\n")
+        return false
+    end
+end
+
+local function RegisterEvent_AntiGOB()
+	local Q = WorldDBQuery("SELECT entry FROM item_template WHERE entry > 500000 and entry < 600000")
+	for i = 1, Q:GetRowCount() do
+		local entry = Q:GetInt32(0)
+		RegisterItemEvent( entry, 2, AntiGOB )
+		Q:NextRow()
+	end
+end
+RegisterServerEvent( 33, RegisterEvent_AntiGOB ) -- ELUNA_EVENT_ON_LUA_STATE_OPEN
