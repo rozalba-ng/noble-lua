@@ -149,7 +149,7 @@ local function GetQuestStage( player )
 end
 
 local function UPQuestStage( player, stage )
-	WorldDBQuery( "REPLACE INTO Winter2020 ( account, quest_stage ) VALUES ( "..player:GetAccountId()..", "..stage.." )" )
+	WorldDBQuery( "UPDATE Winter2020 SET quest_stage = "..stage.." WHERE account = "..player:GetAccountId() )
 end
 
 local function Stage1( _, _, player )
@@ -159,6 +159,8 @@ local function Stage1( _, _, player )
 	end
 	if stage == 0 then
 	--	Игрок начинает квест.
+		local Q = WorldDBQuery( "SELECT quest_stage FROM Winter2020 WHERE account = "..player:GetAccountId() )
+		if not Q then return false end
 		player:SendBroadcastMessage("|cff80d2ff\"Это что, сосулька? Откуда она здесь? Сбить бы её, да вот только чем..\"")
 		UPQuestStage(player,1) --> 1
 	elseif stage == 2 then
