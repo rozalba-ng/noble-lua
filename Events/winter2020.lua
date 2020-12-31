@@ -335,7 +335,7 @@ local function Stage8( _, _, player )
 		player:SendBroadcastMessage("|cff80d2ffОчень холодные.")
 	end
 end
-RegisterGameObjectEvent( entry_money, 14, Stage5 ) -- GAMEOBJECT_EVENT_ON_USE
+RegisterGameObjectEvent( entry_money, 14, Stage8 ) -- GAMEOBJECT_EVENT_ON_USE
 
 local function Stage9( event, player, creature, sender, intid )
 	if event == 1 then
@@ -365,8 +365,8 @@ local function Stage9( event, player, creature, sender, intid )
 		end
 	end
 end
-RegisterCreatureGossipEvent( entry_yeti, 1, Stage7 ) -- GOSSIP_EVENT_ON_HELLO
-RegisterCreatureGossipEvent( entry_yeti, 2, Stage7 ) -- GOSSIP_EVENT_ON_SELECT
+RegisterCreatureGossipEvent( entry_yeti, 1, Stage9 ) -- GOSSIP_EVENT_ON_HELLO
+RegisterCreatureGossipEvent( entry_yeti, 2, Stage9 ) -- GOSSIP_EVENT_ON_SELECT
 
 --[[	ВХОД ИГРОКА В МИР	]]--
 
