@@ -149,7 +149,7 @@ local function GetQuestStage( player )
 end
 
 local function UPQuestStage( player, stage )
-	WorldDBQuery( "REPLACE INTO Winter2020 ( account, quest_stage ) VALUES ( "..player:GetAccountId()..", "..stage.." )" )
+	WorldDBQuery( "UPDATE Winter2020 SET quest_stage = "..stage.." WHERE account = "..player:GetAccountId() )
 end
 
 local function Stage1( _, _, player )
@@ -159,6 +159,8 @@ local function Stage1( _, _, player )
 	end
 	if stage == 0 then
 	--	Игрок начинает квест.
+		local Q = WorldDBQuery( "SELECT quest_stage FROM Winter2020 WHERE account = "..player:GetAccountId() )
+		if not Q then return false end
 		player:SendBroadcastMessage("|cff80d2ff\"Это что, сосулька? Откуда она здесь? Сбить бы её, да вот только чем..\"")
 		UPQuestStage(player,1) --> 1
 	elseif stage == 2 then
@@ -352,8 +354,8 @@ local function Stage9( event, player, creature, sender, intid )
 	else
 		local Q = WorldDBQuery("SELECT COUNT(*) FROM Winter2020 WHERE quest_stage > 22")
 		local count = Q:GetInt32(0)
-		if count > 30 then
-		-- Квест выполнило > 30 игроков
+		if count > 55 then
+		-- Квест выполнило > 55 игроков
 			UPQuestStage(player, 23) --> 23
 			player:TalkingHead( creature, "А-р-р! Ты вернул все подарки и спас детишек ждущих Зимний Покров. Дедушка Зима этого не забудет, "..player:GetName() )
 		elseif player:HasEmptySlot() then
