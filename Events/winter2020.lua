@@ -340,14 +340,14 @@ RegisterGameObjectEvent( entry_money, 14, Stage8 ) -- GAMEOBJECT_EVENT_ON_USE
 local function Stage9( event, player, creature, sender, intid )
 	if event == 1 then
 		local text = "Что я здесь делаю? Прячусь, конечно! Кхм..."
-		if ( GetQuestStage(player) >= 18 and GetQuestStage(player) <= 20 ) then
+		if GetQuestStage(player) == 22 then
 			text = text.."\n\nА-р-р! О нет, ладно, я сдаюсь. Ты победил, храбрый герой."
 			player:GossipMenuAddItem( 0, "<Завершить задание.>", 1, 1, true )
 		else
 			text = text.."\n\nНе мешайте, пожалуйста. Мы с вами не знакомы."
 		end
-		player:GossipSetText( text, 31122001 )
-		player:GossipSendMenu( 31122001, creature )
+		player:GossipSetText( text, 31122002 )
+		player:GossipSendMenu( 31122002, creature )
 	else
 		local Q = WorldDBQuery("SELECT COUNT(*) FROM Winter2020 WHERE quest_stage > 22")
 		local count = Q:GetInt32(0)
