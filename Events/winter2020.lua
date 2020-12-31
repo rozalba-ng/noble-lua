@@ -149,7 +149,7 @@ local function OnLogin_Player( _, player )
 		local companion = Q:GetUInt8(1)
 		local item = Q:GetUInt8(2)
 		SendMail( "Посылка от Дедушки Зимы.", items[1][text], player:GetGUIDLow(), 0, 65, 20, 0, 0, items[2][companion], 1, items[3][item], 1, 600158, 1 )
-		WorldDBQuery( "UPDATE winter2020 SET issued = 1 WHERE account = "..player:GetAccountId() )
+		WorldDBQuery( "UPDATE Winter2020 SET issued = 1 WHERE account = "..player:GetAccountId() )
 	end
 end
 RegisterPlayerEvent( 3, OnLogin_Player ) -- PLAYER_EVENT_ON_LOGIN
