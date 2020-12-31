@@ -137,6 +137,7 @@ local entry_gift = 5049503
 local entry_acostar = 9921754
 local entry_money = 5049504
 local entry_yeti = 9929897
+local entry_horn = 5057395
 --	|cff80d2ff
 
 local function GetQuestStage( player )
@@ -342,7 +343,7 @@ local function Stage9( event, player, creature, sender, intid )
 		local text = "Что я здесь делаю? Прячусь, конечно! Кхм..."
 		if GetQuestStage(player) == 22 then
 			text = text.."\n\nА-р-р! О нет, ладно, я сдаюсь. Ты победил, храбрый герой."
-			player:GossipMenuAddItem( 0, "<Завершить задание.>", 1, 1, true )
+			player:GossipMenuAddItem( 0, "<Завершить задание.>", 1, 1 )
 		else
 			text = text.."\n\nНе мешайте, пожалуйста. Мы с вами не знакомы."
 		end
@@ -351,14 +352,14 @@ local function Stage9( event, player, creature, sender, intid )
 	else
 		local Q = WorldDBQuery("SELECT COUNT(*) FROM Winter2020 WHERE quest_stage > 22")
 		local count = Q:GetInt32(0)
-		if count > 2 then
-		-- Квест выполнило > 50 игроков
+		if count > 30 then
+		-- Квест выполнило > 30 игроков
 			UPQuestStage(player, 23) --> 23
 			player:TalkingHead( creature, "А-р-р! Ты вернул все подарки и спас детишек ждущих Зимний Покров. Дедушка Зима этого не забудет, "..player:GetName() )
 		elseif player:HasEmptySlot() then
 			UPQuestStage(player, 24) --> 24
 			player:TalkingHead( creature, "А-р-р! Одним из первых ты вернул все подарки и спас детишек ждущих Зимний Покров. У меня есть награда для тебя..." )
-			player:AddItem( 499937, 1 )
+			player:AddItem( entry_horn, 1 )
 		else
 			player:GossipComplete()
 			player:TalkingHead( creature, "Вот твоя награда! Постой... В твоих сумках совсем не осталось места." )
@@ -423,3 +424,10 @@ local function RegisterEvent_AntiGOB()
 	end
 end
 RegisterServerEvent( 33, RegisterEvent_AntiGOB ) -- ELUNA_EVENT_ON_LUA_STATE_OPEN
+
+--[[	ЮЗАБЕЛЬНЫЙ РОГ	]]--
+
+local function OnUse_Horn( event, player, item )
+	player:PlayDirectSound( Roulette(6140, 7234) )
+end
+RegisterItemEvent( entry_horn, 2, OnUse_Horn ) -- ITEM_EVENT_ON_USE
