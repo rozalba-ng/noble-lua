@@ -12,11 +12,11 @@ local function calculateMoney()
 	for _, player in ipairs( onlinePlayers ) do
 		if ( player:IsAFK() == false ) then
 		--	Добавление денег
-			player:ModifyMoney( 40 );
+			player:ModifyMoney( 20 );
 			local guild = player:GetGuild();
 			if ( guild ~= nil ) then		
 				player:ModifyMoney( -5 );
-				guild:DepositBankMoney( player, 15 )
+				guild:DepositBankMoney( player, 10 )
 			end
 		--	Добавление репутации
 --			if SocialTime() then
@@ -63,4 +63,4 @@ local function calculateMoney()
 		end;	  
 	end
 end
-CreateLuaEvent( calculateMoney, 900000, 0 )
+CreateLuaEvent( calculateMoney, 300000, 0 )
