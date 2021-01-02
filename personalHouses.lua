@@ -401,7 +401,7 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
             if (lockedDoorArray[gobDBID].cost_start ~= 0) then
                 for i, v in pairs(lockedDoorArray) do
                     if (v.ownerID == playerGUID and v.owner_type == 2 and v.cost_start ~= 0) then
-                        player:SendBroadcastMessage("У Вас уже есть личный дом.");
+                        player:SendBroadcastMessage("У Вас уже есть лавка.");
                         player:GossipComplete();
                         return false;
                     end
