@@ -1,165 +1,165 @@
-﻿local PLAYER_EVENT_ON_CHAT = 18;
-local CREATURE_EVENT_ON_REACH_WP = 6;
-local npc_cancelFuncArray = {}
-
-function NpcHitEvent(event, creature, wp_type, id)
-    creature:Emote( 435 )
-    creature:SendUnitSay("Blabla", 1)
-    --npc_cancelFuncArray[creature:GetGUIDLow()]();
-end
-
-local function NpcCommanderEvent(event, player, msg, Type, lang, group)
-    if(player:GetAccountId() == 1)then
-        if(string.match(msg, 'Эй, (%S+), подойди к (%S+)'))then
-            local npc_name = string.match(msg, 'Эй, (%S+), ')
-            local target_name = string.match(msg, 'подойди к (%S+)')            
-
-            local tar_x = player:GetX();
-            local tar_y = player:GetY();
-            local tar_z = player:GetZ();
-            
-            local nearPlayers = player:GetPlayersInRange( 200, 0, 0 )
-            for index, nearPlayer in pairs(nearPlayers) do
-                if(nearPlayer:GetName() == target_name)then
-                    player:SendBroadcastMessage("Нашёл1");
-                    tar_x = nearPlayer:GetX();
-                    tar_y = nearPlayer:GetY();
-                    tar_z = nearPlayer:GetZ();
-                    break;
-                end
-            end
-                        
-            local nearCrs = player:GetCreaturesInRange( 2 );
-            for index, nearCr in pairs(nearCrs) do
-                if (string.find(nearCr:GetNameForLocaleRu(), npc_name))then
-                    player:SendBroadcastMessage("Нашёл2 "..nearCr:GetEntry());
-                    RegisterCreatureEvent(nearCr:GetEntry(), CREATURE_EVENT_ON_REACH_WP, NpcHitEvent)
-                    nearCr:MoveTo( 88888, tar_x, tar_y, tar_z, true )                    
-                    break;
-                end
-            end            
-        end        
-    end
-end
-
---RegisterPlayerEvent(PLAYER_EVENT_ON_CHAT, NpcCommanderEvent);
-
-local function gossipMoleMachineConsole(event, player, object)
-    player:GossipClearMenu() -- required for player gossip
-    if(player:GetAccountId() == 270)then
-	player:GossipMenuAddItem(4, "Завести", 1, 3, false, nil, nil, false)
-        player:GossipMenuAddItem(4, "Управление", 1, 4, false, nil, nil, false)
-        player:GossipMenuAddItem(4, "Выбраться", 1, 5, false, nil, nil, false) 
-        player:GossipMenuAddItem(4, "Погрузиться", 1, 6, false, nil, nil, false) 
-	player:GossipMenuAddItem(4, "Заглушить", 1, 7, false, nil, nil, false)
-    end 
-    player:GossipMenuAddItem(0, "Назад", 1, 8);
-    player:GossipSendMenu(1, object, 5503) -- MenuId required for player gossip
-end
-
-local function gossipSquirrelConsole(event, player, object, mode)
-    player:GossipClearMenu() -- required for player gossip
-    player:GossipMenuAddItem(0, "Закрыть", 1, 1)
-    player:GossipMenuAddItem(4, "Машина", 1, 2)
-    if(player:GetAccountId() == 270 and not mode)then
-        local nearSqr = player:GetCreaturesInRange( 4000, 990004);
-        for index, nearSq in pairs(nearSqr) do
-            player:GossipMenuAddItem(4, "Белка: "..nearSq:GetDBTableGUIDLow(), 1, nearSq:GetDBTableGUIDLow(), false, nil, nil, false)
-        end
-    end
-    player:GossipSendMenu(1, player, 5503) -- MenuId required for player gossip
-end
-
-moleMachineExitAvaible = 1;
-
-local function gossipSelectSquirrelConsole(event, player, object, sender, intid, code, menuid)
-    local map = player:GetMap();
-    if (intid == 1) then        
-        player:GossipComplete();
-    elseif (intid == 2) then 
-	gossipMoleMachineConsole(event, player, object);
-    elseif (intid == 3) then 
-	local x, y, z, o = player:GetLocation();
-	local pid = player:GetGUIDLow();
-	local map = player:GetMapId();
-	local phase = player:GetPhaseMask();
-	local moleMachine = PerformIngameSpawn( 1, 2002923, map, 0, x, y, z+102, o, false, pid, 0, phase);
-	moleMachine:AddAura(24450, moleMachine);
-	moleMachine:SetDisplayId( 11686 );	
-    elseif (intid == 4) then 
-	local moleMachine = player:GetNearestCreature( 115, 2002923);
-	if(moleMachine)then
-	    moleMachine:RemoveAura(24450);
-	    player:CastSpell(moleMachine, 38586, true);
-	    --moleMachine:AddAura(24450, moleMachine);
-	    --moleMachine:EmoteState( 481 );	    
-	end
-	moleMachineExitAvaible = 0;
-    elseif (intid == 5) then 
-	local moleMachine = player:GetNearestCreature( 115, 2002923);
-	if(moleMachine)then
-	    moleMachine:RemoveAura(24450);
-	    moleMachine:DeMorph();
-	    moleMachine:EmoteState( 480 );
-	    --moleMachine:Emote( 478 );
-	end;
-	moleMachineExitAvaible = 2;
-    elseif (intid == 6) then 
-	local moleMachine = player:GetNearestCreature( 115, 2002923);
-	if(moleMachine)then
-	    --moleMachine:Emote( 479 );
-	    moleMachine:EmoteState( 481 );	    
-	end;
-	moleMachineExitAvaible = 1;
-    elseif (intid == 7) then 
-	local moleMachine = player:GetNearestCreature( 115, 2002923);
-	if(moleMachine)then
-	    moleMachine:SetDisplayId( 11686 );
-	    moleMachine:Delete();
-	end;
-	moleMachineExitAvaible = 1;
-    elseif (intid == 8) then 
-	gossipSquirrelConsole(event, player, object, 0);
-    elseif (intid == 10) then 
-	if(moleMachineExitAvaible == 2)then
-	    local moleMachine = player:GetNearestCreature( 9, 2002923);
-	    if(moleMachine)then
-	        local mapid = player:GetMapId();
-	        local x, y, z, o = moleMachine:GetLocation()
-    
-	        player:Teleport( mapid, x, y, z-97.3, o );
-	    end
-    	end
-    else
-        local squirrel = GetCreature(intid, 990004, map:GetMapId());
-        if(squirrel)then
-            squirrel:RemoveAura(24450);
-            player:CastSpell(squirrel, 38586, true);
-            squirrel:AddAura(24450, squirrel);
-        end
-        player:GossipComplete();
-        --gossipSquirrelConsole(event, player, object, 1);
-    end
-end
-
-local function molemachineSubExitGossip(event, player, object)
-    if(moleMachineExitAvaible == 2)then
-	local mapid = player:GetMapId();
-	local x, y, z, o = object:GetLocation()
-
-	player:Teleport( mapid, x, y, z+98.5, o );
-    end
-end
-
-local function OnGossipHelloMoleMachine(event, player, creature)
-    player:GossipClearMenu() -- required for player gossip
-    player:GossipMenuAddItem(4, "Войти внутрь", 1, 10, false, nil, nil, false)
-    player:GossipMenuAddItem(0, "Закрыть", 1, 1)
-    player:GossipSendMenu(1, player, 5503) -- MenuId required for player gossip
-end
-
-RegisterCreatureGossipEvent(2002923, 1, OnGossipHelloMoleMachine)
-
-RegisterGameObjectGossipEvent(300409, 1, molemachineSubExitGossip);
-RegisterPlayerGossipEvent(5503, 2, gossipSelectSquirrelConsole);
-RegisterGameObjectGossipEvent(300408, 1, gossipSquirrelConsole);
+﻿--local PLAYER_EVENT_ON_CHAT = 18;
+--local CREATURE_EVENT_ON_REACH_WP = 6;
+--local npc_cancelFuncArray = {}
+--
+--function NpcHitEvent(event, creature, wp_type, id)
+--    creature:Emote( 435 )
+--    creature:SendUnitSay("Blabla", 1)
+--    --npc_cancelFuncArray[creature:GetGUIDLow()]();
+--end
+--
+--local function NpcCommanderEvent(event, player, msg, Type, lang, group)
+--    if(player:GetAccountId() == 1)then
+--        if(string.match(msg, 'Эй, (%S+), подойди к (%S+)'))then
+--            local npc_name = string.match(msg, 'Эй, (%S+), ')
+--            local target_name = string.match(msg, 'подойди к (%S+)')
+--
+--            local tar_x = player:GetX();
+--            local tar_y = player:GetY();
+--            local tar_z = player:GetZ();
+--
+--            local nearPlayers = player:GetPlayersInRange( 200, 0, 0 )
+--            for index, nearPlayer in pairs(nearPlayers) do
+--                if(nearPlayer:GetName() == target_name)then
+--                    player:SendBroadcastMessage("Нашёл1");
+--                    tar_x = nearPlayer:GetX();
+--                    tar_y = nearPlayer:GetY();
+--                    tar_z = nearPlayer:GetZ();
+--                    break;
+--                end
+--            end
+--
+--            local nearCrs = player:GetCreaturesInRange( 2 );
+--            for index, nearCr in pairs(nearCrs) do
+--                if (string.find(nearCr:GetNameForLocaleRu(), npc_name))then
+--                    player:SendBroadcastMessage("Нашёл2 "..nearCr:GetEntry());
+--                    RegisterCreatureEvent(nearCr:GetEntry(), CREATURE_EVENT_ON_REACH_WP, NpcHitEvent)
+--                    nearCr:MoveTo( 88888, tar_x, tar_y, tar_z, true )
+--                    break;
+--                end
+--            end
+--        end
+--    end
+--end
+--
+----RegisterPlayerEvent(PLAYER_EVENT_ON_CHAT, NpcCommanderEvent);
+--
+--local function gossipMoleMachineConsole(event, player, object)
+--    player:GossipClearMenu() -- required for player gossip
+--    if(player:GetAccountId() == 270)then
+--	player:GossipMenuAddItem(4, "Завести", 1, 3, false, nil, nil, false)
+--        player:GossipMenuAddItem(4, "Управление", 1, 4, false, nil, nil, false)
+--        player:GossipMenuAddItem(4, "Выбраться", 1, 5, false, nil, nil, false)
+--        player:GossipMenuAddItem(4, "Погрузиться", 1, 6, false, nil, nil, false)
+--	player:GossipMenuAddItem(4, "Заглушить", 1, 7, false, nil, nil, false)
+--    end
+--    player:GossipMenuAddItem(0, "Назад", 1, 8);
+--    player:GossipSendMenu(1, object, 5503) -- MenuId required for player gossip
+--end
+--
+--local function gossipSquirrelConsole(event, player, object, mode)
+--    player:GossipClearMenu() -- required for player gossip
+--    player:GossipMenuAddItem(0, "Закрыть", 1, 1)
+--    player:GossipMenuAddItem(4, "Машина", 1, 2)
+--    if(player:GetAccountId() == 270 and not mode)then
+--        local nearSqr = player:GetCreaturesInRange( 4000, 990004);
+--        for index, nearSq in pairs(nearSqr) do
+--            player:GossipMenuAddItem(4, "Белка: "..nearSq:GetDBTableGUIDLow(), 1, nearSq:GetDBTableGUIDLow(), false, nil, nil, false)
+--        end
+--    end
+--    player:GossipSendMenu(1, player, 5503) -- MenuId required for player gossip
+--end
+--
+--moleMachineExitAvaible = 1;
+--
+--local function gossipSelectSquirrelConsole(event, player, object, sender, intid, code, menuid)
+--    local map = player:GetMap();
+--    if (intid == 1) then
+--        player:GossipComplete();
+--    elseif (intid == 2) then
+--	gossipMoleMachineConsole(event, player, object);
+--    elseif (intid == 3) then
+--	local x, y, z, o = player:GetLocation();
+--	local pid = player:GetGUIDLow();
+--	local map = player:GetMapId();
+--	local phase = player:GetPhaseMask();
+--	local moleMachine = PerformIngameSpawn( 1, 2002923, map, 0, x, y, z+102, o, false, pid, 0, phase);
+--	moleMachine:AddAura(24450, moleMachine);
+--	moleMachine:SetDisplayId( 11686 );
+--    elseif (intid == 4) then
+--	local moleMachine = player:GetNearestCreature( 115, 2002923);
+--	if(moleMachine)then
+--	    moleMachine:RemoveAura(24450);
+--	    player:CastSpell(moleMachine, 38586, true);
+--	    --moleMachine:AddAura(24450, moleMachine);
+--	    --moleMachine:EmoteState( 481 );
+--	end
+--	moleMachineExitAvaible = 0;
+--    elseif (intid == 5) then
+--	local moleMachine = player:GetNearestCreature( 115, 2002923);
+--	if(moleMachine)then
+--	    moleMachine:RemoveAura(24450);
+--	    moleMachine:DeMorph();
+--	    moleMachine:EmoteState( 480 );
+--	    --moleMachine:Emote( 478 );
+--	end;
+--	moleMachineExitAvaible = 2;
+--    elseif (intid == 6) then
+--	local moleMachine = player:GetNearestCreature( 115, 2002923);
+--	if(moleMachine)then
+--	    --moleMachine:Emote( 479 );
+--	    moleMachine:EmoteState( 481 );
+--	end;
+--	moleMachineExitAvaible = 1;
+--    elseif (intid == 7) then
+--	local moleMachine = player:GetNearestCreature( 115, 2002923);
+--	if(moleMachine)then
+--	    moleMachine:SetDisplayId( 11686 );
+--	    moleMachine:Delete();
+--	end;
+--	moleMachineExitAvaible = 1;
+--    elseif (intid == 8) then
+--	gossipSquirrelConsole(event, player, object, 0);
+--    elseif (intid == 10) then
+--	if(moleMachineExitAvaible == 2)then
+--	    local moleMachine = player:GetNearestCreature( 9, 2002923);
+--	    if(moleMachine)then
+--	        local mapid = player:GetMapId();
+--	        local x, y, z, o = moleMachine:GetLocation()
+--
+--	        player:Teleport( mapid, x, y, z-97.3, o );
+--	    end
+--    	end
+--    else
+--        local squirrel = GetCreature(intid, 990004, map:GetMapId());
+--        if(squirrel)then
+--            squirrel:RemoveAura(24450);
+--            player:CastSpell(squirrel, 38586, true);
+--            squirrel:AddAura(24450, squirrel);
+--        end
+--        player:GossipComplete();
+--        --gossipSquirrelConsole(event, player, object, 1);
+--    end
+--end
+--
+--local function molemachineSubExitGossip(event, player, object)
+--    if(moleMachineExitAvaible == 2)then
+--	local mapid = player:GetMapId();
+--	local x, y, z, o = object:GetLocation()
+--
+--	player:Teleport( mapid, x, y, z+98.5, o );
+--    end
+--end
+--
+--local function OnGossipHelloMoleMachine(event, player, creature)
+--    player:GossipClearMenu() -- required for player gossip
+--    player:GossipMenuAddItem(4, "Войти внутрь", 1, 10, false, nil, nil, false)
+--    player:GossipMenuAddItem(0, "Закрыть", 1, 1)
+--    player:GossipSendMenu(1, player, 5503) -- MenuId required for player gossip
+--end
+--
+--RegisterCreatureGossipEvent(2002923, 1, OnGossipHelloMoleMachine)
+--
+--RegisterGameObjectGossipEvent(300409, 1, molemachineSubExitGossip);
+--RegisterPlayerGossipEvent(5503, 2, gossipSelectSquirrelConsole);
+--RegisterGameObjectGossipEvent(300408, 1, gossipSquirrelConsole);

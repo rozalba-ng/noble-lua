@@ -131,7 +131,7 @@ local function AddonMessageEvent(event, sender, type, prefix, msg, target)
             local arguments = string.split(msg, "|")
             if (#arguments == 6) then
                 if(tonumber(arguments[1]) > 0)then
-                    local nearestCreature = sender:GetNearestCreature( 20, tonumber(arguments[1]) )
+                    local nearestCreature = sender:GetNearestCreature( 15, tonumber(arguments[1]) )
                     local money = sender:GetCoinage();
                     if(nearestCreature and money >= 10)then
                         if(nearestCreature:IsTabardDesigner())then
