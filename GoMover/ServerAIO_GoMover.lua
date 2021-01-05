@@ -3,6 +3,7 @@ local AIO = AIO or require("AIO")
 
 local GoMover = AIO.AddHandlers("GOM_Handlers", {})
 
+playersCooldowns = {}
 
 function copysign(value,valuetocopy)
 	return value * (valuetocopy / math.abs(valuetocopy))
@@ -28,18 +29,27 @@ function FromQuatToEuler(x,y,z,w)
 end
 
 function GoMover.StartRotate(player,guid,value,rotateType)
-	q = WorldDBQuery('SELECT rotation0, rotation1,rotation2,rotation3 FROM gameobject WHERE guid ='..guid)	
-	local x,y,z = FromQuatToEuler(q:GetFloat(0),q:GetFloat(1),q:GetFloat(2),q:GetFloat(3))
-	AIO.Handle(player,"GOM_Handlers","RotateGo",rotateType,x,y,z,value)
+	if ( not playersCooldowns[player:GetName()] or (  os.time() - playersCooldowns[player:GetName()]  ) > 0.3 )  then
+		playersCooldowns[player:GetName()] = os.time()
+		q = WorldDBQuery('SELECT rotation0, rotation1,rotation2,rotation3 FROM gameobject WHERE guid ='..guid)	
+		local x,y,z = FromQuatToEuler(q:GetFloat(0),q:GetFloat(1),q:GetFloat(2),q:GetFloat(3))
+		AIO.Handle(player,"GOM_Handlers","RotateGo",rotateType,x,y,z,value)
+	end
 end
 function GoMover.StartMove(player,guid,value,moveType)
-	q = WorldDBQuery('SELECT position_x, position_y,position_z,orientation FROM gameobject WHERE guid ='..guid)
-	local x,y,z,o = q:GetFloat(0),q:GetFloat(1),q:GetFloat(2),q:GetFloat(3)
-	local po = player:GetO()
-	AIO.Handle(player,"GOM_Handlers","MoveGo",moveType,x,y,z,po,value)
+	if ( not playersCooldowns[player:GetName()] or (  os.time() - playersCooldowns[player:GetName()]  ) > 0.3 )  then
+		playersCooldowns[player:GetName()] = os.time()
+		q = WorldDBQuery('SELECT position_x, position_y,position_z,orientation FROM gameobject WHERE guid ='..guid)
+		local x,y,z,o = q:GetFloat(0),q:GetFloat(1),q:GetFloat(2),q:GetFloat(3)
+		local po = player:GetO()
+		AIO.Handle(player,"GOM_Handlers","MoveGo",moveType,x,y,z,po,value)
+	end
 end
 function GoMover.StartScale(player,guid,value,scaleType)
-	AIO.Handle(player,"GOM_Handlers","ScaleGo",scaleType,value)
+	if ( not playersCooldowns[player:GetName()] or (  os.time() - playersCooldowns[player:GetName()]  ) > 0.3 )  then
+		playersCooldowns[player:GetName()] = os.time()
+		AIO.Handle(player,"GOM_Handlers","ScaleGo",scaleType,value)
+	end
 end
 function GoMover.ReturnToInventory(player,guid)
 	if(player:GetGMRank() == 2 or player:GetGMRank() == 1)then
