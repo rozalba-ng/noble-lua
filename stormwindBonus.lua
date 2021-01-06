@@ -49,12 +49,12 @@ local function sendOnlineLetters()
 					public_item = 600243;
 				end
 
-				if (playerId ~= 0 and standart_amount > 0 and playerId == 41063) then
+				if (playerId ~= 0 and standart_amount > 0) then
 					SendMail('Noblegarden', 'Добрый день! Ваша активность на территории Штормграда в праймтайм за прошлые сутки: ' .. activity .. ' минут. Накопленный бонус репутации: ' .. standart_amount .. ' малых жетонов. Приятной игры!', playerId, 36, 61, 20, 0, 0, standart_item, standart_amount);
 					CharDBQuery('UPDATE character_daily_log set standart_gift_done = 1 where id = ' .. id);
 				end
 
-				if (playerId ~= 0 and public_amount > 0 and playerId == 41063) then
+				if (playerId ~= 0 and public_amount > 0) then
 					SendMail('Noblegarden', 'Добрый день! Вчера вы проявили необычайную активность на полигоне Штормград, и потому вам полагается дополнительная награда! Спасибо за вашу активность!', playerId, 36, 61, 20, 0, 0, public_item, public_amount);
 					CharDBQuery('UPDATE character_daily_log set public_gift_done = 1 where id = ' .. id);
 				end
@@ -66,3 +66,46 @@ local function sendOnlineLetters()
 end
 
 CreateLuaEvent(sendOnlineLetters, 200000, 0);
+
+local function sendWeeklyLetters()
+	local bonusQuery = CharDBQuery("SELECT * from character_weekly_log where (rep_gift_amount > 0 and rep_gift_done = 0) or (crowns_gift_amount > 0 and crowns_gift_done = 0)");
+	if (bonusQuery ~= nil) then
+		local rowCount = bonusQuery:GetRowCount();
+		local entry;
+		for var=1,rowCount,1 do
+			local ownerData = bonusQuery:GetRow();
+			local rep_amount = ownerData['rep_gift_amount'];
+			local crowns_amount = ownerData['crowns_gift_amount'];
+			local playerId = ownerData['character_guid'];
+			local id = ownerData['id'];
+
+			local factionQuery = CharDBQuery("SELECT faction from character_reputation where faction in (1163, 1162) and guid = " .. playerId .. " order by standing DESC limit 1");
+
+			if (factionQuery ~= nil) then
+				local factionRow = factionQuery:GetRow();
+				local faction = factionRow['faction'];
+
+				local rep_item = 2114372;
+				local veksel_item = 600157;
+
+				if (faction == law_faction) then
+					rep_item = 2114371;
+				end
+
+				if (playerId ~= 0 and rep_amount > 0 and playerId == 41063) then
+					SendMail('Noblegarden', 'Еженедельный гильдейский бонус репутации', playerId, 36, 61, 20, 0, 0, rep_item, rep_amount);
+					CharDBQuery('UPDATE character_weekly_log set rep_gift_done = 1 where id = ' .. id);
+				end
+
+				if (playerId ~= 0 and crowns_amount > 0 and playerId == 41063) then
+					SendMail('Noblegarden', 'Еженедельный гильдейский бонус валюты', playerId, 36, 61, 20, 0, 0, veksel_item, crowns_amount);
+					CharDBQuery('UPDATE character_weekly_log set crowns_gift_done = 1 where id = ' .. id);
+				end
+			end;
+
+			bonusQuery:NextRow();
+		end
+	end
+end
+
+CreateLuaEvent(sendWeeklyLetters, 200000, 0);
