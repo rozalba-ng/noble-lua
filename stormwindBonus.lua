@@ -99,12 +99,12 @@ local function sendWeeklyLetters()
 					text_crowns = 'Поздравляем с попаданием в топ недельного рейтинга личной активности! Ваши Королевские Вексели прилагаются!';
 				end
 
-				if (playerId ~= 0 and rep_amount > 0 and playerId == 41063) then
+				if (playerId ~= 0 and rep_amount > 0) then
 					SendMail('Noblegarden - репутация', text_rep, playerId, 36, 61, 20, 0, 0, rep_item, rep_amount);
 					CharDBQuery('UPDATE character_weekly_log set rep_gift_done = 1 where id = ' .. id);
 				end
 
-				if (playerId ~= 0 and crowns_amount > 0 and playerId == 41063) then
+				if (playerId ~= 0 and crowns_amount > 0) then
 					SendMail('Noblegarden - валюта', text_crowns, playerId, 36, 61, 20, 0, 0, veksel_item, crowns_amount);
 					CharDBQuery('UPDATE character_weekly_log set crowns_gift_done = 1 where id = ' .. id);
 				end
