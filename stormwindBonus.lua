@@ -1,6 +1,10 @@
 --[[Каждые 5 минут проверяет челочисленный]]
 
 local function sendShopLetters()
+	if SocialTime() then
+		return false
+	end
+
 	local bonusQuery = CharDBQuery("SELECT * from doors_owners where bonus > 0");
 	if (bonusQuery ~= nil) then
 		local rowCount = bonusQuery:GetRowCount();	
@@ -20,9 +24,13 @@ local function sendShopLetters()
 	end	
 end
 
-CreateLuaEvent(sendShopLetters, 200000, 0);
+CreateLuaEvent(sendShopLetters, 600000, 0);
 
 local function sendOnlineLetters()
+	if SocialTime() then
+		return false
+	end
+
 	local bonusQuery = CharDBQuery("SELECT * from character_daily_log where (standart_gift > 0 and standart_gift_done = 0) or (public_gift > 0 and public_gift_done = 0)");
 	if (bonusQuery ~= nil) then
 		local rowCount = bonusQuery:GetRowCount();
@@ -65,9 +73,13 @@ local function sendOnlineLetters()
 	end
 end
 
-CreateLuaEvent(sendOnlineLetters, 200000, 0);
+CreateLuaEvent(sendOnlineLetters, 600000, 0);
 
 local function sendWeeklyLetters()
+	if SocialTime() then
+		return false
+	end
+
 	local bonusQuery = CharDBQuery("SELECT * from character_weekly_log where (rep_gift_amount > 0 and rep_gift_done = 0) or (crowns_gift_amount > 0 and crowns_gift_done = 0)");
 	if (bonusQuery ~= nil) then
 		local rowCount = bonusQuery:GetRowCount();
@@ -115,4 +127,4 @@ local function sendWeeklyLetters()
 	end
 end
 
-CreateLuaEvent(sendWeeklyLetters, 200000, 0);
+CreateLuaEvent(sendWeeklyLetters, 600000, 0);

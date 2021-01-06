@@ -1,5 +1,9 @@
 --[[Каждые 5 минут проверяет список голосов с ммотоп и рассылает письма с подарками]]
 local function sendVoteLetters()
+	if SocialTime() then
+		return false
+	end
+
 	--local votesQuery = CharDBQuery('SELECT id, account, `character` FROM vote_statistics where sended = 0');
 	local votesQuery = CharDBQuery("SELECT a.id, a.account, a.`character` from vote_statistics a where a.sended = 0 and (a.amount > 1 OR (NOT EXISTS (select b.* from vote_statistics b where b.`date` like concat(substr(a.`date`, 1, 10),'%') and b.sended = 1 and b.amount = 1 and b.account = a.account) AND NOT EXISTS (select count(c.account) as cnt from vote_statistics c where c.`date` like concat(substr(a.`date`, 1, 10),'%') and c.sended = 0 and c.amount = 1 and c.account = a.account having cnt>1)))");
 	--local votesDateQuery = CharDBQuery('SELECT id, account, `character` FROM vote_statistics where sended = 1 and amount = 1 and `date` like "'..os.date("%d.%m.%Y",os.time()+7200)..'%");
@@ -41,4 +45,4 @@ local function sendVoteLetters()
 	end	
 end
 
-CreateLuaEvent(sendVoteLetters, 120000, 0);
+CreateLuaEvent(sendVoteLetters, 600000, 0);
