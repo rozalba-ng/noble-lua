@@ -71,15 +71,15 @@ RegisterPlayerEvent( 3, WhenPlayerEnterGame )
 
 --[[	СНЯТИЕ АУРЫ ИГРОКОМ ИЛИ СЕРВЕРОМ	]]--
 
-local function AuraCancelled( _, packet, player )
-	if player:GetData("Camouflage") and not player:HasAura( aura.camouflage ) then
-		player:SetData( "Camouflage", nil )
-		local Q = CharDBQuery( "SELECT city_class FROM character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
-		if Q then
-			local aura = Q:GetUInt32(0)
-			player:AddAura( aura, player )
-			player:PlayDirectSound( 3780, player )
-		else player:SendBroadcastMessage("Произошла ошибка и вы не смогли получить ауру своей социальной роли. Сделайте скриншот этого сообщения, пожалуйста, и свяжитесь с администрацией.") end
-	end
-end
-RegisterPacketEvent( 0x496, 7, AuraCancelled ) -- PACKET_EVENT_ON_PACKET_SEND, 0x496 - SMSG_AURA_UPDATE
+--local function AuraCancelled( _, packet, player )
+--	if player:GetData("Camouflage") and not player:HasAura( aura.camouflage ) then
+--		player:SetData( "Camouflage", nil )
+--		local Q = CharDBQuery( "SELECT city_class FROM character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
+--		if Q then
+--			local aura = Q:GetUInt32(0)
+--			player:AddAura( aura, player )
+--			player:PlayDirectSound( 3780, player )
+--		else player:SendBroadcastMessage("Произошла ошибка и вы не смогли получить ауру своей социальной роли. Сделайте скриншот этого сообщения, пожалуйста, и свяжитесь с администрацией.") end
+--	end
+--end
+--RegisterPacketEvent( 0x496, 7, AuraCancelled ) -- PACKET_EVENT_ON_PACKET_SEND, 0x496 - SMSG_AURA_UPDATE
