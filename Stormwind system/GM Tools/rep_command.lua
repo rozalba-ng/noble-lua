@@ -16,8 +16,8 @@ local function Command( _, player, command )
 		if ( not target ) or ( not target:ToPlayer() ) then
 			player:SendAreaTriggerMessage("|cffFF4500[!!]|r Выберите игрока в цель.")
 		else
-			local rank_thief = player:GetReputationRank(thiefs_faction)
-			local rank_law = player:GetReputationRank(law_faction)
+			local rank_thief = target:GetReputationRank(thiefs_faction)
+			local rank_law = target:GetReputationRank(law_faction)
 			player:SendBroadcastMessage( target:GetName().." имеет:\n "..rank_strings[rank_law].."|r у Штормграда.\n "..rank_strings[rank_thief].."|r у Теней." )
 		end
  	end
