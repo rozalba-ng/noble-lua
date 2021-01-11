@@ -34,6 +34,7 @@ local BState_ESCAPING = 6
 ---
 
 local hpBuffAuraList = {	{id = 88044, bonus = 1},
+							{id = 88039, bonus = 1},
 							{id = 88045, bonus = 1},
 							{id = 88046, bonus = 2},
 							{id = 88047, bonus = 2},
