@@ -11,7 +11,7 @@ local EVENT_ON_CAST = 5;
  LEAVER_AURA = 88058
  HP_AURA =  88059
  WOUND_AURA = 88010
-
+ DOUBLE_ATTACK_AURA = 88076
  DEAD_AURA = 45801
 
 
@@ -34,11 +34,16 @@ local BState_ESCAPING = 6
 ---
 
 local hpBuffAuraList = {	{id = 88044, bonus = 1},
+							{id = 88039, bonus = 1},
 							{id = 88045, bonus = 1},
+							{id = 88071, bonus = 1},
+							{id = 88072, bonus = 1},
 							{id = 88046, bonus = 2},
 							{id = 88047, bonus = 2},
 							{id = 88048, bonus = 2},
-							{id = 88049	, bonus = 2}
+							{id = 88049	, bonus = 2},
+							{id = 88074, bonus = 2},
+							{id = 88073, bonus = 2}
 						}
 
 
@@ -447,7 +452,7 @@ function SayToBattle(text,battle)
 		end
 	end
 end
-function handlePlayerRoll(success,rollType, player,target,isPotionReroll)
+function handlePlayerRoll(success,rollType, player,target,isPotionReroll,isCrit)
 	if (not player:HasAura(IS_IN_BATTLE_AURA) and target:HasAura(IS_IN_BATTLE_AURA)) or (player:HasAura(IS_IN_BATTLE_AURA) and not target:HasAura(IS_IN_BATTLE_AURA)) then
 		player:SendBroadcastMessage("Вы не можете атаковать цель, которая находится не в вашем бою.")
 		return false
@@ -463,14 +468,25 @@ function handlePlayerRoll(success,rollType, player,target,isPotionReroll)
 			local battle = battleList[battleId]
 			if target:HasAura(HP_AURA) then
 				if success and rollType ~= 6 then
+					if player:HasAura(DOUBLE_ATTACK_AURA) and isCrit then
+						local hpAura = target:GetAura(HP_AURA)
+						SayToBattle(cWhite..player:GetName()..cR.." снимает "..cWhite..target:GetName().." "..cRed.."2 очка здоровья."..cR.." Эффект бонуса \"Стремительность\"",battle)
+						if hpAura:GetStackAmount() < 3 then
+							killPlayerInBattle(battle,target)
+						else
+							hpAura:SetStackAmount(hpAura:GetStackAmount() - 2)
+						end
 					
-					local hpAura = target:GetAura(HP_AURA)
-					SayToBattle(cWhite..player:GetName()..cR.." снимает "..cWhite..target:GetName().." "..cRed.."1 очко здоровья."..cR,battle)
-					if hpAura:GetStackAmount() < 2 then
-						killPlayerInBattle(battle,target)
 					else
-						hpAura:SetStackAmount(hpAura:GetStackAmount() - 1)
+						local hpAura = target:GetAura(HP_AURA)
+						SayToBattle(cWhite..player:GetName()..cR.." снимает "..cWhite..target:GetName().." "..cRed.."1 очко здоровья."..cR,battle)
+						if hpAura:GetStackAmount() < 2 then
+							killPlayerInBattle(battle,target)
+						else
+							hpAura:SetStackAmount(hpAura:GetStackAmount() - 1)
+						end
 					end
+					
 				elseif rollType == 6 then
 					local hpAura = target:GetAura(HP_AURA)
 					local curHp = hpAura:GetStackAmount()
