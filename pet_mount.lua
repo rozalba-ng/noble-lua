@@ -16,6 +16,9 @@ local petMountTemplateArray = {		[1200000] = 1,
 									[1200006] = 1,
 									[1200007] = 1,};
 
+local petBankArray = {		[1200032] = 1,
+	[1200033] = 1,};
+
 local available_equip_slots = {[1] = "Седло",
                                [2] = "Флаг"};
 
@@ -55,6 +58,9 @@ local function gossipPetMount(event, player, object)
 		local mountEntry = object:GetEntry()
 		if(petMountTemplateArray[mountEntry] == 1)then
 			player:GossipMenuAddItem(1, "Экипировать", 1, 5)
+		end
+		if(petBankArray[mountEntry] == 1)then
+			player:GossipMenuAddItem(1, "Открыть седельные сумки", 1, 6)
 		end
 		player:GossipMenuAddItem(0, "Закрыть", 1, 2)
 		player:GossipSendMenu(1, object) -- MenuId required for player gossip
@@ -132,6 +138,8 @@ local function gossipSelectPetMount(event, player, object, sender, intid, code, 
             player:GossipComplete();        
         elseif (intid == 5) then
             gossipMountEquipList(event, player, object);
+		elseif (intid == 6) then
+			player:SendShowBank( object )
         elseif (intid >= 101 and intid <= 355) then
             local slot_id = intid - 100;
             gossipMountSlotItemList(event, player, object, slot_id)
