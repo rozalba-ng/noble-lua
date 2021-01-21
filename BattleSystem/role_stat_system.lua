@@ -12,6 +12,7 @@ roleCombat.menuID = 6010;
 roleCombat.diff_number = {};
 
 npcStats = {}
+gmToCrit = {}
 
 auraModificators = {
 					[1] = {88067,1,1,1,0,0,0,0},
@@ -360,7 +361,7 @@ function attackRoll(roller, target, spellid)
             local result_text = "";
             local result_symbol = "";
             local isSuccess = false;
-            
+            local isCrit = false
             if(stat == 6)then
                 target_def = math.floor(roller:GetRoleStat(0)+roller:GetRoleStat(1)+roller:GetRoleStat(2)+(player_att/2));
                 def_rand = 11;
@@ -378,11 +379,20 @@ function attackRoll(roller, target, spellid)
                 if( att_rand == 1 )then
                     result_color = "FFFF0000"
                     result_text = "критически неудачно"
-                    result_symbol = "X"
-                elseif( att_rand == 20 )then
+					result_symbol = "Ч"
+					if roller:HasAura(88040) then
+						result_color = "FF00FF00"
+						result_text = "критически удачная неудача.|r Эффект "..GetItemLink(600053)
+						result_symbol = ">>"
+						isSuccess = true;
+					end
+                    
+                elseif( att_rand == 20  or gmToCrit[roller:GetName()])then
                     result_color = "FF00FF00"
                     result_text = "критически удачно"
                     result_symbol = "X"
+					isCrit = true
+					gmToCrit[roller:GetName()] = false
                     isSuccess = true;
                 else
                     if( (player_att+att_rand) >= (target_def+def_rand) )then
@@ -425,7 +435,7 @@ function attackRoll(roller, target, spellid)
 				isSuccess = false
 				target:RemoveAura(88042)
 			end
-			if not handlePlayerRoll(isSuccess,stat,roller,target,isFogPotionUsed) then
+			if not handlePlayerRoll(isSuccess,stat,roller,target,isFogPotionUsed,isCrit) then
 				return false
 			end
             if( roller:ToPlayer() )then
@@ -601,6 +611,11 @@ local function OnPlayerCommandWithArg(event, player, code)
 						player:SendBroadcastMessage("Существу "..greenColor.."\""..GM_target:GetName().."\"|r "..statnames[statid].." установлена в значение "..greenColor..value)
 					end
 				end
+			end
+		elseif (arguments[1] == "makemecrit") then
+			if  player:GetGMRank() > 1 then
+				gmToCrit[player:GetName()] = true
+				player:SendBroadcastMessage("Уа-а-а-а-зяяя, ты щас ему ТАК дашь, что у него зубы вылетят")
 			end
 		end
 	end
