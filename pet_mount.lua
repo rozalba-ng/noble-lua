@@ -139,7 +139,7 @@ local function gossipSelectPetMount(event, player, object, sender, intid, code, 
         elseif (intid == 5) then
             gossipMountEquipList(event, player, object);
 		elseif (intid == 6) then
-			player:SendShowBank( object )
+			player:SendShowBank( player )
         elseif (intid >= 101 and intid <= 355) then
             local slot_id = intid - 100;
             gossipMountSlotItemList(event, player, object, slot_id)
