@@ -1,6 +1,8 @@
 local NpcChargerId = 110004;
 local veksel = 600157;
 local crown = 600057;
+local stormRepToken = 2114371;
+local shadowRepToken = 2114372;
 local faction_stormwind = 1162;
 local faction_shadow_stormwind = 1163;
 local reputation_friendly = 3000;
@@ -12,6 +14,12 @@ local function OnGossipCharger(event, player, object)
     player:GossipClearMenu() -- required for player gossip
     player:GossipMenuAddItem(0, "КУПИТЬ вексели (максимум 30 за раз, вводить количество в поле <код>)", 1, 2, true, nil)
     player:GossipMenuAddItem(0, "ПРОДАТЬ вексели (максимум 30 за раз, вводить количество в поле <код>))", 1, 3, true, nil)
+    if (player:GetReputation( faction_shadow_stormwind ) >= reputation_revered) then
+        player:GossipMenuAddItem(0, "ОБМЕНЯТЬ значки штормградских контрабандистов на Короны (курс 2:1,максимум 30 за раз, вводить кол-во значков в поле <код>))", 1, 6, true, nil)
+    end
+    if (player:GetReputation( faction_stormwind ) >= reputation_revered) then
+        player:GossipMenuAddItem(0, "ОБМЕНЯТЬ значки штормградской стражи на Короны (курс 2:1,максимум 30 за раз, вводить кол-во значков в поле <код>))", 1, 7, true, nil)
+    end
     player:GossipMenuAddItem(0, "Закрыть", 1, 5)
     player:GossipSetText( 'ООС: Тут вы можете обменять короны на вексели и обратно. Векселями можно обмениваться с другими игроками.\n\n После обмены короны/вексели придут на почту. \n\nКурс покупки векселя у казначея: \n- дружелюбие - 5 корон за вексель\n- уважение - 4 короны за вексель\n- почтение - 3 короны за вексель \nКурс продажи векселя казначею: за один вексель вы получите 3 короны на любом уровне репутации', MenuId )
     player:GossipSendMenu(MenuId, object, MenuId) -- MenuId required for player gossip
@@ -64,6 +72,40 @@ local function OnGossipChargerSelect(event, player, object, sender, intid, code,
             player:GossipComplete()
         else
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно векселей. Требуемое число векселей: |r" .. tostring(num));
+            player:GossipComplete()
+        end
+    elseif (intid == 6) then
+        local num = tonumber(code);
+        if (num > 30) then
+            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОШИБКА! Нельзя обменивать более 30 значков за раз |r");
+            player:GossipComplete();
+            return false;
+        end
+        local crownsToAdd = math.floor(num/2);
+        if (player:HasItem(2114372, crownsToAdd*2)) then
+            SendMail( "Обмен у казначея", "Приятной игры", player:GetGUIDLow(), 0, 61, 0, 0, 0, crown, crownsToAdd )
+            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОбмен проведен успешно! Выслано штормградских корон: |r" .. tostring(crownsToAdd));
+            player:RemoveItem(2114372, crownsToAdd*2);
+            player:GossipComplete()
+        else
+            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно значков штормградских контрабандистов. Требуемое число значков: |r" .. tostring(num));
+            player:GossipComplete()
+        end
+    elseif (intid == 7) then
+        local num = tonumber(code);
+        if (num > 30) then
+            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОШИБКА! Нельзя обменивать более 30 значков за раз |r");
+            player:GossipComplete();
+            return false;
+        end
+        local crownsToAdd = math.floor(num/2);
+        if (player:HasItem(stormRepToken, crownsToAdd*2)) then
+            SendMail( "Обмен у казначея", "Приятной игры", player:GetGUIDLow(), 0, 61, 0, 0, 0, crown, crownsToAdd )
+            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОбмен проведен успешно! Выслано штормградских корон: |r" .. tostring(crownsToAdd));
+            player:RemoveItem(stormRepToken, crownsToAdd*2);
+            player:GossipComplete()
+        else
+            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно жетонов. Требуемое число значков: |r" .. tostring(num));
             player:GossipComplete()
         end
     elseif (intid == 5) then
