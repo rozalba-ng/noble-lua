@@ -107,9 +107,9 @@ local function gossipDoorBuy(event, player, object, guid)
     local text = "Меню покупки помещения"
     if (lockedDoorArray[guid].can_own_user == 1) then
         if lockedDoorArray[guid].region_id == 1 then
-            text = "Для покупки нужна репутация Королевство Штормград: дружелюбие"
-        elseif lockedDoorArray[guid].region_id == 2 then
-            text = "Для покупки нужна репутация Тени Штормграда: дружелюбие"
+            text = "Для покупки нужна репутация у одной из фракций штормграда: дружелюбие"
+--        elseif lockedDoorArray[guid].region_id == 2 then
+--            text = "Для покупки нужна репутация Тени Штормграда: дружелюбие"
         end
         player:GossipMenuAddItem(10, "Купить дом", 1, 22, false, "Вы желаете приобрести этот личный дом? Это будет стоить " .. lockedDoorArray[guid].cost_start .. " " .. payCurrency[lockedDoorArray[guid].cost_type]);
     end
@@ -214,14 +214,14 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
             gossipDoorOption(event, player, object, gobDBID);
         elseif (intid == 21) then
             -- Достаточно ли у персонажа репутации?
-            if (lockedDoorArray[gobDBID].owner_type == 0 and lockedDoorArray[gobDBID].region_id == region_stormwind and player:GetReputation( faction_stormwind ) < reputation_friendly) then
-                player:SendBroadcastMessage("У вас недостаточно репутации для продления владения этим зданием. Требуемая репутация: Королевство Штормград - дружелюбие");
+            if (lockedDoorArray[gobDBID].owner_type == 0 and lockedDoorArray[gobDBID].region_id == region_stormwind and not (player:GetReputation( faction_stormwind ) > reputation_friendly or player:GetReputation( faction_shadow_stormwind ) > reputation_friendly)) then
+                player:SendBroadcastMessage("У вас недостаточно репутации для продления владения этим зданием. Требуемая репутация у одной из фракций Штормграда - дружелюбие");
                 return false;
             end
-            if (lockedDoorArray[gobDBID].owner_type == 0 and lockedDoorArray[gobDBID].region_id == region_shadow_stormwind and player:GetReputation( faction_shadow_stormwind ) < reputation_friendly) then
-                player:SendBroadcastMessage("У вас недостаточно репутации для продления владения этим зданием. Требуемая репутация: Тени Штормграда - дружелюбие");
-                return false;
-            end
+--            if (lockedDoorArray[gobDBID].owner_type == 0 and lockedDoorArray[gobDBID].region_id == region_shadow_stormwind and player:GetReputation( faction_shadow_stormwind ) < reputation_friendly) then
+--                player:SendBroadcastMessage("У вас недостаточно репутации для продления владения этим зданием. Требуемая репутация: Тени Штормграда - дружелюбие");
+--                return false;
+--            end
             if (lockedDoorArray[gobDBID].owner_type == 2 and lockedDoorArray[gobDBID].region_id == region_stormwind and player:GetReputation( faction_stormwind ) < reputation_honored) then
                 player:SendBroadcastMessage("У вас недостаточно репутации для продления владения этой лавкой.");
                 return false;
@@ -338,14 +338,14 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
                 return false;
             end
             -- хватает ли персонажу репутации
-            if (lockedDoorArray[gobDBID].region_id == region_stormwind and player:GetReputation( faction_stormwind ) < reputation_friendly) then
-                player:SendBroadcastMessage("У вас недостаточно репутации для приобретения этого личного дома. Требуемая репутация: Королевство Штормград - дружелюбие");
+            if (lockedDoorArray[gobDBID].region_id == region_stormwind and not (player:GetReputation( faction_stormwind ) > reputation_friendly or player:GetReputation( faction_shadow_stormwind ) > reputation_friendly)) then
+                player:SendBroadcastMessage("У вас недостаточно репутации для приобретения этого личного дома. Требуемая репутация: дружелюбие у одной из фракций Штормграда");
                 return false;
             end
-            if (lockedDoorArray[gobDBID].region_id == region_shadow_stormwind and player:GetReputation( faction_shadow_stormwind ) < reputation_friendly) then
-                player:SendBroadcastMessage("У вас недостаточно репутации для приобретения этого личного дома. Требуемая репутация: Тени Штормграда - дружелюбие");
-                return false;
-            end
+--            if (lockedDoorArray[gobDBID].region_id == region_shadow_stormwind and player:GetReputation( faction_shadow_stormwind ) < reputation_friendly) then
+--                player:SendBroadcastMessage("У вас недостаточно репутации для приобретения этого личного дома. Требуемая репутация: Тени Штормграда - дружелюбие");
+--                return false;
+--            end
             -- Нет ли у персонажа уже другого личного дома? (кроме домов с нулевой стоимостью)
             if (lockedDoorArray[gobDBID].cost_start ~= 0) then
                 for i, v in pairs(lockedDoorArray) do
