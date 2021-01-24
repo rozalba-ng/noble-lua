@@ -368,7 +368,29 @@ local function OnPlayerCommand(event, player, command)
                 return false			
             end
         end
-        return false	
+        return false
+    elseif (string.match(command, 'petstay$')) then
+        local Pet = player:GetTargetCreature();
+        local creatorGUID = Pet:GetControllerGUID();
+        local plGUID = player:GetGUID();
+        if(creatorGUID == plGUID)then
+            Pet:MoveClear(true);
+            return false;
+        else
+            player:SendBroadcastMessage("ОШИБКА: NPC не является вашим спутником.")
+            return false;
+        end
+    elseif (string.match(command, 'petfollow$')) then
+        local Pet = player:GetTargetCreature();
+        local creatorGUID = Pet:GetControllerGUID();
+        local plGUID = player:GetGUID();
+        if(creatorGUID == plGUID) then
+            Pet:MoveFollow( player, 0, 1.507 )
+            return false;
+        else
+            player:SendBroadcastMessage("ОШИБКА: NPC не является вашим спутником.")
+            return false;
+        end
 	elseif (string.find(command, " ")) then
 		local arguments = {}
 		local arguments = string.split(command, " ")
@@ -409,17 +431,6 @@ local function OnPlayerCommand(event, player, command)
                 else
                     Pet:MoveFollow( player, 0, 1.507 )
                 end
-                return false;
-            else
-                player:SendBroadcastMessage("ОШИБКА: NPC не является вашим спутником.")
-                return false;
-            end
-        elseif (arguments[1] == "petstay") then
-            local Pet = player:GetTargetCreature();
-            local creatorGUID = Pet:GetControllerGUID();
-            local plGUID = player:GetGUID();
-            if(creatorGUID == plGUID)then
-                Pet:MoveClear(true);
                 return false;
             else
                 player:SendBroadcastMessage("ОШИБКА: NPC не является вашим спутником.")
