@@ -385,7 +385,46 @@ local function OnPlayerCommand(event, player, command)
 			else
 				player:SendBroadcastMessage("ОШИБКА: NPC не является вашим спутником.")
 				return false;
-			end
+            end
+        elseif (arguments[1] == "petfollow") then
+            local Pet = player:GetTargetCreature();
+            local creatorGUID = Pet:GetControllerGUID();
+            local plGUID = player:GetGUID();
+            if(creatorGUID == plGUID)then
+                player:SendBroadcastMessage(".petfollow |r[|cffbbbbbbДистанция от -2 до 4|r] |r[|cffbbbbbbПозиция относительно игрока|r]\nВы можете не указывать дистанцию и позицию, и тогда спутник будет следовать стандартным образом.")
+                if arguments[2] ~= nil then
+                    arguments[2] = tonumber(arguments[2])
+                    if ( arguments[2] <= 4 and arguments[2] >= (-2) ) then
+                        if arguments[3] ~= nil then
+                            arguments[3] = tonumber(arguments[3])
+                            Pet:MoveFollow( player, arguments[2], arguments[3] )
+                            -- Позиция рядом с игроком не указана
+                        else
+                            Pet:MoveFollow( player, arguments[2], 1.507 )
+                        end
+                    else
+                        player:SendBroadcastMessage("Укажите дистанцию следования от -2 до 4.")
+                    end
+                    -- Если не указана дистанция следования
+                else
+                    Pet:MoveFollow( player, 0, 1.507 )
+                end
+                return false;
+            else
+                player:SendBroadcastMessage("ОШИБКА: NPC не является вашим спутником.")
+                return false;
+            end
+        elseif (arguments[1] == "petstay") then
+            local Pet = player:GetTargetCreature();
+            local creatorGUID = Pet:GetControllerGUID();
+            local plGUID = player:GetGUID();
+            if(creatorGUID == plGUID)then
+                Pet:MoveClear(true);
+                return false;
+            else
+                player:SendBroadcastMessage("ОШИБКА: NPC не является вашим спутником.")
+                return false;
+            end
 		elseif (arguments[1] == "petemote") then
 			local Pet = player:GetTargetCreature();
 			local creatorGUID = Pet:GetControllerGUID();
