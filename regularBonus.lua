@@ -23,7 +23,6 @@ local function sendShopLetters()
 		end
 	end	
 end
-
 CreateLuaEvent(sendShopLetters, 600000, 0);
 
 local function sendOnlineLetters()
@@ -72,7 +71,6 @@ local function sendOnlineLetters()
 		end
 	end
 end
-
 CreateLuaEvent(sendOnlineLetters, 600000, 0);
 
 local function sendWeeklyLetters()
@@ -126,5 +124,4 @@ local function sendWeeklyLetters()
 		end
 	end
 end
-
 CreateLuaEvent(sendWeeklyLetters, 600000, 0);

@@ -703,8 +703,8 @@ end
 --PlayerContainers.assignChestGossipEvents();
 
 --RegisterPlayerGossipEvent(6666, 2, TestSelect)
---RegisterGameObjectGossipEvent(4149, 1, PlayerContainers.OpenGossip);
---RegisterGameObjectEvent(4149, 9, PlayerContainers.StateChangeGossip);
+RegisterGameObjectGossipEvent(4149, 1, PlayerContainers.OpenGossip);
+RegisterGameObjectEvent(4149, 9, PlayerContainers.StateChangeGossip);
 --RegisterGameObjectEvent(153454, 14, TESTESTGossip); --153454
 
 ----------------------------- Подвалы -----------------------------
