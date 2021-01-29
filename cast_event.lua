@@ -14,7 +14,7 @@ local EVENT_ON_CAST = 5;
 local function castEvent(event, player, spell, skipCheck)
 	local spellId = spell:GetEntry();
 if (player:GetGMRank() == 3) then
-		--player:SendBroadcastMessage(spellId)
+		player:SendBroadcastMessage(spellId)
 	end
 	if (spellId == 90005) then -- GOB, case spell "start/stop a building mode"
 		local questId = 110000;
