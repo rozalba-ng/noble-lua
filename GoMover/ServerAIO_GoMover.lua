@@ -81,17 +81,18 @@ function GOM_OpenEditAddon(player,gob)
 end
 
 local function OnPlayerCommandWithArg(event, player, code)
-    if(string.find(code, " "))then
+    if(string.find(code, " "))then -- кста, Вадик, а что это за странный кусок кода, который ничего не делает?
         local arguments = {}
         local arguments = string.split(code, " ")
-	elseif(code == "movego")then  
-		local nearestGo = player:GetNearestGameObject(5)
-		if nearestGo then
-			AIO.Handle(player,"GOM_Handlers","SetName",nearestGo:GetName())
-			AIO.Handle(player,"GOM_Handlers","GetGUID",nearestGo:GetDBTableGUIDLow())
-		else
-			player:SendBroadcastMessage("Объектов в радиусе не было обнаружено")
-		end
+	elseif(code == "movego")then
+		player:SendBroadcastMessage("Команда временно отключена")
+--		local nearestGo = player:GetNearestGameObject(5)
+--		if nearestGo then
+--			AIO.Handle(player,"GOM_Handlers","SetName",nearestGo:GetName())
+--			AIO.Handle(player,"GOM_Handlers","GetGUID",nearestGo:GetDBTableGUIDLow())
+--		else
+--			player:SendBroadcastMessage("Объектов в радиусе не было обнаружено")
+--		end
 	end
 end
 

@@ -35,7 +35,7 @@ local function calculateMoney()
 --					--	Игрок в Штормграде
 --						r = 4
 --						trueZone = true
---					elseif ( zone == 10237 or zone == 10214 or zone == 10197 or zone == 10160 or zone == 10179 or zone == 10232 ) then
+--					elseif ( zone == 10237 or zone == 10236 or zone == 10235 or zone == 10199 or zone == 10234 or zone == 10214 or zone == 10197 or zone == 10160 or zone == 10179 or zone == 10232 or zone == 10233 or zone == 12) then
 --					--	Игрок играет на полигоне
 --						r = 3
 --						trueZone = true
