@@ -85,14 +85,17 @@ local function OnPlayerCommandWithArg(event, player, code)
         local arguments = {}
         local arguments = string.split(code, " ")
 	elseif(code == "movego")then
-		player:SendBroadcastMessage("Команда временно отключена")
---		local nearestGo = player:GetNearestGameObject(5)
---		if nearestGo then
---			AIO.Handle(player,"GOM_Handlers","SetName",nearestGo:GetName())
---			AIO.Handle(player,"GOM_Handlers","GetGUID",nearestGo:GetDBTableGUIDLow())
---		else
---			player:SendBroadcastMessage("Объектов в радиусе не было обнаружено")
---		end
+		local nearestGo = player:GetNearestGameObject(5)
+		if nearestGo then
+			if (nearestGo:GetOwner() == player) or player:GetGMRank() > 0 then
+				AIO.Handle(player,"GOM_Handlers","SetName",nearestGo:GetName())
+				AIO.Handle(player,"GOM_Handlers","GetGUID",nearestGo:GetDBTableGUIDLow())
+			else
+				player:SendBroadcastMessage("Рядом стоящий объект вам не принадлежит")
+			end
+		else
+			player:SendBroadcastMessage("Объектов в радиусе не было обнаружено")
+		end
 	end
 end
 
