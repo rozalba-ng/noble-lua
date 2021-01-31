@@ -85,7 +85,7 @@ local function OnPlayerCommandWithArg(event, player, code)
         local arguments = {}
         local arguments = string.split(code, " ")
 	elseif(code == "movego")then
-		local nearestGo = player:GetNearestGameObject(5)
+		local nearestGo = player:GetNearestGameObject(10)
 		if nearestGo then
 			if (nearestGo:GetOwner() == player) or player:GetGMRank() > 0 then
 				AIO.Handle(player,"GOM_Handlers","SetName",nearestGo:GetName())
