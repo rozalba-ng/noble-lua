@@ -8,6 +8,8 @@ PlayerBuild = {}
 PlayerBuild.targetgobject = {}
 footBall = {}
 footBall.lastHit = {};
+local playersRubberyTime = {}
+
 
 local EVENT_ON_CAST = 5;
 
@@ -63,8 +65,14 @@ local function castEvent(event, player, spell, skipCheck)
             return false;
         end
 
+        if ( playersRubberyTime[selection:GetName()] and (  os.time() - playersRubberyTime[selection:GetName()]   ) < 1800 )  then
+            player:SendNotification( "Данное действие невозможно: персонаж недавно был ограблен!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
         if (selection:HasAura( 91060 )) then
-            player:SendNotification( "Данное действие невозможно: персонаж под стражи!" )
+            player:SendNotification( "Данное действие невозможно: персонаж под защитой стражи!" )
             player:ResetSpellCooldown( spellId )
             return false;
         end
@@ -92,6 +100,8 @@ local function castEvent(event, player, spell, skipCheck)
             player:SendNotification( "Успешно! Удалось украсть " .. amount .. " медных монет" )
             return true;
         end
+
+        playersRubberyTime[selection:GetName()] = os.time();
 
         return true;
 
