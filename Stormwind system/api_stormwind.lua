@@ -23,6 +23,41 @@ amount_reputation_honored = 9000;
 amount_reputation_revered = 21000;
 amount_reputation_exalted = 42000;
 
+--	Перечень зон основного полигона.
+mainPlaygroundZones = {
+	aura = 91065, -- Аура гильдхолла на территории Штормграда.
+	1519, -- Штормград
+	--	Какие-то зоны с карты.
+	--	Список ниже необходимо пересобрать после того как мы убедимся в том что все зоны на карте размечены правильно.
+	10237,
+	10236,
+	10235,
+	10199,
+	10234,
+	10214,
+	10197,
+	10160,
+	10179,
+	10232,
+	10233,
+	12,
+}
+
+-- Игрок на основном полигоне?
+function Player:InMainPlayground()
+	if self:HasAura( mainPlaygroundZones.aura ) then
+		return true
+	else
+		local zone = self:GetZoneId()
+		for i = 1, #mainPlaygroundZones do
+			if mainPlaygroundZones[i] == zone then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 --	Сейчас время актива или нет?
 function ActionTime()
 	local t = tonumber( os.date("%H") )
