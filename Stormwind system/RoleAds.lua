@@ -16,6 +16,7 @@ CharDBQuery( SQL_databaseCreation )
 local function RoleAdv()
 	if SocialTime() then
 		local Q = CharDBQuery( "SELECT id, text, countOfUses FROM roleADS WHERE ( countOfUses > 0 ) AND ( "..os.time().." - lastUseTime ) > 100" ) --3000
+		print("Debug1")
 		if Q then
 			if Q:GetRowCount() > 2 then
 				for i = 1, math.random( 1, ( Q:GetRowCount() - 1 ) ) do -- Выбор случайного объявления из доступных.
@@ -27,9 +28,12 @@ local function RoleAdv()
 			text = Q:GetString(1)
 			countOfUses = Q:GetUInt8(2)
 			countOfUses = countOfUses - 1
+			print("Debug2")
 			if ( countOfUses == 0 ) then
 				CharDBQuery( "DELETE FROM roleAds WHERE id = "..id )
+				print("Debug3")
 			else
+				print("Debug4")
 				CharDBQuery( "UPDATE roleAds SET lastUseTime = "..os.time()..",  countOfUses = "..countOfUses.." WHERE id = "..id )
 			end
 		--	Отправка сообщения игрокам
