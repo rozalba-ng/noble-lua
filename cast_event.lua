@@ -19,18 +19,26 @@ local function castEvent(event, player, spell, skipCheck)
     if (spellId == 1804) then -- взлом замка
 
     elseif (spellId == 91095) then -- обшаривание карманов
+        local zone = player:GetZoneId();
+
+        if (not(zone == 1519 or player:HasAura(mainPlaygroundZones.aura ))) then
+            player:SendNotification( "В этой зоне запрещены карманные кражи!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
         if (player:GetReputation( thiefs_faction ) < amount_reputation_friendly) then
-            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно репутации для совершения данного действия!|r");
+            player:SendNotification( "Недостаточно репутации для совершения данного действия!" )
             player:ResetSpellCooldown( spellId )
             return false;
         end
         if (player:HasAura( 91060 )) then
-            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFДанное действие невозможно совершить под наблюдением стражи!|r");
+            player:SendNotification( "Данное действие невозможно совершить под наблюдением стражи!" )
             player:ResetSpellCooldown( spellId )
             return false;
         end
         if not SocialTime() then
-            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFДанное действие можно совершать только во время социальной активности (18:00 - 2:00 по МСК)!|r");
+            player:SendNotification( "Данное действие можно совершать только во время социальной активности (18:00 - 2:00 по МСК)!" )
             player:ResetSpellCooldown( spellId )
             return false;
         end
@@ -51,6 +59,12 @@ local function castEvent(event, player, spell, skipCheck)
 
         if player == selection then
             player:SendNotification( "Ошибка! Целью не можете быть вы сами!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if (selection:HasAura( 91060 )) then
+            player:SendNotification( "Данное действие невозможно: персонаж под стражи!" )
             player:ResetSpellCooldown( spellId )
             return false;
         end
