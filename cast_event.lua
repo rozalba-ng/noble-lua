@@ -90,6 +90,7 @@ local function castEvent(event, player, spell, skipCheck)
             selection:ModifyMoney(-amount);
             player:ModifyMoney(amount);
             player:SendNotification( "Успешно! Удалось украсть " .. amount .. " медных монет" )
+            playersRubberyTime[selection:GetName()] = os.time();
             return true;
         end
 
@@ -98,10 +99,11 @@ local function castEvent(event, player, spell, skipCheck)
             selection:ModifyMoney(-amount);
             player:ModifyMoney(amount);
             player:SendNotification( "Успешно! Удалось украсть " .. amount .. " медных монет" )
+            playersRubberyTime[selection:GetName()] = os.time();
             return true;
         end
 
-        playersRubberyTime[selection:GetName()] = os.time();
+
 
         return true;
 
