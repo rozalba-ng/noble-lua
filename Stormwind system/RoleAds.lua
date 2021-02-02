@@ -30,11 +30,11 @@ local function RoleAdv()
 			countOfUses = countOfUses - 1
 			print("Debug2")
 			if ( countOfUses == 0 ) then
-				CharDBQuery( "DELETE FROM roleAds WHERE id = "..id )
+				CharDBQuery( "DELETE FROM roleADS WHERE id = "..id )
 				print("Debug3")
 			else
 				print("Debug4")
-				CharDBQuery( "UPDATE roleAds SET lastUseTime = "..os.time()..",  countOfUses = "..countOfUses.." WHERE id = "..id )
+				CharDBQuery( "UPDATE roleADS SET lastUseTime = "..os.time()..",  countOfUses = "..countOfUses.." WHERE id = "..id )
 			end
 		--	Отправка сообщения игрокам
 			local players = GetPlayersInWorld()
