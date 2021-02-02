@@ -8,15 +8,106 @@ PlayerBuild = {}
 PlayerBuild.targetgobject = {}
 footBall = {}
 footBall.lastHit = {};
+local playersRubberyTime = {}
+
 
 local EVENT_ON_CAST = 5;
 
 local function castEvent(event, player, spell, skipCheck)
 	local spellId = spell:GetEntry();
-if (player:GetGMRank() == 3) then
+    if (player:GetGMRank() == 3) then
 		player:SendBroadcastMessage(spellId)
-	end
-	if (spellId == 90005) then -- GOB, case spell "start/stop a building mode"
+    end
+    if (spellId == 1804) then -- взлом замка
+
+    elseif (spellId == 91095) then -- обшаривание карманов
+        local zone = player:GetZoneId();
+
+        if (not(zone == 1519 or player:HasAura(mainPlaygroundZones.aura ))) then
+            player:SendNotification( "В этой зоне запрещены карманные кражи!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if (player:GetReputation( thiefs_faction ) < amount_reputation_friendly) then
+            player:SendNotification( "Недостаточно репутации для совершения данного действия!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+        if (player:HasAura( 91060 )) then
+            player:SendNotification( "Данное действие невозможно совершить под наблюдением стражи!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+        if not SocialTime() then
+            player:SendNotification( "Данное действие можно совершать только во время социальной активности (18:00 - 2:00 по МСК)!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        local selection = player:GetSelection()
+
+        if not selection then
+            player:SendNotification( "Ошибка! Не выбрана цель!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if not selection:ToPlayer() then
+            player:SendNotification( "Ошибка! В цель не выбран игрок!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if player == selection then
+            player:SendNotification( "Ошибка! Целью не можете быть вы сами!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if ( playersRubberyTime[selection:GetName()] and (  os.time() - playersRubberyTime[selection:GetName()]   ) < 1800 )  then
+            player:SendNotification( "Данное действие невозможно: персонаж недавно был ограблен!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if (selection:HasAura( 91060 )) then
+            player:SendNotification( "Данное действие невозможно: персонаж под защитой стражи!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        local targetMoney = selection:GetCoinage()
+
+        if (targetMoney < 500) then
+            player:SendNotification( "Ничего не удалось украсть: персонаж слишком беден или не имеет с собой денег" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if (targetMoney > 50000) then
+            local amount = math.random(50, 500);
+            selection:ModifyMoney(-amount);
+            player:ModifyMoney(amount);
+            player:SendNotification( "Успешно! Удалось украсть " .. amount .. " медных монет" )
+            playersRubberyTime[selection:GetName()] = os.time();
+            return true;
+        end
+
+        if (targetMoney >= 500) then
+            local amount = math.random(50, 150);
+            selection:ModifyMoney(-amount);
+            player:ModifyMoney(amount);
+            player:SendNotification( "Успешно! Удалось украсть " .. amount .. " медных монет" )
+            playersRubberyTime[selection:GetName()] = os.time();
+            return true;
+        end
+
+
+
+        return true;
+
+	elseif (spellId == 90005) then -- GOB, case spell "start/stop a building mode"
 		local questId = 110000;
 		if (player:HasQuest(questId)) then
 			player:RemoveQuest(questId);
