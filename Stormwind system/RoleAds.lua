@@ -56,11 +56,15 @@ local function RoleAdv_Command( _, player, command )
 				if command[2] == "create" then
 					local text = ""
 					for i = 3, #command do
-						text = text..command
+						text = text..command[i]
 					end
-					CharDBQuery("INSERT INTO roleADS ( text, creator ) values ( '"..text.."', "..player:GetAccountId().." )")
+					if text ~= "" then
+						CharDBQuery('INSERT INTO roleADS ( text, creator ) values ( "'..text..'", '..player:GetAccountId()..' )')
+						player:SendBroadcastMessage("Объявление создано. Теперь оно будет показываться игрокам.")
+					end
 				elseif ( command[2] == "delete" ) and ( command[3] ) and ( tonumber( command[3] ) ) then
 					CharDBQuery( "DELETE FROM roleADS WHERE id = "..tonumber( command[3] ) )
+					player:SendBroadcastMessage( command[3].." - удалено." )
 				elseif command[2] == "list" then
 					local Q = CharDBQuery( "SELECT id, text, countOfUses FROM roleADS WHERE owner = "..player:GetAccountId() )
 					if Q then
