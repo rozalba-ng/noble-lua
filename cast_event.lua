@@ -21,26 +21,37 @@ local function castEvent(event, player, spell, skipCheck)
     elseif (spellId == 91095) then -- обшаривание карманов
         if (player:GetReputation( thiefs_faction ) < amount_reputation_friendly) then
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНедостаточно репутации для совершения данного действия!|r");
+            player:ResetSpellCooldown( spellId )
             return false;
         end
         if (player:HasAura( 91060 )) then
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFДанное действие невозможно совершить под наблюдением стражи!|r");
+            player:ResetSpellCooldown( spellId )
             return false;
         end
         if not SocialTime() then
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFДанное действие можно совершать только во время социальной активности (18:00 - 2:00 по МСК)!|r");
+            player:ResetSpellCooldown( spellId )
             return false;
         end
 
         local selection = player:GetSelection()
 
+        if not selection then
+            player:SendNotification( "Ошибка! Не выбрана цель!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
         if not selection:ToPlayer() then
             player:SendNotification( "Ошибка! В цель не выбран игрок!" )
+            player:ResetSpellCooldown( spellId )
             return false;
         end
 
         if player == selection then
             player:SendNotification( "Ошибка! Целью не можете быть вы сами!" )
+            player:ResetSpellCooldown( spellId )
             return false;
         end
 
@@ -48,6 +59,7 @@ local function castEvent(event, player, spell, skipCheck)
 
         if (targetMoney < 500) then
             player:SendNotification( "Ничего не удалось украсть: персонаж слишком беден или не имеет с собой денег" )
+            player:ResetSpellCooldown( spellId )
             return false;
         end
 
