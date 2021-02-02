@@ -18,7 +18,7 @@ local function RoleAdv()
 		local Q = CharDBQuery( "SELECT id, text, countOfUses FROM roleADS WHERE ( countOfUses > 0 ) AND ( "..os.time().." - lastUseTime ) > 3000" )
 		if Q then
 			if Q:GetRowCount() > 2 then
-				for i = 1, math.random( 1, ( Q:GetRowCount() - 1 ) ) -- Выбор случайного объявления из доступных.
+				for i = 1, math.random( 1, ( Q:GetRowCount() - 1 ) ) do -- Выбор случайного объявления из доступных.
 					Q:NextRow()
 				end
 			end
