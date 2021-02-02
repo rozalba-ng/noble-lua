@@ -36,7 +36,7 @@ local function RoleAdv()
 			local players = GetPlayersInWorld()
 			for i = 1, #players do
 				if players[i]:InMainPlayground() then
-					players[i]:SendBroadcastMessage( "[|cff7eff47РОЛЕВОЕ ОБЪЯВЛЕНИЕ|r]\n|cffff4040"..text )
+					players[i]:SendBroadcastMessage( "[|cff7eff47РОЛЕВОЕ ОБЪЯВЛЕНИЕ|r]\n|cff03c2fc"..text )
 					players[i]:PlayDirectSound( 61, players[i] )
 				end
 			end
