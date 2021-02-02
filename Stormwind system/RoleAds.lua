@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `roleADS` (
 	PRIMARY KEY (`id`)
 )
 COMMENT='Used for RoleAds.lua\r\nРолевые объявления в Штормграде и его окрестностях.'
-COLLATE='latin1_swedish_ci'
+COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
 ]]
@@ -15,7 +15,7 @@ CharDBQuery( SQL_databaseCreation )
 
 local function RoleAdv()
 	if SocialTime() then
-		local Q = CharDBQuery( "SELECT id, text, countOfUses FROM roleADS WHERE ( countOfUses > 0 ) AND ( "..os.time().." - lastUseTime ) > 3000" )
+		local Q = CharDBQuery( "SELECT id, text, countOfUses FROM roleADS WHERE ( countOfUses > 0 ) AND ( "..os.time().." - lastUseTime ) > 100" ) --3000
 		if Q then
 			if Q:GetRowCount() > 2 then
 				for i = 1, math.random( 1, ( Q:GetRowCount() - 1 ) ) do -- Выбор случайного объявления из доступных.
