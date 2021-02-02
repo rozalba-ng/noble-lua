@@ -43,4 +43,4 @@ local function RoleAdv()
 		end
 	end
 end
-CreateLuaEvent( RoleAdv, 0.5*60000, repeats ) -- 60000-умножение на миллисекунды. Т.Е. Указываем кол-во минут.
+CreateLuaEvent( RoleAdv, 0.5*60000, 0 ) -- 60000-умножение на миллисекунды. Т.Е. Указываем кол-во минут.
