@@ -85,7 +85,7 @@ end
 local function performDm3GobjectSpawn(player, gobEntry, save)
 	local queryType = WorldDBQuery("SELECT type FROM `world`.`gameobject_template` WHERE entry = "..gobEntry.."")
 	local gobType = queryType:GetInt32(0)
-	if gobEntry < 300000 or (gobType == 0 or gobType == 5 or gobType == 7 or gobType == 9 or gobType == 10 or gobType == 32 or gobType == 34) then
+	if gobEntry < 300000 then
 		local x, y, z, o = player:GetLocation();
 		local pid = player:GetGUIDLow();
 		local map = player:GetMapId();

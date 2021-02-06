@@ -52,27 +52,7 @@ function GoMover.StartScale(player,guid,value,scaleType)
 	end
 end
 function GoMover.ReturnToInventory(player,guid)
-	if(player:GetGMRank() == 2 or player:GetGMRank() == 1)then
-		player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFДоступ запрещен для вашего типа аккаунта.|r");
-		return false;
-	end
-	for index, go in pairs(player:GetGameObjectsInRange(40)) do 
-		if tonumber(go:GetDBTableGUIDLow()) == tonumber(guid) then
-			if go:GetPhaseMask() == 1024 then --Нельзя забирать гошки в 1024 фазе (Творческая фаза)
-				player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFВы не можете забирать объекты в творческой фазе.|r");
-				return false
-			end
-			local entry = go:GetEntry();
-			local item = player:AddItem(entry);
-			if(item == nil)then
-				player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет места.|r");
-				return false;
-			end
-			
-			go:RemoveFromWorld(true)
-
-		end
-	end
+	player:SendBroadcastMessage("Для того чтобы забрать объект воспользуйтесь кнопкой в главном меню режима строительства")
 end
 function GOM_OpenEditAddon(player,gob)
 	AIO.Handle(player,"GOM_Handlers","SetName",gob:GetName())
