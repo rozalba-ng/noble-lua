@@ -68,24 +68,50 @@ end
 	end
 end]]--
 ------------------------- Спавн гошек ------------------------------
+local allowedTypes = {
+	0, -- GAMEOBJECT_TYPE_DOOR
+	5, -- GAMEOBJECT_TYPE_GENERIC
+	7, -- GAMEOBJECT_TYPE_CHAIR
+	9, -- GAMEOBJECT_TYPE_TEXT
+	10, -- GAMEOBJECT_TYPE_GOOBER
+}
+local function GOBIsAllowed( entry )
+--	Проверка ID
+	if ( entry >= 530000 ) and ( entry <= 540000 ) then
+		return false
+	else
+	--	Проверка типа
+		local Q = WorldDBQuery( "SELECT type FROM `world`.`gameobject_template` WHERE entry = "..entry )
+		local t = Q:GetInt32(0)
+		for i = 1, #allowedTypes do
+			if t == allowedTypes[i] then
+				return true
+			end
+		end
+		return false
+	end
+end
+
 local function performGobjectSpawn(player, gobEntry, save)
-	if (gobEntry < 300000) then
-		local x, y, z, o = player:GetLocation();
-		local pid = player:GetGUIDLow();
-		local map = player:GetMapId();
-		local phase = player:GetPhaseMask();
-		local DMobject = PerformIngameSpawn( 2, gobEntry, map, 0, x, y, z, o, save, pid, 0, phase);
-		player:SendBroadcastMessage('Объект ID: '..DMobject:GetGUIDLow()..' ['..DMobject:GetName()..'] установлен.');
-		PrintError(player:GetName().." поставил ГОБ: "..gobEntry);
-        return DMobject;
+	if ( gobEntry < 300000 ) then
+		if GOBIsAllowed( gobEntry ) then
+			local x, y, z, o = player:GetLocation();
+			local pid = player:GetGUIDLow();
+			local map = player:GetMapId();
+			local phase = player:GetPhaseMask();
+			local DMobject = PerformIngameSpawn( 2, gobEntry, map, 0, x, y, z, o, save, pid, 0, phase);
+			player:SendBroadcastMessage('Объект ID: '..DMobject:GetGUIDLow()..' ['..DMobject:GetName()..'] установлен.');
+			PrintError(player:GetName().." поставил ГОБ: "..gobEntry);
+			return DMobject;
+		else
+			player:SendBroadcastMessage("Объект имеет запрещенный тип.")
+		end
 	else
 		player:SendBroadcastMessage("Данный объект недоступен для использования. Используйте объекты с ID меньше 300000")
 	end
 end
 local function performDm3GobjectSpawn(player, gobEntry, save)
-	local queryType = WorldDBQuery("SELECT type FROM `world`.`gameobject_template` WHERE entry = "..gobEntry.."")
-	local gobType = queryType:GetInt32(0)
-	if gobEntry < 300000 then
+	if GOBIsAllowed( gobEntry ) then
 		local x, y, z, o = player:GetLocation();
 		local pid = player:GetGUIDLow();
 		local map = player:GetMapId();
@@ -457,7 +483,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 							local map = player:GetMap();	
 							local gob = gobjects[var];
 							gob:SetGoScale(gobSize);
-							local phase = player:GetPhaseMask()
+							local phase = gob:GetPhaseMask()
 							gob:SetPhaseMask(4096)
 							gob:SetPhaseMask(phase)
 							player:SendBroadcastMessage('Размер изменен.');
