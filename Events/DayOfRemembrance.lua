@@ -56,9 +56,9 @@ function event.GMCommand( _, player, command )
 	if player:GetGMRank() > 0 then
 		if command == "lamp" then
 			if event.playersCanUseLamps then
-				player:SendBroadcastMessage("В данный момент игроки не могут запустить фонарики.\nИспользуй .lamp on")
-			else
 				player:SendBroadcastMessage("В данный момент игроки могут запустить фонарики.\nИспользуй .lamp off")
+			else
+				player:SendBroadcastMessage("В данный момент игроки не могут запустить фонарики.\nИспользуй .lamp on")
 			end
 		elseif string.find( command, " " ) then
 			command = string.split( command, " " )
