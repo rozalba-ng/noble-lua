@@ -48,6 +48,11 @@ local function calculateMoney()
 --					--	Если рядом есть НПС дарующий бонус
 --						r = r + 2
 --					end
+					if (player:HasAura(91098) or player:HasAura(91099) or player:HasAura(91100) or player:HasAura(91101)) then
+						--	Если время суперактива - идёт маленький бонус.
+						r = r*2;
+					end
+
 					--	Начисление репутации
 					player:SetReputation( f, player:GetReputation( f ) + r )
 					--	Снятие репутации UPD ROZALBA: отменяем снятие репутации
