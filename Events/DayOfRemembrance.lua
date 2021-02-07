@@ -6,14 +6,22 @@ local event = {
 		item2 = 5057520,
 		creature = 9931054,
 		creature2 = 9931060,
+		gameobject = 5049822,
 		fireworks = {
 			11542,
 			11543,
 			11544,
 			55420,
+		},
+		auras = {
+			91098, -- Малое подношение
+			91099, -- Щедрое подношение
+			91100, -- Меценат
 		}
 	}
 }
+
+--[[	ЗАПУСК ФОНАРИКОВ	]]--
 
 function event.FlyingLamp( _,_,_, creature )
 	if ( creature:GetEntry() == event.entry.creature2 ) then -- Красный, дорогой
@@ -89,3 +97,17 @@ function event.GMCommand( _, player, command )
 	end
 end
 RegisterPlayerEvent( 42, event.GMCommand ) -- PLAYER_EVENT_ON_COMMAND
+
+--[[	ПОДНОШЕНИЯ	]]--
+
+function event.Donations( _, gob, player )
+	player:GossipClearMenu()
+	local text = "123"
+	player:GossipSetText( text, 07022101 )
+	player:GossipMenuAddItem( 0, "<Малое подношение.>", 1, 1, false, "тест", 2000 )
+	player:GossipMenuAddItem( 0, "<Щедрое подношение.>", 1, 2, false, "тест", 5000 )
+	player:GossipMenuAddItem( 0, "<Кинуть золотую монетку.>", 1, 3, false, "тест", 10000 )
+	player:GossipMenuAddItem( 0, "<Попытаться украсть монету из кучи.>", 1, 4, false, "тест", 10000 )
+	player:GossipSendMenu( 07022101, gob )
+end
+RegisterGameObjectEvent( event.entry.gameobject, 14, event.Donations ) -- GAMEOBJECT_EVENT_ON_USE
