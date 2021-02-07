@@ -3,7 +3,9 @@ local event = {
 	playersCanUseLamps = false,
 	entry = {
 		item = 5057489,
+		item2 = 5057520,
 		creature = 9931054,
+		creature2 = 9931060,
 		fireworks = {
 			11542,
 			11543,
@@ -14,8 +16,14 @@ local event = {
 }
 
 function event.FlyingLamp( _,_,_, creature )
-	if math.random(1,4) == 1 then -- 25% шанс
-		creature:CastSpell( creature, ( event.entry.fireworks[math.random(1,#event.entry.fireworks)] ), true )
+	if ( creature:GetEntry() == event.entry.creature2 ) then -- Красный, дорогой
+		if math.random(1,2) == 1 then -- 50% шанс
+			creature:CastSpell( creature, ( event.entry.fireworks[math.random(1,#event.entry.fireworks)] ), true )
+		end
+	else -- Синий, обычный
+		if math.random(1,4) == 1 then -- 25% шанс
+			creature:CastSpell( creature, ( event.entry.fireworks[math.random(1,#event.entry.fireworks)] ), true )
+		end
 	end
 	local x,y,z = creature:GetLocation()
 	creature:MoveJump( x+math.random(-4,4), y+math.random(-4,4), z+math.random(1,2), 0.2, 3 )
@@ -49,6 +57,7 @@ function event.OnUseLamp( _, player, item, target )
 	return false
 end
 RegisterItemEvent( event.entry.item, 2, event.OnUseLamp ) -- ITEM_EVENT_ON_USE
+RegisterItemEvent( event.entry.item2, 2, event.OnUseLamp ) -- ITEM_EVENT_ON_USE
 
 --[[	КОМАНДА ДЛЯ РАЗРЕШЕНИЯ ФОНАРИКОВ	]]--
 
