@@ -49,3 +49,29 @@ function event.OnUseLamp( _, player, item, target )
 	return false
 end
 RegisterItemEvent( event.entry.item, 2, event.OnUseLamp ) -- ITEM_EVENT_ON_USE
+
+--[[	КОМАНДА ДЛЯ РАЗРЕШЕНИЯ ФОНАРИКОВ	]]--
+
+function event.GMCommand( _, player, command )
+	if player:GetGMRank() > 0 then
+		if command == "lamp" then
+			if event.playersCanUseLamps then
+				player:SendBroadcastMessage("В данный момент игроки не могут запустить фонарики.\nИспользуй .lamp on")
+			else
+				player:SendBroadcastMessage("В данный момент игроки могут запустить фонарики.\nИспользуй .lamp off")
+			end
+		elseif string.find( command, " " ) then
+			command = string.split( command, " " )
+			if command[1] == "lamp" then
+				if command[2] == "on" then
+					event.playersCanUseLamps = true
+					player:SendBroadcastMessage("Фонарики включены.")
+				elseif command[2] == "off" then
+					event.playersCanUseLamps = false
+					player:SendBroadcastMessage("Фонарики выключены.")
+				end
+			end
+		end
+	end
+end
+RegisterPlayerEvent( 42, event.GMCommand ) -- PLAYER_EVENT_ON_COMMAND
