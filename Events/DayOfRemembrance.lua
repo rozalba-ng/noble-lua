@@ -100,14 +100,24 @@ RegisterPlayerEvent( 42, event.GMCommand ) -- PLAYER_EVENT_ON_COMMAND
 
 --[[	ПОДНОШЕНИЯ	]]--
 
-function event.Donations( _, gob, player )
-	player:GossipClearMenu()
-	local text = "123"
-	player:GossipSetText( text, 07022101 )
-	player:GossipMenuAddItem( 0, "<Малое подношение.>", 1, 1, false, "тест", 2000 )
-	player:GossipMenuAddItem( 0, "<Щедрое подношение.>", 1, 2, false, "тест", 5000 )
-	player:GossipMenuAddItem( 0, "<Кинуть золотую монетку.>", 1, 3, false, "тест", 10000 )
-	player:GossipMenuAddItem( 0, "<Попытаться украсть монету из кучи.>", 1, 4, false, "тест", 10000 )
-	player:GossipSendMenu( 07022101, gob )
+function event.Donations( event, object1, object2, sender, intid )
+	if event == 14 then
+		local player = object2
+		player:GossipClearMenu()
+		local text = "<Блестящая куча монет задорно звенит каждый раз, когда туда кидают деньги. На жертвующих глядят с нескрываемым одобрением. Вы явно можете стать одним из них.>\n\n|cff2a5b78Пожертвование денег временно удвоит получаемую вами репутацию. Срок действия бонуса зависит от суммы пожертвования. Вы можете узнать про это подробнее нажав на один из вариантов ниже."
+		player:GossipSetText( text, 07022101 )
+		player:GossipMenuAddItem( 0, "<Малое подношение.>", 1, 1, false, "Бонус от этого подношения будет действовать до 10.02", 2000 )
+		player:GossipMenuAddItem( 0, "<Щедрое подношение.>", 1, 2, false, "Бонус от этого подношения будет действовать до 14.02", 5000 )
+		player:GossipMenuAddItem( 0, "<Кинуть золотую монетку.>", 1, 3, false, "Бонус от этого подношения будет действовать до 21.02", 10000 )
+		player:GossipSendMenu( 07022101, gob )
+	elseif event == 2 then
+		local player = object1
+		print(intid)
+		if intid == 1 then
+		elseif intid == 2 then
+		else
+		end
+	end
 end
 RegisterGameObjectEvent( event.entry.gameobject, 14, event.Donations ) -- GAMEOBJECT_EVENT_ON_USE
+RegisterGameObjectGossipEvent( event.entry.gameobject, 2, event.Donations ) -- GOSSIP_EVENT_ON_SELECT
