@@ -102,7 +102,7 @@ RegisterPlayerEvent( 42, event.GMCommand ) -- PLAYER_EVENT_ON_COMMAND
 
 function event.Donations( event, object1, object2, sender, intid )
 	if event == 14 then
-		local player = object2
+		local player, gob = object2, object1
 		player:GossipClearMenu()
 		local text = "<Блестящая куча монет задорно звенит каждый раз, когда туда кидают деньги. На жертвующих глядят с нескрываемым одобрением. Вы явно можете стать одним из них.>\n\n|cff2a5b78Пожертвование денег временно удвоит получаемую вами репутацию. Срок действия бонуса зависит от суммы пожертвования. Вы можете узнать про это подробнее нажав на один из вариантов ниже."
 		player:GossipSetText( text, 07022101 )
