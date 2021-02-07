@@ -40,7 +40,12 @@ function event.OnUseLamp( _, player, item, target )
 		if ( player:GetZoneId() == 1519 ) or ( item:GetEntry() == event.entry.item2 ) then
 			player:CastSpell( player, 6245, true )
 			local x,y,z,o = player:GetLocation()
-			local creature = player:SpawnCreature( event.entry.creature, x+math.random(-1,1), y+math.random(-1,1), z+1.2, o, 3, 420000 ) -- TEMPSUMMON_TIMED_DESPAWN
+			local creature
+			if ( item:GetEntry() == event.entry.item2 ) then
+				creature = player:SpawnCreature( event.entry.creature2, x+math.random(-1,1), y+math.random(-1,1), z+1.2, o, 3, 420000 ) -- TEMPSUMMON_TIMED_DESPAWN
+			else
+				creature = player:SpawnCreature( event.entry.creature, x+math.random(-1,1), y+math.random(-1,1), z+1.2, o, 3, 420000 ) -- TEMPSUMMON_TIMED_DESPAWN
+			end
 			creature:RegisterEvent( event.OnSpawnLamp, 3000, 1 )
 			creature:SetDisableGravity(true)
 			local guid = player:GetGUIDLow()
