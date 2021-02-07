@@ -100,8 +100,8 @@ RegisterPlayerEvent( 42, event.GMCommand ) -- PLAYER_EVENT_ON_COMMAND
 
 --[[	ПОДНОШЕНИЯ	]]--
 
-function event.Donations( event, object1, object2, sender, intid )
-	if event == 14 then
+function event.Donations( eventID, object1, object2, sender, intid )
+	if eventID == 14 then
 		local player, gob = object2, object1
 		local text
 		player:GossipClearMenu()
@@ -115,7 +115,7 @@ function event.Donations( event, object1, object2, sender, intid )
 			text = "|cff003608Вы уже совершили пожертвование."
 		end
 		player:GossipSendMenu( 07022101, gob )
-	elseif event == 2 then
+	elseif eventID == 2 then
 		local player = object1
 		if not ( player:HasAura(event.entry.auras[1]) or player:HasAura(event.entry.auras[2]) or player:HasAura(event.entry.auras[3]) ) then
 			if intid == 1 then
