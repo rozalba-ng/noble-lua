@@ -60,6 +60,7 @@ function event.OnUseLamp( _, player, item, target )
 			creature:SetOwnerGUID( guid )
 			creature:SetCreatorGUID( guid )
 			player:RemoveItem( item, 1 )
+			player:PlayDirectSound( 12901, player )
 			return true
 		else
 			player:SendNotification("Вы должны использовать это в Штормграде.")
@@ -107,13 +108,13 @@ function event.Donations( eventID, object1, object2, sender, intid )
 		player:GossipClearMenu()
 		if not ( player:HasAura(event.entry.auras[1]) or player:HasAura(event.entry.auras[2]) or player:HasAura(event.entry.auras[3]) ) then
 			text = "<Блестящая куча монет задорно звенит каждый раз, когда туда кидают деньги. На жертвующих глядят с нескрываемым одобрением. Вы явно можете стать одним из них.>\n\n|cff003608Пожертвование денег временно удвоит получаемую вами репутацию. Срок действия бонуса зависит от суммы пожертвования. Вы можете узнать про это подробнее, нажав на один из вариантов ниже.\n\n|cff360004Вы не сможете пожертвовать деньги повторно!"
-			player:GossipSetText( text, 07022101 )
 			player:GossipMenuAddItem( 0, "<Малое подношение.>", 1, 1, false, "Бонус от этого подношения будет\nдействовать до 10.02", 2000 )
 			player:GossipMenuAddItem( 0, "<Щедрое подношение.>", 1, 2, false, "Бонус от этого подношения будет\nдействовать до 14.02", 5000 )
 			player:GossipMenuAddItem( 0, "<Кинуть золотую монетку.>", 1, 3, false, "Бонус от этого подношения будет\nдействовать до 21.02", 10000 )
 		else
 			text = "|cff003608Вы уже совершили пожертвование."
 		end
+		player:GossipSetText( text, 07022101 )
 		player:GossipSendMenu( 07022101, gob )
 	elseif eventID == 2 then
 		local player = object1
@@ -135,6 +136,7 @@ function event.Donations( eventID, object1, object2, sender, intid )
 				end
 			end
 		end
+		player:PlayDirectSound( 104875, player )
 		player:GossipComplete()
 	end
 end
