@@ -103,20 +103,39 @@ RegisterPlayerEvent( 42, event.GMCommand ) -- PLAYER_EVENT_ON_COMMAND
 function event.Donations( event, object1, object2, sender, intid )
 	if event == 14 then
 		local player, gob = object2, object1
+		local text
 		player:GossipClearMenu()
-		local text = "<Блестящая куча монет задорно звенит каждый раз когда туда кидают деньги. На жертвующих глядят с нескрываемым одобрением. Вы явно можете стать одним из них.>\n\n|cff003608Пожертвование денег временно удвоит получаемую вами репутацию. Срок действия бонуса зависит от суммы пожертвования. Вы можете узнать про это подробнее нажав на один из вариантов ниже."
-		player:GossipSetText( text, 07022101 )
-		player:GossipMenuAddItem( 0, "<Малое подношение.>", 1, 1, false, "Бонус от этого подношения будет\nдействовать до 10.02", 2000 )
-		player:GossipMenuAddItem( 0, "<Щедрое подношение.>", 1, 2, false, "Бонус от этого подношения будет\nдействовать до 14.02", 5000 )
-		player:GossipMenuAddItem( 0, "<Кинуть золотую монетку.>", 1, 3, false, "Бонус от этого подношения будет\nдействовать до 21.02", 10000 )
+		if not ( player:HasAura(event.entry.auras[1]) or player:HasAura(event.entry.auras[2]) or player:HasAura(event.entry.auras[3]) ) then
+			text = "<Блестящая куча монет задорно звенит каждый раз, когда туда кидают деньги. На жертвующих глядят с нескрываемым одобрением. Вы явно можете стать одним из них.>\n\n|cff003608Пожертвование денег временно удвоит получаемую вами репутацию. Срок действия бонуса зависит от суммы пожертвования. Вы можете узнать про это подробнее, нажав на один из вариантов ниже.\n\n|cff360004Вы не сможете пожертвовать деньги повторно!"
+			player:GossipSetText( text, 07022101 )
+			player:GossipMenuAddItem( 0, "<Малое подношение.>", 1, 1, false, "Бонус от этого подношения будет\nдействовать до 10.02", 2000 )
+			player:GossipMenuAddItem( 0, "<Щедрое подношение.>", 1, 2, false, "Бонус от этого подношения будет\nдействовать до 14.02", 5000 )
+			player:GossipMenuAddItem( 0, "<Кинуть золотую монетку.>", 1, 3, false, "Бонус от этого подношения будет\nдействовать до 21.02", 10000 )
+		else
+			text = "|cff003608Вы уже совершили пожертвование."
+		end
 		player:GossipSendMenu( 07022101, gob )
 	elseif event == 2 then
 		local player = object1
-		print(intid)
-		if intid == 1 then
-		elseif intid == 2 then
-		else
+		if not ( player:HasAura(event.entry.auras[1]) or player:HasAura(event.entry.auras[2]) or player:HasAura(event.entry.auras[3]) ) then
+			if intid == 1 then
+				if ( player:GetCoinage() >= 2000 ) then
+					player:ModifyMoney(-2000)
+					player:AddAura( event.entry.auras[1], player )
+				end
+			elseif intid == 2 then
+				if ( player:GetCoinage() >= 5000 ) then
+					player:ModifyMoney(-5000)
+					player:AddAura( event.entry.auras[2], player )
+				end
+			else
+				if ( player:GetCoinage() >= 10000 ) then
+					player:ModifyMoney(-10000)
+					player:AddAura( event.entry.auras[3], player )
+				end
+			end
 		end
+		player:GossipComplete()
 	end
 end
 RegisterGameObjectEvent( event.entry.gameobject, 14, event.Donations ) -- GAMEOBJECT_EVENT_ON_USE
