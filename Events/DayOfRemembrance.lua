@@ -15,7 +15,7 @@ local event = {
 
 function event.FlyingLamp( _,_,_, creature )
 	if math.random(1,4) == 1 then -- 25% шанс
-		creature:CastSpell( creature, ( event.entry.fireworks[math.random(1,#fireworks)] ), true )
+		creature:CastSpell( creature, ( event.entry.fireworks[math.random(1,#event.entry.fireworks)] ), true )
 	end
 	local x,y,z = creature:GetLocation()
 	creature:MoveJump( x+math.random(-4,4), y+math.random(-4,4), z+math.random(1,2), 0.2, 3 )
