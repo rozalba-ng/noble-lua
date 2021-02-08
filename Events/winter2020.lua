@@ -47,6 +47,8 @@ RegisterServerEvent( 33, RegisterEvent_AntiGOB ) -- ELUNA_EVENT_ON_LUA_STATE_OPE
 
 --[[	ЮЗАБЕЛЬНЫЙ РОГ	]]--
 
+local entry_horn = 5057395
+
 local function OnUse_Horn( event, player, item )
 	player:PlayDirectSound( Roulette(6140, 7234) )
 end
