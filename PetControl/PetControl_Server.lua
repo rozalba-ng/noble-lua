@@ -20,11 +20,25 @@ function PetControlAIO.Byte1( player, byte1 )
 	else player:SendNotification("Вы не можете управлять этим существом.") end
 end
 
-function PetControlAIO.Follow( player, follow )
+function PetControlAIO.Follow( player, follow, distance, angle )
 	local creature = player:GetSelection()
 	if creature and ( creature:GetControllerGUID() == player:GetGUID() ) and not ( creature:HasAura(91072) ) then
 		if follow == 1 then
-			creature:MoveFollow( player )
+			if distance and tonumber(distance) then
+				distance = tonumber(distance) - 2
+				if ( distance > 3 ) or ( distance < -2 ) then
+					player:SendNotification("Укажите дистанцию следования от 0 до 5.")
+					return
+				end
+				if angle and tonumber(angle) then
+					angle = tonumber(angle) * 3.141 / 180 -- Перевод градусов в радианы.
+					creature:MoveFollow( player, distance, angle )
+				else
+					creature:MoveFollow( player, distance )
+				end
+			else
+				creature:MoveFollow( player )
+			end
 		else
 			creature:MoveExpire()
 		end

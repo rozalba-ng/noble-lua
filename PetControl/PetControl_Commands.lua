@@ -7,7 +7,7 @@ PetControlAIO = PetControlAIO or {}
 
 function PetControlAIO.PlayerCommands( _, player, command )
 	if command == "pet" then -- Вывод справки
-		player:SendBroadcastMessage("|cffFF4500(!)|r Для использования этих команд нужно взять спутника в ЦЕЛЬ.\n|cff00FF7F.pet say [Текст]|r - Реплика от лица спутника.\n|cff00FF7F.pet emote [Текст]|r - Текстовая эмоция от лица спутника.\n|cff00FF7F.pet stay|r - Спутник стоит на месте.\n|cff00FF7F.pet follow|r - Спутник следует за вами.\n|cff00FF7F.pet play [ID] {Повтор}|r - Спутник проигрывает анимацию.\nЕсли на месте |cff00FF7F{Повтор}|r указать любое значение анимация будет повторяться бесконечно.\n|cff00FF7F.pet pos [0, 1 или 3]|r - Стоять, сидеть или лежать.\n|cff00FF7F.pet tele|r - Телепорт спутника к персонажу.")
+		player:SendBroadcastMessage("|cffFF4500(!)|r Для использования этих команд нужно взять спутника в ЦЕЛЬ.\n|cff00FF7F.pet say [Текст]|r - Реплика от лица спутника.\n|cff00FF7F.pet emote [Текст]|r - Текстовая эмоция от лица спутника.\n|cff00FF7F.pet stay|r - Спутник стоит на месте.\n|cff00FF7F.pet follow {Дистанция (0-5)} {Угол следования (0-360)}|r - Спутник следует за вами.\n|cff00FF7F.pet play [ID] {Повтор}|r - Спутник проигрывает анимацию.\nЕсли на месте |cff00FF7F{Повтор}|r указать любое значение анимация будет повторяться бесконечно.\n|cff00FF7F.pet pos [0, 1 или 3]|r - Стоять, сидеть или лежать.\n|cff00FF7F.pet tele|r - Телепорт спутника к персонажу.")
 	elseif string.find( command, " " ) then
 		command = string.split( command, " " )
 		if command[1] == "pet" then -- Команды
@@ -36,7 +36,7 @@ function PetControlAIO.PlayerCommands( _, player, command )
 				return
 			----------
 			elseif command[2] == "follow" then
-				PetControlAIO.Follow( player, 1 )
+				PetControlAIO.Follow( player, 1, command[3], command[4] )
 				return
 			----------
 			elseif command[2] == "play" then
