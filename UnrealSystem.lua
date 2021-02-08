@@ -129,7 +129,7 @@ if ( os.date("%d.%m") == "08.02" ) then
 	}
 	local function Congratulation( _, player )
 		if ( player:GetAccountId() == 7243 ) then -- 5194
-			player:CastSpell( player, fireworks(math.random(1,#fireworks)), true )
+			player:CastSpell( player, fireworks[math.random(1,#fireworks)], true )
 			player:SendBroadcastMessage("|cffc779f7"..congratulations[math.random(1,#congratulations)])
 		end
 	end
