@@ -106,6 +106,10 @@ local function UnrealGossip( _, player, creature )
 		local text = "Любопытство это хорошо, но на твоём месте я бы водил интересные сюжеты и вовремя подавал заявку на продление доступа. А знаешь почему? Потому что я слежу за каждым мастером, "..player:GetName()
 		player:GossipSetText( text, 08022101 )
 		player:GossipSendMenu( 08022101, creature )
+	else
+		local text = "— Будьте внимательны при составлении заявок в разделе \"Обратная связь\". Если вам нужно получить одобрение гильдии или персональный предмет, не стоит оставлять заявку в \"Смешанных\". Когда создаете заявку, обращайте внимание на выпадающее окно с разделом, его легко проглядеть. Так вы значительно увеличите шанс на её скорую обработку. А чем быстрее заявки будут обработаны, тем быстрее я обгоню Неко!"
+		player:GossipSetText( text, 08022102 )
+		player:GossipSendMenu( 08022102, creature )
 	end
 end
 RegisterCreatureGossipEvent( 9911244, 1, UnrealGossip ) -- GOSSIP_EVENT_ON_HELLO
@@ -114,24 +118,20 @@ RegisterCreatureGossipEvent( 9911244, 1, UnrealGossip ) -- GOSSIP_EVENT_ON_HELLO
 
 if ( os.date("%d.%m") == "08.02" ) then
 	local congratulations = {
-		"Салам, брат!",
-		"С ДР, братишка.",
-		"Счастливых тебе гороскопов, незнакомец.",
+		"Счастливых тебе гороскопов, Анрил.",
 		"С днём рождения, хозяин.",
 	}
-	local function FakeGossip( _, player, creature )
+	local fireworks = {
+		11542,
+		11543,
+		11544,
+		55420,
+	}
+	local function Congratulation( _, player )
 		if ( player:GetAccountId() == 7243 ) then -- 5194
-			local text = congratulations[math.random(1,#congratulations)]
-			player:GossipSetText( text, 08022102 )
-			player:GossipSendMenu( 08022102, creature )
-		else
-			player:GossipSendMenu( creature:GetGossipTextId(), creature )
+			player:CastSpell( player, fireworks(math.random(1,#fireworks)), true )
+			player:SendBroadcastMessage("|cffc779f7"..congratulations[math.random(1,#congratulations)])
 		end
 	end
-	local Q = WorldDBQuery("SELECT entry FROM creature_template WHERE npcflag = 1")
-	for i = 1, Q:GetRowCount() do
-		local entry = Q:GetUInt32(0)
-		RegisterCreatureGossipEvent( entry, 1, FakeGossip ) -- GOSSIP_EVENT_ON_HELLO
-		Q:NextRow()
-	end
+	RegisterPlayerEvent( 3, Congratulation ) -- PLAYER_EVENT_ON_LOGIN
 end
