@@ -2,15 +2,15 @@
 PetControlAIO = PetControlAIO or {}
 
 --[[
-	Фунции из таблицы PetControlAIO ищи в файле PetControl_Server.lua
+	Р¤СѓРЅС†РёРё РёР· С‚Р°Р±Р»РёС†С‹ PetControlAIO РёС‰Рё РІ С„Р°Р№Р»Рµ PetControl_Server.lua
 ]]
 
 function PetControlAIO.PlayerCommands( _, player, command )
-	if command == "pet" then -- Вывод справки
-		player:SendBroadcastMessage("|cffFF4500(!)|r Для использования этих команд нужно взять спутника в ЦЕЛЬ.\n|cff00FF7F.pet say [Текст]|r - Реплика от лица спутника.\n|cff00FF7F.pet emote [Текст]|r - Текстовая эмоция от лица спутника.\n|cff00FF7F.pet stay|r - Спутник стоит на месте.\n|cff00FF7F.pet follow|r - Спутник следует за вами.\n|cff00FF7F.pet play [ID] {Повтор}|r - Спутник проигрывает анимацию.\nЕсли на месте |cff00FF7F{Повтор}|r указать любое значение анимация будет повторяться бесконечно.\n|cff00FF7F.pet pos [0, 1 или 3]|r - Стоять, сидеть или лежать.\n|cff00FF7F.pet tele|r - Телепорт спутника к персонажу.")
+	if command == "pet" then -- Р’С‹РІРѕРґ СЃРїСЂР°РІРєРё
+		player:SendBroadcastMessage("|cffFF4500(!)|r Р”Р»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ СЌС‚РёС… РєРѕРјР°РЅРґ РЅСѓР¶РЅРѕ РІР·СЏС‚СЊ СЃРїСѓС‚РЅРёРєР° РІ Р¦Р•Р›Р¬.\n|cff00FF7F.pet say [РўРµРєСЃС‚]|r - Р РµРїР»РёРєР° РѕС‚ Р»РёС†Р° СЃРїСѓС‚РЅРёРєР°.\n|cff00FF7F.pet emote [РўРµРєСЃС‚]|r - РўРµРєСЃС‚РѕРІР°СЏ СЌРјРѕС†РёСЏ РѕС‚ Р»РёС†Р° СЃРїСѓС‚РЅРёРєР°.\n|cff00FF7F.pet stay|r - РЎРїСѓС‚РЅРёРє СЃС‚РѕРёС‚ РЅР° РјРµСЃС‚Рµ.\n|cff00FF7F.pet follow|r - РЎРїСѓС‚РЅРёРє СЃР»РµРґСѓРµС‚ Р·Р° РІР°РјРё.\n|cff00FF7F.pet play [ID] {РџРѕРІС‚РѕСЂ}|r - РЎРїСѓС‚РЅРёРє РїСЂРѕРёРіСЂС‹РІР°РµС‚ Р°РЅРёРјР°С†РёСЋ.\nР•СЃР»Рё РЅР° РјРµСЃС‚Рµ |cff00FF7F{РџРѕРІС‚РѕСЂ}|r СѓРєР°Р·Р°С‚СЊ Р»СЋР±РѕРµ Р·РЅР°С‡РµРЅРёРµ Р°РЅРёРјР°С†РёСЏ Р±СѓРґРµС‚ РїРѕРІС‚РѕСЂСЏС‚СЊСЃСЏ Р±РµСЃРєРѕРЅРµС‡РЅРѕ.\n|cff00FF7F.pet pos [0, 1 РёР»Рё 3]|r - РЎС‚РѕСЏС‚СЊ, СЃРёРґРµС‚СЊ РёР»Рё Р»РµР¶Р°С‚СЊ.\n|cff00FF7F.pet tele|r - РўРµР»РµРїРѕСЂС‚ СЃРїСѓС‚РЅРёРєР° Рє РїРµСЂСЃРѕРЅР°Р¶Сѓ.")
 	elseif string.find( command, " " ) then
 		command = string.split( command, " " )
-		if command[1] == "pet" then -- Команды
+		if command[1] == "pet" then -- РљРѕРјР°РЅРґС‹
 			if command[2] == "say" then
 				if command[3] then
 					local text = ""
@@ -49,7 +49,7 @@ function PetControlAIO.PlayerCommands( _, player, command )
 							creature:Emote( command[3] )
 						end
 						return
-					else player:SendNotification("Вы не можете управлять этим существом.") end
+					else player:SendNotification("Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ СѓРїСЂР°РІР»СЏС‚СЊ СЌС‚РёРј СЃСѓС‰РµСЃС‚РІРѕРј.") end
 				end
 			----------
 			elseif command[2] == "pos" then
@@ -64,10 +64,10 @@ function PetControlAIO.PlayerCommands( _, player, command )
 					local x,y,z,o = player:GetLocation()
 					creature:NearTeleport(x,y,z,o)
 					return
-				else player:SendNotification("Вы не можете управлять этим существом.") end
+				else player:SendNotification("Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ СѓРїСЂР°РІР»СЏС‚СЊ СЌС‚РёРј СЃСѓС‰РµСЃС‚РІРѕРј.") end
 			----------
 			else
-				player:SendBroadcastMessage("|cffFF4500[!!]|r Вы ошиблись в написании команды.\nИспользуйте |cff00FF7F.pet|r для просмотра доступных вам команд.")
+				player:SendBroadcastMessage("|cffFF4500[!!]|r Р’С‹ РѕС€РёР±Р»РёСЃСЊ РІ РЅР°РїРёСЃР°РЅРёРё РєРѕРјР°РЅРґС‹.\nРСЃРїРѕР»СЊР·СѓР№С‚Рµ |cff00FF7F.pet|r РґР»СЏ РїСЂРѕСЃРјРѕС‚СЂР° РґРѕСЃС‚СѓРїРЅС‹С… РІР°Рј РєРѕРјР°РЅРґ.")
 			end
 		end
 	end
