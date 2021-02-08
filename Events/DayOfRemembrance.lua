@@ -115,7 +115,7 @@ function event.GMCommand( _, player, command )
 end
 RegisterPlayerEvent( 42, event.GMCommand ) -- PLAYER_EVENT_ON_COMMAND
 
---[[	ПОДНОШЕНИЯ	]]--
+--[	ПОДНОШЕНИЯ	]--
 
 function event.Donations( eventID, object1, object2, sender, intid )
 	if eventID == 14 then
