@@ -1,4 +1,4 @@
-
+--[[	Рабочий фрагмент кода деактивирован до следующих ивентов.
 local event = {
 	playersCanUseLamps = false,
 	entry = {
@@ -20,6 +20,19 @@ local event = {
 		}
 	}
 }
+]]
+local event = {
+	entry = {
+		item2 = 5057520,
+		creature2 = 9931060,
+		fireworks = {
+			11542,
+			11543,
+			11544,
+			55420,
+		},
+	},
+}
 
 --[[	ЗАПУСК ФОНАРИКОВ	]]--
 
@@ -28,10 +41,12 @@ function event.FlyingLamp( _,_,_, creature )
 		if math.random(1,2) == 1 then -- 50% шанс
 			creature:CastSpell( creature, ( event.entry.fireworks[math.random(1,#event.entry.fireworks)] ), true )
 		end
+--[[	Рабочий фрагмент кода деактивирован до следующих ивентов.
 	else -- Синий, обычный
 		if math.random(1,4) == 1 then -- 25% шанс
 			creature:CastSpell( creature, ( event.entry.fireworks[math.random(1,#event.entry.fireworks)] ), true )
 		end
+]]
 	end
 	local x,y,z = creature:GetLocation()
 	creature:MoveJump( x+math.random(-4,4), y+math.random(-4,4), z+math.random(1,2), 0.2, 3 )
@@ -44,15 +59,15 @@ function event.OnSpawnLamp( _,_,_, creature )
 end
 
 function event.OnUseLamp( _, player, item, target )
-	if ( event.playersCanUseLamps ) or ( item:GetEntry() == event.entry.item2 ) then
-		if ( player:GetZoneId() == 1519 ) or ( item:GetEntry() == event.entry.item2 ) then
+--	if ( event.playersCanUseLamps ) or ( item:GetEntry() == event.entry.item2 ) then
+	--	if ( player:GetZoneId() == 1519 ) or ( item:GetEntry() == event.entry.item2 ) then
 			player:CastSpell( player, 6245, true )
 			local x,y,z,o = player:GetLocation()
 			local creature
 			if ( item:GetEntry() == event.entry.item2 ) then
 				creature = player:SpawnCreature( event.entry.creature2, x+math.random(-1,1), y+math.random(-1,1), z+1.2, o, 3, 420000 ) -- TEMPSUMMON_TIMED_DESPAWN
-			else
-				creature = player:SpawnCreature( event.entry.creature, x+math.random(-1,1), y+math.random(-1,1), z+1.2, o, 3, 420000 ) -- TEMPSUMMON_TIMED_DESPAWN
+		--	else
+		--		creature = player:SpawnCreature( event.entry.creature, x+math.random(-1,1), y+math.random(-1,1), z+1.2, o, 3, 420000 ) -- TEMPSUMMON_TIMED_DESPAWN
 			end
 			creature:RegisterEvent( event.OnSpawnLamp, 3000, 1 )
 			creature:SetDisableGravity(true)
@@ -62,18 +77,19 @@ function event.OnUseLamp( _, player, item, target )
 			player:RemoveItem( item, 1 )
 			player:PlayDirectSound( 12901, player )
 			return true
-		else
-			player:SendNotification("Вы должны использовать это в Штормграде.")
-		end
-	else
-		player:SendNotification("Вы не можете использовать это сейчас.")
-	end
+	--	else
+	--		player:SendNotification("Вы должны использовать это в Штормграде.")
+	--	end
+--	else
+--		player:SendNotification("Вы не можете использовать это сейчас.")
+--	end
 	return false
 end
 RegisterItemEvent( event.entry.item, 2, event.OnUseLamp ) -- ITEM_EVENT_ON_USE
 RegisterItemEvent( event.entry.item2, 2, event.OnUseLamp ) -- ITEM_EVENT_ON_USE
 
 --[[	КОМАНДА ДЛЯ РАЗРЕШЕНИЯ ФОНАРИКОВ	]]--
+--[[	Рабочий фрагмент кода деактивирован до следующих ивентов.
 
 function event.GMCommand( _, player, command )
 	if player:GetGMRank() > 0 then
@@ -142,3 +158,5 @@ function event.Donations( eventID, object1, object2, sender, intid )
 end
 RegisterGameObjectEvent( event.entry.gameobject, 14, event.Donations ) -- GAMEOBJECT_EVENT_ON_USE
 RegisterGameObjectGossipEvent( event.entry.gameobject, 2, event.Donations ) -- GOSSIP_EVENT_ON_SELECT
+
+]]
