@@ -34,7 +34,7 @@ function PetControlAIO.Follow( player, follow, distance, angle )
 					angle = tonumber(angle) * 3.141 / 180 -- Перевод градусов в радианы.
 					creature:MoveFollow( player, distance, angle )
 				else
-					creature:MoveFollow( player, distance )
+					creature:MoveFollow( player, distance, 0.78 )
 				end
 			else
 				creature:MoveFollow( player )
