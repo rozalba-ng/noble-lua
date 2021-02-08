@@ -98,3 +98,50 @@ local function OnCommand_Player( _, player, command )
 	end
 end
 RegisterPlayerEvent( 42, OnCommand_Player ) -- PLAYER_EVENT_ON_COMMAND
+
+--[[	НПС АНРИЛА НА ЛУННОЙ ПОЛЯНЕ 	]]--
+
+local function UnrealGossip( _, player, creature )
+	if player:GetDmLevel() > 0 then
+		local text = "Любопытство это хорошо, но на твоём месте я бы водил интересные сюжеты и вовремя подавал заявку на продление доступа. А знаешь почему? Потому что я слежу за каждым мастером, "..player:GetName()
+		player:GossipSetText( text, 08022101 )
+		player:GossipSendMenu( 08022101, creature )
+	else
+		local text = "— Будьте внимательны при составлении заявок в разделе \"Обратная связь\". Если вам нужно получить одобрение гильдии или персональный предмет, не стоит оставлять заявку в \"Смешанных\". Когда создаете заявку, обращайте внимание на выпадающее окно с разделом, его легко проглядеть. Так вы значительно увеличите шанс на её скорую обработку. А чем быстрее заявки будут обработаны, тем быстрее я обгоню Неко!"
+		player:GossipSetText( text, 08022102 )
+		player:GossipSendMenu( 08022102, creature )
+	end
+end
+RegisterCreatureGossipEvent( 9911244, 1, UnrealGossip ) -- GOSSIP_EVENT_ON_HELLO
+
+--[[	ПОЗДРАВЛЯЛКА АНРИЛУ НА ДЕНЬ РОЖДЕНИЯ	]]--
+
+if ( os.date("%d.%m") == "09.02" ) then
+	local congratulations = {
+		"Счастливых тебе гороскопов, Анрил.",
+		"С днём рождения, хозяин.",
+		"Всего наилучшего!",
+		"С ДНЁМ РОЖДЕНИЯ БРАТИШКЕ ОТ братишки",
+		"Не стал депутатом только потому что хотел остаться с народом! Уважаем, любим и ценим.",
+		"Гороскоп на оставшуюся жизнь: Всё будет великолепно. Особенно если не переставать стараться.",
+		"С-ДР.",
+		"Почему ты ещё трезвый? У тебя же день рождения!",
+		"Рецепт хорошего сюжета прост: Один Анрил, много смертей и талантливые помощники.",
+	}
+	local fireworks = {
+		11542,
+		11543,
+		11544,
+		55420,
+	}
+	local function Congratulation( _,_,_, player )
+		player:CastSpell( player, fireworks[math.random(1,#fireworks)], true )
+	end
+	local function Congratulation_Prepare ( _, player )
+		if ( player:GetAccountId() == 5194 ) then
+			player:SendBroadcastMessage("|cffc779f7"..congratulations[math.random(1,#congratulations)])
+			player:RegisterEvent( Congratulation, 2000, 5 )
+		end
+	end
+	RegisterPlayerEvent( 3, Congratulation_Prepare ) -- PLAYER_EVENT_ON_LOGIN
+end
