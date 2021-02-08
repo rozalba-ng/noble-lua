@@ -124,6 +124,8 @@ if ( os.date("%d.%m") == "08.02" ) then
 			local text = congratulations[math.random(1,#congratulations)]
 			player:GossipSetText( text, 08022102 )
 			player:GossipSendMenu( 08022102, creature )
+		else
+			player:GossipSendMenu( creature:GetGossipTextId(), creature )
 		end
 	end
 	local Q = WorldDBQuery("SELECT entry FROM creature_template WHERE npcflag = 1")
