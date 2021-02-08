@@ -64,11 +64,11 @@ function event.OnUseLamp( _, player, item, target )
 			player:CastSpell( player, 6245, true )
 			local x,y,z,o = player:GetLocation()
 			local creature
-			if ( item:GetEntry() == event.entry.item2 ) then
+		--	if ( item:GetEntry() == event.entry.item2 ) then
 				creature = player:SpawnCreature( event.entry.creature2, x+math.random(-1,1), y+math.random(-1,1), z+1.2, o, 3, 420000 ) -- TEMPSUMMON_TIMED_DESPAWN
 		--	else
 		--		creature = player:SpawnCreature( event.entry.creature, x+math.random(-1,1), y+math.random(-1,1), z+1.2, o, 3, 420000 ) -- TEMPSUMMON_TIMED_DESPAWN
-			end
+		--	end
 			creature:RegisterEvent( event.OnSpawnLamp, 3000, 1 )
 			creature:SetDisableGravity(true)
 			local guid = player:GetGUIDLow()
@@ -83,7 +83,7 @@ function event.OnUseLamp( _, player, item, target )
 --	else
 --		player:SendNotification("Вы не можете использовать это сейчас.")
 --	end
-	return false
+--	return false
 end
 RegisterItemEvent( event.entry.item, 2, event.OnUseLamp ) -- ITEM_EVENT_ON_USE
 RegisterItemEvent( event.entry.item2, 2, event.OnUseLamp ) -- ITEM_EVENT_ON_USE
