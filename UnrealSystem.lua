@@ -102,10 +102,10 @@ RegisterPlayerEvent( 42, OnCommand_Player ) -- PLAYER_EVENT_ON_COMMAND
 --[[	НПС АНРИЛА НА ЛУННОЙ ПОЛЯНЕ 	]]--
 
 local function UnrealGossip( _, player, creature )
-	if player:GetDMLevel() > 0 then
+	if player:GetDmLevel() > 0 then
 		local text = "Любопытство это хорошо, но на твоём месте я бы водил интересные сюжеты и вовремя подавал заявку на продление доступа. А знаешь почему? Потому что я слежу за каждым мастером, "..player:GetName()
 		player:GossipSetText( text, 08022101 )
-		player:GossipSendMenu( 08022101, sender )
+		player:GossipSendMenu( 08022101, creature )
 	end
 end
 RegisterCreatureGossipEvent( 9911244, 1, UnrealGossip ) -- GOSSIP_EVENT_ON_HELLO
@@ -119,11 +119,11 @@ if ( os.date("%d.%m") == "08.02" ) then
 		"Счастливых тебе гороскопов, незнакомец.",
 		"С днём рождения, хозяин.",
 	}
-	local function FakeGossip( _, player )
+	local function FakeGossip( _, player, creature )
 		if ( player:GetAccountId() == 7243 ) then -- 5194
 			local text = congratulations[math.random(1,#congratulations)]
 			player:GossipSetText( text, 08022102 )
-			player:GossipSendMenu( 08022102, sender )
+			player:GossipSendMenu( 08022102, creature )
 		end
 	end
 	local Q = WorldDBQuery("SELECT entry FROM creature_template WHERE npcflag = 1")
