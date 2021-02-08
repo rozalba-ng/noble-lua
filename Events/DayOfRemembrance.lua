@@ -85,7 +85,7 @@ function event.OnUseLamp( _, player, item, target )
 --	end
 --	return false
 end
-RegisterItemEvent( event.entry.item, 2, event.OnUseLamp ) -- ITEM_EVENT_ON_USE
+--RegisterItemEvent( event.entry.item, 2, event.OnUseLamp ) -- ITEM_EVENT_ON_USE
 RegisterItemEvent( event.entry.item2, 2, event.OnUseLamp ) -- ITEM_EVENT_ON_USE
 
 --[[	КОМАНДА ДЛЯ РАЗРЕШЕНИЯ ФОНАРИКОВ	]]--
