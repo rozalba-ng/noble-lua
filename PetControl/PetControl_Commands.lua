@@ -42,7 +42,7 @@ function PetControlAIO.PlayerCommands( _, player, command )
 			elseif command[2] == "play" then
 				if command[3] and tonumber( command[3] ) then
 					local creature = player:GetSelection()
-					if creature and ( creature:GetOwner() == player ) and not ( creature:HasAura(91072) ) then
+					if creature and ( creature:GetOwnerGUID() == player:GetGUIDLow() ) and not ( creature:HasAura(91072) ) then
 						if command[4] then
 							creature:EmoteState( command[3] )
 						else
@@ -60,7 +60,7 @@ function PetControlAIO.PlayerCommands( _, player, command )
 			----------
 			elseif command[2] == "tele" then
 				local creature = player:GetSelection()
-				if creature and ( creature:GetOwner() == player ) and not ( creature:HasAura(91072) ) then
+				if creature and ( creature:GetOwnerGUID() == player:GetGUIDLow() ) and not ( creature:HasAura(91072) ) then
 					local x,y,z,o = player:GetLocation()
 					creature:NearTeleport(x,y,z,o)
 					return
