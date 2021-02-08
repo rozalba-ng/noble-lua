@@ -49,8 +49,7 @@ function PetControlAIO.Emote( player, text )
 		if text then
 			text = tostring(text)
 			if ( string.utf8len(text) < 254 ) then
-				--creature:SendUnitEmote( "|cfffcba03["..player:GetName().."]|r "..text ) На случай абуза механики
-				creature:SendUnitEmote( text )
+				creature:SendUnitEmote( creature:GetName().." "..text )
 			end
 		end
 	else player:SendNotification("Вы не можете управлять этим существом.") end
