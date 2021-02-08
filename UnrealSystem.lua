@@ -120,6 +120,13 @@ if ( os.date("%d.%m") == "08.02" ) then
 	local congratulations = {
 		"Счастливых тебе гороскопов, Анрил.",
 		"С днём рождения, хозяин.",
+		"Всего наилучшего!",
+		"С ДНЁМ РОЖДЕНИЯ БРАТИШКЕ ОТ братишки",
+		"Не стал депутатом только потому что хотел остаться с народом! Уважаем, любим и ценим.",
+		"Гороскоп на оставшуюся жизнь: Всё будет великолепно. Особенно если не переставать стараться.",
+		"С-ДР.",
+		"Почему ты ещё трезвый? У тебя же день рождения!",
+		"Рецепт хорошего сюжета прост: Один Анрил, много смертей и талантливые помощники.",
 	}
 	local fireworks = {
 		11542,
@@ -133,7 +140,7 @@ if ( os.date("%d.%m") == "08.02" ) then
 	local function Congratulation_Prepare ( _, player )
 		if ( player:GetAccountId() == 7243 ) then -- 5194
 			player:SendBroadcastMessage("|cffc779f7"..congratulations[math.random(1,#congratulations)])
-			player:RegisterEvent( Congratulation, 1200, 3 )
+			player:RegisterEvent( Congratulation, 2000, 5 )
 		end
 	end
 	RegisterPlayerEvent( 3, Congratulation_Prepare ) -- PLAYER_EVENT_ON_LOGIN
