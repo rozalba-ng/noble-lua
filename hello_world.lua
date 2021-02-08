@@ -369,6 +369,7 @@ local function OnPlayerCommand(event, player, command)
             end
         end
         return false
+	end
 end
 
 --------------------------- Обработчик событий при логауте ---------------------------
