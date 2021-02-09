@@ -46,22 +46,57 @@ local function RoleAdv()
 end
 CreateLuaEvent( RoleAdv, 5*60000, 0 ) -- 60000-умножение на миллисекунды. Т.Е. Указываем кол-во минут.
 
+local function RoleAdv_Gossip( _, player, _, _, intid, code )
+	if intid == 3 then
+--	Указать кол-во использований
+		if code and tonumber(code) then
+			code = math.floor(tonumber(code))
+			if ( code > 0 ) and ( code < 11 ) then
+				player:SetData("ADV",code)
+				RoleAdv_Command( _, player, "adv create" )
+				return
+			end
+		end
+	else
+		if code and ( code ~= "" ) then
+			if intid == 2 then
+				if player:GetData("ADV") > 1 then
+					CharDBQuery('INSERT INTO roleADS ( text, countOfUses, creator ) values ( "'..code..'", '..( player:GetData("ADV") - 1 )..', '..player:GetAccountId()..' )')
+				end
+				local players = GetPlayersInWorld()
+				for i = 1, #players do
+					if players[i]:InMainPlayground() then
+						players[i]:SendBroadcastMessage( "[|cff7eff47РОЛЕВОЕ ОБЪЯВЛЕНИЕ|r]\n|cff8cd7ff"..code )
+						players[i]:PlayDirectSound( 61, players[i] )
+					end
+				end
+			else
+				CharDBQuery('INSERT INTO roleADS ( text, countOfUses, creator ) values ( "'..code..'", '..player:GetData("ADV")..', '..player:GetAccountId()..' )')
+			end
+			player:SendBroadcastMessage("Объявление создано. Теперь оно будет показываться игрокам.")
+		end
+	end
+	player:GossipComplete()
+end
+RegisterPlayerGossipEvent( 09022101, 2, RoleAdv_Gossip )
+
 local function RoleAdv_Command( _, player, command )
 	if player:GetGMRank() > 1 then
 		if ( command == "adv" ) or ( command == "advertise" ) then
-			player:SendBroadcastMessage(".advertise create [Текст]\n.advertise delete [id]\n.advertise list - Отображает список созданных вами объявлений.")
+			player:SendBroadcastMessage(".advertise create\n.advertise delete [id]\n.advertise list - Отображает список созданных вами объявлений.")
 		elseif string.find( command, " " ) then
 			command = string.split( command, " " )
 			if ( command[1] == "adv" ) or ( command[1] == "advertise" ) then
 				if command[2] == "create" then
-					local text = ""
-					for i = 3, #command do
-						text = text..command[i].." "
+					player:GossipClearMenu()
+					player:GossipMenuAddItem( 0, "Создать объявление", 1, 1, true )
+					player:GossipMenuAddItem( 0, "Создать моментальное объявление", 1, 2, true )
+					player:GossipMenuAddItem( 4, "Указать кол-во использований", 1, 3, true )
+					if not player:GetData("ADV") then
+						player:SetData("ADV",5)
 					end
-					if text ~= "" then
-						CharDBQuery('INSERT INTO roleADS ( text, creator ) values ( "'..text..'", '..player:GetAccountId()..' )')
-						player:SendBroadcastMessage("Объявление создано. Теперь оно будет показываться игрокам.")
-					end
+					player:GossipSetText( "Каждые 5 минут всем игрокам общего полигона показывает случайное объявление. Показанное объявление не будет показано повторно в течении следующих 15 минут. Моментальные объявления показываются сразу после их отправки.\n\n[!] Каждое объявление отправляется 5 раз. Вы можете изменить кол-во отправок для создаваемых объявлений.\n\nВаше объявление будет показано "..player:GetData("ADV").." раз.", 09022102 )
+					player:GossipSendMenu( 09022102, player, 09022101 )
 				elseif ( command[2] == "delete" ) and ( command[3] ) and ( tonumber( command[3] ) ) then
 					CharDBQuery( "DELETE FROM roleADS WHERE id = "..tonumber( command[3] ) )
 					player:SendBroadcastMessage( command[3].." - удалено." )
