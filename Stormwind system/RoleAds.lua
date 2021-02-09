@@ -46,40 +46,6 @@ local function RoleAdv()
 end
 CreateLuaEvent( RoleAdv, 5*60000, 0 ) -- 60000-умножение на миллисекунды. Т.Е. Указываем кол-во минут.
 
-local function RoleAdv_Gossip( _, player, _, _, intid, code )
-	if intid == 3 then
---	Указать кол-во использований
-		if code and tonumber(code) then
-			code = math.floor(tonumber(code))
-			if ( code > 0 ) and ( code < 11 ) then
-				player:SetData("ADV",code)
-				RoleAdv_Command( _, player, "adv create" )
-				return
-			end
-		end
-	else
-		if code and ( code ~= "" ) then
-			if intid == 2 then
-				if player:GetData("ADV") > 1 then
-					CharDBQuery('INSERT INTO roleADS ( text, countOfUses, creator ) values ( "'..code..'", '..( player:GetData("ADV") - 1 )..', '..player:GetAccountId()..' )')
-				end
-				local players = GetPlayersInWorld()
-				for i = 1, #players do
-					if players[i]:InMainPlayground() then
-						players[i]:SendBroadcastMessage( "[|cff7eff47РОЛЕВОЕ ОБЪЯВЛЕНИЕ|r]\n|cff8cd7ff"..code )
-						players[i]:PlayDirectSound( 61, players[i] )
-					end
-				end
-			else
-				CharDBQuery('INSERT INTO roleADS ( text, countOfUses, creator ) values ( "'..code..'", '..player:GetData("ADV")..', '..player:GetAccountId()..' )')
-			end
-			player:SendBroadcastMessage("Объявление создано. Теперь оно будет показываться игрокам.")
-		end
-	end
-	player:GossipComplete()
-end
-RegisterPlayerGossipEvent( 09022101, 2, RoleAdv_Gossip )
-
 local function RoleAdv_Command( _, player, command )
 	if player:GetGMRank() > 1 then
 		if ( command == "adv" ) or ( command == "advertise" ) then
@@ -121,3 +87,37 @@ local function RoleAdv_Command( _, player, command )
 	end
 end
 RegisterPlayerEvent( 42, RoleAdv_Command )
+
+local function RoleAdv_Gossip( _, player, _, _, intid, code )
+	if intid == 3 then
+--	Указать кол-во использований
+		if code and tonumber(code) then
+			code = math.floor(tonumber(code))
+			if ( code > 0 ) and ( code < 11 ) then
+				player:SetData("ADV",code)
+				RoleAdv_Command( _, player, "adv create" )
+				return
+			end
+		end
+	else
+		if code and ( code ~= "" ) then
+			if intid == 2 then
+				if player:GetData("ADV") > 1 then
+					CharDBQuery('INSERT INTO roleADS ( text, countOfUses, creator ) values ( "'..code..'", '..( player:GetData("ADV") - 1 )..', '..player:GetAccountId()..' )')
+				end
+				local players = GetPlayersInWorld()
+				for i = 1, #players do
+					if players[i]:InMainPlayground() then
+						players[i]:SendBroadcastMessage( "[|cff7eff47РОЛЕВОЕ ОБЪЯВЛЕНИЕ|r]\n|cff8cd7ff"..code )
+						players[i]:PlayDirectSound( 61, players[i] )
+					end
+				end
+			else
+				CharDBQuery('INSERT INTO roleADS ( text, countOfUses, creator ) values ( "'..code..'", '..player:GetData("ADV")..', '..player:GetAccountId()..' )')
+			end
+			player:SendBroadcastMessage("Объявление создано. Теперь оно будет показываться игрокам.")
+		end
+	end
+	player:GossipComplete()
+end
+RegisterPlayerGossipEvent( 09022101, 2, RoleAdv_Gossip )
