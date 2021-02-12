@@ -48,7 +48,12 @@ local function calculateMoney()
 --					--	Если рядом есть НПС дарующий бонус
 --						r = r + 2
 --					end
-					if (player:HasAura(91098) or player:HasAura(91099) or player:HasAura(91100) or player:HasAura(91101)) then
+
+					if (player:HasAura(91098)) then
+						player:RemoveAura(91098)
+					end
+ 					--91099 среднее 91100 меценат
+					if (player:HasAura(91099) or player:HasAura(91100)) then
 						--	Если время суперактива - идёт маленький бонус.
 						r = r*2;
 					end
