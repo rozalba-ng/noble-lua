@@ -113,35 +113,3 @@ local function UnrealGossip( _, player, creature )
 	end
 end
 RegisterCreatureGossipEvent( 9911244, 1, UnrealGossip ) -- GOSSIP_EVENT_ON_HELLO
-
---[[	ПОЗДРАВЛЯЛКА АНРИЛУ НА ДЕНЬ РОЖДЕНИЯ	]]--
-
-if ( os.date("%d.%m") == "09.02" ) then
-	local congratulations = {
-		"Счастливых тебе гороскопов, Анрил.",
-		"С днём рождения, хозяин.",
-		"Всего наилучшего!",
-		"С ДНЁМ РОЖДЕНИЯ БРАТИШКЕ ОТ братишки",
-		"Не стал депутатом только потому что хотел остаться с народом! Уважаем, любим и ценим.",
-		"Гороскоп на оставшуюся жизнь: Всё будет великолепно. Особенно если не переставать стараться.",
-		"С-ДР.",
-		"Почему ты ещё трезвый? У тебя же день рождения!",
-		"Рецепт хорошего сюжета прост: Один Анрил, много смертей и талантливые помощники.",
-	}
-	local fireworks = {
-		11542,
-		11543,
-		11544,
-		55420,
-	}
-	local function Congratulation( _,_,_, player )
-		player:CastSpell( player, fireworks[math.random(1,#fireworks)], true )
-	end
-	local function Congratulation_Prepare ( _, player )
-		if ( player:GetAccountId() == 5194 ) then
-			player:SendBroadcastMessage("|cffc779f7"..congratulations[math.random(1,#congratulations)])
-			player:RegisterEvent( Congratulation, 2000, 5 )
-		end
-	end
-	RegisterPlayerEvent( 3, Congratulation_Prepare ) -- PLAYER_EVENT_ON_LOGIN
-end
