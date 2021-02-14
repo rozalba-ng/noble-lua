@@ -97,7 +97,7 @@ function event.OnKiss( _, player, emote )
 						event.kisses[name] = 0
 						local x,y,z,o = player:GetLocation()
 						local creature = player:SpawnCreature( event.entry.trader, x+0.2, y+0.2, z+0.2, o, 3, 40000 )
-						creature:SendUnitSay( event.text[1,math.random(1,#event.text)], 0 )
+						creature:SendUnitSay( event.text[math.random(1,#event.text)], 0 )
 						creature:MoveFollow( player )
 						creature:SetDisableGravity(true)
 						local guid = player:GetGUIDLow()
