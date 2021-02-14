@@ -229,7 +229,7 @@ function event.Gossip( e, player, creature, sender, intid, code )
 			else
 				local receiver, message = player:GetData("L20_Receiver"), player:GetData("L20_Message")
 				if receiver and message then
-					local Q = CharDBQuery("SELECT guid FROM characters WHERE name = '"..tostring(code).."'")
+					local Q = CharDBQuery("SELECT guid FROM characters WHERE name = '"..receiver.."'")
 					local guid = Q:GetInt32(0)
 					SendMail( "Анонимная валентинка", message, guid, 0, 64, 20 )
 					CharDBQuery("REPLACE INTO love2020 ( account, valentine, text ) VALUES ( "..player:GetAccountId()..", "..guid..", '"..message.."' )")
