@@ -117,8 +117,8 @@ RegisterPlayerEvent( 24, event.OnKiss ) -- PLAYER_EVENT_ON_TEXT_EMOTE
 
 --[[	АНОНИМНЫЕ ВАЛЕНТИНКИ, ОТПРАВКА ФОНАРИКОВ	]]--
 
-function event.Gossip( event, player, creature, sender, intid, code )
-	if event == 1 then
+function event.Gossip( e, player, creature, sender, intid, code )
+	if e == 1 then
 		local text = event.text2[math.random(1,#event.text2)]
 		text = text.."\n\nХотите отправить валентинку или праздничный фонарик?"
 		local Q = CharDBQuery("SELECT valentine, lamp FROM love2020 WHERE account = "..player:GetAccountId())
