@@ -18,7 +18,6 @@ local event = {
 		item = 5057535,
 		creature = 9931186,
 		creature_gossip = 9931188,
-		firework = 44940,
 		aura = 62002,
 		aura_frog = 62537,
 		trader = 9931187,
@@ -49,10 +48,7 @@ local event = {
 --[[	ЗАПУСК ФОНАРИКОВ	]]--
 
 function event.FlyingLamp( _,_,_, creature )
-	if math.random(1,4) == 1 then -- 25% шанс
-		creature:CastSpell( creature, event.entry.firework, true )
-	end
-	creature:SetScale( creature:GetScale()+0.2 )
+	creature:SetScale( creature:GetScale()+0.1 )
 	local x,y,z = creature:GetLocation()
 	creature:MoveJump( x+math.random(-4,4), y+math.random(-4,4), z+math.random(1,2), 0.2, 3 )
 end
@@ -64,7 +60,7 @@ function event.OnSpawnLamp( _,_,_, creature )
 end
 
 function event.OnUseLamp( _, player, item, target )
-	player:CastSpell( player, 6245, true )----
+	player:CastSpell( player, 44940, true )
 	local x,y,z,o = player:GetLocation()
 	local creature
 	creature = player:SpawnCreature( event.entry.creature, x+math.random(-1,1), y+math.random(-1,1), z+1.2, o, 3, 420000 ) -- TEMPSUMMON_TIMED_DESPAWN
@@ -93,10 +89,12 @@ function event.OnKiss( _, player, emote )
 					event.kisses[name] = 1
 				else
 					event.kisses[name] = event.kisses[name] + 1
-					if event.kisses[name] >= math.random(10,20) then
+					math.randomseed(os.time())
+					local r = math.random(5,15)
+					if event.kisses[name] >= r then
 						event.kisses[name] = 0
 						local x,y,z,o = player:GetLocation()
-						local creature = player:SpawnCreature( event.entry.trader, x+0.2, y+0.2, z+0.2, o, 3, 40000 )
+						local creature = player:SpawnCreature( event.entry.trader, x+0.2, y+0.2, z+0.2, o, 3, 70000 )
 						creature:SendUnitSay( event.text[math.random(1,#event.text)], 0 )
 						creature:MoveFollow( player )
 						creature:SetDisableGravity(true)
@@ -147,6 +145,23 @@ function event.Gossip( e, player, creature, sender, intid, code )
 	else
 		if sender == 1 then
 			if intid == 1 then
+				local text = "Заполните поля ниже..\n\nПолучатель: "
+				local receiver = player:GetData("L20_Receiver")
+				local message = player:GetData("L20_Message")
+				if receiver then
+					text = text..receiver
+				end
+				text = text.."\n\nТекст: "
+				if message then
+					text = text..message
+				end
+				player:GossipMenuAddItem( 0, "<Указать получателя.>", 2, 1, true )
+				player:GossipMenuAddItem( 0, "<Указать текст.>", 2, 2, true )
+				if receiver and message then
+					player:GossipMenuAddItem( 4, "<Отправить.>", 2, 3 )
+				end
+				player:GossipSetText( text, 14022102 )
+				player:GossipSendMenu( 14022102, creature )
 			else
 				if code and ( code ~= " " ) then
 					if code ~= player:GetName() then
@@ -187,7 +202,41 @@ function event.Gossip( e, player, creature, sender, intid, code )
 			end
 		else
 			if intid == 1 then
+				if code and ( code ~= " " ) and ( string.utf8len(code) < 25 ) then
+					Q = CharDBQuery("SELECT account, guid FROM characters WHERE name = '"..tostring(code).."'")
+					if Q then
+						local account = Q:GetInt32(0)
+						if account ~= player:GetAccountId() then
+							player:SetData("L20_Receiver",code)
+							event.Gossip( 2, 1, 1, player )
+						else
+							player:SendNotification("Вы не можете отправить валентинку себе.")
+							event.Gossip( 2, 1, 1, player )
+						end
+					else
+						player:SendNotification("Получатель не найден.")
+						event.Gossip( 2, 1, 1, player )
+					end
+				else
+					player:SendNotification("Получатель не найден.")
+					event.Gossip( 2, 1, 1, player )
+				end
+			elseif intid == 2 then
+				if code and ( code ~= " " ) then
+					player:SetData("L20_Message",code)
+					event.Gossip( 2, 1, 1, player )
+				end
 			else
+				local receiver, message = player:GetData("L20_Receiver"), player:GetData("L20_Message")
+				if receiver and message then
+					local Q = CharDBQuery("SELECT guid FROM characters WHERE name = '"..tostring(code).."'")
+					local guid = Q:GetInt32(0)
+					SendMail( "Анонимная валентинка", message, guid, 0, 64, 20 )
+					CharDBQuery("REPLACE INTO love2020 ( account, valentine, text ) VALUES ( "..player:GetAccountId()..", "..guid..", '"..message.."' )")
+					player:GossipComplete()
+					player:SetData("L20_Message",nil)
+					player:SetData("L20_Receiver",nil)
+				end
 			end
 		end
 	end
