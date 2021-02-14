@@ -124,7 +124,7 @@ function event.Gossip( e, player, creature, sender, intid, code )
 		local Q = CharDBQuery("SELECT valentine, lamp FROM love2020 WHERE account = "..player:GetAccountId())
 		if Q then
 			local valentine = Q:GetUInt32(0)
-			local lamp = Q:UInt8(1)
+			local lamp = Q:GetUInt8(1)
 			if valentine == 0 then
 				text = text.."\nХорошие новости - вы можете отправить анонимную валентинку."
 				player:GossipMenuAddItem( 0, "<Отправить анонимную валентинку.>", 1, 1 )
