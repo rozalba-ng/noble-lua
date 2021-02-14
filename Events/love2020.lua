@@ -166,8 +166,9 @@ function event.Gossip( e, player, creature, sender, intid, code )
 				if code and ( code ~= " " ) then
 					if code ~= player:GetName() then
 						local Q = CharDBQuery("SELECT lamp FROM love2020 WHERE account = "..player:GetAccountId())
-						local lamp = 0
+						local lamp, sql = 0, false
 						if Q then
+							sql = true
 							lamp = Q:GetUInt8(0)
 							if lamp >= 2 then
 								return
@@ -178,7 +179,11 @@ function event.Gossip( e, player, creature, sender, intid, code )
 							local account = Q:GetInt32(0)
 							if account ~= player:GetAccountId() then
 								lamp = lamp + 1
-								CharDBQuery("REPLACE INTO love2020 ( account, lamp ) VALUES ( "..player:GetAccountId()..", "..lamp.." )")
+								if sql then
+									CharDBQuery( "UPDATE love2020 SET lamp = "..lamp.." WHERE account = "..player:GetAccountId() )
+								else
+									CharDBQuery("INSERT INTO love2020 ( account, lamp ) VALUES ( "..player:GetAccountId()..", "..lamp.." )")
+								end
 								local guid = Q:GetInt32(1)
 								SendMail( "Любовная лихорадка", "Кто-то решил отправить вам этот чудесный фонарик.", guid, 0, 64, 20, 0, 0, event.entry.item, 1 )
 								player:SendAreaTriggerMessage("Подарок отправлен!")
@@ -232,10 +237,16 @@ function event.Gossip( e, player, creature, sender, intid, code )
 					local Q = CharDBQuery("SELECT guid FROM characters WHERE name = '"..receiver.."'")
 					local guid = Q:GetInt32(0)
 					SendMail( "Анонимная валентинка", message, guid, 0, 64, 20 )
-					CharDBQuery("REPLACE INTO love2020 ( account, valentine, text ) VALUES ( "..player:GetAccountId()..", "..guid..", '"..message.."' )")
+					Q = CharDBQuery("SELECT account FROM love2020 WHERE account = "..player:GetAccountId())
+					if Q then
+						CharDBQuery( "UPDATE love2020 SET valentine = "..guid..", text = '"..message.."' WHERE account = "..player:GetAccountId() )
+					else
+						CharDBQuery("INSERT INTO love2020 ( account, valentine, text ) VALUES ( "..player:GetAccountId()..", "..guid..", '"..message.."' )")
+					end
 					player:GossipComplete()
 					player:SetData("L20_Message",nil)
 					player:SetData("L20_Receiver",nil)
+					player:SendAreaTriggerMessage("Валентинка отправлена.")
 				end
 			end
 		end
