@@ -29,7 +29,7 @@ local event = {
 		"Романтика, значит? Я продаю отличные подарки для таких себе вторых половинок.",
 		"Вы любите своего партнёра, а я люблю деньги. Всё сходится!",
 		"Купите букетик.",
-		"А-апчхи! Кто подсказал ей брызнуть в меня духами?! ... Покупать будете?",
+		"А-апчхи! Кто подсказал ей брызнуть в меня духами?! ... Покупать что-нибудь будете?",
 		"Купите что-нибудь, прошу!",
 		"Мой девиз - \"Лучшие побрякушки для бездельников и лучше безделушки для побрякушек\".",
 	},
@@ -42,7 +42,7 @@ local event = {
 		"Не стесняйтесь признаваться в любви. Даже если объект обожания красив...",
 		"Вам давали почитать стихи написанные влюблёнными? Нет? Я мог бы дать вам почитать свои, но забыл их сегодня дома.",
 		"Кто-то облил КунКуна розовой краской. Мне кажется ему это нравится...",
-		"Любовная лихорадка сносит всем голову, а Адель отмечает свой день рождения. Вы, кстати, не забыли её поздавить?",
+		"Любовная лихорадка сносит всем голову, а Адель отмечает свой день рождения. Вы, кстати, не забыли её позрдавить?",
 	},
 }
 
@@ -151,26 +151,29 @@ function event.Gossip( e, player, creature, sender, intid, code )
 				if code and ( code ~= " " ) then
 					if code ~= player:GetName() then
 						local Q = CharDBQuery("SELECT lamp FROM love2020 WHERE account = "..player:GetAccountId())
-						local lamp = Q:GetUInt8()
-						if lamp < 2 then
-							local Q2 = CharDBQuery("SELECT account, guid FROM characters WHERE name = '"..tostring(code).."'")
-							if Q2 then
-								local account = Q:GetInt32(0)
-								if account ~= player:GetAccountId() then
-									lamp = lamp + 1
-									CharDBQuery("REPLACE INTO love2020 ( account, lamp ) VALUES ( "..player:GetAccountId()..", "..lamp.." )")
-									local guid = Q:GetInt32(1)
-									SendMail( "Любовная лихорадка", "Кто-то решил отправить вам этот чудесный фонарик.", guid, 0, 64, 20, 0, 0, event.entry.item, 1 )
-									player:SendAreaTriggerMessage("Подарок отправлен!")
-									player:GossipComplete()
-								else
-									player:SendNotification("Вы не можете отправить подарок себе.")
-									player:GossipComplete()
-								end
+						if Q then
+							local lamp = Q:GetUInt8()
+							if lamp >= 2 then
+								return
+							end
+						end
+						local Q2 = CharDBQuery("SELECT account, guid FROM characters WHERE name = '"..tostring(code).."'")
+						if Q2 then
+							local account = Q:GetInt32(0)
+							if account ~= player:GetAccountId() then
+								lamp = lamp + 1
+								CharDBQuery("REPLACE INTO love2020 ( account, lamp ) VALUES ( "..player:GetAccountId()..", "..lamp.." )")
+								local guid = Q:GetInt32(1)
+								SendMail( "Любовная лихорадка", "Кто-то решил отправить вам этот чудесный фонарик.", guid, 0, 64, 20, 0, 0, event.entry.item, 1 )
+								player:SendAreaTriggerMessage("Подарок отправлен!")
+								player:GossipComplete()
 							else
-								player:SendNotification("Получатель не найден.")
+								player:SendNotification("Вы не можете отправить подарок себе.")
 								player:GossipComplete()
 							end
+						else
+							player:SendNotification("Получатель не найден.")
+							player:GossipComplete()
 						end
 					else
 						player:SendNotification("Вы не можете отправить подарок себе.")
