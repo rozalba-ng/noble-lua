@@ -115,7 +115,7 @@ RegisterPlayerEvent( 24, event.OnKiss ) -- PLAYER_EVENT_ON_TEXT_EMOTE
 
 --[[	АНОНИМНЫЕ ВАЛЕНТИНКИ, ОТПРАВКА ФОНАРИКОВ	]]--
 
-function event.Gossip( e, player, creature, sender, intid, code )
+function event.Gossip( e, player, creature, sender, intid, code ) 
 	if e == 1 then
 		local text = event.text2[math.random(1,#event.text2)]
 		text = text.."\n\nХотите отправить валентинку или праздничный фонарик?"
@@ -208,23 +208,23 @@ function event.Gossip( e, player, creature, sender, intid, code )
 						local account = Q:GetInt32(0)
 						if account ~= player:GetAccountId() then
 							player:SetData("L20_Receiver",code)
-							event.Gossip( 2, 1, 1, player )
+							event.Gossip( 2, player, _, 1, 1 )
 						else
 							player:SendNotification("Вы не можете отправить валентинку себе.")
-							event.Gossip( 2, 1, 1, player )
+							event.Gossip( 2, player, _, 1, 1 )
 						end
 					else
 						player:SendNotification("Получатель не найден.")
-						event.Gossip( 2, 1, 1, player )
+						event.Gossip( 2, player, _, 1, 1 )
 					end
 				else
 					player:SendNotification("Получатель не найден.")
-					event.Gossip( 2, 1, 1, player )
+					event.Gossip( 2, player, _, 1, 1 )
 				end
 			elseif intid == 2 then
 				if code and ( code ~= " " ) then
 					player:SetData("L20_Message",code)
-					event.Gossip( 2, 1, 1, player )
+					event.Gossip( 2, player, _, 1, 1 )
 				end
 			else
 				local receiver, message = player:GetData("L20_Receiver"), player:GetData("L20_Message")
