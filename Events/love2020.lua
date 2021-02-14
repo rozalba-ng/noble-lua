@@ -107,7 +107,7 @@ function event.OnKiss( _, player, emote )
 				end
 				target:AddAura( event.entry.aura, target )
 			end
-			if target:ToCreature() and ( (creature:GetEntry() == 9925361) or (creature:GetEntry() == 9925362) ) then
+			if target:ToCreature() and ( (target:GetEntry() == 9925361) or (target:GetEntry() == 9925362) ) then
 				player:AddAura( event.entry.aura_frog, player )
 			end
 		end
