@@ -157,8 +157,8 @@ function event.Gossip( e, player, creature, sender, intid, code )
 								return
 							end
 						end
-						local Q2 = CharDBQuery("SELECT account, guid FROM characters WHERE name = '"..tostring(code).."'")
-						if Q2 then
+						Q = CharDBQuery("SELECT account, guid FROM characters WHERE name = '"..tostring(code).."'")
+						if Q then
 							local account = Q:GetInt32(0)
 							if account ~= player:GetAccountId() then
 								lamp = lamp + 1
