@@ -16,7 +16,7 @@ CharDBQuery( SQL_databaseCreation )
 local event = {
 	entry = {
 		item = 5057535,
-		creature = 9931186,
+		creature = 1001148,
 		creature_gossip = 9931188,
 		aura = 62002,
 		aura_frog = 62537,
