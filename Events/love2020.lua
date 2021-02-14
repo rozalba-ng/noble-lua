@@ -90,7 +90,7 @@ function event.OnKiss( _, player, emote )
 				else
 					event.kisses[name] = event.kisses[name] + 1
 					math.randomseed(os.time())
-					local r = math.random(5,15)
+					local r = math.random(4,8)
 					if event.kisses[name] >= r then
 						event.kisses[name] = 0
 						local x,y,z,o = player:GetLocation()
@@ -236,7 +236,7 @@ function event.Gossip( e, player, creature, sender, intid, code )
 				if receiver and message then
 					local Q = CharDBQuery("SELECT guid FROM characters WHERE name = '"..receiver.."'")
 					local guid = Q:GetInt32(0)
-					SendMail( "Анонимная валентинка", message, guid, 0, 64, 20 )
+					SendMail( "Анонимная валентинка", message, guid, 0, 64, 120 )
 					Q = CharDBQuery("SELECT account FROM love2020 WHERE account = "..player:GetAccountId())
 					if Q then
 						CharDBQuery( "UPDATE love2020 SET valentine = "..guid..", text = '"..message.."' WHERE account = "..player:GetAccountId() )
