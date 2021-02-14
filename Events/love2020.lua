@@ -2,7 +2,7 @@ local SQL_databaseCreation = [[
 CREATE TABLE IF NOT EXISTS `love2020` (
 	`account` INT(10) UNSIGNED NOT NULL,
 	`valentine` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-	`text` TEXT NOT NULL, DEFAULT '',
+	`text` TEXT NOT NULL COLLATE 'latin1_swedish_ci',
 	`lamp` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
 	PRIMARY KEY (`account`)
 )
