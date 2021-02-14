@@ -151,8 +151,9 @@ function event.Gossip( e, player, creature, sender, intid, code )
 				if code and ( code ~= " " ) then
 					if code ~= player:GetName() then
 						local Q = CharDBQuery("SELECT lamp FROM love2020 WHERE account = "..player:GetAccountId())
+						local lamp = 0
 						if Q then
-							local lamp = Q:GetUInt8()
+							lamp = Q:GetUInt8()
 							if lamp >= 2 then
 								return
 							end
