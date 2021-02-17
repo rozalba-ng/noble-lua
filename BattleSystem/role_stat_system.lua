@@ -15,9 +15,9 @@ npcStats = {}
 gmToCrit = {}
 
 auraModificators = {
-					[1] = {88067,1,1,1,0,0,0,0},
-					[2] = {88068,0,0,0,1,1,1,0},
-					[3] = {88069,2,2,2,2,2,2,2}
+					[1] = {88067,0,0,0,0,0,0,0},
+					[2] = {88068,0,0,0,0,0,0,0},
+					[3] = {88069,0,0,0,0,0,0,0}
 }
 
 local healthByType = { [3] = 2, --NPC
@@ -180,6 +180,18 @@ function attackRoll(roller, target, spellid)
         stat = 6;
         attack_type = "Исцеляющее";
         action_type = "на";
+--    elseif((spellid == 88008 or spellid == "5" or string.upper(spellid) == "СТ") and roller:ToPlayer())then
+--        stat = 6;
+--        attack_type = "Защитное (стойкость)";
+--        action_type = "от";
+--    elseif((spellid == 88008 or spellid == "6" or string.upper(spellid) == "СН") and roller:ToPlayer())then
+--        stat = 6;
+--        attack_type = "Защитное (сноровка)";
+--        action_type = "от";
+--    elseif((spellid == 88008 or spellid == "7" or string.upper(spellid) == "ВО") and roller:ToPlayer())then
+--        stat = 6;
+--        attack_type = "Защитное (воля)";
+--        action_type = "от";
     end
     if(roller:HasAura(88011) and roller:ToPlayer())then
         local playerGuid = roller:GetGUIDLow();
