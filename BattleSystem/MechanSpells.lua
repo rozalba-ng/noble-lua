@@ -61,13 +61,6 @@ end
 function Player:RescaleHP()
 	local curHp = self:GetHealth();
 	local maxHp = self:GetMaxHealth();
-	local beforeRescaleHealthDiff = maxHp - curHp;
-	self:SendBroadcastMessage('Макс хп = ');
-	self:SendBroadcastMessage(maxHp);
-	self:SendBroadcastMessage('Текущее хп = ');
-	self:SendBroadcastMessage(curHp);
-	self:SendBroadcastMessage('Разница между хп = ');
-	self:SendBroadcastMessage(beforeRescaleHealthDiff);
 	local hp = 100;
 	local mapid = self:GetMapId();
 	if mapid == KALIMDOR_MID or mapid == WARSONG_MID then -- устарело, но пока оставляю чтобы переиспользовать если что
