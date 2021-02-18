@@ -445,6 +445,11 @@ function handlePlayerRoll(success,rollType, player,target,isPotionReroll,isCrit)
 		return false
 	end
 
+	if ((player:HasAura(IS_IN_BATTLE_AURA) or target:HasAura(IS_IN_BATTLE_AURA)) and statAllowedInBattle[rollType] == 0) then
+		player:SendBroadcastMessage("Вы не можете атаковать цель выбранной способностью.")
+		return false
+	end
+
 	if (isInSameBattle(player,target) or (player:GetName() == target:GetName() and rollType == 6 and player:HasAura(IS_IN_BATTLE_AURA))) and  not isPotionReroll then
 		if GetPlayerBattleTurn(player) == 1 then
 			if  player:GetSelection() == player and rollType ~= 6 then
