@@ -439,6 +439,7 @@ function SayToBattle(text,battle)
 		end
 	end
 end
+
 function handlePlayerRoll(success,rollType, player,target,isPotionReroll,isCrit)
 	if (not player:HasAura(IS_IN_BATTLE_AURA) and target:HasAura(IS_IN_BATTLE_AURA)) or (player:HasAura(IS_IN_BATTLE_AURA) and not target:HasAura(IS_IN_BATTLE_AURA)) then
 		player:SendBroadcastMessage("Вы не можете атаковать цель, которая находится не в вашем бою.")
@@ -452,14 +453,14 @@ function handlePlayerRoll(success,rollType, player,target,isPotionReroll,isCrit)
 
 	if (isInSameBattle(player,target) or (player:GetName() == target:GetName() and rollType == 6 and player:HasAura(IS_IN_BATTLE_AURA))) and  not isPotionReroll then
 		if GetPlayerBattleTurn(player) == 1 then
-			if  player:GetSelection() == player and rollType ~= 6 then
+			if  player:GetSelection() == player and rollType ~= ROLE_STAT_SPIRIT then
 				player:SendBroadcastMessage("Вы не можете совершить атаку на самого себя.")
 				return false
 			end
 			local battleId = listPlayersInBattle[player:GetName()].battleId
 			local battle = battleList[battleId]
 			if target:HasAura(HP_AURA) then
-				if success and rollType ~= 6 then
+				if success and rollType ~= ROLE_STAT_SPIRIT then
 					if player:HasAura(DOUBLE_ATTACK_AURA) and isCrit then
 						local hpAura = target:GetAura(HP_AURA)
 						SayToBattle(cWhite..player:GetName()..cR.." снимает "..cWhite..target:GetName().." "..cRed.."2 очка здоровья."..cR.." Эффект бонуса \"Стремительность\"",battle)
@@ -479,7 +480,7 @@ function handlePlayerRoll(success,rollType, player,target,isPotionReroll,isCrit)
 						end
 					end
 					
-				elseif rollType == 6 then
+				elseif rollType == ROLE_STAT_SPIRIT then
 					local hpAura = target:GetAura(HP_AURA)
 					local curHp = hpAura:GetStackAmount()
 					local pid = findPlayer(battle.players,target:GetName())

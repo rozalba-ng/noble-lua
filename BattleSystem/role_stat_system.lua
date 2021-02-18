@@ -14,32 +14,59 @@ roleCombat.diff_number = {};
 npcStats = {}
 gmToCrit = {}
 
+ROLE_STAT_STRENGTH = 0;
+ROLE_STAT_AGLILITY = 1;
+ROLE_STAT_INTELLECT = 2;
+ROLE_STAT_STAMINA = 3;
+ROLE_STAT_VERSA = 4;
+ROLE_STAT_WILL = 5;
+ROLE_STAT_SPIRIT = 6;
+ROLE_STAT_CHARISMA = 7;
+ROLE_STAT_AVOID = 8;
+ROLE_STAT_LUCK = 9;
+ROLE_STAT_STEALTH = 10;
+
 auraModificators = {
 					[1] = {88067,0,0,0,0,0,0,0},
 					[2] = {88068,0,0,0,0,0,0,0},
 					[3] = {88069,0,0,0,0,0,0,0}
 }
+
 statCorrespondedDef = {
-    [0] = 3, -- силе стойкость
-    [1] = 4, -- ловкости сноровка
-    [2] = 5, -- интеллекту воля
-    [3] = 6, -- стойкости сила
-    [4] = 1, -- сноровке ловкость
-    [5] = 2 -- воле интеллект
+    [ROLE_STAT_STRENGTH] = ROLE_STAT_STAMINA, -- силе стойкость
+    [ROLE_STAT_AGLILITY] = ROLE_STAT_VERSA, -- ловкости сноровка
+    [ROLE_STAT_INTELLECT] = ROLE_STAT_WILL, -- интеллекту воля
+    [ROLE_STAT_STAMINA] = ROLE_STAT_STRENGTH, -- стойкости сила
+    [ROLE_STAT_VERSA] = ROLE_STAT_AGLILITY, -- сноровке ловкость
+    [ROLE_STAT_WILL] = ROLE_STAT_INTELLECT -- воле интеллект
 }
 
 statAllowedInBattle = {
-    [0] = 1, -- силе
-    [1] = 1, -- ловкости
-    [2] = 1, -- интеллекту
-    [3] = 0, -- стойкости
-    [4] = 0, -- сноровке
-    [5] = 0, -- воле
-    [6] = 1, -- дух
-    [7] = 0, -- харизма
-    [8] = 0, -- избегание
-    [9] = 0, -- удача
-    [10] = 0, -- скрытность
+    [ROLE_STAT_STRENGTH] = 1, -- силе
+    [ROLE_STAT_AGLILITY] = 1, -- ловкости
+    [ROLE_STAT_INTELLECT] = 1, -- интеллекту
+    [ROLE_STAT_STAMINA] = 0, -- стойкости
+    [ROLE_STAT_VERSA] = 0, -- сноровке
+    [ROLE_STAT_WILL] = 0, -- воле
+    [ROLE_STAT_SPIRIT] = 1, -- дух
+    [ROLE_STAT_CHARISMA] = 0, -- харизма
+    [ROLE_STAT_AVOID] = 0, -- избегание
+    [ROLE_STAT_LUCK] = 0, -- удача
+    [ROLE_STAT_STEALTH] = 0, -- скрытность
+}
+
+statBaseTreshold = {
+    [ROLE_STAT_STRENGTH] = 0, -- силе
+    [ROLE_STAT_AGLILITY] = 0, -- ловкости
+    [ROLE_STAT_INTELLECT] = 0, -- интеллекту
+    [ROLE_STAT_STAMINA] = 0, -- стойкости
+    [ROLE_STAT_VERSA] = 0, -- сноровке
+    [ROLE_STAT_WILL] = 0, -- воле
+    [ROLE_STAT_SPIRIT] = 15, -- дух
+    [ROLE_STAT_CHARISMA] = 15, -- харизма
+    [ROLE_STAT_AVOID] = 15, -- избегание
+    [ROLE_STAT_LUCK] = 15, -- удача
+    [ROLE_STAT_STEALTH] = 15, -- скрытность
 }
 
 hpBuffAuraList = {	{id = 88044, bonus = 1},
@@ -58,15 +85,25 @@ hpBuffAuraList = {	{id = 88044, bonus = 1},
 local healthByType = { [3] = 2, --NPC
                        [4] = 3 --PLAYER
                        };
-local statnames = { [0] = "Сила",
-					[1] = "Ловкость",
-					[2] = "Интеллект",
-					[3] = "Стойкость",
-					[4] = "Сноровка",
-					[5] = "Воля",
-                    [6] = "Дух"
+local statnames = { [ROLE_STAT_STRENGTH] = "Сила",
+					[ROLE_STAT_AGLILITY] = "Ловкость",
+					[ROLE_STAT_INTELLECT] = "Интеллект",
+					[ROLE_STAT_STAMINA] = "Стойкость",
+					[ROLE_STAT_VERSA] = "Сноровка",
+					[ROLE_STAT_WILL] = "Воля",
+                    [ROLE_STAT_SPIRIT] = "Дух",
+                    [ROLE_STAT_CHARISMA] = "Харизма", -- харизма
+                    [ROLE_STAT_AVOID] = "Избегание", -- избегание
+                    [ROLE_STAT_LUCK] = "Удача", -- удача
+                    [ROLE_STAT_STEALTH] = "Скрытность", -- скрытность
                    }
 local greenColor = "|cFF5fdb2e"
+
+-- получаем фиксированный порог, используется для кубов с фиксированным порогом
+function getTargetDefTreshold(stat, target)
+    return statBaseTreshold[stat];
+end
+
 function roleCombat.ChooseFactionGossip(event, player, object)
     local playerGuid = player:GetGUIDLow();
     local combat_id = roleCombat.playerCombat[playerGuid];
@@ -260,14 +297,17 @@ function attackRoll(roller, target, spellid)
             local roll_maded = false;
             local isSuccess = false;
 
-            if(stat == 6)then
+            if (statAllowedInBattle[stat] == 0) then
+                roller:SendBroadcastMessage("Данную способность нельзя использовать в массовой битве.")
+                return false
+            elseif(stat == ROLE_STAT_SPIRIT)then
                 if(target ~= nil)then
                     if(target:ToPlayer())then
                         target_name = target:GetName();
 --                        target_def = roller:GetRoleStat(0)+roller:GetRoleStat(1)+roller:GetRoleStat(2)+(player_att/2);
 --                        def_rand = 11;
                         target_def = 15;
-                        def_rand = 0;
+                        def_rand = 2; -- в массовой битве порог на хил повыше, раж битвы
                         if( (player_att+att_rand) >= (target_def+def_rand) )then
                             result_color = "FF4DB54D"
                             result_text = "удачно"
@@ -308,6 +348,7 @@ function attackRoll(roller, target, spellid)
                 roll_maded = true;
                 roller:SendBroadcastMessage(string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
             end
+
             
             PrintError("Ролевая битва, имя: "..roller_name.." стат: "..stat.." "..result_text);
             
@@ -397,7 +438,8 @@ function attackRoll(roller, target, spellid)
             --roller:SendBroadcastMessage("Вы уже сделали свой ход в этом раунде.")
         end
     end
-    if(target ~= nil and not target:HasAura(88011))then -- цель - имеется но на ней НЕТ ауры "Бой"
+
+    if(target ~= nil and not target:HasAura(88011))then -- цель - имеется но на ней НЕТ ауры "Бой" - обычный ролл на цель или ролл в ролевом нападении
             local player_att = roller:GetRoleStat(stat);
 			for i = 1, #auraModificators do
 				if roller:HasAura(auraModificators[i][1]) then
@@ -429,10 +471,10 @@ function attackRoll(roller, target, spellid)
             local result_symbol = "";
             local isSuccess = false;
             local isCrit = false
-            if(stat == 6)then
+            if(statBaseTreshold[stat] > 0)then -- юзается для кубов с фиксированным порогом
 --                target_def = math.floor(roller:GetRoleStat(0)+roller:GetRoleStat(1)+roller:GetRoleStat(2)+(player_att/2));
 --                def_rand = 11;
-                target_def = 15;
+                target_def = getTargetDefTreshold(stat, target);
                 def_rand = 0;
                 if( (player_att+att_rand) >= (target_def+def_rand) )then
                     result_color = "FF4DB54D"
@@ -490,10 +532,10 @@ function attackRoll(roller, target, spellid)
             else
                 target_name = target:GetNameForLocaleRu();
             end
+
             local isFogPotionUsed = false
 			local isAdaptPotionUsed = false
 			local isLuckPotionUsed = false
-			
 			
 			if roller:HasAura(88043) and not isSuccess then
 				isFogPotionUsed = true
@@ -503,17 +545,18 @@ function attackRoll(roller, target, spellid)
 				isAdaptPotionUsed = true
 				isSuccess = false
 				target:RemoveAura(88042)
-			end
+            end
+
 			if not handlePlayerRoll(isSuccess,stat,roller,target,isFogPotionUsed,isCrit) then
 				return false
-			end
+            end
+
             if( roller:ToPlayer() )then
 				if isFogPotionUsed and not isLuckPotionUsed then -- Зелье тумана
 					result_color = "FF7a7671"	
 					roller:SendBroadcastMessage(string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));            
 					local itemLink = GetItemLink(600055,8)
 					roller:SendBroadcastMessage("Эффект бонуса "..itemLink.." = " .. "|cFF8192deПереброс атаки!|r")
-					
 				elseif isAdaptPotionUsed  then -- Зелье адаптации
 					result_color = "FF7a7671"
 					roller:SendBroadcastMessage(string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));            
@@ -523,7 +566,8 @@ function attackRoll(roller, target, spellid)
 				else
 					roller:SendBroadcastMessage(string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));            
 				end
-			end        
+			end
+
             local nearPlayers = roller:GetPlayersInRange( 40, 0, 0 )
             for index, nearPlayer in pairs(nearPlayers) do
 				if isFogPotionUsed then -- Зелье тумана
@@ -542,8 +586,8 @@ function attackRoll(roller, target, spellid)
 		   end
 		   if isFogPotionUsed then
 				attackRoll(roller, target, spellid)
-				
            end
+
            if(roller:GetPhaseMask() == 32)then
                 if((not roller:ToPlayer()) and target:ToPlayer())then
                     if(isSuccess)then
@@ -567,7 +611,7 @@ function attackRoll(roller, target, spellid)
                         attackRoll(target, roller, "2");
                     end
                 end
-            end
+           end
             
             --[[if(roller:HasAura(88011) and target:HasAura(88011))then
                 if(stat == 6)then
@@ -598,6 +642,7 @@ function attackRoll(roller, target, spellid)
                 end
             end]]
     end
+
     if(target == nil and not roller:HasAura(88011))then -- цели нет и на кастере нет ауры "бой"
         local player_att = roller:GetRoleStat(stat);      
         local att_rand = math.random(20);
