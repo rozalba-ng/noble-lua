@@ -25,13 +25,6 @@ local spellListToBuff = { 	[87001] = {type = 1, mod = 0.3},
 							[86018] = {type = 3, mod = 1},
 							[86019] = {type = 3, mod = 1}
 						}
-local hpBuffAuraList = {	{id = 88044, bonus = 1},
-							{id = 88045, bonus = 1},
-							{id = 88046, bonus = 2},
-							{id = 88047, bonus = 2},
-							{id = 88048, bonus = 2},
-							{id = 88049, bonus = 2}
-						}
 
 local DEF_HP_MULTIPLICATOR = 3
 
@@ -66,22 +59,33 @@ local function OnUnitHitBySpell(event, unit, spell)
 end
 
 function Player:RescaleHP()
-	local curHp = self:GetHealth()
-	local hp = 100
-	local mapid = self:GetMapId()
-	if mapid == KALIMDOR_MID or mapid == WARSONG_MID then
-		self:SetMaxHealth(500)
-		self:SetHealth(500)
+	local curHp = self:GetHealth();
+	local beforeRescaleHealthDiff = self:GetMaxHealth() - self:GetHealth();
+	local hp = 100;
+	local mapid = self:GetMapId();
+	if mapid == KALIMDOR_MID or mapid == WARSONG_MID then -- устарело, но пока оставляю чтобы переиспользовать если что
+--		self:SetMaxHealth(500)
+--		self:SetHealth(500)
 	else
+		-- учитываем бафы за сеты и зелья
 		for i = 1, #hpBuffAuraList do
 			if self:HasAura(hpBuffAuraList[i].id) then
 				hp = hp + (hpBuffAuraList[i].bonus) * 30
 			end
 		end
+
+		-- учитываем стандартные характеристики защиты
 		local defStats = self:GetRoleStat(DEF_STR_ID) + self:GetRoleStat(DEF_DXT_ID) + self:GetRoleStat(DEF_INT_ID)
 		hp = hp + (defStats* DEF_HP_MULTIPLICATOR)
 		self:SetMaxHealth(hp)
-		self:SetHealth(curHp)
+
+		-- расчитываем хп с учетом хп персонажа до рескейла (чтобы не лечило)
+		local realHp = hp-beforeRescaleHealthDiff;
+		if (realHp < 1) then
+			realHp = 1;
+		end
+
+		self:SetHealth(beforeRescaleHealthDiff);
 	end
 end
 

@@ -20,6 +20,19 @@ auraModificators = {
 					[3] = {88069,0,0,0,0,0,0,0}
 }
 
+hpBuffAuraList = {	{id = 88044, bonus = 1},
+    {id = 88039, bonus = 1},
+    {id = 88045, bonus = 1},
+    {id = 88071, bonus = 1},
+    {id = 88072, bonus = 1},
+    {id = 88046, bonus = 2},
+    {id = 88047, bonus = 2},
+    {id = 88048, bonus = 2},
+    {id = 88049, bonus = 2},
+    {id = 88074, bonus = 2},
+    {id = 88073, bonus = 2}
+}
+
 local healthByType = { [3] = 2, --NPC
                        [4] = 3 --PLAYER
                        };
@@ -28,7 +41,9 @@ local statnames = { [0] = "Сила",
 					[2] = "Интеллект",
 					[3] = "Стойкость",
 					[4] = "Сноровка",
-					[5] = "Воля"}
+					[5] = "Воля",
+                    [6] = "Дух"
+                   }
 local greenColor = "|cFF5fdb2e"
 function roleCombat.ChooseFactionGossip(event, player, object)
     local playerGuid = player:GetGUIDLow();
@@ -180,18 +195,34 @@ function attackRoll(roller, target, spellid)
         stat = 6;
         attack_type = "Исцеляющее";
         action_type = "на";
---    elseif((spellid == 88008 or spellid == "5" or string.upper(spellid) == "СТ") and roller:ToPlayer())then
---        stat = 6;
---        attack_type = "Защитное (стойкость)";
---        action_type = "от";
---    elseif((spellid == 88008 or spellid == "6" or string.upper(spellid) == "СН") and roller:ToPlayer())then
---        stat = 6;
---        attack_type = "Защитное (сноровка)";
---        action_type = "от";
---    elseif((spellid == 88008 or spellid == "7" or string.upper(spellid) == "ВО") and roller:ToPlayer())then
---        stat = 6;
---        attack_type = "Защитное (воля)";
---        action_type = "от";
+    elseif((spellid == 91154 or spellid == "5" or string.upper(spellid) == "СТ") and roller:ToPlayer())then
+        stat = 3;
+        attack_type = "Защитное (стойкость)";
+        action_type = "от";
+    elseif((spellid == 91155 or spellid == "6" or string.upper(spellid) == "СН") and roller:ToPlayer())then
+        stat = 4;
+        attack_type = "Защитное (сноровка)";
+        action_type = "от";
+    elseif((spellid == 91156 or spellid == "7" or string.upper(spellid) == "ВО") and roller:ToPlayer())then
+        stat = 5;
+        attack_type = "Защитное (воля)";
+        action_type = "от";
+    elseif((spellid == 91157 or spellid == "8" or string.upper(spellid) == "ХА") and roller:ToPlayer())then
+        stat = 7;
+        attack_type = "Специальное (харизма)";
+        action_type = "от";
+    elseif((spellid == 91158 or spellid == "9" or string.upper(spellid) == "ИЗ") and roller:ToPlayer())then
+        stat = 8;
+        attack_type = "Специальное (избегание)";
+        action_type = "от";
+    elseif((spellid == 91159 or spellid == "10" or string.upper(spellid) == "УД") and roller:ToPlayer())then
+        stat = 9;
+        attack_type = "Специальное (удача)";
+        action_type = "от";
+    elseif((spellid == 91160 or spellid == "11" or string.upper(spellid) == "СК") and roller:ToPlayer())then
+        stat = 10;
+        attack_type = "Специальное (скрытность)";
+        action_type = "на";
     end
     if(roller:HasAura(88011) and roller:ToPlayer())then
         local playerGuid = roller:GetGUIDLow();
@@ -375,8 +406,10 @@ function attackRoll(roller, target, spellid)
             local isSuccess = false;
             local isCrit = false
             if(stat == 6)then
-                target_def = math.floor(roller:GetRoleStat(0)+roller:GetRoleStat(1)+roller:GetRoleStat(2)+(player_att/2));
-                def_rand = 11;
+--                target_def = math.floor(roller:GetRoleStat(0)+roller:GetRoleStat(1)+roller:GetRoleStat(2)+(player_att/2));
+--                def_rand = 11;
+                target_def = 15;
+                def_rand = 0;
                 if( (player_att+att_rand) >= (target_def+def_rand) )then
                     result_color = "FF4DB54D"
                     result_text = "удачно"
@@ -486,8 +519,8 @@ function attackRoll(roller, target, spellid)
 		   if isFogPotionUsed then
 				attackRoll(roller, target, spellid)
 				
-			end
-			if(roller:GetPhaseMask() == 32)then
+           end
+           if(roller:GetPhaseMask() == 32)then
                 if((not roller:ToPlayer()) and target:ToPlayer())then
                     if(isSuccess)then
                         roller:DealDamage( target, (target:GetMaxHealth()/3)+1, false, 0 )
