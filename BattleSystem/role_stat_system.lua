@@ -27,9 +27,9 @@ ROLE_STAT_LUCK = 9;
 ROLE_STAT_STEALTH = 10;
 
 auraModificators = {
-					[1] = {88067,0,0,0,0,0,0,0},
-					[2] = {88068,0,0,0,0,0,0,0},
-					[3] = {88069,0,0,0,0,0,0,0}
+					[1] = {88067,0,0,0,0,0,0,0,0,0,0,0},
+					[2] = {88068,0,0,0,0,0,0,0,0,0,0,0},
+					[3] = {88069,0,0,0,0,0,0,0,0,0,0,0}
 }
 
 statCorrespondedDef = {
@@ -107,13 +107,13 @@ function gettargetDefValue(stat, target)
     local tarDef = target:GetRoleStat(statCorrespondedDef[stat]);
     for i = 1, #auraModificators do
         if target:HasAura(auraModificators[i][1]) then
-            target_def = target_def + auraModificators[i][stat+5]
+            tarDef = tarDef + auraModificators[i][stat+5]
         end
     end
     if not target:ToPlayer() and npcStats[target:GetGUIDLow()] then
         if npcStats[target:GetGUIDLow()][statCorrespondedDef[stat]] then
-            target_def = npcStats[target:GetGUIDLow()][statCorrespondedDef[stat]]
-            print(target_def)
+            tarDef = npcStats[target:GetGUIDLow()][statCorrespondedDef[stat]]
+            print(tarDef)
         end
     end
 
