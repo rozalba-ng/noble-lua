@@ -491,7 +491,7 @@ function attackRoll(roller, target, spellid)
             if( att_rand == 1 )then
                 result_color = "FFFF0000"
                 result_text = "критически неудачно"
-                result_symbol = "Ч"
+                result_symbol = "X"
                 if roller:HasAura(88040) then
                     result_color = "FF00FF00"
                     result_text = "критически удачная неудача.|r Эффект "..GetItemLink(600053)
