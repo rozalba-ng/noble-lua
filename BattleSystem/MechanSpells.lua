@@ -101,7 +101,7 @@ function playerRescaleHpOnChangeStat(event, player, stat)
 end
 
 local function Rescale(eventid, delay, repeats, player)
-	player:RescaleHP()
+	--player:RescaleHP()
 end
 
 local function OnMapChange(event, player)
