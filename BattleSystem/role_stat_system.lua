@@ -20,6 +20,15 @@ auraModificators = {
 					[3] = {88069,0,0,0,0,0,0,0}
 }
 
+statCorrespondedDef = {
+    [0] = 3, -- силе стойкость
+    [1] = 4, -- ловкости сноровка
+    [2] = 5, -- интеллекту воля
+    [3] = 6, -- стойкости сила
+    [4] = 1, -- сноровке ловкость
+    [5] = 2 -- воле интеллект
+}
+
 hpBuffAuraList = {	{id = 88044, bonus = 1},
     {id = 88039, bonus = 1},
     {id = 88045, bonus = 1},
@@ -210,21 +219,21 @@ function attackRoll(roller, target, spellid)
     elseif((spellid == 91157 or spellid == "8" or string.upper(spellid) == "ХА") and roller:ToPlayer())then
         stat = 7;
         attack_type = "Специальное (харизма)";
-        action_type = "от";
+        action_type = "на";
     elseif((spellid == 91158 or spellid == "9" or string.upper(spellid) == "ИЗ") and roller:ToPlayer())then
         stat = 8;
         attack_type = "Специальное (избегание)";
-        action_type = "от";
+        action_type = "на";
     elseif((spellid == 91159 or spellid == "10" or string.upper(spellid) == "УД") and roller:ToPlayer())then
         stat = 9;
         attack_type = "Специальное (удача)";
-        action_type = "от";
+        action_type = "на";
     elseif((spellid == 91160 or spellid == "11" or string.upper(spellid) == "СК") and roller:ToPlayer())then
         stat = 10;
         attack_type = "Специальное (скрытность)";
         action_type = "на";
     end
-    if(roller:HasAura(88011) and roller:ToPlayer())then
+    if(roller:HasAura(88011) and roller:ToPlayer())then -- аура "Бой", кастер - юзер, цель - не важно
         local playerGuid = roller:GetGUIDLow();
         if(roleCombat.playerCombatMove[playerGuid] == true)then    
             local player_att = roller:GetRoleStat(stat);
@@ -242,8 +251,10 @@ function attackRoll(roller, target, spellid)
                 if(target ~= nil)then
                     if(target:ToPlayer())then
                         target_name = target:GetName();
-                        target_def = roller:GetRoleStat(0)+roller:GetRoleStat(1)+roller:GetRoleStat(2)+(player_att/2);
-                        def_rand = 11;
+--                        target_def = roller:GetRoleStat(0)+roller:GetRoleStat(1)+roller:GetRoleStat(2)+(player_att/2);
+--                        def_rand = 11;
+                        target_def = 15;
+                        def_rand = 0;
                         if( (player_att+att_rand) >= (target_def+def_rand) )then
                             result_color = "FF4DB54D"
                             result_text = "удачно"
@@ -373,7 +384,7 @@ function attackRoll(roller, target, spellid)
             --roller:SendBroadcastMessage("Вы уже сделали свой ход в этом раунде.")
         end
     end
-    if(target ~= nil and not target:HasAura(88011))then
+    if(target ~= nil and not target:HasAura(88011))then -- цель - имеется но на ней НЕТ ауры "Бой"
             local player_att = roller:GetRoleStat(stat);
 			for i = 1, #auraModificators do
 				if roller:HasAura(auraModificators[i][1]) then
@@ -385,15 +396,15 @@ function attackRoll(roller, target, spellid)
 					player_att = npcStats[roller:GetGUIDLow()][stat]
 				end
 			end
-            local target_def = target:GetRoleStat(stat+3); 
+            local target_def = target:GetRoleStat(statCorrespondedDef[stat]);
 			for i = 1, #auraModificators do
 				if target:HasAura(auraModificators[i][1]) then
 					target_def = target_def + auraModificators[i][stat+5]
 				end
 			end
 			if not target:ToPlayer() and npcStats[target:GetGUIDLow()] then
-				if npcStats[target:GetGUIDLow()][stat+3] then
-					target_def = npcStats[target:GetGUIDLow()][stat+3]
+				if npcStats[target:GetGUIDLow()][statCorrespondedDef[stat]] then
+					target_def = npcStats[target:GetGUIDLow()][statCorrespondedDef[stat]]
 					print(target_def)
 				end
 			end
@@ -574,7 +585,7 @@ function attackRoll(roller, target, spellid)
                 end
             end]]
     end
-    if(target == nil and not roller:HasAura(88011))then
+    if(target == nil and not roller:HasAura(88011))then -- цели нет и на кастере нет ауры "бой"
         local player_att = roller:GetRoleStat(stat);      
         local att_rand = math.random(20);
         
