@@ -85,14 +85,7 @@ function Player:RescaleHP()
 		local defStats = self:GetRoleStat(DEF_STR_ID) + self:GetRoleStat(DEF_DXT_ID) + self:GetRoleStat(DEF_INT_ID)
 		hp = hp + (defStats* DEF_HP_MULTIPLICATOR)
 		self:SetMaxHealth(hp)
-
-		-- расчитываем хп с учетом хп персонажа до рескейла (чтобы не лечило)
-		local realHp = hp-beforeRescaleHealthDiff;
-		if (realHp < 1) then
-			realHp = 1;
-		end
-
-		self:SetHealth(realHp);
+		self:SetHealth(curHp)
 	end
 end
 
@@ -101,7 +94,7 @@ function playerRescaleHpOnChangeStat(event, player, stat)
 end
 
 local function Rescale(eventid, delay, repeats, player)
-	--player:RescaleHP()
+	player:RescaleHP()
 end
 
 local function OnMapChange(event, player)
