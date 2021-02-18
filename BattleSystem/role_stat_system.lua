@@ -99,9 +99,33 @@ local statnames = { [ROLE_STAT_STRENGTH] = "Сила",
                    }
 local greenColor = "|cFF5fdb2e"
 
--- получаем фиксированный порог, используется для кубов с фиксированным порогом
-function getTargetDefTreshold(stat, target)
-    return statBaseTreshold[stat];
+function gettargetDefValue(stat, target)
+    if (statBaseTreshold[stat] > 0) then -- получаем фиксированный порог, используется для кубов с фиксированным порогом
+        return statBaseTreshold[stat];
+    end
+
+    local tarDef = target:GetRoleStat(statCorrespondedDef[stat]);
+    for i = 1, #auraModificators do
+        if target:HasAura(auraModificators[i][1]) then
+            target_def = target_def + auraModificators[i][stat+5]
+        end
+    end
+    if not target:ToPlayer() and npcStats[target:GetGUIDLow()] then
+        if npcStats[target:GetGUIDLow()][statCorrespondedDef[stat]] then
+            target_def = npcStats[target:GetGUIDLow()][statCorrespondedDef[stat]]
+            print(target_def)
+        end
+    end
+
+    return tarDef;
+end
+
+function getDefRandByStatTypeAndTarget(stat, target)
+    if(statBaseTreshold[stat] > 0)then -- юзается для кубов с фиксированным порогом
+        return 0;
+    end
+
+    return math.random(20);
 end
 
 function roleCombat.ChooseFactionGossip(event, player, object)
@@ -283,6 +307,7 @@ function attackRoll(roller, target, spellid)
         attack_type = "Специальное (скрытность)";
         action_type = "на";
     end
+
     if(roller:HasAura(88011) and roller:ToPlayer())then -- аура "Бой", кастер - юзер, цель - не важно
         local playerGuid = roller:GetGUIDLow();
         if(roleCombat.playerCombatMove[playerGuid] == true)then    
@@ -450,32 +475,37 @@ function attackRoll(roller, target, spellid)
 				if npcStats[roller:GetGUIDLow()][stat] then
 					player_att = npcStats[roller:GetGUIDLow()][stat]
 				end
-			end
-            local target_def = target:GetRoleStat(statCorrespondedDef[stat]);
-			for i = 1, #auraModificators do
-				if target:HasAura(auraModificators[i][1]) then
-					target_def = target_def + auraModificators[i][stat+5]
-				end
-			end
-			if not target:ToPlayer() and npcStats[target:GetGUIDLow()] then
-				if npcStats[target:GetGUIDLow()][statCorrespondedDef[stat]] then
-					target_def = npcStats[target:GetGUIDLow()][statCorrespondedDef[stat]]
-					print(target_def)
-				end
-			end
+            end
+
+            local target_def = gettargetDefValue(stat, target);
+
             local att_rand = math.random(20);
-            local def_rand = math.random(20);
+            local def_rand = getDefRandByStatTypeAndTarget(stat, target)
             
             local result_color = "";
             local result_text = "";
             local result_symbol = "";
             local isSuccess = false;
             local isCrit = false
-            if(statBaseTreshold[stat] > 0)then -- юзается для кубов с фиксированным порогом
---                target_def = math.floor(roller:GetRoleStat(0)+roller:GetRoleStat(1)+roller:GetRoleStat(2)+(player_att/2));
---                def_rand = 11;
-                target_def = getTargetDefTreshold(stat, target);
-                def_rand = 0;
+
+            if( att_rand == 1 )then
+                result_color = "FFFF0000"
+                result_text = "критически неудачно"
+                result_symbol = "Ч"
+                if roller:HasAura(88040) then
+                    result_color = "FF00FF00"
+                    result_text = "критически удачная неудача.|r Эффект "..GetItemLink(600053)
+                    result_symbol = ">>"
+                    isSuccess = true;
+                end
+            elseif( att_rand == 20  or gmToCrit[roller:GetName()])then
+                result_color = "FF00FF00"
+                result_text = "критически удачно"
+                result_symbol = "X"
+                isCrit = true
+                gmToCrit[roller:GetName()] = false
+                isSuccess = true;
+            else
                 if( (player_att+att_rand) >= (target_def+def_rand) )then
                     result_color = "FF4DB54D"
                     result_text = "удачно"
@@ -486,38 +516,8 @@ function attackRoll(roller, target, spellid)
                     result_text = "неудачно"
                     result_symbol = "<"
                 end
-            else
-                if( att_rand == 1 )then
-                    result_color = "FFFF0000"
-                    result_text = "критически неудачно"
-					result_symbol = "Ч"
-					if roller:HasAura(88040) then
-						result_color = "FF00FF00"
-						result_text = "критически удачная неудача.|r Эффект "..GetItemLink(600053)
-						result_symbol = ">>"
-						isSuccess = true;
-					end
-                    
-                elseif( att_rand == 20  or gmToCrit[roller:GetName()])then
-                    result_color = "FF00FF00"
-                    result_text = "критически удачно"
-                    result_symbol = "X"
-					isCrit = true
-					gmToCrit[roller:GetName()] = false
-                    isSuccess = true;
-                else
-                    if( (player_att+att_rand) >= (target_def+def_rand) )then
-                        result_color = "FF4DB54D"
-                        result_text = "удачно"
-                        result_symbol = ">="
-                        isSuccess = true;
-                    else
-                        result_color = "FFC43533"
-                        result_text = "неудачно"
-                        result_symbol = "<"
-                    end
-                end
             end
+
             
             local roller_name = ""
             local target_name = ""
