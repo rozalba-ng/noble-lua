@@ -34,7 +34,7 @@ local DEF_INT_ID = 5
 
 local KALIMDOR_MID = 2105
 local WARSONG_MID = 489
-
+local PLAYER_EVENT_ON_ROLE_STAT_UPDATE = 45;
 
 local function auraListContain(table,key)
 	for i = 1, #table do
@@ -89,9 +89,14 @@ function Player:RescaleHP()
 	end
 end
 
+function playerRescaleHpOnChangeStat(event, player, stat)
+	player:RescaleHP();
+end
+
 local function Rescale(eventid, delay, repeats, player)
 	player:RescaleHP()
 end
+
 local function OnMapChange(event, player)
 	player:RegisterEvent( Rescale, 200,1)
 end
@@ -128,3 +133,4 @@ RegisterPlayerEvent(28,OnMapChange)
 RegisterPlayerEvent(3,OnPlayerLogin)
 RegisterPlayerEvent(48, OnUnitHitBySpell)
 RegisterPlayerEvent(33, playerOnEquip)
+RegisterPlayerEvent (PLAYER_EVENT_ON_ROLE_STAT_UPDATE, playerRescaleHpOnChangeStat);
