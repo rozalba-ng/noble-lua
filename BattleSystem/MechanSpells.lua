@@ -85,7 +85,7 @@ function Player:RescaleHP()
 			realHp = 1;
 		end
 
-		self:SetHealth(beforeRescaleHealthDiff);
+		self:SetHealth(realHp);
 	end
 end
 
