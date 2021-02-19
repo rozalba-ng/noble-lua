@@ -71,6 +71,20 @@ statBaseTreshold = {
     [ROLE_STAT_STEALTH] = 15, -- скрытность
 }
 
+statNpcDoDefRoll = {
+    [ROLE_STAT_STRENGTH] = 0, -- силе
+    [ROLE_STAT_AGLILITY] = 0, -- ловкости
+    [ROLE_STAT_INTELLECT] = 0, -- интеллекту
+    [ROLE_STAT_STAMINA] = 1, -- стойкости
+    [ROLE_STAT_VERSA] = 1, -- сноровке
+    [ROLE_STAT_WILL] = 1, -- воле
+    [ROLE_STAT_SPIRIT] = 0, -- дух
+    [ROLE_STAT_CHARISMA] = 0, -- харизма
+    [ROLE_STAT_AVOID] = 0, -- избегание
+    [ROLE_STAT_LUCK] = 0, -- удача
+    [ROLE_STAT_STEALTH] = 0, -- скрытность
+}
+
 hpBuffAuraList = {
     { id = 88044, bonus = 1 },
     { id = 88039, bonus = 1 },
@@ -132,7 +146,7 @@ function getDefRandByStatTypeAndTarget(stat, target)
         return 0;
     end
 
-    if not target:ToPlayer() then -- нпс в общем случае не кидают куб назащиту
+    if not target:ToPlayer() and statNpcDoDefRoll[stat] == 0 then -- нпс в общем случае не кидают куб назащиту
         return 0;
     end
 
