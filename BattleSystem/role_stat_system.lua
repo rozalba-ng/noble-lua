@@ -726,7 +726,7 @@ local function OnPlayerCommandWithArg(event, player, code)
 					end
 				end
             end
-        elseif (arguments[1] == "npcsetstatradius" and #arguments == 7 ) then
+        elseif (arguments[1] == "npcsetstatradius" and #arguments == 9 ) then
             if  player:GetGMRank() > 0 then
                 local strength = tonumber(arguments[2]); if strength == nil then strength = 0 end
                 local agila = tonumber(arguments[3]); if strength == nil then strength = 0 end
@@ -734,8 +734,8 @@ local function OnPlayerCommandWithArg(event, player, code)
                 local stamina = tonumber(arguments[5]); if strength == nil then strength = 0 end
                 local versa = tonumber(arguments[6]); if strength == nil then strength = 0 end
                 local will = tonumber(arguments[7]); if strength == nil then strength = 0 end
-                local hpval = tonumber(arguments[7]); if strength == nil then strength = 0 end
-                local ammoval = tonumber(arguments[7]); if strength == nil then strength = 0 end
+                local hpval = tonumber(arguments[8]); if strength == nil then strength = 0 end
+                local ammoval = tonumber(arguments[9]); if strength == nil then strength = 0 end
 
                 local GM_target = player:GetSelectedUnit()
                 if not GM_target then
