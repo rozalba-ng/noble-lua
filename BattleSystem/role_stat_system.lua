@@ -746,7 +746,7 @@ local function OnPlayerCommandWithArg(event, player, code)
                         end
                         npcStats[GM_target:GetGUIDLow()][ROLE_STAT_STRENGTH] = strength
                         npcStats[GM_target:GetGUIDLow()][ROLE_STAT_AGLILITY] = agila
-                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_AGLILITY] = inta
+                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_INTELLECT] = inta
                         npcStats[GM_target:GetGUIDLow()][ROLE_STAT_STAMINA] = stamina
                         npcStats[GM_target:GetGUIDLow()][ROLE_STAT_VERSA] = versa
                         npcStats[GM_target:GetGUIDLow()][ROLE_STAT_WILL] = will
@@ -761,7 +761,7 @@ local function OnPlayerCommandWithArg(event, player, code)
                             end
                             npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_STRENGTH] = strength
                             npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_AGLILITY] = agila
-                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_AGLILITY] = inta
+                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_INTELLECT] = inta
                             npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_STAMINA] = stamina
                             npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_VERSA] = versa
                             npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_WILL] = will
