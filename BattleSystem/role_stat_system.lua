@@ -793,7 +793,7 @@ local function OnPlayerCommandWithArg(event, player, code)
                             end
                         end
 
-                        player:SendBroadcastMessage("Всем существам с именем "..greenColor.."\""..GM_target:GetName().."\"|r в радиусе 50 ярдов установлены характеристики: сила: ".. strength .. " ловкость: ".. agila .. "  инта: ".. inta .. "  стойкость: ".. stamina .. "  сноровка: ".. versa .. "  воля: ".. will)
+                        player:SendBroadcastMessage("Всем существам с именем "..greenColor.."\""..GM_target:GetName().."\"|r в радиусе 50 ярдов установлены характеристики: сила: ".. strength .. " ловкость: ".. agila .. "  инта: ".. inta .. "  стойкость: ".. stamina .. "  сноровка: ".. versa .. "  воля: ".. will .. "  здоровье: ".. hpval .. "  броня: ".. ammoval)
                     else
                         player:SendBroadcastMessage("Возьмите в цель нпс, сейчас выбран игрок")
                     end
