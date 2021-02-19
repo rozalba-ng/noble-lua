@@ -734,6 +734,8 @@ local function OnPlayerCommandWithArg(event, player, code)
                 local stamina = tonumber(arguments[5]); if strength == nil then strength = 0 end
                 local versa = tonumber(arguments[6]); if strength == nil then strength = 0 end
                 local will = tonumber(arguments[7]); if strength == nil then strength = 0 end
+                local hpval = tonumber(arguments[7]); if strength == nil then strength = 0 end
+                local ammoval = tonumber(arguments[7]); if strength == nil then strength = 0 end
 
                 local GM_target = player:GetSelectedUnit()
                 if not GM_target then
@@ -751,6 +753,18 @@ local function OnPlayerCommandWithArg(event, player, code)
                         npcStats[GM_target:GetGUIDLow()][ROLE_STAT_VERSA] = versa
                         npcStats[GM_target:GetGUIDLow()][ROLE_STAT_WILL] = will
 
+                        GM_target:RemoveAura(EBS_HP_AURA)
+                        if hpval > 0 then
+                            local hpAura = GM_target:AddAura(EBS_HP_AURA,GM_target)
+                            hpAura:SetStackAmount(hpval)
+                        end
+
+                        GM_target:RemoveAura(EBS_ARMOR_AURA)
+                        if ammoval > 0 then
+                            local ammoAura = GM_target:AddAura(EBS_ARMOR_AURA,GM_target)
+                            ammoAura:SetStackAmount(ammoval)
+                        end
+
                         -- теперь на радиус
                         local creaturesInRange = GM_target:GetCreaturesInRange( 50, GM_target:GetEntry() )
 
@@ -766,6 +780,17 @@ local function OnPlayerCommandWithArg(event, player, code)
                             npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_VERSA] = versa
                             npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_WILL] = will
 
+                            creaturesInRange[i]:RemoveAura(EBS_HP_AURA)
+                            if hpval > 0 then
+                                local hpAura = creaturesInRange[i]:AddAura(EBS_HP_AURA,creaturesInRange[i])
+                                hpAura:SetStackAmount(hpval)
+                            end
+
+                            creaturesInRange[i]:RemoveAura(EBS_ARMOR_AURA)
+                            if ammoval > 0 then
+                                local ammoAura = creaturesInRange[i]:AddAura(EBS_ARMOR_AURA,creaturesInRange[i])
+                                ammoAura:SetStackAmount(ammoval)
+                            end
                         end
 
                         player:SendBroadcastMessage("Всем существам с именем "..greenColor.."\""..GM_target:GetName().."\"|r в радиусе 50 ярдов установлены характеристики: сила: ".. strength .. " ловкость: ".. agila .. "  инта: ".. inta .. "  стойкость: ".. stamina .. "  сноровка: ".. versa .. "  воля: ".. will)
