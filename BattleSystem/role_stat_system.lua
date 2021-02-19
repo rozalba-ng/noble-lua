@@ -736,38 +736,42 @@ local function OnPlayerCommandWithArg(event, player, code)
                 local will = tonumber(arguments[7]); if strength == nil then strength = 0 end
 
                 local GM_target = player:GetSelectedUnit()
-                if not GM_target:ToPlayer() then
-                    -- сначала на цель
-                    if not npcStats[GM_target:GetGUIDLow()] then
-                        npcStats[GM_target:GetGUIDLow()] = {}
-                    end
-                    npcStats[GM_target:GetGUIDLow()][ROLE_STAT_STRENGTH] = strength
-                    npcStats[GM_target:GetGUIDLow()][ROLE_STAT_AGLILITY] = agila
-                    npcStats[GM_target:GetGUIDLow()][ROLE_STAT_AGLILITY] = inta
-                    npcStats[GM_target:GetGUIDLow()][ROLE_STAT_STAMINA] = stamina
-                    npcStats[GM_target:GetGUIDLow()][ROLE_STAT_VERSA] = versa
-                    npcStats[GM_target:GetGUIDLow()][ROLE_STAT_WILL] = will
-
-                    -- теперь на радиус
-                    local creaturesInRange = GM_target:GetCreaturesInRange( 50, GM_target:GetEntry() )
-
-                    for i = 1, #creaturesInRange do
-
-                        if not npcStats[creaturesInRange[i]:GetGUIDLow()] then
-                            npcStats[creaturesInRange[i]:GetGUIDLow()] = {}
-                        end
-                        npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_STRENGTH] = strength
-                        npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_AGLILITY] = agila
-                        npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_AGLILITY] = inta
-                        npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_STAMINA] = stamina
-                        npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_VERSA] = versa
-                        npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_WILL] = will
-
-                    end
-
-                    player:SendBroadcastMessage("Всем существам с именем "..greenColor.."\""..GM_target:GetName().."\"|r в радиусе 50 ярдов установлены характеристики: сила: ".. strength .. " ловкость: ".. agila .. "  инта: ".. inta .. "  стойкость: ".. stamina .. "  сноровка: ".. versa .. "  воля: ".. will)
+                if not GM_target then
+                    player:SendBroadcastMessage("Выберите цель (нпс)")
                 else
-                    player:SendBroadcastMessage("Возьмите в цель нпс")
+                    if not GM_target:ToPlayer() then
+                        -- сначала на цель
+                        if not npcStats[GM_target:GetGUIDLow()] then
+                            npcStats[GM_target:GetGUIDLow()] = {}
+                        end
+                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_STRENGTH] = strength
+                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_AGLILITY] = agila
+                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_AGLILITY] = inta
+                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_STAMINA] = stamina
+                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_VERSA] = versa
+                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_WILL] = will
+
+                        -- теперь на радиус
+                        local creaturesInRange = GM_target:GetCreaturesInRange( 50, GM_target:GetEntry() )
+
+                        for i = 1, #creaturesInRange do
+
+                            if not npcStats[creaturesInRange[i]:GetGUIDLow()] then
+                                npcStats[creaturesInRange[i]:GetGUIDLow()] = {}
+                            end
+                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_STRENGTH] = strength
+                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_AGLILITY] = agila
+                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_AGLILITY] = inta
+                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_STAMINA] = stamina
+                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_VERSA] = versa
+                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_WILL] = will
+
+                        end
+
+                        player:SendBroadcastMessage("Всем существам с именем "..greenColor.."\""..GM_target:GetName().."\"|r в радиусе 50 ярдов установлены характеристики: сила: ".. strength .. " ловкость: ".. agila .. "  инта: ".. inta .. "  стойкость: ".. stamina .. "  сноровка: ".. versa .. "  воля: ".. will)
+                    else
+                        player:SendBroadcastMessage("Возьмите в цель нпс, сейчас выбран игрок")
+                    end
                 end
             elseif player:GetDmLevel() > 0 then
                 player:SendBroadcastMessage("На вашем уровне доступа данная команда недоступна")
