@@ -139,6 +139,14 @@ function getDefRandByStatTypeAndTarget(stat, target)
     return math.random(20);
 end
 
+local function getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand)
+    if def_rand > 0 then
+        return string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand);
+    else
+        return string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def);
+    end
+end
+
 function roleCombat.ChooseFactionGossip(event, player, object)
     local playerGuid = player:GetGUIDLow();
     local combat_id = roleCombat.playerCombat[playerGuid];
@@ -565,34 +573,34 @@ function attackRoll(roller, target, spellid)
         if (roller:ToPlayer()) then
             if isFogPotionUsed and not isLuckPotionUsed then -- Зелье тумана
                 result_color = "FF7a7671"
-                roller:SendBroadcastMessage(string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                roller:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
                 local itemLink = GetItemLink(600055, 8)
                 roller:SendBroadcastMessage("Эффект бонуса " .. itemLink .. " = " .. "|cFF8192deПереброс атаки!|r")
             elseif isAdaptPotionUsed then -- Зелье адаптации
                 result_color = "FF7a7671"
-                roller:SendBroadcastMessage(string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                roller:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
                 local itemLink = GetItemLink(600056, 8)
                 roller:SendBroadcastMessage("Эффект бонуса " .. itemLink .. " = " .. "|cFFC43533Неудачно!|r")
 
             else
-                roller:SendBroadcastMessage(string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                roller:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
             end
         end
 
         local nearPlayers = roller:GetPlayersInRange(40, 0, 0)
         for index, nearPlayer in pairs(nearPlayers) do
             if isFogPotionUsed then -- Зелье тумана
-                nearPlayer:SendBroadcastMessage(string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
                 local itemLink = GetItemLink(600055, 8)
                 nearPlayer:SendBroadcastMessage("Эффект бонуса " .. itemLink .. " = " .. "|cFF8192deПереброс атаки!|r")
             elseif isAdaptPotionUsed then -- Зелье адаптации
                 result_color = "FF7a7671"
-                nearPlayer:SendBroadcastMessage(string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
                 local itemLink = GetItemLink(600056, 8)
                 nearPlayer:SendBroadcastMessage("Эффект бонуса " .. itemLink .. " = " .. "|cFFC43533Неудачно!|r")
 
             else
-                nearPlayer:SendBroadcastMessage(string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
             end
         end
         if isFogPotionUsed then
