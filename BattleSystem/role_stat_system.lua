@@ -27,11 +27,13 @@ ROLE_STAT_CHARISMA = 7;
 ROLE_STAT_AVOID = 8;
 ROLE_STAT_LUCK = 9;
 ROLE_STAT_STEALTH = 10;
+ROLE_STAT_INIT = 10;
+ROLE_STAT_PERCEPT = 10;
 
 auraModificators = {
-    [1] = { 88067, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    [2] = { 88068, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    [3] = { 88069, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    [1] = { 88067, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    [2] = { 88068, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    [3] = { 88069, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 }
 
 statCorrespondedDef = {
@@ -55,6 +57,8 @@ statAllowedInBattle = {
     [ROLE_STAT_AVOID] = 0, -- избегание
     [ROLE_STAT_LUCK] = 0, -- удача
     [ROLE_STAT_STEALTH] = 0, -- скрытность
+    [ROLE_STAT_INIT] = 0, -- инициатива
+    [ROLE_STAT_PERCEPT] = 0, -- восприятие
 }
 
 statBaseTreshold = {
@@ -69,6 +73,8 @@ statBaseTreshold = {
     [ROLE_STAT_AVOID] = 15, -- избегание
     [ROLE_STAT_LUCK] = 15, -- удача
     [ROLE_STAT_STEALTH] = 15, -- скрытность
+    [ROLE_STAT_INIT] = 15, -- инициатива
+    [ROLE_STAT_PERCEPT] = 15, -- восприятие
 }
 
 statNpcDoDefRoll = {
@@ -83,6 +89,8 @@ statNpcDoDefRoll = {
     [ROLE_STAT_AVOID] = 0, -- избегание
     [ROLE_STAT_LUCK] = 0, -- удача
     [ROLE_STAT_STEALTH] = 0, -- скрытность
+    [ROLE_STAT_INIT] = 0, -- инициатива
+    [ROLE_STAT_PERCEPT] = 0, -- восприятие
 }
 
 hpBuffAuraList = {
@@ -115,6 +123,8 @@ local statnames = {
     [ROLE_STAT_AVOID] = "Избегание", -- избегание
     [ROLE_STAT_LUCK] = "Удача", -- удача
     [ROLE_STAT_STEALTH] = "Скрытность", -- скрытность
+    [ROLE_STAT_INIT] = "Инициатива", -- инициатива
+    [ROLE_STAT_PERCEPT] = "Восприятие", -- восприятие
 }
 local greenColor = "|cFF5fdb2e"
 
@@ -338,6 +348,14 @@ function attackRoll(roller, target, spellid)
     elseif ((spellid == 91160 or spellid == "11" or string.upper(spellid) == "СК") and roller:ToPlayer()) then
         stat = 10;
         attack_type = "Специальное (скрытность)";
+        action_type = "на";
+    elseif ((spellid == 91161 or spellid == "12" or string.upper(spellid) == "ИН") and roller:ToPlayer()) then
+        stat = 11;
+        attack_type = "Специальное (инициатива)";
+        action_type = "на";
+    elseif ((spellid == 91162 or spellid == "13" or string.upper(spellid) == "ВО") and roller:ToPlayer()) then
+        stat = 12;
+        attack_type = "Специальное (восприятие)";
         action_type = "на";
     end
 
