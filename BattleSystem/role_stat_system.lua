@@ -11,7 +11,17 @@ roleCombat.menuID = 6010;
 
 roleCombat.diff_number = {};
 
-npcStats = {}
+
+--`STR` INT(11) NULL DEFAULT '0' COMMENT 'Сила',
+--`AGI` INT(11) NULL DEFAULT '0' COMMENT 'Ловкость',
+--`INTEL` INT(11) NULL DEFAULT '0' COMMENT 'Интеллект',
+--`VIT` INT(11) NULL DEFAULT '0' COMMENT 'Стойкость',
+--`DEX` INT(11) NULL DEFAULT '0' COMMENT 'Проворство',
+--`WILL` INT(11) NULL DEFAULT '0' COMMENT 'Воля',
+--`SPI` INT(11) NULL DEFAULT '0' COMMENT 'Дух',
+--`HEALTH` INT(11) NULL DEFAULT '0' COMMENT 'Здоровье',
+--`ARMOR` INT(11) NULL DEFAULT '0' COMMENT 'Броня',
+
 gmToCrit = {}
 
 ROLE_STAT_DEFAULT_TRESHOLD = 15;
@@ -29,6 +39,20 @@ ROLE_STAT_LUCK = 9;
 ROLE_STAT_STEALTH = 10;
 ROLE_STAT_INIT = 11;
 ROLE_STAT_PERCEPT = 12;
+ROLE_STAT_HEALTH = 100;
+ROLE_STAT_ARMOR = 101;
+
+statDbNames = {
+    [ROLE_STAT_STRENGTH] = "STR",
+    [ROLE_STAT_AGLILITY] = "AGI",
+    [ROLE_STAT_INTELLECT] = "INTEL",
+    [ROLE_STAT_STAMINA] = "VIT",
+    [ROLE_STAT_VERSA] = "DEX",
+    [ROLE_STAT_WILL] = "WILL",
+    [ROLE_STAT_SPIRIT] = "SPI",
+    [ROLE_STAT_HEALTH] = "HEALTH", -- инициатива
+    [ROLE_STAT_ARMOR] = "ARMOR", -- восприятие
+}
 
 auraModificators = {
     [1] = { 88067, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -140,9 +164,10 @@ function gettargetDefValue(stat, target)
         end
     end
 
-    if not target:ToPlayer() and npcStats[target:GetGUIDLow()] then
-        if npcStats[target:GetGUIDLow()] then
-            tarDef = npcStats[target:GetGUIDLow()][statCorrespondedDef[stat]]; if tarDef == nil then tarDef = ROLE_STAT_DEFAULT_TRESHOLD end
+    if not target:ToPlayer() then
+        local npcStatsValues = getStatsByCreature(target)
+        if npcStatsValues then
+            tarDef = npcStatsValues[statCorrespondedDef[stat]]; if tarDef == nil then tarDef = ROLE_STAT_DEFAULT_TRESHOLD end
         else
             tarDef = ROLE_STAT_DEFAULT_TRESHOLD;
         end
@@ -522,9 +547,12 @@ function attackRoll(roller, target, spellid)
                 player_att = player_att + auraModificators[i][stat + 2]
             end
         end
-        if not roller:ToPlayer() and npcStats[roller:GetGUIDLow()] then
-            if npcStats[roller:GetGUIDLow()][stat] then
-                player_att = npcStats[roller:GetGUIDLow()][stat]
+        if not roller:ToPlayer() then
+            local npcStatsValues = getStatsByCreature(target)
+            if npcStatsValues then
+                if npcStatsValues[stat] then
+                    player_att = npcStatsValues[stat]
+                end
             end
         end
 
@@ -763,16 +791,10 @@ local function OnPlayerCommandWithArg(event, player, code)
             if player:GetGMRank() > 0 or player:GetDmLevel() > 0 then
                 local statid = tonumber(arguments[2]) - 1
                 local value = tonumber(arguments[3])
-                if statid > -1 and statid < 6 then
-                    print(statid)
-                    print(value)
-                    local GM_target = player:GetSelectedUnit()
-                    if not GM_target:ToPlayer() then
-                        print("set")
-                        if not npcStats[GM_target:GetGUIDLow()] then
-                            npcStats[GM_target:GetGUIDLow()] = {}
-                        end
-                        npcStats[GM_target:GetGUIDLow()][statid] = value
+                local GM_target = player:GetSelectedUnit()
+                if not GM_target:ToPlayer() then
+                    local result = setNpcStats(GM_target, statid, value)
+                    if (result) then
                         player:SendBroadcastMessage("Существу " .. greenColor .. "\"" .. GM_target:GetName() .. "\"|r " .. statnames[statid] .. " установлена в значение " .. greenColor .. value)
                     end
                 end
@@ -780,13 +802,13 @@ local function OnPlayerCommandWithArg(event, player, code)
         elseif (arguments[1] == "npcsetstatradius" and #arguments == 9) then
             if player:GetGMRank() > 0 then
                 local strength = tonumber(arguments[2]); if strength == nil then strength = 0 end
-                local agila = tonumber(arguments[3]); if strength == nil then strength = 0 end
-                local inta = tonumber(arguments[4]); if strength == nil then strength = 0 end
-                local stamina = tonumber(arguments[5]); if strength == nil then strength = 0 end
-                local versa = tonumber(arguments[6]); if strength == nil then strength = 0 end
-                local will = tonumber(arguments[7]); if strength == nil then strength = 0 end
-                local hpval = tonumber(arguments[8]); if strength == nil then strength = 0 end
-                local ammoval = tonumber(arguments[9]); if strength == nil then strength = 0 end
+                local agila = tonumber(arguments[3]); if agila == nil then agila = 0 end
+                local inta = tonumber(arguments[4]); if inta == nil then inta = 0 end
+                local stamina = tonumber(arguments[5]); if stamina == nil then stamina = 0 end
+                local versa = tonumber(arguments[6]); if versa == nil then versa = 0 end
+                local will = tonumber(arguments[7]); if will == nil then will = 0 end
+                local hpval = tonumber(arguments[8]); if hpval == nil then hpval = 0 end
+                local ammoval = tonumber(arguments[9]); if ammoval == nil then ammoval = 0 end
 
                 local GM_target = player:GetSelectedUnit()
                 if not GM_target then
@@ -794,15 +816,14 @@ local function OnPlayerCommandWithArg(event, player, code)
                 else
                     if not GM_target:ToPlayer() then
                         -- сначала на цель
-                        if not npcStats[GM_target:GetGUIDLow()] then
-                            npcStats[GM_target:GetGUIDLow()] = {}
-                        end
-                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_STRENGTH] = strength
-                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_AGLILITY] = agila
-                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_INTELLECT] = inta
-                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_STAMINA] = stamina
-                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_VERSA] = versa
-                        npcStats[GM_target:GetGUIDLow()][ROLE_STAT_WILL] = will
+                        setNpcStats(GM_target, ROLE_STAT_STRENGTH, strength)
+                        setNpcStats(GM_target, ROLE_STAT_AGLILITY, agila)
+                        setNpcStats(GM_target, ROLE_STAT_INTELLECT, inta)
+                        setNpcStats(GM_target, ROLE_STAT_STAMINA, stamina)
+                        setNpcStats(GM_target, ROLE_STAT_VERSA, versa)
+                        setNpcStats(GM_target, ROLE_STAT_WILL, will)
+                        setNpcStats(GM_target, ROLE_STAT_HEALTH, hpval)
+                        setNpcStats(GM_target, ROLE_STAT_ARMOR, ammoval)
 
                         GM_target:RemoveAura(EBS_HP_AURA)
                         if hpval > 0 then
@@ -821,15 +842,14 @@ local function OnPlayerCommandWithArg(event, player, code)
 
                         for i = 1, #creaturesInRange do
 
-                            if not npcStats[creaturesInRange[i]:GetGUIDLow()] then
-                                npcStats[creaturesInRange[i]:GetGUIDLow()] = {}
-                            end
-                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_STRENGTH] = strength
-                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_AGLILITY] = agila
-                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_INTELLECT] = inta
-                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_STAMINA] = stamina
-                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_VERSA] = versa
-                            npcStats[creaturesInRange[i]:GetGUIDLow()][ROLE_STAT_WILL] = will
+                            setNpcStats(creaturesInRange[i], ROLE_STAT_STRENGTH, strength)
+                            setNpcStats(creaturesInRange[i], ROLE_STAT_AGLILITY, agila)
+                            setNpcStats(creaturesInRange[i], ROLE_STAT_INTELLECT, inta)
+                            setNpcStats(creaturesInRange[i], ROLE_STAT_STAMINA, stamina)
+                            setNpcStats(creaturesInRange[i], ROLE_STAT_VERSA, versa)
+                            setNpcStats(creaturesInRange[i], ROLE_STAT_WILL, will)
+                            setNpcStats(creaturesInRange[i], ROLE_STAT_HEALTH, hpval)
+                            setNpcStats(creaturesInRange[i], ROLE_STAT_ARMOR, ammoval)
 
                             creaturesInRange[i]:RemoveAura(EBS_HP_AURA)
                             if hpval > 0 then
@@ -856,6 +876,10 @@ local function OnPlayerCommandWithArg(event, player, code)
             if player:GetGMRank() > 1 then
                 gmToCrit[player:GetName()] = true
                 player:SendBroadcastMessage("Уа-а-а-а-зяяя, ты щас ему ТАК дашь, что у него зубы вылетят")
+            end
+        elseif (arguments[1] == "reloadnpcstats") then
+            if player:GetGMRank() > 0 then
+                loadAllCreatureTemplateRollStats();
             end
         end
     end

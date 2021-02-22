@@ -115,6 +115,9 @@ local function OnPlayerCommandWithArg(event, player, code)
 					end
 					
 				end
+				if not GM_target:ToPlayer() then
+					setNpcStats(GM_target, ROLE_STAT_ARMOR, value);
+				end
 			end
 		elseif (arguments[1] == "addarmor" and #arguments == 2 ) then
 			local value = arguments[2]
@@ -136,6 +139,9 @@ local function OnPlayerCommandWithArg(event, player, code)
 					local armorAura = GM_target:GetAura(EBS_ARMOR_AURA)
 					local stackAmount = armorAura:GetStackAmount()
 					armorAura:SetStackAmount(stackAmount + value)
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_ARMOR, stackAmount + value);
+					end
 					player:SendBroadcastMessage(GM_target:GetName().." добавлено "..greenColor..value.."|r очков брони!")
 					if GM_target:ToPlayer() then
 						GM_target:SendBroadcastMessage("Вам добавлено "..greenColor..value.." очков брони!")	
@@ -169,6 +175,9 @@ local function OnPlayerCommandWithArg(event, player, code)
 						return false
 					end
 					armorAura:SetStackAmount(stackAmount - value)
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_ARMOR, stackAmount - value);
+					end
 					player:SendBroadcastMessage(GM_target:GetName().." потерял "..greenColor..value.."|r очков брони!")
 					if GM_target:ToPlayer() then
 						GM_target:SendBroadcastMessage("Вы потеряли "..greenColor..value.." очков брони!")	
@@ -211,6 +220,9 @@ local function OnPlayerCommandWithArg(event, player, code)
 					local hpAura = GM_target:AddAura(EBS_HP_AURA,GM_target)
 					hpAura:SetStackAmount(value)
 					player:SendBroadcastMessage(GM_target:GetName().." установлено "..greenColor..value.." очков здоровья")
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_HEALTH, value);
+					end
 					if GM_target:ToPlayer() then
 						GM_target:SendBroadcastMessage("Вам установлено "..greenColor..value.." очков здоровья")
 					end
@@ -275,6 +287,9 @@ local function OnPlayerCommandWithArg(event, player, code)
 						return false
 					end
 					hpAura:SetStackAmount(stackAmount - value)
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_HEALTH, stackAmount - value);
+					end
 					player:SendBroadcastMessage(GM_target:GetName().." получил "..redColor.."урон|r в "..value.." очков!")
 					if GM_target:ToPlayer() then
 						GM_target:SendBroadcastMessage("Вы получили "..redColor.."урон|r в "..value.." очков!")
@@ -304,6 +319,9 @@ local function OnPlayerCommandWithArg(event, player, code)
 					local hpAura = GM_target:GetAura(EBS_HP_AURA)
 					local stackAmount = hpAura:GetStackAmount()
 					hpAura:SetStackAmount(stackAmount + value)
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_HEALTH, stackAmount + value);
+					end
 					player:SendBroadcastMessage(GM_target:GetName().." добавлено "..greenColor..value.."|r очков здоровья!")
 					if GM_target:ToPlayer() then
 						GM_target:SendBroadcastMessage("Вам добавлено "..greenColor..value.." очков здоровья!")	
@@ -519,6 +537,12 @@ local function OnPlayerCommandWithArg(event, player, code)
 			GM_target:RemoveAura(EBS_HP_AURA)
 			GM_target:RemoveAura(EBS_ARMOR_AURA)
 			GM_target:RemoveAura(EBS_ENERGY_AURA)
+
+			if not GM_target:ToPlayer() then
+				setNpcStats(GM_target, ROLE_STAT_HEALTH, 0)
+				setNpcStats(GM_target, ROLE_STAT_ARMOR, 0)
+			end
+
 			for i = 1, #EBS_Auras do
 				GM_target:RemoveAura(EBS_Auras[i].id)
 			end
