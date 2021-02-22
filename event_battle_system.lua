@@ -220,15 +220,14 @@ local function OnPlayerCommandWithArg(event, player, code)
 					local hpAura = GM_target:AddAura(EBS_HP_AURA,GM_target)
 					hpAura:SetStackAmount(value)
 					player:SendBroadcastMessage(GM_target:GetName().." установлено "..greenColor..value.." очков здоровья")
-					if not GM_target:ToPlayer() then
-						setNpcStats(GM_target, ROLE_STAT_HEALTH, value);
-					end
 					if GM_target:ToPlayer() then
 						GM_target:SendBroadcastMessage("Вам установлено "..greenColor..value.." очков здоровья")
 					end
 					
 				end
-				
+				if not GM_target:ToPlayer() then
+					setNpcStats(GM_target, ROLE_STAT_HEALTH, value);
+				end
 			end
 		elseif (arguments[1] == "setwound" and #arguments == 2 ) then
 			local value = arguments[2]
