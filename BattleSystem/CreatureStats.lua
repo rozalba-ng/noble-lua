@@ -86,16 +86,11 @@ function setNpcStats(GM_target, stat, value)
     local guidLow = GM_target:GetGUIDLow();
     value = tonumber(value);
 
-print(stat);
-print(value);
-print(statDbNames[stat]);
     if not (statDbNames[stat] and value and value >= 0) then
-        print(22);
         return false
     end
 
     if guid then
-        print(22);
         if not npcStats[guid] then
             npcStats[guid] = {}
         end
@@ -103,22 +98,17 @@ print(statDbNames[stat]);
 
         local guidQ = WorldDBQuery('SELECT * FROM creature_role_stats where guid = ' .. guid );
         if(guidQ ~= nil) then
-            print(44);
-            WorldDBQuery('UPDATE creature_role_stats SET ' .. statDbNames[stat] ..' = ' .. stat .. ' where guid = ' .. guid );
+            WorldDBQuery('UPDATE creature_role_stats SET ' .. statDbNames[stat] ..' = ' .. value .. ' where guid = ' .. guid );
         else
-            print(55);
             WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',0,0,0,0,0,0,0,0,0)');
-            WorldDBQuery('UPDATE creature_role_stats SET ' .. statDbNames[stat] ..' = ' .. stat .. ' where guid = ' .. guid );
+            WorldDBQuery('UPDATE creature_role_stats SET ' .. statDbNames[stat] ..' = ' .. value .. ' where guid = ' .. guid );
         end
     else
-        print(66);
         if not tempNpcStats[guidLow] then
             tempNpcStats[guidLow] = {}
         end
         tempNpcStats[guidLow][stat] = value
-        print(77);
     end
-    print(88);
     return true
 end
 
