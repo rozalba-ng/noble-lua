@@ -548,7 +548,7 @@ function attackRoll(roller, target, spellid)
             end
         end
         if not roller:ToPlayer() then
-            local npcStatsValues = getStatsByCreature(target)
+            local npcStatsValues = getStatsByCreature(roller)
             if npcStatsValues then
                 if npcStatsValues[stat] then
                     player_att = npcStatsValues[stat]
