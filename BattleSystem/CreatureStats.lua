@@ -86,7 +86,9 @@ function setNpcStats(GM_target, statid, value)
     local guidLow = GM_target:GetGUIDLow();
     value = tonumber(value);
 
-print(11);
+print(stat);
+print(value);
+print(statDbNames[stat]);
     if not (statDbNames[stat] and value and value >= 0) then
         print(22);
         return false
