@@ -24,9 +24,8 @@ ROLE_STAT_ARMOR = 101;
 
 function loadDefaultCreatureStats(event, creature, summoner)
     local entry = creature:GetEntry();
-print(entry)
+
     if npcStatsTemplate[entry] then
-        print(5)
         setNpcStats(creature, ROLE_STAT_STRENGTH, npcStatsTemplate[entry][ROLE_STAT_STRENGTH])
         setNpcStats(creature, ROLE_STAT_AGLILITY, npcStatsTemplate[entry][ROLE_STAT_AGLILITY])
         setNpcStats(creature, ROLE_STAT_INTELLECT, npcStatsTemplate[entry][ROLE_STAT_INTELLECT])
@@ -51,7 +50,10 @@ function loadDefaultCreatureStatsNoSum(event, creature)
         setNpcStats(creature, ROLE_STAT_WILL, npcStatsTemplate[entry][ROLE_STAT_WILL])
         setNpcStats(creature, ROLE_STAT_HEALTH, npcStatsTemplate[entry][ROLE_STAT_HEALTH])
         setNpcStats(creature, ROLE_STAT_ARMOR, npcStatsTemplate[entry][ROLE_STAT_ARMOR])
+    else
+        print('nipanimayu')
     end
+    print(222)
 end
 
 function loadAllCreatureTemplateRollStats()
@@ -78,8 +80,7 @@ function loadAllCreatureTemplateRollStats()
             npcStatsTemplate[entry][ROLE_STAT_ARMOR] = creatureTemplateStatsQuery:GetString(9);
             -- Регаем ивенты на все заранее настроенные нпс
             RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
-        print(entry)
-            RegisterCreatureEvent(entry, 22, loadDefaultCreatureStats)
+
             creatureTemplateStatsQuery:NextRow()
         end
     end
