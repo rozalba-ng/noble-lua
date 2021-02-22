@@ -390,14 +390,14 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                     if(emoteid == nil)then
                         player:SendBroadcastMessage("ОШИБКА: некорректное значение! Допустимы только целые числа.")
                     else
-			if(#arguments == 2)then
+                        if(#arguments == 2)then
                             DMcreature:Emote( emoteid )
-			elseif(#arguments == 3)then
-			    local param = tonumber(arguments[3])
-			    if(param == 1)then
-				DMcreature:EmoteState( emoteid )
-			    end
-			end
+                        elseif(#arguments == 3)then
+                            local param = tonumber(arguments[3])
+                            if(param == 1)then
+                                DMcreature:EmoteState( emoteid )
+                            end
+                        end
                     end
                     return false;
                 else
@@ -415,7 +415,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                     end
                     return false;
                 else
-                    player:SendBroadcastMessage("ОШИБКА: NPC Вам не принадлежит.")
+                    player:SendBroadcastMessage("ОШИБКА: NPC Вам не принадлежит!")
                     return false;
                 end
             elseif (arguments[1] == 'gobadd' and #arguments == 2) then
