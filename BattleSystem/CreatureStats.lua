@@ -28,7 +28,7 @@ function loadAllCreatureTemplateRollStats()
     if creatureTemplateStatsQuery then
         local creatureTemplsteStatsCount = creatureTemplateStatsQuery:GetRowCount()
 
-        for i = 1, creatureStatsCount do
+        for i = 1, creatureTemplsteStatsCount do
             local entry = creatureTemplateStatsQuery:GetString(0)
 
             if not npcStatsTemplate[entry] then
