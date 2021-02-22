@@ -6,7 +6,7 @@ npcStatsTemplate = {}
 --WorldDBQuery('UPDATE creature_role_stats SET STR = ' .. STR ..', AGI = ' .. AGI .. ', INTEL = ' .. INTEL .. ', VIT = ' .. VIT .. ', DEX = ' .. DEX .. ', WILL = ' .. WILL .. ', SPI = ' .. SPI ..', HEALTH = ' .. HEALTH ..', ARMOR = ' .. ARMOR ..' where guid = ' .. guid );
 --WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',' .. STR ..', '.. AGI ..',' .. INTEL .. ', ' .. VIT .. ',' .. DEX .. ',' .. WILL .. ',' .. SPI .. ', ' .. HEALTH .. ', ' .. ARMOR .. ')');
 
-function loadDefaultCreatureStats(event, creature)
+function loadDefaultCreatureStats(event, creature, summoner)
     local entry = creature:GetEntry();
     local guid = creature:GetDBTableGUIDLow();
     if npcStatsTemplate[entry] then
@@ -46,7 +46,7 @@ function loadAllCreatureTemplateRollStats()
             npcStatsTemplate[entry][ROLE_STAT_ARMOR] = creatureTemplateStatsQuery:GetString(9);
 
             -- Регаем ивенты на все заранее настроенные нпс
-            RegisterCreatureEvent(entry, 5, loadDefaultCreatureStats)
+            RegisterCreatureEvent(entry, 22, loadDefaultCreatureStats)
 
             creatureTemplateStatsQuery:NextRow()
         end
