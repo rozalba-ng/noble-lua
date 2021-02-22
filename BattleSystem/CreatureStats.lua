@@ -71,9 +71,6 @@ function loadAllCreatureTemplateRollStats()
             npcStatsTemplate[entry][ROLE_STAT_HEALTH] = creatureTemplateStatsQuery:GetString(8);
             npcStatsTemplate[entry][ROLE_STAT_ARMOR] = creatureTemplateStatsQuery:GetString(9);
             -- Регаем ивенты на все заранее настроенные нпс
-            RegisterCreatureEvent(entry, 22, loadDefaultCreatureStats)
-            RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
-            RegisterCreatureEvent(9911050, 5, loadDefaultCreatureStatsNoSum)
             creatureTemplateStatsQuery:NextRow()
         end
     end
@@ -149,3 +146,5 @@ end
 
 loadAllCreatureTemplateRollStats();
 loadAllCreatureRollStats();
+RegisterCreatureEvent(9911050, 5, loadDefaultCreatureStatsNoSum)
+RegisterCreatureEvent(9911050, 22, loadDefaultCreatureStats)
