@@ -7,9 +7,13 @@ npcStatsTemplate = {}
 --WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',' .. STR ..', '.. AGI ..',' .. INTEL .. ', ' .. VIT .. ',' .. DEX .. ',' .. WILL .. ',' .. SPI .. ', ' .. HEALTH .. ', ' .. ARMOR .. ')');
 
 function loadDefaultCreatureStats(event, creature, summoner)
+    print(123);
     local entry = creature:GetEntry();
     local guid = creature:GetDBTableGUIDLow();
+    print(entry);
+    print(guid);
     if npcStatsTemplate[entry] then
+        print(232)
         npcStats[guid][ROLE_STAT_STRENGTH] = npcStatsTemplate[entry][ROLE_STAT_STRENGTH];
         npcStats[guid][ROLE_STAT_AGLILITY] = npcStatsTemplate[entry][ROLE_STAT_AGLILITY];
         npcStats[guid][ROLE_STAT_INTELLECT] = npcStatsTemplate[entry][ROLE_STAT_INTELLECT];
@@ -19,24 +23,23 @@ function loadDefaultCreatureStats(event, creature, summoner)
         npcStats[guid][ROLE_STAT_SPIRIT] = npcStatsTemplate[entry][ROLE_STAT_SPIRIT];
         npcStats[guid][ROLE_STAT_HEALTH] = npcStatsTemplate[entry][ROLE_STAT_HEALTH];
         npcStats[guid][ROLE_STAT_ARMOR] = npcStatsTemplate[entry][ROLE_STAT_ARMOR];
+        print(npcStatsTemplate[entry][ROLE_STAT_HEALTH]);
     end
 end
 
 function loadAllCreatureTemplateRollStats()
     local creatureTemplateStatsQuery = WorldDBQuery('SELECT * FROM creature_template_role_stats where 1');
-print(1);
+
     if creatureTemplateStatsQuery then
         local creatureTemplsteStatsCount = creatureTemplateStatsQuery:GetRowCount()
-        print(2);
-        for i = 1, creatureTemplsteStatsCount do
-            print(3);
-            local entry = creatureTemplateStatsQuery:GetString(0)
 
+        for i = 1, creatureTemplsteStatsCount do
+
+            local entry = creatureTemplateStatsQuery:GetString(0)
             if not npcStatsTemplate[entry] then
                 npcStatsTemplate[entry] = {}
             end
-            print(4);
-            print(entry);
+
             npcStatsTemplate[entry][ROLE_STAT_STRENGTH] = creatureTemplateStatsQuery:GetString(1);
             npcStatsTemplate[entry][ROLE_STAT_AGLILITY] = creatureTemplateStatsQuery:GetString(2);
             npcStatsTemplate[entry][ROLE_STAT_INTELLECT] = creatureTemplateStatsQuery:GetString(3);
@@ -46,7 +49,6 @@ print(1);
             npcStatsTemplate[entry][ROLE_STAT_SPIRIT] = creatureTemplateStatsQuery:GetString(7);
             npcStatsTemplate[entry][ROLE_STAT_HEALTH] = creatureTemplateStatsQuery:GetString(8);
             npcStatsTemplate[entry][ROLE_STAT_ARMOR] = creatureTemplateStatsQuery:GetString(9);
-            print(5);
             -- Регаем ивенты на все заранее настроенные нпс
             RegisterCreatureEvent(entry, 22, loadDefaultCreatureStats)
 
