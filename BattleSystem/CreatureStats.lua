@@ -81,7 +81,7 @@ function loadAllCreatureRollStats()
     creatureStatsQuery = nil;
 end
 
-function setNpcStats(GM_target, statid, value)
+function setNpcStats(GM_target, stat, value)
     local guid = GM_target:GetDBTableGUIDLow();
     local guidLow = GM_target:GetGUIDLow();
     value = tonumber(value);
@@ -99,7 +99,7 @@ print(statDbNames[stat]);
         if not npcStats[guid] then
             npcStats[guid] = {}
         end
-        npcStats[guid][statid] = value
+        npcStats[guid][stat] = value
 
         local guidQ = WorldDBQuery('SELECT * FROM creature_role_stats where guid = ' .. guid );
         if(guidQ ~= nil) then
@@ -115,7 +115,7 @@ print(statDbNames[stat]);
         if not tempNpcStats[guidLow] then
             tempNpcStats[guidLow] = {}
         end
-        tempNpcStats[guidLow][statid] = value
+        tempNpcStats[guidLow][stat] = value
         print(77);
     end
     print(88);
