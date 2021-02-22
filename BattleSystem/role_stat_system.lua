@@ -880,6 +880,7 @@ local function OnPlayerCommandWithArg(event, player, code)
         elseif (arguments[1] == "reloadnpcstats") then
             if player:GetGMRank() > 0 then
                 loadAllCreatureTemplateRollStats();
+                player:SendBroadcastMessage("Статы перезагружены")
             end
         end
     end
