@@ -385,7 +385,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                 end            
             elseif (arguments[1] == "npcplayemote" and (#arguments == 2 or #arguments == 3)) then
                 local DMcreature = player:GetTargetCreature();
-                if(DMcreature:GetOwner() == player)then
+                if(DMcreature:GetOwner() == player or player:GetGMRank() >= 1)then
                     local emoteid = tonumber(arguments[2])
                     if(emoteid == nil)then
                         player:SendBroadcastMessage("ОШИБКА: некорректное значение! Допустимы только целые числа.")
