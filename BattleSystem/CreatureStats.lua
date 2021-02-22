@@ -27,6 +27,27 @@ function loadDefaultCreatureStats(event, creature, summoner)
     end
 end
 
+function loadDefaultCreatureStatsNoSum(event, creature)
+    print(123);
+    local entry = creature:GetEntry();
+    local guid = creature:GetDBTableGUIDLow();
+    print(entry);
+    print(guid);
+    if npcStatsTemplate[entry] then
+        print(232)
+        npcStats[guid][ROLE_STAT_STRENGTH] = npcStatsTemplate[entry][ROLE_STAT_STRENGTH];
+        npcStats[guid][ROLE_STAT_AGLILITY] = npcStatsTemplate[entry][ROLE_STAT_AGLILITY];
+        npcStats[guid][ROLE_STAT_INTELLECT] = npcStatsTemplate[entry][ROLE_STAT_INTELLECT];
+        npcStats[guid][ROLE_STAT_STAMINA] = npcStatsTemplate[entry][ROLE_STAT_STAMINA];
+        npcStats[guid][ROLE_STAT_VERSA] = npcStatsTemplate[entry][ROLE_STAT_VERSA];
+        npcStats[guid][ROLE_STAT_WILL] = npcStatsTemplate[entry][ROLE_STAT_WILL];
+        npcStats[guid][ROLE_STAT_SPIRIT] = npcStatsTemplate[entry][ROLE_STAT_SPIRIT];
+        npcStats[guid][ROLE_STAT_HEALTH] = npcStatsTemplate[entry][ROLE_STAT_HEALTH];
+        npcStats[guid][ROLE_STAT_ARMOR] = npcStatsTemplate[entry][ROLE_STAT_ARMOR];
+        print(npcStatsTemplate[entry][ROLE_STAT_HEALTH]);
+    end
+end
+
 function loadAllCreatureTemplateRollStats()
     local creatureTemplateStatsQuery = WorldDBQuery('SELECT * FROM creature_template_role_stats where 1');
 
@@ -51,7 +72,8 @@ function loadAllCreatureTemplateRollStats()
             npcStatsTemplate[entry][ROLE_STAT_ARMOR] = creatureTemplateStatsQuery:GetString(9);
             -- Регаем ивенты на все заранее настроенные нпс
             RegisterCreatureEvent(entry, 22, loadDefaultCreatureStats)
-
+            RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
+            RegisterCreatureEvent(9911050, 5, loadDefaultCreatureStatsNoSum)
             creatureTemplateStatsQuery:NextRow()
         end
     end
