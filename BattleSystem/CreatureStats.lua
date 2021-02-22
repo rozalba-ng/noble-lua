@@ -2,6 +2,22 @@ npcStats = {}
 tempNpcStats = {}
 npcStatsTemplate = {}
 
+ROLE_STAT_STRENGTH = 0;
+ROLE_STAT_AGLILITY = 1;
+ROLE_STAT_INTELLECT = 2;
+ROLE_STAT_STAMINA = 3;
+ROLE_STAT_VERSA = 4;
+ROLE_STAT_WILL = 5;
+ROLE_STAT_SPIRIT = 6;
+ROLE_STAT_CHARISMA = 7;
+ROLE_STAT_AVOID = 8;
+ROLE_STAT_LUCK = 9;
+ROLE_STAT_STEALTH = 10;
+ROLE_STAT_INIT = 11;
+ROLE_STAT_PERCEPT = 12;
+ROLE_STAT_HEALTH = 100;
+ROLE_STAT_ARMOR = 101;
+
 
 --WorldDBQuery('UPDATE creature_role_stats SET STR = ' .. STR ..', AGI = ' .. AGI .. ', INTEL = ' .. INTEL .. ', VIT = ' .. VIT .. ', DEX = ' .. DEX .. ', WILL = ' .. WILL .. ', SPI = ' .. SPI ..', HEALTH = ' .. HEALTH ..', ARMOR = ' .. ARMOR ..' where guid = ' .. guid );
 --WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',' .. STR ..', '.. AGI ..',' .. INTEL .. ', ' .. VIT .. ',' .. DEX .. ',' .. WILL .. ',' .. SPI .. ', ' .. HEALTH .. ', ' .. ARMOR .. ')');
