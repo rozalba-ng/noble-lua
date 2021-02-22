@@ -80,6 +80,10 @@ function loadAllCreatureTemplateRollStats()
             npcStatsTemplate[entry][ROLE_STAT_ARMOR] = creatureTemplateStatsQuery:GetString(9);
             -- Регаем ивенты на все заранее настроенные нпс
             RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
+            print(222)
+            print(npcStatsTemplate[entry][ROLE_STAT_INTELLECT])
+            print(npcStatsTemplate[entry][ROLE_STAT_ARMOR])
+        print(444)
 
             creatureTemplateStatsQuery:NextRow()
         end
