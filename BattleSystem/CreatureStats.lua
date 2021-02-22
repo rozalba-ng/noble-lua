@@ -23,44 +23,17 @@ ROLE_STAT_ARMOR = 101;
 --WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',' .. STR ..', '.. AGI ..',' .. INTEL .. ', ' .. VIT .. ',' .. DEX .. ',' .. WILL .. ',' .. SPI .. ', ' .. HEALTH .. ', ' .. ARMOR .. ')');
 
 function loadDefaultCreatureStats(event, creature, summoner)
-    print(123);
     local entry = creature:GetEntry();
-    local guid = creature:GetDBTableGUIDLow();
-    print(entry);
-    print(guid);
-    if npcStatsTemplate[entry] then
-        print(232)
-        npcStats[guid][ROLE_STAT_STRENGTH] = npcStatsTemplate[entry][ROLE_STAT_STRENGTH];
-        npcStats[guid][ROLE_STAT_AGLILITY] = npcStatsTemplate[entry][ROLE_STAT_AGLILITY];
-        npcStats[guid][ROLE_STAT_INTELLECT] = npcStatsTemplate[entry][ROLE_STAT_INTELLECT];
-        npcStats[guid][ROLE_STAT_STAMINA] = npcStatsTemplate[entry][ROLE_STAT_STAMINA];
-        npcStats[guid][ROLE_STAT_VERSA] = npcStatsTemplate[entry][ROLE_STAT_VERSA];
-        npcStats[guid][ROLE_STAT_WILL] = npcStatsTemplate[entry][ROLE_STAT_WILL];
-        npcStats[guid][ROLE_STAT_SPIRIT] = npcStatsTemplate[entry][ROLE_STAT_SPIRIT];
-        npcStats[guid][ROLE_STAT_HEALTH] = npcStatsTemplate[entry][ROLE_STAT_HEALTH];
-        npcStats[guid][ROLE_STAT_ARMOR] = npcStatsTemplate[entry][ROLE_STAT_ARMOR];
-        print(npcStatsTemplate[entry][ROLE_STAT_HEALTH]);
-    end
-end
 
-function loadDefaultCreatureStatsNoSum(event, creature)
-    print(123);
-    local entry = creature:GetEntry();
-    local guid = creature:GetDBTableGUIDLow();
-    print(entry);
-    print(guid);
     if npcStatsTemplate[entry] then
-        print(232)
-        npcStats[guid][ROLE_STAT_STRENGTH] = npcStatsTemplate[entry][ROLE_STAT_STRENGTH];
-        npcStats[guid][ROLE_STAT_AGLILITY] = npcStatsTemplate[entry][ROLE_STAT_AGLILITY];
-        npcStats[guid][ROLE_STAT_INTELLECT] = npcStatsTemplate[entry][ROLE_STAT_INTELLECT];
-        npcStats[guid][ROLE_STAT_STAMINA] = npcStatsTemplate[entry][ROLE_STAT_STAMINA];
-        npcStats[guid][ROLE_STAT_VERSA] = npcStatsTemplate[entry][ROLE_STAT_VERSA];
-        npcStats[guid][ROLE_STAT_WILL] = npcStatsTemplate[entry][ROLE_STAT_WILL];
-        npcStats[guid][ROLE_STAT_SPIRIT] = npcStatsTemplate[entry][ROLE_STAT_SPIRIT];
-        npcStats[guid][ROLE_STAT_HEALTH] = npcStatsTemplate[entry][ROLE_STAT_HEALTH];
-        npcStats[guid][ROLE_STAT_ARMOR] = npcStatsTemplate[entry][ROLE_STAT_ARMOR];
-        print(npcStatsTemplate[entry][ROLE_STAT_HEALTH]);
+        setNpcStats(creature, ROLE_STAT_STRENGTH, npcStatsTemplate[entry][ROLE_STAT_STRENGTH])
+        setNpcStats(creature, ROLE_STAT_AGLILITY, npcStatsTemplate[entry][ROLE_STAT_AGLILITY])
+        setNpcStats(creature, ROLE_STAT_INTELLECT, npcStatsTemplate[entry][ROLE_STAT_INTELLECT])
+        setNpcStats(creature, ROLE_STAT_STAMINA, npcStatsTemplate[entry][ROLE_STAT_STAMINA])
+        setNpcStats(creature, ROLE_STAT_VERSA, npcStatsTemplate[entry][ROLE_STAT_VERSA])
+        setNpcStats(creature, ROLE_STAT_WILL, npcStatsTemplate[entry][ROLE_STAT_WILL])
+        setNpcStats(creature, ROLE_STAT_HEALTH, npcStatsTemplate[entry][ROLE_STAT_HEALTH])
+        setNpcStats(creature, ROLE_STAT_ARMOR, npcStatsTemplate[entry][ROLE_STAT_ARMOR])
     end
 end
 
@@ -87,6 +60,8 @@ function loadAllCreatureTemplateRollStats()
             npcStatsTemplate[entry][ROLE_STAT_HEALTH] = creatureTemplateStatsQuery:GetString(8);
             npcStatsTemplate[entry][ROLE_STAT_ARMOR] = creatureTemplateStatsQuery:GetString(9);
             -- Регаем ивенты на все заранее настроенные нпс
+            RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
+            RegisterCreatureEvent(entry, 22, loadDefaultCreatureStats)
             creatureTemplateStatsQuery:NextRow()
         end
     end
@@ -120,9 +95,9 @@ function loadAllCreatureRollStats()
     creatureStatsQuery = nil;
 end
 
-function setNpcStats(GM_target, stat, value)
-    local guid = GM_target:GetDBTableGUIDLow();
-    local guidLow = GM_target:GetGUIDLow();
+function setNpcStats(creature, stat, value)
+    local guid = creature:GetDBTableGUIDLow();
+    local guidLow = creature:GetGUIDLow();
     value = tonumber(value);
     if not (statDbNames[stat] and value~=nil and value >=0) then
         return false
@@ -162,5 +137,3 @@ end
 
 loadAllCreatureTemplateRollStats();
 loadAllCreatureRollStats();
-RegisterCreatureEvent(9911050, 5, loadDefaultCreatureStatsNoSum)
-RegisterCreatureEvent(9911050, 22, loadDefaultCreatureStats)
