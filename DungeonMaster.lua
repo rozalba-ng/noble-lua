@@ -370,9 +370,9 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                     player:SendBroadcastMessage("ОШИБКА: NPC Вам не принадлежит.")
                     return false;
                 end            
-            elseif (arguments[1] == "npcemote" or player:GetGMRank() >= 1) then
+            elseif (arguments[1] == "npcemote") then
                 local DMcreature = player:GetTargetCreature();
-                if(DMcreature:GetOwner() == player)then
+                if(DMcreature:GetOwner() == player or player:GetGMRank() >= 1)then
                     local msg = "";
                     for i = 2, #arguments do
                         msg = msg.." "..arguments[i]
