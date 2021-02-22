@@ -8,7 +8,7 @@ npcStatsTemplate = {}
 
 function loadDefaultCreatureStats(event, creature)
     local entry = creature:GetEntry();
-    local guid = creature:GetDbTableGUIDLow();
+    local guid = creature:GetDBTableGUIDLow();
     if npcStatsTemplate[entry] then
         npcStats[guid][ROLE_STAT_STRENGTH] = npcStatsTemplate[entry][ROLE_STAT_STRENGTH];
         npcStats[guid][ROLE_STAT_AGLILITY] = npcStatsTemplate[entry][ROLE_STAT_AGLILITY];
@@ -82,7 +82,7 @@ function loadAllCreatureRollStats()
 end
 
 function setNpcStats(GM_target, statid, value)
-    local guid = GM_target:GetDbTableGUIDLow();
+    local guid = GM_target:GetDBTableGUIDLow();
     local guidLow = GM_target:GetGUIDLow();
     value = tonumber(value);
 
@@ -113,9 +113,9 @@ function setNpcStats(GM_target, statid, value)
     return true
 end
 
-function getStatsByCreature(GM_target)
-    if npcStats[target:GetDbTableGUIDLow()] then
-        return npcStats[target:GetDbTableGUIDLow()]
+function getStatsByCreature(target)
+    if npcStats[target:GetDBTableGUIDLow()] then
+        return npcStats[target:GetDBTableGUIDLow()]
     elseif tempNpcStats[target:GetGUIDLow()] then
         return tempNpcStats[target:GetGUIDLow()]
     end
