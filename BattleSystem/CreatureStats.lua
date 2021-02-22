@@ -24,8 +24,9 @@ ROLE_STAT_ARMOR = 101;
 
 function loadDefaultCreatureStats(event, creature, summoner)
     local entry = creature:GetEntry();
-
+print(entry)
     if npcStatsTemplate[entry] then
+        print(5)
         setNpcStats(creature, ROLE_STAT_STRENGTH, npcStatsTemplate[entry][ROLE_STAT_STRENGTH])
         setNpcStats(creature, ROLE_STAT_AGLILITY, npcStatsTemplate[entry][ROLE_STAT_AGLILITY])
         setNpcStats(creature, ROLE_STAT_INTELLECT, npcStatsTemplate[entry][ROLE_STAT_INTELLECT])
@@ -60,7 +61,7 @@ function loadAllCreatureTemplateRollStats()
             npcStatsTemplate[entry][ROLE_STAT_HEALTH] = creatureTemplateStatsQuery:GetString(8);
             npcStatsTemplate[entry][ROLE_STAT_ARMOR] = creatureTemplateStatsQuery:GetString(9);
             -- Регаем ивенты на все заранее настроенные нпс
-            RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
+            --RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
             RegisterCreatureEvent(entry, 22, loadDefaultCreatureStats)
             creatureTemplateStatsQuery:NextRow()
         end
@@ -102,7 +103,8 @@ function setNpcStats(creature, stat, value)
     if not (statDbNames[stat] and value~=nil and value >=0) then
         return false
     end
-
+    print(guid)
+    print(guidLow)
     if guid then
         if not npcStats[guid] then
             npcStats[guid] = {}
