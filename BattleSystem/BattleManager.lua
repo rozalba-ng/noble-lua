@@ -1,4 +1,14 @@
-print(555555555)
+--BattleManager.lua
+listPlayersInBattle = {}
+
+TURN_AURA = 88037
+IS_IN_BATTLE_AURA = 88057
+LEAVER_AURA = 88058
+HP_AURA =  88059
+WOUND_AURA = 88010
+DOUBLE_ATTACK_AURA = 88076
+DEAD_AURA = 45801
+
 local AIO = AIO or require("AIO")
 local BM_Handlers = AIO.AddHandlers("BM_Handlers", {})
 
