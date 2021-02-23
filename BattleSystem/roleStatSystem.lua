@@ -1,66 +1,17 @@
 ﻿local npc_health = {};
 local PLAYER_EVENT_ON_EQUIP = 29;
 
-roleCombatArray = {};
+local gmToCrit = {}
 
-roleCombat = {};
-roleCombat.playerCombat = {};
-roleCombat.playerCombatMove = {};
-roleCombat.playerCombatFaction = {};
-roleCombat.menuID = 6010;
+local ROLE_STAT_DEFAULT_TRESHOLD = 15;
 
-roleCombat.diff_number = {};
-
-
---`STR` INT(11) NULL DEFAULT '0' COMMENT 'Сила',
---`AGI` INT(11) NULL DEFAULT '0' COMMENT 'Ловкость',
---`INTEL` INT(11) NULL DEFAULT '0' COMMENT 'Интеллект',
---`VIT` INT(11) NULL DEFAULT '0' COMMENT 'Стойкость',
---`DEX` INT(11) NULL DEFAULT '0' COMMENT 'Проворство',
---`WILL` INT(11) NULL DEFAULT '0' COMMENT 'Воля',
---`SPI` INT(11) NULL DEFAULT '0' COMMENT 'Дух',
---`HEALTH` INT(11) NULL DEFAULT '0' COMMENT 'Здоровье',
---`ARMOR` INT(11) NULL DEFAULT '0' COMMENT 'Броня',
-
-gmToCrit = {}
-
-ROLE_STAT_DEFAULT_TRESHOLD = 15;
-
-ROLE_STAT_STRENGTH = 0;
-ROLE_STAT_AGLILITY = 1;
-ROLE_STAT_INTELLECT = 2;
-ROLE_STAT_STAMINA = 3;
-ROLE_STAT_VERSA = 4;
-ROLE_STAT_WILL = 5;
-ROLE_STAT_SPIRIT = 6;
-ROLE_STAT_CHARISMA = 7;
-ROLE_STAT_AVOID = 8;
-ROLE_STAT_LUCK = 9;
-ROLE_STAT_STEALTH = 10;
-ROLE_STAT_INIT = 11;
-ROLE_STAT_PERCEPT = 12;
-ROLE_STAT_HEALTH = 100;
-ROLE_STAT_ARMOR = 101;
-
-statDbNames = {
-    [ROLE_STAT_STRENGTH] = "STR",
-    [ROLE_STAT_AGLILITY] = "AGI",
-    [ROLE_STAT_INTELLECT] = "INTEL",
-    [ROLE_STAT_STAMINA] = "VIT",
-    [ROLE_STAT_VERSA] = "DEX",
-    [ROLE_STAT_WILL] = "WILL",
-    [ROLE_STAT_SPIRIT] = "SPI",
-    [ROLE_STAT_HEALTH] = "HEALTH", -- инициатива
-    [ROLE_STAT_ARMOR] = "ARMOR", -- восприятие
-}
-
-auraModificators = {
+local auraModificators = {
     [1] = { 88067, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     [2] = { 88068, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     [3] = { 88069, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 }
 
-statCorrespondedDef = {
+local statCorrespondedDef = {
     [ROLE_STAT_STRENGTH] = ROLE_STAT_STAMINA, -- силе стойкость
     [ROLE_STAT_AGLILITY] = ROLE_STAT_VERSA, -- ловкости сноровка
     [ROLE_STAT_INTELLECT] = ROLE_STAT_WILL, -- интеллекту воля
@@ -69,23 +20,9 @@ statCorrespondedDef = {
     [ROLE_STAT_WILL] = ROLE_STAT_INTELLECT -- воле интеллект
 }
 
-statAllowedInBattle = {
-    [ROLE_STAT_STRENGTH] = 1, -- силе
-    [ROLE_STAT_AGLILITY] = 1, -- ловкости
-    [ROLE_STAT_INTELLECT] = 1, -- интеллекту
-    [ROLE_STAT_STAMINA] = 0, -- стойкости
-    [ROLE_STAT_VERSA] = 0, -- сноровке
-    [ROLE_STAT_WILL] = 0, -- воле
-    [ROLE_STAT_SPIRIT] = 1, -- дух
-    [ROLE_STAT_CHARISMA] = 0, -- харизма
-    [ROLE_STAT_AVOID] = 0, -- избегание
-    [ROLE_STAT_LUCK] = 0, -- удача
-    [ROLE_STAT_STEALTH] = 0, -- скрытность
-    [ROLE_STAT_INIT] = 0, -- инициатива
-    [ROLE_STAT_PERCEPT] = 0, -- восприятие
-}
 
-statBaseTreshold = {
+
+local statBaseTreshold = {
     [ROLE_STAT_STRENGTH] = 0, -- силе
     [ROLE_STAT_AGLILITY] = 0, -- ловкости
     [ROLE_STAT_INTELLECT] = 0, -- интеллекту

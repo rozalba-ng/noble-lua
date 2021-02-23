@@ -1,43 +1,10 @@
-npcStats = {}
-tempNpcStats = {}
-npcStatsTemplate = {}
-
-ROLE_STAT_STRENGTH = 0;
-ROLE_STAT_AGLILITY = 1;
-ROLE_STAT_INTELLECT = 2;
-ROLE_STAT_STAMINA = 3;
-ROLE_STAT_VERSA = 4;
-ROLE_STAT_WILL = 5;
-ROLE_STAT_SPIRIT = 6;
-ROLE_STAT_CHARISMA = 7;
-ROLE_STAT_AVOID = 8;
-ROLE_STAT_LUCK = 9;
-ROLE_STAT_STEALTH = 10;
-ROLE_STAT_INIT = 11;
-ROLE_STAT_PERCEPT = 12;
-ROLE_STAT_HEALTH = 100;
-ROLE_STAT_ARMOR = 101;
-
-
+local npcStats = {}
+local tempNpcStats = {}
+local npcStatsTemplate = {}
 --WorldDBQuery('UPDATE creature_role_stats SET STR = ' .. STR ..', AGI = ' .. AGI .. ', INTEL = ' .. INTEL .. ', VIT = ' .. VIT .. ', DEX = ' .. DEX .. ', WILL = ' .. WILL .. ', SPI = ' .. SPI ..', HEALTH = ' .. HEALTH ..', ARMOR = ' .. ARMOR ..' where guid = ' .. guid );
 --WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',' .. STR ..', '.. AGI ..',' .. INTEL .. ', ' .. VIT .. ',' .. DEX .. ',' .. WILL .. ',' .. SPI .. ', ' .. HEALTH .. ', ' .. ARMOR .. ')');
 
-function loadDefaultCreatureStats(event, creature, summoner)
-    local entry = creature:GetEntry();
-
-    if npcStatsTemplate[entry] then
-        setNpcStats(creature, ROLE_STAT_STRENGTH, npcStatsTemplate[entry][ROLE_STAT_STRENGTH])
-        setNpcStats(creature, ROLE_STAT_AGLILITY, npcStatsTemplate[entry][ROLE_STAT_AGLILITY])
-        setNpcStats(creature, ROLE_STAT_INTELLECT, npcStatsTemplate[entry][ROLE_STAT_INTELLECT])
-        setNpcStats(creature, ROLE_STAT_STAMINA, npcStatsTemplate[entry][ROLE_STAT_STAMINA])
-        setNpcStats(creature, ROLE_STAT_VERSA, npcStatsTemplate[entry][ROLE_STAT_VERSA])
-        setNpcStats(creature, ROLE_STAT_WILL, npcStatsTemplate[entry][ROLE_STAT_WILL])
-        setNpcStats(creature, ROLE_STAT_HEALTH, npcStatsTemplate[entry][ROLE_STAT_HEALTH])
-        setNpcStats(creature, ROLE_STAT_ARMOR, npcStatsTemplate[entry][ROLE_STAT_ARMOR])
-    end
-end
-
-function loadDefaultCreatureStatsNoSum(event, creature)
+local function loadDefaultCreatureStatsNoSum(event, creature)
     local entry = creature:GetEntry();
     print(entry)
     if npcStatsTemplate[entry] then
@@ -64,7 +31,7 @@ function loadAllCreatureTemplateRollStats()
 
         for i = 1, creatureTemplsteStatsCount do
 
-            local entry = creatureTemplateStatsQuery:GetString(0)
+            local entry = tonumber(creatureTemplateStatsQuery:GetString(0))
             if not npcStatsTemplate[entry] then
                 npcStatsTemplate[entry] = {}
             end
@@ -80,10 +47,6 @@ function loadAllCreatureTemplateRollStats()
             npcStatsTemplate[entry][ROLE_STAT_ARMOR] = creatureTemplateStatsQuery:GetString(9);
             -- Регаем ивенты на все заранее настроенные нпс
             RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
-            print(222)
-            print(npcStatsTemplate[entry][ROLE_STAT_INTELLECT])
-            print(npcStatsTemplate[entry][ROLE_STAT_ARMOR])
-        print(444)
 
             creatureTemplateStatsQuery:NextRow()
         end
@@ -125,8 +88,6 @@ function setNpcStats(creature, stat, value)
     if not (statDbNames[stat] and value~=nil and value >=0) then
         return false
     end
-    print(guid)
-    print(guidLow)
     if guid then
         if not npcStats[guid] then
             npcStats[guid] = {}
