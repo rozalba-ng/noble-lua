@@ -24,6 +24,7 @@ local function loadDefaultCreatureStatsNoSum(event, creature)
 end
 
 function loadAllCreatureTemplateRollStats()
+    print(2222222222)
     local creatureTemplateStatsQuery = WorldDBQuery('SELECT * FROM creature_template_role_stats where 1');
 
     if creatureTemplateStatsQuery then
