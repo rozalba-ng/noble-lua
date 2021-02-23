@@ -15,6 +15,9 @@ ROLE_STAT_PERCEPT = 12;
 ROLE_STAT_HEALTH = 100;
 ROLE_STAT_ARMOR = 101;
 
+EBS_HP_AURA = 88038
+EBS_ARMOR_AURA = 88050
+
 statDbNames = {
     [ROLE_STAT_STRENGTH] = "STR",
     [ROLE_STAT_AGLILITY] = "AGI",
@@ -45,6 +48,18 @@ local function loadDefaultCreatureStatsNoSum(event, creature)
         setNpcStats(creature, ROLE_STAT_WILL, npcStatsTemplate[entry][ROLE_STAT_WILL])
         setNpcStats(creature, ROLE_STAT_HEALTH, npcStatsTemplate[entry][ROLE_STAT_HEALTH])
         setNpcStats(creature, ROLE_STAT_ARMOR, npcStatsTemplate[entry][ROLE_STAT_ARMOR])
+
+        creature:RemoveAura(EBS_HP_AURA)
+        if npcStatsTemplate[entry][ROLE_STAT_HEALTH] > 0 then
+            local hpAura = creature:AddAura(EBS_HP_AURA, creature)
+            hpAura:SetStackAmount(npcStatsTemplate[entry][ROLE_STAT_HEALTH])
+        end
+
+        creature:RemoveAura(EBS_ARMOR_AURA)
+        if npcStatsTemplate[entry][ROLE_STAT_ARMOR] > 0 then
+            local ammoAura = creature:AddAura(EBS_ARMOR_AURA, creature)
+            ammoAura:SetStackAmount(npcStatsTemplate[entry][ROLE_STAT_ARMOR])
+        end
     end
 end
 
