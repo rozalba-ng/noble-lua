@@ -1,3 +1,4 @@
+print(3333333)
 npcStats = {}
 tempNpcStats = {}
 npcStatsTemplate = {}
@@ -123,3 +124,4 @@ end
 
 loadAllCreatureTemplateRollStats();
 loadAllCreatureRollStats();
+print(4444444)

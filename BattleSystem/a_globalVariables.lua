@@ -51,7 +51,7 @@ roleCombat.playerCombatMove = {};
 roleCombat.playerCombatFaction = {};
 roleCombat.menuID = 6010;
 roleCombat.diff_number = {};
-
+print(66666666)
 --BattleManager.lua
 listPlayersInBattle = {}
 

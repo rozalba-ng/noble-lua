@@ -1,3 +1,4 @@
+print(555555555)
 local AIO = AIO or require("AIO")
 local BM_Handlers = AIO.AddHandlers("BM_Handlers", {})
 
