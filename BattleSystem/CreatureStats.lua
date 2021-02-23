@@ -50,13 +50,13 @@ local function loadDefaultCreatureStatsNoSum(event, creature)
         setNpcStats(creature, ROLE_STAT_ARMOR, npcStatsTemplate[entry][ROLE_STAT_ARMOR])
 
         creature:RemoveAura(EBS_HP_AURA)
-        if npcStatsTemplate[entry][ROLE_STAT_HEALTH] > 0 then
+        if tonumber(npcStatsTemplate[entry][ROLE_STAT_HEALTH]) > 0 then
             local hpAura = creature:AddAura(EBS_HP_AURA, creature)
             hpAura:SetStackAmount(npcStatsTemplate[entry][ROLE_STAT_HEALTH])
         end
 
         creature:RemoveAura(EBS_ARMOR_AURA)
-        if npcStatsTemplate[entry][ROLE_STAT_ARMOR] > 0 then
+        if tonumber(npcStatsTemplate[entry][ROLE_STAT_ARMOR]) > 0 then
             local ammoAura = creature:AddAura(EBS_ARMOR_AURA, creature)
             ammoAura:SetStackAmount(npcStatsTemplate[entry][ROLE_STAT_ARMOR])
         end
@@ -76,15 +76,15 @@ function loadAllCreatureTemplateRollStats()
                 npcStatsTemplate[entry] = {}
             end
 
-            npcStatsTemplate[entry][ROLE_STAT_STRENGTH] = creatureTemplateStatsQuery:GetString(1);
-            npcStatsTemplate[entry][ROLE_STAT_AGLILITY] = creatureTemplateStatsQuery:GetString(2);
-            npcStatsTemplate[entry][ROLE_STAT_INTELLECT] = creatureTemplateStatsQuery:GetString(3);
-            npcStatsTemplate[entry][ROLE_STAT_STAMINA] = creatureTemplateStatsQuery:GetString(4);
-            npcStatsTemplate[entry][ROLE_STAT_VERSA] = creatureTemplateStatsQuery:GetString(5);
-            npcStatsTemplate[entry][ROLE_STAT_WILL] = creatureTemplateStatsQuery:GetString(6);
-            npcStatsTemplate[entry][ROLE_STAT_SPIRIT] = creatureTemplateStatsQuery:GetString(7);
-            npcStatsTemplate[entry][ROLE_STAT_HEALTH] = creatureTemplateStatsQuery:GetString(8);
-            npcStatsTemplate[entry][ROLE_STAT_ARMOR] = creatureTemplateStatsQuery:GetString(9);
+            npcStatsTemplate[entry][ROLE_STAT_STRENGTH] = tonubber(creatureTemplateStatsQuery:GetString(1));
+            npcStatsTemplate[entry][ROLE_STAT_AGLILITY] = tonubber(creatureTemplateStatsQuery:GetString(2));
+            npcStatsTemplate[entry][ROLE_STAT_INTELLECT] = tonubber(creatureTemplateStatsQuery:GetString(3));
+            npcStatsTemplate[entry][ROLE_STAT_STAMINA] = tonubber(creatureTemplateStatsQuery:GetString(4));
+            npcStatsTemplate[entry][ROLE_STAT_VERSA] = tonubber(creatureTemplateStatsQuery:GetString(5));
+            npcStatsTemplate[entry][ROLE_STAT_WILL] = tonubber(creatureTemplateStatsQuery:GetString(6));
+            npcStatsTemplate[entry][ROLE_STAT_SPIRIT] = tonubber(creatureTemplateStatsQuery:GetString(7));
+            npcStatsTemplate[entry][ROLE_STAT_HEALTH] = tonubber(creatureTemplateStatsQuery:GetString(8));
+            npcStatsTemplate[entry][ROLE_STAT_ARMOR] = tonubber(creatureTemplateStatsQuery:GetString(9));
             -- Регаем ивенты на все заранее настроенные нпс
             RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
 
@@ -105,15 +105,15 @@ function loadAllCreatureRollStats()
             if not npcStats[guid] then
                 npcStats[guid] = {}
             end
-            npcStats[guid][ROLE_STAT_STRENGTH] = creatureStatsQuery:GetString(1);
-            npcStats[guid][ROLE_STAT_AGLILITY] = creatureStatsQuery:GetString(2);
-            npcStats[guid][ROLE_STAT_INTELLECT] = creatureStatsQuery:GetString(3);
-            npcStats[guid][ROLE_STAT_STAMINA] = creatureStatsQuery:GetString(4);
-            npcStats[guid][ROLE_STAT_VERSA] = creatureStatsQuery:GetString(5);
-            npcStats[guid][ROLE_STAT_WILL] = creatureStatsQuery:GetString(6);
-            npcStats[guid][ROLE_STAT_SPIRIT] = creatureStatsQuery:GetString(7);
-            npcStats[guid][ROLE_STAT_HEALTH] = creatureStatsQuery:GetString(8);
-            npcStats[guid][ROLE_STAT_ARMOR] = creatureStatsQuery:GetString(9);
+            npcStats[guid][ROLE_STAT_STRENGTH] = tonubber(creatureStatsQuery:GetString(1));
+            npcStats[guid][ROLE_STAT_AGLILITY] = tonubber(creatureStatsQuery:GetString(2));
+            npcStats[guid][ROLE_STAT_INTELLECT] = tonubber(creatureStatsQuery:GetString(3));
+            npcStats[guid][ROLE_STAT_STAMINA] = tonubber(creatureStatsQuery:GetString(4));
+            npcStats[guid][ROLE_STAT_VERSA] = tonubber(creatureStatsQuery:GetString(5));
+            npcStats[guid][ROLE_STAT_WILL] = tonubber(creatureStatsQuery:GetString(6));
+            npcStats[guid][ROLE_STAT_SPIRIT] = tonubber(creatureStatsQuery:GetString(7));
+            npcStats[guid][ROLE_STAT_HEALTH] = tonubber(creatureStatsQuery:GetString(8));
+            npcStats[guid][ROLE_STAT_ARMOR] = tonubber(creatureStatsQuery:GetString(9));
 
             creatureStatsQuery:NextRow()
         end
