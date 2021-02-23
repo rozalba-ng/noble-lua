@@ -76,15 +76,15 @@ function loadAllCreatureTemplateRollStats()
                 npcStatsTemplate[entry] = {}
             end
 
-            npcStatsTemplate[entry][ROLE_STAT_STRENGTH] = tonubber(creatureTemplateStatsQuery:GetString(1));
-            npcStatsTemplate[entry][ROLE_STAT_AGLILITY] = tonubber(creatureTemplateStatsQuery:GetString(2));
-            npcStatsTemplate[entry][ROLE_STAT_INTELLECT] = tonubber(creatureTemplateStatsQuery:GetString(3));
-            npcStatsTemplate[entry][ROLE_STAT_STAMINA] = tonubber(creatureTemplateStatsQuery:GetString(4));
-            npcStatsTemplate[entry][ROLE_STAT_VERSA] = tonubber(creatureTemplateStatsQuery:GetString(5));
-            npcStatsTemplate[entry][ROLE_STAT_WILL] = tonubber(creatureTemplateStatsQuery:GetString(6));
-            npcStatsTemplate[entry][ROLE_STAT_SPIRIT] = tonubber(creatureTemplateStatsQuery:GetString(7));
-            npcStatsTemplate[entry][ROLE_STAT_HEALTH] = tonubber(creatureTemplateStatsQuery:GetString(8));
-            npcStatsTemplate[entry][ROLE_STAT_ARMOR] = tonubber(creatureTemplateStatsQuery:GetString(9));
+            npcStatsTemplate[entry][ROLE_STAT_STRENGTH] = tonumber(creatureTemplateStatsQuery:GetString(1));
+            npcStatsTemplate[entry][ROLE_STAT_AGLILITY] = tonumber(creatureTemplateStatsQuery:GetString(2));
+            npcStatsTemplate[entry][ROLE_STAT_INTELLECT] = tonumber(creatureTemplateStatsQuery:GetString(3));
+            npcStatsTemplate[entry][ROLE_STAT_STAMINA] = tonumber(creatureTemplateStatsQuery:GetString(4));
+            npcStatsTemplate[entry][ROLE_STAT_VERSA] = tonumber(creatureTemplateStatsQuery:GetString(5));
+            npcStatsTemplate[entry][ROLE_STAT_WILL] = tonumber(creatureTemplateStatsQuery:GetString(6));
+            npcStatsTemplate[entry][ROLE_STAT_SPIRIT] = tonumber(creatureTemplateStatsQuery:GetString(7));
+            npcStatsTemplate[entry][ROLE_STAT_HEALTH] = tonumber(creatureTemplateStatsQuery:GetString(8));
+            npcStatsTemplate[entry][ROLE_STAT_ARMOR] = tonumber(creatureTemplateStatsQuery:GetString(9));
             -- Регаем ивенты на все заранее настроенные нпс
             RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
 
@@ -105,15 +105,15 @@ function loadAllCreatureRollStats()
             if not npcStats[guid] then
                 npcStats[guid] = {}
             end
-            npcStats[guid][ROLE_STAT_STRENGTH] = tonubber(creatureStatsQuery:GetString(1));
-            npcStats[guid][ROLE_STAT_AGLILITY] = tonubber(creatureStatsQuery:GetString(2));
-            npcStats[guid][ROLE_STAT_INTELLECT] = tonubber(creatureStatsQuery:GetString(3));
-            npcStats[guid][ROLE_STAT_STAMINA] = tonubber(creatureStatsQuery:GetString(4));
-            npcStats[guid][ROLE_STAT_VERSA] = tonubber(creatureStatsQuery:GetString(5));
-            npcStats[guid][ROLE_STAT_WILL] = tonubber(creatureStatsQuery:GetString(6));
-            npcStats[guid][ROLE_STAT_SPIRIT] = tonubber(creatureStatsQuery:GetString(7));
-            npcStats[guid][ROLE_STAT_HEALTH] = tonubber(creatureStatsQuery:GetString(8));
-            npcStats[guid][ROLE_STAT_ARMOR] = tonubber(creatureStatsQuery:GetString(9));
+            npcStats[guid][ROLE_STAT_STRENGTH] = tonumber(creatureStatsQuery:GetString(1));
+            npcStats[guid][ROLE_STAT_AGLILITY] = tonumber(creatureStatsQuery:GetString(2));
+            npcStats[guid][ROLE_STAT_INTELLECT] = tonumber(creatureStatsQuery:GetString(3));
+            npcStats[guid][ROLE_STAT_STAMINA] = tonumber(creatureStatsQuery:GetString(4));
+            npcStats[guid][ROLE_STAT_VERSA] = tonumber(creatureStatsQuery:GetString(5));
+            npcStats[guid][ROLE_STAT_WILL] = tonumber(creatureStatsQuery:GetString(6));
+            npcStats[guid][ROLE_STAT_SPIRIT] = tonumber(creatureStatsQuery:GetString(7));
+            npcStats[guid][ROLE_STAT_HEALTH] = tonumber(creatureStatsQuery:GetString(8));
+            npcStats[guid][ROLE_STAT_ARMOR] = tonumber(creatureStatsQuery:GetString(9));
 
             creatureStatsQuery:NextRow()
         end
