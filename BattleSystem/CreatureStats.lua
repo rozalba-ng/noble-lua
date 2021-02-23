@@ -35,9 +35,8 @@ npcStatsTemplate = {}
 
 local function loadDefaultCreatureStatsNoSum(event, creature)
     local entry = creature:GetEntry();
-    print(entry)
-    if npcStatsTemplate[entry] then
-        print(7)
+    local guid = creature:GetDBTableGUIDLow();
+    if not npcStats[guid] and npcStatsTemplate[entry] then
         setNpcStats(creature, ROLE_STAT_STRENGTH, npcStatsTemplate[entry][ROLE_STAT_STRENGTH])
         setNpcStats(creature, ROLE_STAT_AGLILITY, npcStatsTemplate[entry][ROLE_STAT_AGLILITY])
         setNpcStats(creature, ROLE_STAT_INTELLECT, npcStatsTemplate[entry][ROLE_STAT_INTELLECT])
@@ -46,10 +45,7 @@ local function loadDefaultCreatureStatsNoSum(event, creature)
         setNpcStats(creature, ROLE_STAT_WILL, npcStatsTemplate[entry][ROLE_STAT_WILL])
         setNpcStats(creature, ROLE_STAT_HEALTH, npcStatsTemplate[entry][ROLE_STAT_HEALTH])
         setNpcStats(creature, ROLE_STAT_ARMOR, npcStatsTemplate[entry][ROLE_STAT_ARMOR])
-    else
-        print('nipanimayu')
     end
-    print(222)
 end
 
 function loadAllCreatureTemplateRollStats()
@@ -149,5 +145,5 @@ function getStatsByCreature(target)
     return nil
 end
 
-loadAllCreatureTemplateRollStats();
 loadAllCreatureRollStats();
+loadAllCreatureTemplateRollStats();
