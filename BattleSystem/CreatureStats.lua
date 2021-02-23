@@ -36,7 +36,24 @@ npcStatsTemplate = {}
 --WorldDBQuery('UPDATE creature_role_stats SET STR = ' .. STR ..', AGI = ' .. AGI .. ', INTEL = ' .. INTEL .. ', VIT = ' .. VIT .. ', DEX = ' .. DEX .. ', WILL = ' .. WILL .. ', SPI = ' .. SPI ..', HEALTH = ' .. HEALTH ..', ARMOR = ' .. ARMOR ..' where guid = ' .. guid );
 --WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',' .. STR ..', '.. AGI ..',' .. INTEL .. ', ' .. VIT .. ',' .. DEX .. ',' .. WILL .. ',' .. SPI .. ', ' .. HEALTH .. ', ' .. ARMOR .. ')');
 
-local function loadDefaultCreatureStatsNoSum(event, creature)
+-- удаляем лишние статы
+function deleteRoleStatsForDeletedNpc()
+    local toDeleteQuery = WorldDBQuery('SELECT guid FROM creature_role_stats crs WHERE not exists (SELECT * FROM creature c WHERE c.guid = crs.guid)');
+    if toDeleteQuery then
+        local toDeleteCount = toDeleteQuery:GetRowCount()
+
+        for i = 1, toDeleteCount do
+            local guid = toDeleteQuery:GetString(0);
+            WorldDBQuery('DELETE FROM creature_role_stats WHERE guid = ' .. guid);
+
+            toDeleteQuery:NextRow()
+        end
+    end
+    toDeleteQuery = nil;
+
+end
+
+local function loadDefaultCreatureStats(event, creature)
     local entry = creature:GetEntry();
     local guid = creature:GetDBTableGUIDLow();
     if not npcStats[guid] and npcStatsTemplate[entry] then
@@ -88,7 +105,7 @@ function loadAllCreatureTemplateRollStats()
             npcStatsTemplate[entry][ROLE_STAT_HEALTH] = tonumber(creatureTemplateStatsQuery:GetString(8));
             npcStatsTemplate[entry][ROLE_STAT_ARMOR] = tonumber(creatureTemplateStatsQuery:GetString(9));
             -- Регаем ивенты на все заранее настроенные нпс
-            RegisterCreatureEvent(entry, 5, loadDefaultCreatureStatsNoSum)
+            RegisterCreatureEvent(entry, 5, loadDefaultCreatureStats)
 
             creatureTemplateStatsQuery:NextRow()
         end
@@ -120,7 +137,20 @@ function loadAllCreatureRollStats()
             creatureStatsQuery:NextRow()
         end
     end
-    creatureStatsQuery = nil;
+    creatureStatsQuery = nil
+
+    local noTeplateButSetQuery = WorldDBQuery('SELECT distinct c.id FROM creature_role_stats crs JOIN creature c ON c.guid = crs.guid LEFT JOIN creature_template_role_stats ctrs ON ctrs.entry = c.id WHERE ctrs.entry IS NULL');
+    if noTeplateButSetQuery then
+        local noTeplateButSetCount = noTeplateButSetQuery:GetRowCount()
+
+        for i = 1, noTeplateButSetCount do
+            local entry = tonumber(noTeplateButSetQuery:GetString(0));
+            RegisterCreatureEvent(entry, 5, loadDefaultCreatureStats)
+
+            noTeplateButSetQuery:NextRow()
+        end
+    end
+    noTeplateButSetQuery = nil;
 end
 
 function setNpcStats(creature, stat, value)
@@ -162,5 +192,6 @@ function getStatsByCreature(target)
     return nil
 end
 
+deleteRoleStatsForDeletedNpc();
 loadAllCreatureRollStats();
 loadAllCreatureTemplateRollStats();
