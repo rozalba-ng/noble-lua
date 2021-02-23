@@ -85,7 +85,7 @@ function loadAllCreatureRollStats()
         local creatureStatsCount = creatureStatsQuery:GetRowCount()
 
         for i = 1, creatureStatsCount do
-            local guid = creatureStatsQuery:GetString(0)
+            local guid = tonumber(creatureStatsQuery:GetString(0))
 
             if not npcStats[guid] then
                 npcStats[guid] = {}
