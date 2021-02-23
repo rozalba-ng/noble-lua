@@ -892,11 +892,18 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
             end
         elseif(code == "deskin")then
             local DM_target = player:GetSelectedUnit();
-            if(DM_target)then
+            local targetPlayer = DM_target:ToPlayer()
+            if(targetPlayer)then
+                if (targetPlayer == player) then
+                    player:DeMorph();
+                    return false;
+                end
+                player:SendBroadcastMessage("ОШИБКА: вы не можете снимать морфы с игроков. Для снятия морфа попросите игрока релогнуться.")
+            elseif(DM_target:GetOwner() == player)then
                 DM_target:DeMorph();
                 return false;
             else
-                player:SendBroadcastMessage("ОШИБКА: нет цели.")
+                player:SendBroadcastMessage("ОШИБКА: нет подходящей цели.")
                 return false;
             end
         elseif (code == "npcspanwer") then
