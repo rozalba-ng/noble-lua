@@ -48,17 +48,19 @@ local function loadDefaultCreatureStatsNoSum(event, creature)
         setNpcStats(creature, ROLE_STAT_WILL, npcStatsTemplate[entry][ROLE_STAT_WILL])
         setNpcStats(creature, ROLE_STAT_HEALTH, npcStatsTemplate[entry][ROLE_STAT_HEALTH])
         setNpcStats(creature, ROLE_STAT_ARMOR, npcStatsTemplate[entry][ROLE_STAT_ARMOR])
+    end
 
+    if npcStats[guid] then
         creature:RemoveAura(EBS_HP_AURA)
-        if tonumber(npcStatsTemplate[entry][ROLE_STAT_HEALTH]) > 0 then
+        if tonumber(npcStats[guid][ROLE_STAT_HEALTH]) > 0 then
             local hpAura = creature:AddAura(EBS_HP_AURA, creature)
-            hpAura:SetStackAmount(npcStatsTemplate[entry][ROLE_STAT_HEALTH])
+            hpAura:SetStackAmount(npcStats[guid][ROLE_STAT_HEALTH])
         end
 
         creature:RemoveAura(EBS_ARMOR_AURA)
-        if tonumber(npcStatsTemplate[entry][ROLE_STAT_ARMOR]) > 0 then
+        if tonumber(npcStats[guid][ROLE_STAT_ARMOR]) > 0 then
             local ammoAura = creature:AddAura(EBS_ARMOR_AURA, creature)
-            ammoAura:SetStackAmount(npcStatsTemplate[entry][ROLE_STAT_ARMOR])
+            ammoAura:SetStackAmount(npcStats[guid][ROLE_STAT_ARMOR])
         end
     end
 end
