@@ -1,5 +1,10 @@
---BattleManager.lua
-listPlayersInBattle = {}
+
+local AIO = AIO or require("AIO")
+local BM_Handlers = AIO.AddHandlers("BM_Handlers", {})
+
+local EVENT_ON_CAST = 5;
+
+
 
 TURN_AURA = 88037
 IS_IN_BATTLE_AURA = 88057
@@ -8,11 +13,6 @@ HP_AURA =  88059
 WOUND_AURA = 88010
 DOUBLE_ATTACK_AURA = 88076
 DEAD_AURA = 45801
-
-local AIO = AIO or require("AIO")
-local BM_Handlers = AIO.AddHandlers("BM_Handlers", {})
-
-local EVENT_ON_CAST = 5;
 
 
 local TIMER_FOR_TURN = 90
@@ -73,6 +73,8 @@ local battleList = {}
 ]]
 local battleInitiations = {}
 local battlesExpect = {}
+
+listPlayersInBattle = {}
 
 local listPlayersInBattleTemplate = {battleId = 0}
 
