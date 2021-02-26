@@ -161,7 +161,7 @@ local function castEvent(event, player, spell, skipCheck)
             print(target:GetDBTableGUIDLow())
             table.insert(vehicle_GameObject_List[target:GetDBTableGUIDLow()].passengers, player:GetGUIDLow());
         end
-    elseif (spellId >= 88005 and spellId <= 88008) then
+    elseif ((spellId >= 88005 and spellId <= 88008) or (spellId >= 91154 and spellId <= 91162)) then
         local target = player:GetSelectedUnit();
         attackRoll(player, target, spellId);
     elseif (spellId == 84043 or spellId == 84044) then

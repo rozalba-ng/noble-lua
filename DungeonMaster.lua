@@ -372,7 +372,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                 end            
             elseif (arguments[1] == "npcemote") then
                 local DMcreature = player:GetTargetCreature();
-                if(DMcreature:GetOwner() == player)then
+                if(DMcreature:GetOwner() == player or player:GetGMRank() >= 1)then
                     local msg = "";
                     for i = 2, #arguments do
                         msg = msg.." "..arguments[i]
@@ -385,19 +385,19 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                 end            
             elseif (arguments[1] == "npcplayemote" and (#arguments == 2 or #arguments == 3)) then
                 local DMcreature = player:GetTargetCreature();
-                if(DMcreature:GetOwner() == player)then
+                if(DMcreature:GetOwner() == player or player:GetGMRank() >= 1)then
                     local emoteid = tonumber(arguments[2])
                     if(emoteid == nil)then
                         player:SendBroadcastMessage("ОШИБКА: некорректное значение! Допустимы только целые числа.")
                     else
-			if(#arguments == 2)then
+                        if(#arguments == 2)then
                             DMcreature:Emote( emoteid )
-			elseif(#arguments == 3)then
-			    local param = tonumber(arguments[3])
-			    if(param == 1)then
-				DMcreature:EmoteState( emoteid )
-			    end
-			end
+                        elseif(#arguments == 3)then
+                            local param = tonumber(arguments[3])
+                            if(param == 1)then
+                                DMcreature:EmoteState( emoteid )
+                            end
+                        end
                     end
                     return false;
                 else
@@ -892,11 +892,18 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
             end
         elseif(code == "deskin")then
             local DM_target = player:GetSelectedUnit();
-            if(DM_target)then
+            local targetPlayer = DM_target:ToPlayer()
+            if(targetPlayer)then
+                if (targetPlayer == player) then
+                    player:DeMorph();
+                    return false;
+                end
+                player:SendBroadcastMessage("ОШИБКА: вы не можете снимать морфы с игроков. Для снятия морфа попросите игрока релогнуться.")
+            elseif(DM_target:GetOwner() == player)then
                 DM_target:DeMorph();
                 return false;
             else
-                player:SendBroadcastMessage("ОШИБКА: нет цели.")
+                player:SendBroadcastMessage("ОШИБКА: нет подходящей цели.")
                 return false;
             end
         elseif (code == "npcspanwer") then

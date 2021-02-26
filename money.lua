@@ -52,10 +52,13 @@ local function calculateMoney()
 					if (player:HasAura(91098)) then
 						player:RemoveAura(91098)
 					end
+					if (player:HasAura(91099)) then
+						player:RemoveAura(91099)
+					end
  					--91099 среднее 91100 меценат
-					if (player:HasAura(91099) or player:HasAura(91100)) then
+					if (player:HasAura(91100)) then
 						--	Если время суперактива - идёт маленький бонус.
-						r = r*2;
+						player:RemoveAura(91100)
 					end
 
 					--	Начисление репутации
