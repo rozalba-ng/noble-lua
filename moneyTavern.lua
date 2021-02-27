@@ -21,8 +21,8 @@ local function sendTavernBonuses()
 	if (otchelnik_bonus > 1) then
 		local otchelnik_bonus_floor = math.floor(otchelnik_bonus)
 		local otchelnik_bonus_ceil = math.ceil(otchelnik_bonus)
-		SendMail('Otshelnik bonus!', 'Бонус за активность таверны "Печальный Отшельник" (квартал магов)', 25924, 36, 61, 20, 0, 0, 600057, otchelnik_bonus_floor);
-		SendMail('Otshelnik bonus!', 'Бонус за активность таверны "Печальный Отшельник" (квартал магов)', 566, 36, 61, 20, 0, 0, 600057, otchelnik_bonus_ceil);
+		SendMail('Otshelnik bonus!', 'Бонус за активность таверны "Печальный Отшельник" (квартал магов)', 25924, 36, 61, 20, 0, 0, 600057, otchelnik_bonus_ceil); -- мне на персонаж Райка для мониторинга
+		SendMail('Otshelnik bonus!', 'Бонус за активность таверны "Печальный Отшельник" (квартал магов)', 31404, 36, 61, 20, 0, 0, 600057, otchelnik_bonus_ceil); -- 31404 персонаж Корс (Неко)
 	end
 end
 CreateLuaEvent( sendTavernBonuses, 1800000, 0 )
