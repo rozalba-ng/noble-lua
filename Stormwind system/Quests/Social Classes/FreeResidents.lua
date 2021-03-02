@@ -42,6 +42,7 @@ local function Gossip_Cat( _, player, creature )
 			end
 			creature:PlayDirectSound( 15141 )
 			creature:SetData("Clicked", os.time())
+			creature:Emote(477)
 			creature:DespawnOrUnsummon( 2000 )
 		end
 	elseif not creature:GetData("Click_Cooldown") or ( os.time() - creature:GetData("Click_Cooldown") ) > 10 then
