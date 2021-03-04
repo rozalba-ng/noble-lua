@@ -54,7 +54,7 @@ RegisterGameObjectGossipEvent( quests[1].gameobject, 2, quests[1].OnGossip ) -- 
 quests[2].OnGossip = function( event, player, creature )
 	if event == 1 then
 	
-		if not creature:GetData("Timer") or ( os.time() - creature.:GetData("Timer") ) > 300 then
+		if not creature:GetData("Timer") or ( os.time() - creature:GetData("Timer") ) > 300 then
 			local text = Roulette( "Работёнку бы какую!", "Чего?", "А?", "Ты пришёл дать мне денег?" )
 			player:GossipSetText( text, 04032102 )
 			
