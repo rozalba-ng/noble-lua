@@ -23,7 +23,7 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 		local text = Roulette( "<Урна приветливо звенит.>", "<Урна выглядит крепкой.>", "<Вы чувствуете умиротворение.>" )
 		player:GossipSetText( text, 04032101 )
 		
-		if player:HasQuest( quests[1].entry ) then
+		if player:HasQuest( quests[1].entry ) and not player:GetData("QUEST_Donate") then
 			player:GossipMenuAddItem( 0, "<Совершить пожертвование.>", 1, 1, false, "Вы хотите совершить пожертвование?", 500 )
 		end
 		
@@ -40,6 +40,8 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 				player:CompleteQuest( quests[1].entry )
 				player:GossipComplete()
 				object:PlayDirectSound( 864, player )
+				player:SetData("QUEST_Donate",true)
+				player:SendAreaTriggerMessage("Задание выполнено.")
 			end
 		end
 		
@@ -71,7 +73,7 @@ quests[2].OnGossip = function( event, player, creature )
 		
 			local text = Roulette( "Я занят.", "Хочешь чтобы я из-за тебя на работу опоздал?", "Слышал про стройку? Я там работаю." )
 			player:GossipSetText( text, 04032103 )
-			player:GossipSendMenu( text, 04032103 )
+			player:GossipSendMenu( 04032103, creature )
 			
 		end
 		
