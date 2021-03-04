@@ -14,7 +14,7 @@ local quests = {
 --[[	ВСЕ - 1 квест	]]--
 --	"Перевыполнить план"
 
-function quests[1].OnGossip( event, arg1, arg2 )
+quests[1].OnGossip = function( event, arg1, arg2 )
 	if event == 14 then
 	
 		local player = arg2
@@ -51,7 +51,7 @@ RegisterGameObjectGossipEvent( quests[1].gameobject, 2, quests[1].OnGossip ) -- 
 --[[	ВСЕ - 2 квест	]]--
 --	"Все на стройку!"
 
-function quests[2].OnGossip( event, player, creature )
+quests[2].OnGossip = function( event, player, creature )
 	if event == 1 then
 	
 		if not creature:GetData("Timer") or ( os.time() - creature.:GetData("Timer") ) > 300 then
