@@ -60,7 +60,7 @@ quests[2].OnGossip = function( event, player, creature )
 			local text = Roulette( "Работёнку бы какую!", "Чего?", "А?", "Ты пришёл дать мне денег?" )
 			player:GossipSetText( text, 04032102 )
 			
-			if player:HasQuest( quests[2].entry ) then
+			if player:HasQuest( quests[2].entry ) and not player:GetData("QUEST_2") then
 				player:GossipMenuAddItem( 0, Roulette("У меня есть для тебя работа.","<Рассказать про стройку.>","За работу!","<Позвать на стройку.>","Я могу предложить тебе одно дельце...","Хочешь сто золотых?"), 1,1 )
 				local name = player:GetName()
 				if not quests[2].players[name] then
@@ -83,7 +83,8 @@ quests[2].OnGossip = function( event, player, creature )
 		if quests[2].players[name] >= 5 then
 			quests[2].players[name] = nil
 			player:CompleteQuest( quests[2].entry )
-			player:SendAreaTriggerMessage("Задание выполнено!")
+			player:SetData("QUEST_2",true)
+			player:SendAreaTriggerMessage("Задание выполнено.")
 		else
 			quests[2].players[name] = quests[2].players[name] + 1
 			player:SendAreaTriggerMessage("Завербовано "..quests[2].players[name].." нищих из 6.")
