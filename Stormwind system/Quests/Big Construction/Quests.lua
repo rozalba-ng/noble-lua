@@ -24,7 +24,7 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 		player:GossipSetText( text, 04032101 )
 		
 		if player:HasQuest( quests[1].entry ) and not player:GetData("QUEST_Donate") then
-			player:GossipMenuAddItem( 0, "<Совершить пожертвование.>", 1, 1, false, "Вы хотите совершить пожертвование?", 500 )
+			player:GossipMenuAddItem( 0, "<Совершить пожертвование.>", 1, 1, false, "Вы хотите совершить пожертвование?", 1000 )
 		end
 		
 		player:GossipSendMenu( 04032101, object )
@@ -35,8 +35,8 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 		local object = arg2
 		
 		if player:HasQuest( quests[1].entry ) then
-			if player:GetCoinage() >= 500 then
-				player:ModifyMoney(-500)
+			if player:GetCoinage() >= 1000 then
+				player:ModifyMoney(-1000)
 				player:CompleteQuest( quests[1].entry )
 				player:GossipComplete()
 				object:PlayDirectSound( 864, player )
