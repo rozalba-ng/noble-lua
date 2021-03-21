@@ -1,5 +1,5 @@
 local SQL_databaseCreation = [[
-CREATE TABLE IF NOT EXISTS `role_ads` (
+CREATE TABLE IF NOT EXISTS `roleADS` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`text` TEXT NOT NULL,
 	`lastUseTime` INT(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -16,7 +16,7 @@ CharDBQuery( SQL_databaseCreation )
 
 local function RoleAdv()
 	if SocialTime() then
-		local Q = CharDBQuery( "SELECT id, text, countOfUses FROM role_ads WHERE ( countOfUses > 0 ) AND ( "..os.time().." - lastUseTime ) > 900" ) --3000
+		local Q = CharDBQuery( "SELECT id, text, countOfUses FROM roleADS WHERE ( countOfUses > 0 ) AND ( "..os.time().." - lastUseTime ) > 900" ) --3000
 		if Q then
 			if Q:GetRowCount() > 2 then
 				for i = 1, math.random( 1, ( Q:GetRowCount() - 1 ) ) do -- Выбор случайного объявления из доступных.
@@ -29,9 +29,9 @@ local function RoleAdv()
 			countOfUses = Q:GetUInt8(2)
 			countOfUses = countOfUses - 1
 			if ( countOfUses == 0 ) then
-				CharDBQuery( "DELETE FROM role_ads WHERE id = "..id )
+				CharDBQuery( "DELETE FROM roleADS WHERE id = "..id )
 			else
-				CharDBQuery( "UPDATE role_ads SET lastUseTime = "..os.time()..",  countOfUses = "..countOfUses.." WHERE id = "..id )
+				CharDBQuery( "UPDATE roleADS SET lastUseTime = "..os.time()..",  countOfUses = "..countOfUses.." WHERE id = "..id )
 			end
 		--	Отправка сообщения игрокам
 			local players = GetPlayersInWorld()
@@ -64,10 +64,10 @@ local function RoleAdv_Command( _, player, command )
 					player:GossipSetText( "Каждые 5 минут всем игрокам общего полигона показывает случайное объявление. Показанное объявление не будет показано повторно в течении следующих 15 минут. Моментальные объявления показываются сразу после их отправки.\n\n[!] Каждое объявление отправляется 5 раз. Вы можете изменить кол-во отправок для создаваемых объявлений.\n\nВаше объявление будет показано "..player:GetData("ADV").." раз.", 09022102 )
 					player:GossipSendMenu( 09022102, player, 09022101 )
 				elseif ( command[2] == "delete" ) and ( command[3] ) and ( tonumber( command[3] ) ) then
-					CharDBQuery( "DELETE FROM role_ads WHERE id = "..tonumber( command[3] ) )
+					CharDBQuery( "DELETE FROM roleADS WHERE id = "..tonumber( command[3] ) )
 					player:SendBroadcastMessage( command[3].." - удалено." )
 				elseif command[2] == "list" then
-					local Q = CharDBQuery( "SELECT id, text, countOfUses FROM role_ads WHERE creator = "..player:GetAccountId() )
+					local Q = CharDBQuery( "SELECT id, text, countOfUses FROM roleADS WHERE creator = "..player:GetAccountId() )
 					if Q then
 						for i = 1, Q:GetRowCount() do
 							local id = Q:GetUInt32(0)
@@ -103,7 +103,7 @@ local function RoleAdv_Gossip( _, player, _, _, intid, code )
 		if code and ( code ~= "" ) then
 			if intid == 2 then
 				if player:GetData("ADV") > 1 then
-					CharDBQuery('INSERT INTO role_ads ( text, countOfUses, creator ) values ( "'..code..'", '..( player:GetData("ADV") - 1 )..', '..player:GetAccountId()..' )')
+					CharDBQuery('INSERT INTO roleADS ( text, countOfUses, creator ) values ( "'..code..'", '..( player:GetData("ADV") - 1 )..', '..player:GetAccountId()..' )')
 				end
 				local players = GetPlayersInWorld()
 				for i = 1, #players do
@@ -113,7 +113,7 @@ local function RoleAdv_Gossip( _, player, _, _, intid, code )
 					end
 				end
 			else
-				CharDBQuery('INSERT INTO role_ads ( text, countOfUses, creator ) values ( "'..code..'", '..player:GetData("ADV")..', '..player:GetAccountId()..' )')
+				CharDBQuery('INSERT INTO roleADS ( text, countOfUses, creator ) values ( "'..code..'", '..player:GetData("ADV")..', '..player:GetAccountId()..' )')
 			end
 			player:SendBroadcastMessage("Объявление создано. Теперь оно будет показываться игрокам.")
 		end
