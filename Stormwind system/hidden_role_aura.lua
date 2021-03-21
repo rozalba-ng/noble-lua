@@ -9,6 +9,59 @@ local aura = {
 	camouflage = 91062,
 }
 local entry_item = 600106
+local auraCityRoles = {
+	91103,
+	91104,
+	91105,
+	91106,
+	91107,
+	91108,
+	91109,
+	91110,
+	91111,
+	91112,
+	91113,
+	91114,
+	91115,
+	91116,
+	91117,
+	91118,
+	91119,
+	91120,
+	91121,
+	91122,
+	91123,
+	91124,
+	91125,
+	91126,
+	91127,
+	91128,
+	91129,
+	91130,
+	91131,
+	91132,
+	91133,
+	91134,
+	91135,
+	91136,
+	91137,
+	91138,
+	91139,
+	91140,
+	91141,
+	91142,
+	91143,
+	91144,
+	91145,
+	91146,
+	91147,
+	91148,
+	91149,
+	91150,
+	91151,
+	91152,
+	91153
+}
 
 --[[	НАВЕШИВАНИЕ АУРЫ АНОНИМНОСТИ	]]--
 
@@ -64,6 +117,17 @@ local function WhenPlayerEnterGame( _, player )
 			if not player:HasAura( aura ) then
 				player:AddAura( aura, player )
 			end
+		end
+	end
+
+	for _, roleAura in ipairs(auraCityRoles) do
+		player:RemoveAura( roleAura )
+	end
+	local SRQ = CharDBQuery( "SELECT spell_id FROM citycraft_roles WHERE current_owner_char_name = '"..player:GetName() .. "'")
+	if SRQ then
+		local playerCityRoleAura = SRQ:GetUInt32(0)
+		if not player:HasAura( playerCityRoleAura ) and playerCityRoleAura > 0 then
+			player:AddAura( playerCityRoleAura, player )
 		end
 	end
 end
