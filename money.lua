@@ -61,6 +61,9 @@ local function calculateMoney()
 						player:RemoveAura(91100)
 					end
 
+					-- бонус за финал сюжета
+					r = r*2;
+
 					--	Начисление репутации
 					player:SetReputation( f, player:GetReputation( f ) + r )
 					--	Снятие репутации UPD ROZALBA: отменяем снятие репутации
