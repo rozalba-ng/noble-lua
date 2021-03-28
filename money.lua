@@ -62,7 +62,7 @@ local function calculateMoney()
 					end
 
 					-- бонус за финал сюжета
-					r = r*2;
+					r = r*3;
 
 					--	Начисление репутации
 					player:SetReputation( f, player:GetReputation( f ) + r )
