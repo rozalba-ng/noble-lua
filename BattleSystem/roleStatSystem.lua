@@ -626,7 +626,7 @@ function attackRoll(roller, target, spellid)
 
         local nearPlayers = roller:GetPlayersInRange(140, 0, 0)
         for index, nearPlayer in pairs(nearPlayers) do
-            if (roller:IsInSameRaidWith(nearPlayer) or target:IsInSameRaidWith(nearPlayer))then
+            if roller:IsInSameRaidWith(nearPlayer) then
                 if isFogPotionUsed then -- Зелье тумана
                     nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
                     local itemLink = GetItemLink(600055, 8)
@@ -645,7 +645,7 @@ function attackRoll(roller, target, spellid)
 
         local nearPlayers = roller:GetPlayersInRange(40, 0, 0)
         for index, nearPlayer in pairs(nearPlayers) do
-            if (not (roller:IsInSameRaidWith(nearPlayer) or target:IsInSameRaidWith(nearPlayer))) then
+            if (roller:IsInSameRaidWith(nearPlayer) ~= true) then
                 if isFogPotionUsed then -- Зелье тумана
                     nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
                     local itemLink = GetItemLink(600055, 8)
