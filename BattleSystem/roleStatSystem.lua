@@ -624,22 +624,44 @@ function attackRoll(roller, target, spellid)
             end
         end
 
-        local nearPlayers = roller:GetPlayersInRange(40, 0, 0)
+        local nearPlayers = roller:GetPlayersInRange(140, 0, 0)
         for index, nearPlayer in pairs(nearPlayers) do
-            if isFogPotionUsed then -- Зелье тумана
-                nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
-                local itemLink = GetItemLink(600055, 8)
-                nearPlayer:SendBroadcastMessage("Эффект бонуса " .. itemLink .. " = " .. "|cFF8192deПереброс атаки!|r")
-            elseif isAdaptPotionUsed then -- Зелье адаптации
-                result_color = "FF7a7671"
-                nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
-                local itemLink = GetItemLink(600056, 8)
-                nearPlayer:SendBroadcastMessage("Эффект бонуса " .. itemLink .. " = " .. "|cFFC43533Неудачно!|r")
+            if roller:IsInSameRaidWith(nearPlayer) then
+                if isFogPotionUsed then -- Зелье тумана
+                    nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                    local itemLink = GetItemLink(600055, 8)
+                    nearPlayer:SendBroadcastMessage("Эффект бонуса " .. itemLink .. " = " .. "|cFF8192deПереброс атаки!|r")
+                elseif isAdaptPotionUsed then -- Зелье адаптации
+                    result_color = "FF7a7671"
+                    nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                    local itemLink = GetItemLink(600056, 8)
+                    nearPlayer:SendBroadcastMessage("Эффект бонуса " .. itemLink .. " = " .. "|cFFC43533Неудачно!|r")
 
-            else
-                nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                else
+                    nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                end
             end
         end
+
+        local nearPlayers = roller:GetPlayersInRange(40, 0, 0)
+        for index, nearPlayer in pairs(nearPlayers) do
+            if (roller:IsInSameRaidWith(nearPlayer) ~= true) then
+                if isFogPotionUsed then -- Зелье тумана
+                    nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                    local itemLink = GetItemLink(600055, 8)
+                    nearPlayer:SendBroadcastMessage("Эффект бонуса " .. itemLink .. " = " .. "|cFF8192deПереброс атаки!|r")
+                elseif isAdaptPotionUsed then -- Зелье адаптации
+                    result_color = "FF7a7671"
+                    nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                    local itemLink = GetItemLink(600056, 8)
+                    nearPlayer:SendBroadcastMessage("Эффект бонуса " .. itemLink .. " = " .. "|cFFC43533Неудачно!|r")
+
+                else
+                    nearPlayer:SendBroadcastMessage(getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                end
+            end
+        end
+
         if isFogPotionUsed then
             attackRoll(roller, target, spellid)
         end
@@ -744,17 +766,33 @@ function attackRoll(roller, target, spellid)
             if (roller:ToPlayer()) then
                 roller:SendBroadcastMessage(string.format("%s действие %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
             end
+            local nearPlayers = roller:GetPlayersInRange(140, 0, 0)
+            for index, nearPlayer in pairs(nearPlayers) do
+                if roller:IsInSameRaidWith(nearPlayer) then
+                    nearPlayer:SendBroadcastMessage(string.format("%s действие %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                end
+            end
             local nearPlayers = roller:GetPlayersInRange(40, 0, 0)
             for index, nearPlayer in pairs(nearPlayers) do
-                nearPlayer:SendBroadcastMessage(string.format("%s действие %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                if (roller:IsInSameRaidWith(nearPlayer) ~= true) then
+                    nearPlayer:SendBroadcastMessage(string.format("%s действие %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand));
+                end
             end
         else
             if (roller:ToPlayer()) then
                 roller:SendBroadcastMessage(string.format("%s действие %s. Результат: %u (%u+%u)", attack_type, roller_name, (player_att + att_rand), player_att, att_rand));
             end
+            local nearPlayers = roller:GetPlayersInRange(140, 0, 0)
+            for index, nearPlayer in pairs(nearPlayers) do
+                if roller:IsInSameRaidWith(nearPlayer) then
+                    nearPlayer:SendBroadcastMessage(string.format("%s действие %s. Результат: %u (%u+%u)", attack_type, roller_name, (player_att + att_rand), player_att, att_rand));
+                end
+            end
             local nearPlayers = roller:GetPlayersInRange(40, 0, 0)
             for index, nearPlayer in pairs(nearPlayers) do
-                nearPlayer:SendBroadcastMessage(string.format("%s действие %s. Результат: %u (%u+%u)", attack_type, roller_name, (player_att + att_rand), player_att, att_rand));
+                if (roller:IsInSameRaidWith(nearPlayer) ~= true) then
+                    nearPlayer:SendBroadcastMessage(string.format("%s действие %s. Результат: %u (%u+%u)", attack_type, roller_name, (player_att + att_rand), player_att, att_rand));
+                end
             end
         end
     end
