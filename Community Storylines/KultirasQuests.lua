@@ -35,6 +35,7 @@ local quests = {
 quests[1].OnStart = function( event, player, creature, quest )
 	if ( quest == quests[1].id ) then
 		quests[1].players[player:GetName()] = 0
+		print("чеечня")
 	end
 end
 RegisterCreatureEvent( quests[1].questgiver, 31, quests[1].OnStart ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
@@ -62,7 +63,7 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 					print( os.time() - object:GetData("QUEST") )
 				end
 			else
-				print("жопа")
+				print( quests[1].players[player:GetName()] )
 			end
 		else
 			print("хуй")
