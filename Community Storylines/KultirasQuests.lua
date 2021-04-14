@@ -26,6 +26,7 @@ local quests = {
 		id = 110087,
 		questgiver = 9930672,
 		creature = 9930643,
+		players = {},
 	},
 }
 
@@ -33,21 +34,22 @@ local quests = {
 --	"Квартал тусклых фонарей"
 
 quests[1].OnStart = function( event, player, creature, quest )
-	if ( quest == quests[1].id ) then
+	if ( quest:GetId() == quests[1].id ) then
 		quests[1].players[player:GetName()] = 0
-		print("чеечня")
 	end
 end
 RegisterCreatureEvent( quests[1].questgiver, 31, quests[1].OnStart ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
 
 quests[1].OnGossip = function( event, arg1, arg2 )
 	if event == 14 then
-	
+		
 		local player = arg2
 		local object = arg1
 		
+		player:GossipClearMenu()
+		
 		local text
-		if ( object:GetData("QUEST") and os.time() - object:GetData("QUEST") > 300 ) then
+		if ( object:GetData("QUEST") and os.time() - object:GetData("QUEST") < 300 ) then
 			text = "<Этот фонарь пока не нуждается в заправке.>"
 		else
 			text = Roulette( "<Фонарь почти потух.>", "<Фонарь слабо мерцает.>" )
@@ -58,15 +60,8 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 			if quests[1].players[player:GetName()] and quests[1].players[player:GetName()] < 9 then
 				if ( not object:GetData("QUEST") ) or ( os.time() - object:GetData("QUEST") ) > 300 then
 					player:GossipMenuAddItem( 0, "<Подлить масла в фонарь.>", 1, 1 )
-				else
-					print( object:GetData("QUEST") )
-					print( os.time() - object:GetData("QUEST") )
 				end
-			else
-				print( quests[1].players[player:GetName()] )
 			end
-		else
-			print("хуй")
 		end
 		
 		player:GossipSendMenu( 01042001, object )
@@ -85,7 +80,6 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 		if ( quests[1].players[player:GetName()] == 9 ) then
 			player:SendAreaTriggerMessage("Все фонари зажжены.")
 			player:CompleteQuest(quests[1].id)
-			player:UpdatePhaseMask()
 		else
 			player:SendAreaTriggerMessage( quests[1].players[player:GetName()].." фонарей из 9 зажжено." )
 		end
@@ -108,10 +102,9 @@ quests[2].OnGossip = function( _, player, creature )
 			player:Emote(69)
 			player:Kill(creature)
 			
-			if ( player:HasItem(quests[1].item[1], 5) and player:HasItem(quests[1].item[2], 5) and player:HasItem(quests[1].item[3], 5) and player:HasItem(quests[1].item[4], 5) ) then
+			if ( player:HasItem(quests[2].item[1], 5) and player:HasItem(quests[2].item[2], 5) and player:HasItem(quests[2].item[3], 5) and player:HasItem(quests[2].item[4], 5) ) then
 				player:SendAreaTriggerMessage("Все крысы пойманы.")
 				player:CompleteQuest(quests[2].id)
-				player:UpdatePhaseMask()
 			end
 			
 		else
@@ -130,7 +123,7 @@ RegisterCreatureGossipEvent( quests[2].creature[4], 1, quests[2].OnGossip ) -- G
 --	"Свободная пресса"
 
 quests[3].OnStart = function( event, player, creature, quest )
-	if ( quest == quests[3].id ) then
+	if ( quest:GetId() == quests[3].id ) then
 		quests[3].players[player:GetName()] = {}
 	end
 end
@@ -141,6 +134,8 @@ quests[3].OnGossip = function( event, arg1, arg2 )
 	
 		local player = arg2
 		local object = arg1
+		
+		player:GossipClearMenu()
 		
 		local guid = object:GetDBTableGUIDLow()
 		
@@ -167,10 +162,11 @@ quests[3].OnGossip = function( event, arg1, arg2 )
 		if ( #quests[3].players[player:GetName()] == 5 ) then
 			player:SendAreaTriggerMessage("Все газеты доставлены.")
 			player:CompleteQuest(quests[3].id)
-			player:UpdatePhaseMask()
 		else
 			player:SendAreaTriggerMessage( #quests[3].players[player:GetName()].." газет из 5 доставлено." )
 		end
+		
+		player:GossipComplete()
 		
 	end
 end
@@ -181,7 +177,7 @@ RegisterGameObjectGossipEvent( quests[3].gameobject, 2, quests[3].OnGossip ) -- 
 --	"Нагреть шпану"
 
 quests[4].OnStart = function( event, player, creature, quest )
-	if ( quest == quests[4].id ) then
+	if ( quest:GetId() == quests[4].id ) then
 		quests[4].players[player:GetName()] = 0
 	end
 end
@@ -203,10 +199,11 @@ quests[4].OnGossip = function( event, player, creature )
 	else
 		creature:SendChatMessageToPlayer( 12, 0, Roulette( "Я вас не знаю, до свидания!", "А? Ой, мне пора!", "Ладно, урок усвоил!" ), player )
 		player:GossipComplete()
+		creature:DespawnOrUnsummon(0)
+		
 		quests[4].players[player:GetName()] = quests[4].players[player:GetName()] + 1
 		if ( quests[4].players[player:GetName()] >= 8 ) then
 			player:CompleteQuest(quests[4].id)
-			player:UpdatePhaseMask()
 			player:SendAreaTriggerMessage("Все беспризорники проучены!")
 		else
 			player:SendAreaTriggerMessage("Проучено "..quests[4].players[player:GetName()].." беспризорников из 8.")

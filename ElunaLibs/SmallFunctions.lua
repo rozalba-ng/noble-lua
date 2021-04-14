@@ -8,6 +8,7 @@ function Roulette(...)
     return t[ math.random( 1, #t ) ]
 end
 
+--[[	НЕ РАБОТАЕТ ПОЧЕМУ-ТО
 function WorldObject:UpdatePhaseMask()
 	local phase = self:GetPhaseMask()
 	if ( phase ~= 1073741824 ) then
@@ -18,6 +19,7 @@ function WorldObject:UpdatePhaseMask()
 		self:SetPhaseMask(1073741824)
 	end
 end
+]]
 
 function table.find( T, val )
     for key, data in pairs(T) do
