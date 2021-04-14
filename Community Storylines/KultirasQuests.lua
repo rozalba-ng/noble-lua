@@ -180,7 +180,7 @@ quests[4].OnGossip = function( event, player, creature )
 		local text = Roulette( "А?", "Чего надо?", "Монетки есть?", "<Ребёнок важно глядит на вас.>" )
 		player:GossipSetText( text, 14042101 )
 		
-		if ( player:HasQuest( quests[4].id ) and quests[4].players[player:GetName()] < 9 then
+		if ( player:HasQuest( quests[4].id ) and quests[4].players[player:GetName()] < 9 ) then
 			player:GossipMenuAddItem( 0, "<Дать подзатыльник и напомнить про Бориса.>", 1, 1 )
 			player:GossipMenuAddItem( 0, "Эй, мелочь. У тебя должок перед сам-знаешь-кем.", 1, 2 )
 			player:GossipMenuAddItem( 0, "И на это ты хочешь потратить свою молодость? Одумайся, пока не поздно!", 1, 3 )
