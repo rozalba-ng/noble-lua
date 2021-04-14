@@ -96,7 +96,7 @@ quests[2].OnGossip = function( _, player, creature )
 			player:Emote(69)
 			player:Kill(creature)
 			
-			if ( player:HasItem(quests[1].item[1], 5) and player:HasItem(quests[1].item[2], 5) and player:HasItem(quests[1].item[3], 5) and player:HasItem(quests[1].item[4], 5) )
+			if ( player:HasItem(quests[1].item[1], 5) and player:HasItem(quests[1].item[2], 5) and player:HasItem(quests[1].item[3], 5) and player:HasItem(quests[1].item[4], 5) ) then
 				player:SendAreaTriggerMessage("Все крысы пойманы.")
 				player:CompleteQuest(quests[2].id)
 				player:UpdatePhaseMask()
