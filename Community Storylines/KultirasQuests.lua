@@ -192,7 +192,7 @@ quests[4].OnGossip = function( event, player, creature )
 		creature:SendChatMessageToPlayer( 12, 0, Roulette( "Я вас не знаю, до свидания!", "А? Ой, мне пора!", "Ладно, урок усвоил!" ), player )
 		player:GossipComplete()
 		quests[4].players[player:GetName()] = quests[4].players[player:GetName()] + 1
-		if ( quests[4].players[player:GetName() >= 8 ) then
+		if ( quests[4].players[player:GetName()] >= 8 ) then
 			player:CompleteQuest(quests[4].id)
 			player:UpdatePhaseMask()
 			player:SendAreaTriggerMessage("Все беспризорники проучены!")
