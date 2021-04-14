@@ -53,7 +53,7 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 		end
 		player:GossipSetText( text, 01042001 )
 		
-		if ( player:HasQuest( quests[1].id ) and player:HasItem(item) and quests[1].players[player:GetName()] < 9 and ( not object:GetData("QUEST") or os.time() - object:GetData("QUEST") > 300 ) ) then
+		if ( player:HasQuest( quests[1].id ) and player:HasItem( quests[1].item ) and quests[1].players[player:GetName()] < 9 and ( not object:GetData("QUEST") or os.time() - object:GetData("QUEST") > 300 ) ) then
 			player:GossipMenuAddItem( 0, "<Подлить масла в фонарь.>", 1, 1 )
 		end
 		
@@ -64,7 +64,7 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 		local player = arg1
 		local object = arg2
 		
-		if ( player:HasQuest( quests[1].id ) and player:HasItem(item) and quests[1].players[player:GetName()] < 9 ) then
+		if ( player:HasQuest( quests[1].id ) and player:HasItem( quests[1].item ) and quests[1].players[player:GetName()] < 9 ) then
 			player:GossipComplete()
 			quests[1].players[player:GetName()] = quests[1].players[player:GetName()] + 1
 			object:SetData("QUEST", os.time())
