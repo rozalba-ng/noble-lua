@@ -49,7 +49,7 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 		player:GossipClearMenu()
 		
 		local text
-		if ( object:GetData("QUEST") and os.time() - object:GetData("QUEST") < 300 ) then
+		if ( object:GetData("QUEST") and os.time() - object:GetData("QUEST") < 600 ) then
 			text = "<Этот фонарь пока не нуждается в заправке.>"
 		else
 			text = Roulette( "<Фонарь почти потух.>", "<Фонарь слабо мерцает.>" )
@@ -58,7 +58,7 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 		
 		if player:HasQuest( quests[1].id ) and player:HasItem( quests[1].item ) then
 			if quests[1].players[player:GetName()] and quests[1].players[player:GetName()] < 9 then
-				if ( not object:GetData("QUEST") ) or ( os.time() - object:GetData("QUEST") ) > 300 then
+				if ( not object:GetData("QUEST") ) or ( os.time() - object:GetData("QUEST") ) > 600 then
 					player:GossipMenuAddItem( 0, "<Подлить масла в фонарь.>", 1, 1 )
 				end
 			end
@@ -139,7 +139,7 @@ quests[3].OnGossip = function( event, arg1, arg2 )
 		
 		local guid = object:GetDBTableGUIDLow()
 		
-		local text = "<...>"
+		local text = "Вы видите почтовый ящик. Он отмечен маленькой буквой \"Q\"."
 		if not table.find( quests[3].players[player:GetName()], guid ) and player:HasQuest( quests[3].id ) then
 			if player:HasItem( quests[3].item, 1) then
 				player:GossipMenuAddItem( 0, "<Вложить газету в ящик.>", 1, 1 )
@@ -159,11 +159,11 @@ quests[3].OnGossip = function( event, arg1, arg2 )
 		table.insert( quests[3].players[player:GetName()], guid )
 		player:RemoveItem( quests[3].item, 1 )
 		
-		if ( #quests[3].players[player:GetName()] == 5 ) then
+		if ( #quests[3].players[player:GetName()] == 7 ) then
 			player:SendAreaTriggerMessage("Все газеты доставлены.")
 			player:CompleteQuest(quests[3].id)
 		else
-			player:SendAreaTriggerMessage( #quests[3].players[player:GetName()].." газет из 5 доставлено." )
+			player:SendAreaTriggerMessage( #quests[3].players[player:GetName()].." газет из 7 доставлено." )
 		end
 		
 		player:GossipComplete()
