@@ -111,13 +111,13 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 				player:GossipComplete()
 			else
 				CharDBQuery( "DELETE character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
-				for ( i = 91103, 91153 ) do -- auraCityRoles из hidden_role_aura.lua
+				for i = 91103, 91153 do -- auraCityRoles из hidden_role_aura.lua
 					if player:HasAura(i) then
 						player:SendBroadcastMessage("Должность персонажа не может быть снята автоматически. Обратитесь к администрации для её снятия.")
 						break
 					end
 				end
-				for ( i = 91055, 91058 ) do -- Соц.класс
+				for i = 91055, 91058 do -- Соц.класс
 					if player:HasAura(i) then
 						player:RemoveAura(i)
 					end
@@ -125,7 +125,7 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 				if player:HasAura(91062) then -- Камуфляж
 					player:RemoveAura(91062)
 				end
-				for ( i = 91067, 91070 ) do -- Репутация
+				for i = 91067, 91070 do -- Репутация
 					if player:HasAura(i) then
 						player:RemoveAura(i)
 					end
