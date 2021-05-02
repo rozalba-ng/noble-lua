@@ -59,6 +59,7 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 		--	Если игрок уже смешарик
 			if Q:GetUInt8(0) > 0 then
 				player:GossipMenuAddItem( 0, "<Сменить социальный класс.>", 1, 2, false, "Вы не сможете бесплатно сменить социальный класс ещё раз." )
+				player:GossipMenuAddItem( 4, "<Отказаться от социального класса.>", 1, 3 )
 			end
 		end
 		player:GossipSetText( text, 13122001 )
@@ -78,11 +79,61 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 	--	Выбор варианта
 		if sender == 1 then
 		--	Выбор роли
-			if intid == 2 then
-				player:SetData( "ChangingSocialRole", true )
+			if intid == 3 then
+			--	Перманетный выход из системы штормграда
+			
+				local text = "Хочешь покинуть эти места на встречу новым приключениям?"
+				if ( player:GetReputation( law_faction ) > amount_reputation_friendly ) then
+					text = text.." О тебе хорошо отзывались некоторые приближённые короля."
+				elseif ( player:GetReputation( thiefs_faction ) > amount_reputation_friendly ) then
+					text = text.." Ты хорошо зарекомендовал себя в рядах теневого общества."
+				else
+					text = text.." Надеюсь ты сможешь найти своё призвание."
+				end
+				text = text.."\n\n|cff360009Вы действительно хотите навсегда снять все ауры относящиеся к системе Штормграда?"
+				
+				player:GossipMenuAddItem( 0, "Я передумал.", 100, 1 )
+				player:GossipMenuAddItem( 0, "Сделай так, чтобы меня забыли.", 100, 2 )
+				
+				player:GossipSetText( text, 02052101 )
+				player:GossipSendMenu( 02052101, creature )
+				
+			else
+				if intid == 2 then
+					player:SetData( "ChangingSocialRole", true )
+				end
+				player:GossipComplete()
+				MyHandlers.ShowMenu( player )
 			end
-			player:GossipComplete()
-			MyHandlers.ShowMenu( player )
+		elseif sender == 100 then
+			--	Перманетный выход из системы штормграда
+			if intid == 1 then
+				player:GossipComplete()
+			else
+				CharDBQuery( "DELETE FROM character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
+				for i = 91103, 91153 do -- auraCityRoles из hidden_role_aura.lua
+					if player:HasAura(i) then
+						player:SendBroadcastMessage("Должность персонажа не может быть снята автоматически. Обратитесь к администрации для её снятия.")
+						break
+					end
+				end
+				for i = 91055, 91058 do -- Соц.класс
+					if player:HasAura(i) then
+						player:RemoveAura(i)
+					end
+				end
+				if player:HasAura(91062) then -- Камуфляж
+					player:RemoveAura(91062)
+				end
+				for i = 91067, 91070 do -- Репутация
+					if player:HasAura(i) then
+						player:RemoveAura(i)
+					end
+				end
+				player:GossipComplete()
+				
+				player:SendBroadcastMessage("Ауры сняты.")
+			end
 		else
 		--	Перевыбор роли
 			if player:GetData("ChangingSocialRole") and intid ~= 3 then
