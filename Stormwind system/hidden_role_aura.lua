@@ -94,24 +94,28 @@ end
 RegisterItemEvent( entry_item, 2, WhenItemUsed ) -- ITEM_EVENT_ON_USE
 
 local function WhenPlayerEnterGame( _, player )
-	player:RemoveAura( 91070 )
-	player:RemoveAura( 91069 )
-	player:RemoveAura( 91068 )
-	player:RemoveAura( 91067 )
-	if ((player:GetReputation( law_faction ) >= amount_reputation_exalted) or (player:GetReputation( thiefs_faction ) >= amount_reputation_exalted)) then
-		player:AddAura( 91070, player )
-	elseif ((player:GetReputation( law_faction ) >= amount_reputation_revered) or (player:GetReputation( thiefs_faction ) >= amount_reputation_revered)) then
-		player:AddAura( 91069, player )
-	elseif ((player:GetReputation( law_faction ) >= amount_reputation_honored) or (player:GetReputation( thiefs_faction ) >= amount_reputation_honored)) then
-		player:AddAura( 91068, player )
-	elseif ((player:GetReputation( law_faction ) >= amount_reputation_friendly) or (player:GetReputation( thiefs_faction ) >= amount_reputation_friendly)) then
-		player:AddAura( 91067, player )
+	-- Накидывание репы
+	local Q = CharDBQuery( "SELECT city_class FROM character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
+	if Q then
+		--	Репутацию отображает только если у игрока есть социальный класс.
+		player:RemoveAura( 91070 )
+		player:RemoveAura( 91069 )
+		player:RemoveAura( 91068 )
+		player:RemoveAura( 91067 )
+		if ((player:GetReputation( law_faction ) >= amount_reputation_exalted) or (player:GetReputation( thiefs_faction ) >= amount_reputation_exalted)) then
+			player:AddAura( 91070, player )
+		elseif ((player:GetReputation( law_faction ) >= amount_reputation_revered) or (player:GetReputation( thiefs_faction ) >= amount_reputation_revered)) then
+			player:AddAura( 91069, player )
+		elseif ((player:GetReputation( law_faction ) >= amount_reputation_honored) or (player:GetReputation( thiefs_faction ) >= amount_reputation_honored)) then
+			player:AddAura( 91068, player )
+		elseif ((player:GetReputation( law_faction ) >= amount_reputation_friendly) or (player:GetReputation( thiefs_faction ) >= amount_reputation_friendly)) then
+			player:AddAura( 91067, player )
+		end
 	end
 
 	if player:HasAura( aura.camouflage ) then
 		player:SetData( "Camouflage", true )
 	else
-		local Q = CharDBQuery( "SELECT city_class FROM character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
 		if Q then
 			local aura = Q:GetUInt32(0)
 			if not player:HasAura( aura ) then
@@ -128,6 +132,9 @@ local function WhenPlayerEnterGame( _, player )
 		local playerCityRoleAura = SRQ:GetUInt32(0)
 		if not player:HasAura( playerCityRoleAura ) and playerCityRoleAura > 0 then
 			player:AddAura( playerCityRoleAura, player )
+			if not Q then
+				player:SendBroadcastMessage("Должность персонажа не может быть снята автоматически. Обратитесь к администрации для её снятия.")
+			end
 		end
 	end
 end
