@@ -82,13 +82,13 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 			if intid == 3 then
 			--	Перманетный выход из системы штормграда
 			
-				local text = "Хочешь покинуть эти места на встречу новым приключениям?"
+				local text = "Хочешь покинуть эти места и отправиться навстречу новым приключениям?"
 				if ( player:GetReputation( law_faction ) > amount_reputation_friendly ) then
 					text = text.." О тебе хорошо отзывались некоторые приближённые короля."
 				elseif ( player:GetReputation( thiefs_faction ) > amount_reputation_friendly ) then
 					text = text.." Ты хорошо зарекомендовал себя в рядах теневого общества."
 				else
-					text = text.." Надеюсь ты сможешь найти своё призвание."
+					text = text.." Надеюсь, ты сможешь найти своё призвание."
 				end
 				text = text.."\n\n|cff360009Вы действительно хотите навсегда снять все ауры относящиеся к системе Штормграда?"
 				
