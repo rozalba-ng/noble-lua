@@ -84,7 +84,7 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 			
 				local text = "Хочешь покинуть эти места на встречу новым приключениям?"
 				if ( player:GetReputation( law_faction ) > amount_reputation_friendly ) then
-					text = text.." О тебе хорошо отзывались некоторые приближённые к королю."
+					text = text.." О тебе хорошо отзывались некоторые приближённые короля."
 				elseif ( player:GetReputation( thiefs_faction ) > amount_reputation_friendly ) then
 					text = text.." Ты хорошо зарекомендовал себя в рядах теневого общества."
 				else
