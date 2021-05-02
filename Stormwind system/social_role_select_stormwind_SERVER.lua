@@ -130,6 +130,12 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 						player:RemoveAura(i)
 					end
 				end
+				player:RemoveQuest(110052)
+				player:RemoveQuest(110053)
+				player:RemoveQuest(110057)
+				player:RemoveQuest(110059)
+				player:RemoveQuest(110061)
+				player:RemoveQuest(110063)
 				player:GossipComplete()
 				
 				player:SendBroadcastMessage("Ауры сняты.")
