@@ -110,7 +110,7 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 			if intid == 1 then
 				player:GossipComplete()
 			else
-				CharDBQuery( "DELETE character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
+				CharDBQuery( "DELETE FROM character_citycraft_config WHERE character_guid = "..player:GetGUIDLow() )
 				for i = 91103, 91153 do -- auraCityRoles из hidden_role_aura.lua
 					if player:HasAura(i) then
 						player:SendBroadcastMessage("Должность персонажа не может быть снята автоматически. Обратитесь к администрации для её снятия.")
