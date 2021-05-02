@@ -82,14 +82,25 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 			if intid == 3 then
 			--	Перманетный выход из системы штормграда
 			
-				local text = "Хочешь покинуть эти места и отправиться навстречу новым приключениям?"
-				if ( player:GetReputation( law_faction ) > amount_reputation_friendly ) then
-					text = text.." О тебе хорошо отзывались некоторые приближённые короля."
-				elseif ( player:GetReputation( thiefs_faction ) > amount_reputation_friendly ) then
-					text = text.." Ты хорошо зарекомендовал себя в рядах теневого общества."
-				else
-					text = text.." Надеюсь, ты сможешь найти своё призвание."
+				local text
+				if player:HasAura(91055) then
+				--	Обращение к дворянину
+					text = "Уже устали от придворных игр? Ваше имя на слуху при дворе, но я посмотрю что с этим можно сделать."
+				elseif player:HasAura(91056) then
+				--	Обращение к священнику
+					text = "Да пребудет с вами Свет! Идите с миром и несите его Слово в самые мрачные уголки Азерота."
+				elseif player:HasAura(91057) then
+				--	Обращение к магу
+					text = "Поиск знаний - тяжелый путь. Надеюсь, эта тропа еще приведет вас обратно к нам."
+				elseif player:HasAura(91058) then
+				--	Обращение к вольному жителю
+					if ( player:GetReputation( thiefs_faction ) > amount_reputation_friendly ) then
+						text = "Шепнуть пару слов тут и там, и про тебя забудут... но после этого лучше ходи оглядываясь, если забредешь не в тот переулок."
+					else
+						text = "Хочешь покинуть эти места и отправиться на встречу новым приключениям?"
+					end
 				end
+				
 				text = text.."\n\n|cff360009Вы действительно хотите навсегда снять все ауры относящиеся к системе Штормграда?"
 				
 				player:GossipMenuAddItem( 0, "Я передумал.", 100, 1 )
