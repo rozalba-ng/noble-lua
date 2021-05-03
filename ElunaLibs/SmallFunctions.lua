@@ -29,3 +29,12 @@ function table.find( T, val )
     end
     return nil
 end
+
+function Player:HasEmptySlot()
+	for slot = 23,38 do
+		if not self:GetItemByPos( 255, slot ) then
+			return true
+		end
+	end
+	return false
+end
