@@ -23,7 +23,7 @@ local function PayDay()
 			if player:GetData("KT_HalfHour") then
 			--	Игрок отыграл полчаса, выдаем награду
 				if player:HasEmptySlot() then
-					playTime:AddItem( money, 1 )
+					player:AddItem( money, 1 )
 					player:SendBroadcastMessage("|cff629404[-X-] |cff8bad4cВы получаете мешочек монет за активную игру.")
 				else
 					SendMail( "Мешочек монет", "Мешочек монет не влез в ваши карманы и был выслан на почту.", player:GetGUIDLow(), 0, 41, 20, 0, 0, money, 1 )
