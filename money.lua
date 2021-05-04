@@ -91,4 +91,4 @@ local function calculateBonuses()
     end
 end
 
-CreateLuaEvent(calculateBonuses, 9000, 0)
+CreateLuaEvent(calculateBonuses, 900000, 0)
