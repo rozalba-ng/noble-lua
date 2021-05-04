@@ -12,6 +12,7 @@ local playersRubberyTime = {}
 
 
 local EVENT_ON_CAST = 5;
+local ENERGY_SYSTEM_AURA = 91180;
 
 local function castEvent(event, player, spell, skipCheck)
 	local spellId = spell:GetEntry();
@@ -200,6 +201,38 @@ local function castEvent(event, player, spell, skipCheck)
 			nearPlayer:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное очко здоровья!|r")
 		end
 		player:RemoveAura(88041)
+    elseif (spellId == 91179) then
+
+        local energyAura = player:GetAura(ENERGY_SYSTEM_AURA) -- аура энергии
+        if energyAura ~= nil then
+            local rand = math.random(1,4)
+            player:SendBroadcastMessage(player:GetName().." бросает кость на массовую атаку. Количество пораженных целей: |cFF79ed21  ".. rand .."|r")
+
+            local playerEnergy = energyAura:GetStackAmount()
+
+            if playerEnergy - 1  < 1 then
+                player:RemoveAura(ENERGY_SYSTEM_AURA)
+            else
+                energyAura:SetStackAmount(playerEnergy - 1)
+            end
+
+            local nearPlayers = player:GetPlayersInRange(140, 0, 0)
+            for index, nearPlayer in pairs(nearPlayers) do
+                if player:IsInSameRaidWith(nearPlayer) then
+                    nearPlayer:SendBroadcastMessage(player:GetName().." бросает Кости Судьбы на массовую атаку. Энергия снижается на 1. Количество пораженных целей: |cFF79ed21  ".. rand .."|r")
+                end
+            end
+
+            local nearPlayers = player:GetPlayersInRange(40, 0, 0)
+            for index, nearPlayer in pairs(nearPlayers) do
+                if (player:IsInSameRaidWith(nearPlayer) ~= true) then
+                    nearPlayer:SendBroadcastMessage(player:GetName().." бросает Кости Судьбы на массовую атаку. Энергия снижается на 1. Количество пораженных целей: |cFF79ed21  ".. rand .."|r")
+                end
+            end
+
+        else
+            player:SendBroadcastMessage(player:GetName()..": не достаточно энергии для проведения массовой атаки.")
+        end
 	end
 end
 RegisterPlayerEvent(EVENT_ON_CAST, castEvent);
