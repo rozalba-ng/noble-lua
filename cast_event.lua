@@ -201,7 +201,7 @@ local function castEvent(event, player, spell, skipCheck)
 			nearPlayer:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное очко здоровья!|r")
 		end
 		player:RemoveAura(88041)
-    elseif (spellId == 91179) then
+    elseif (spellId == 91179) then -- кости судьбы аое
 
         local energyAura = player:GetAura(ENERGY_SYSTEM_AURA) -- аура энергии
         if energyAura ~= nil then
