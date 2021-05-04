@@ -1,18 +1,18 @@
 
-	local AIO = AIO or require("AIO")
+local AIO = AIO or require("AIO")
 local BM_Handlers = AIO.AddHandlers("BM_Handlers", {})
 
 local EVENT_ON_CAST = 5;
 
 
 
- TURN_AURA = 88037
- IS_IN_BATTLE_AURA = 88057
- LEAVER_AURA = 88058
- HP_AURA =  88059
- WOUND_AURA = 88010
-
- DEAD_AURA = 45801
+TURN_AURA = 88037
+IS_IN_BATTLE_AURA = 88057
+LEAVER_AURA = 88058
+HP_AURA =  88059
+WOUND_AURA = 88010
+DOUBLE_ATTACK_AURA = 88076
+DEAD_AURA = 45801
 
 
 local TIMER_FOR_TURN = 90
@@ -32,14 +32,6 @@ local BState_CLOSED = 4
 local BState_CANCELED = 5
 local BState_ESCAPING = 6 
 ---
-
-local hpBuffAuraList = {	{id = 88044, bonus = 1},
-							{id = 88045, bonus = 1},
-							{id = 88046, bonus = 2},
-							{id = 88047, bonus = 2},
-							{id = 88048, bonus = 2},
-							{id = 88049	, bonus = 2}
-						}
 
 
 function tcontain(table,key)
@@ -447,31 +439,48 @@ function SayToBattle(text,battle)
 		end
 	end
 end
-function handlePlayerRoll(success,rollType, player,target,isPotionReroll)
+
+function handlePlayerRoll(success,rollType, player,target,isPotionReroll,isCrit)
 	if (not player:HasAura(IS_IN_BATTLE_AURA) and target:HasAura(IS_IN_BATTLE_AURA)) or (player:HasAura(IS_IN_BATTLE_AURA) and not target:HasAura(IS_IN_BATTLE_AURA)) then
 		player:SendBroadcastMessage("Вы не можете атаковать цель, которая находится не в вашем бою.")
 		return false
 	end
 
+	if ((player:HasAura(IS_IN_BATTLE_AURA) or target:HasAura(IS_IN_BATTLE_AURA)) and statAllowedInBattle[rollType] == 0) then
+		player:SendBroadcastMessage("Вы не можете атаковать цель выбранной способностью.")
+		return false
+	end
+
 	if (isInSameBattle(player,target) or (player:GetName() == target:GetName() and rollType == 6 and player:HasAura(IS_IN_BATTLE_AURA))) and  not isPotionReroll then
 		if GetPlayerBattleTurn(player) == 1 then
-			if  player:GetSelection() == player and rollType ~= 6 then
+			if  player:GetSelection() == player and rollType ~= ROLE_STAT_SPIRIT then
 				player:SendBroadcastMessage("Вы не можете совершить атаку на самого себя.")
 				return false
 			end
 			local battleId = listPlayersInBattle[player:GetName()].battleId
 			local battle = battleList[battleId]
 			if target:HasAura(HP_AURA) then
-				if success and rollType ~= 6 then
+				if success and rollType ~= ROLE_STAT_SPIRIT then
+					if player:HasAura(DOUBLE_ATTACK_AURA) and isCrit then
+						local hpAura = target:GetAura(HP_AURA)
+						SayToBattle(cWhite..player:GetName()..cR.." снимает "..cWhite..target:GetName().." "..cRed.."2 очка здоровья."..cR.." Эффект бонуса \"Стремительность\"",battle)
+						if hpAura:GetStackAmount() < 3 then
+							killPlayerInBattle(battle,target)
+						else
+							hpAura:SetStackAmount(hpAura:GetStackAmount() - 2)
+						end
 					
-					local hpAura = target:GetAura(HP_AURA)
-					SayToBattle(cWhite..player:GetName()..cR.." снимает "..cWhite..target:GetName().." "..cRed.."1 очко здоровья."..cR,battle)
-					if hpAura:GetStackAmount() < 2 then
-						killPlayerInBattle(battle,target)
 					else
-						hpAura:SetStackAmount(hpAura:GetStackAmount() - 1)
+						local hpAura = target:GetAura(HP_AURA)
+						SayToBattle(cWhite..player:GetName()..cR.." снимает "..cWhite..target:GetName().." "..cRed.."1 очко здоровья."..cR,battle)
+						if hpAura:GetStackAmount() < 2 then
+							killPlayerInBattle(battle,target)
+						else
+							hpAura:SetStackAmount(hpAura:GetStackAmount() - 1)
+						end
 					end
-				elseif rollType == 6 then
+					
+				elseif rollType == ROLE_STAT_SPIRIT then
 					local hpAura = target:GetAura(HP_AURA)
 					local curHp = hpAura:GetStackAmount()
 					local pid = findPlayer(battle.players,target:GetName())

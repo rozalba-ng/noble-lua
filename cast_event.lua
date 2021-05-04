@@ -8,15 +8,107 @@ PlayerBuild = {}
 PlayerBuild.targetgobject = {}
 footBall = {}
 footBall.lastHit = {};
+local playersRubberyTime = {}
+
 
 local EVENT_ON_CAST = 5;
+local ENERGY_SYSTEM_AURA = 91180;
 
 local function castEvent(event, player, spell, skipCheck)
 	local spellId = spell:GetEntry();
-if (player:GetGMRank() == 3) then
-		--player:SendBroadcastMessage(spellId)
-	end
-	if (spellId == 90005) then -- GOB, case spell "start/stop a building mode"
+    if (player:GetGMRank() == 3) then
+		player:SendBroadcastMessage(spellId)
+    end
+    if (spellId == 1804) then -- взлом замка
+
+    elseif (spellId == 91095) then -- обшаривание карманов
+        local zone = player:GetZoneId();
+
+        if (not(zone == 1519 or player:HasAura(mainPlaygroundZones.aura ))) then
+            player:SendNotification( "В этой зоне запрещены карманные кражи!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if (player:GetReputation( thiefs_faction ) < amount_reputation_friendly) then
+            player:SendNotification( "Недостаточно репутации для совершения данного действия!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+        if (player:HasAura( 91060 )) then
+            player:SendNotification( "Данное действие невозможно совершить под наблюдением стражи!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+        if not SocialTime() then
+            player:SendNotification( "Данное действие можно совершать только во время социальной активности (18:00 - 2:00 по МСК)!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        local selection = player:GetSelection()
+
+        if not selection then
+            player:SendNotification( "Ошибка! Не выбрана цель!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if not selection:ToPlayer() then
+            player:SendNotification( "Ошибка! В цель не выбран игрок!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if player == selection then
+            player:SendNotification( "Ошибка! Целью не можете быть вы сами!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if ( playersRubberyTime[selection:GetName()] and (  os.time() - playersRubberyTime[selection:GetName()]   ) < 1800 )  then
+            player:SendNotification( "Данное действие невозможно: персонаж недавно был ограблен!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if (selection:HasAura( 91060 )) then
+            player:SendNotification( "Данное действие невозможно: персонаж под защитой стражи!" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        local targetMoney = selection:GetCoinage()
+
+        if (targetMoney < 500) then
+            player:SendNotification( "Ничего не удалось украсть: персонаж слишком беден или не имеет с собой денег" )
+            player:ResetSpellCooldown( spellId )
+            return false;
+        end
+
+        if (targetMoney > 50000) then
+            local amount = math.random(50, 500);
+            selection:ModifyMoney(-amount);
+            player:ModifyMoney(amount);
+            player:SendNotification( "Успешно! Удалось украсть " .. amount .. " медных монет" )
+            playersRubberyTime[selection:GetName()] = os.time();
+            return true;
+        end
+
+        if (targetMoney >= 500) then
+            local amount = math.random(50, 150);
+            selection:ModifyMoney(-amount);
+            player:ModifyMoney(amount);
+            player:SendNotification( "Успешно! Удалось украсть " .. amount .. " медных монет" )
+            playersRubberyTime[selection:GetName()] = os.time();
+            return true;
+        end
+
+
+
+        return true;
+
+	elseif (spellId == 90005) then -- GOB, case spell "start/stop a building mode"
 		local questId = 110000;
 		if (player:HasQuest(questId)) then
 			player:RemoveQuest(questId);
@@ -70,7 +162,7 @@ if (player:GetGMRank() == 3) then
             print(target:GetDBTableGUIDLow())
             table.insert(vehicle_GameObject_List[target:GetDBTableGUIDLow()].passengers, player:GetGUIDLow());
         end
-    elseif (spellId >= 88005 and spellId <= 88008) then
+    elseif ((spellId >= 88005 and spellId <= 88008) or (spellId >= 91154 and spellId <= 91162)) then
         local target = player:GetSelectedUnit();
         attackRoll(player, target, spellId);
     elseif (spellId == 84043 or spellId == 84044) then
@@ -109,6 +201,38 @@ if (player:GetGMRank() == 3) then
 			nearPlayer:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное очко здоровья!|r")
 		end
 		player:RemoveAura(88041)
+    elseif (spellId == 91179) then
+
+        local energyAura = player:GetAura(ENERGY_SYSTEM_AURA) -- аура энергии
+        if energyAura ~= nil then
+            local rand = math.random(1,4)
+            player:SendBroadcastMessage(player:GetName().." бросает кость на массовую атаку. Количество пораженных целей: |cFF79ed21  ".. rand .."|r")
+
+            local playerEnergy = energyAura:GetStackAmount()
+
+            if playerEnergy - 1  < 1 then
+                player:RemoveAura(ENERGY_SYSTEM_AURA)
+            else
+                energyAura:SetStackAmount(playerEnergy - 1)
+            end
+
+            local nearPlayers = player:GetPlayersInRange(140, 0, 0)
+            for index, nearPlayer in pairs(nearPlayers) do
+                if player:IsInSameRaidWith(nearPlayer) then
+                    nearPlayer:SendBroadcastMessage(player:GetName().." бросает Кости Судьбы на массовую атаку. Энергия снижается на 1. Количество пораженных целей: |cFF79ed21  ".. rand .."|r")
+                end
+            end
+
+            local nearPlayers = player:GetPlayersInRange(40, 0, 0)
+            for index, nearPlayer in pairs(nearPlayers) do
+                if (player:IsInSameRaidWith(nearPlayer) ~= true) then
+                    nearPlayer:SendBroadcastMessage(player:GetName().." бросает Кости Судьбы на массовую атаку. Энергия снижается на 1. Количество пораженных целей: |cFF79ed21  ".. rand .."|r")
+                end
+            end
+
+        else
+            player:SendBroadcastMessage(player:GetName()..": не достаточно энергии для проведения массовой атаки.")
+        end
 	end
 end
 RegisterPlayerEvent(EVENT_ON_CAST, castEvent);

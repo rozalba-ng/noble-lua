@@ -41,4 +41,4 @@ local function sendVoteLetters()
 	end	
 end
 
-CreateLuaEvent(sendVoteLetters, 120000, 0);
+CreateLuaEvent(sendVoteLetters, 600000, 0);

@@ -195,7 +195,7 @@ RegisterPlayerEvent( 5, TriggerStarterTeleport)
 
 
 function TH_OnLogin(event, player)--// Костыльно фиксит TalkingHead.
-            TestCreature = player:GetNearestGameObject(300)
+            TestCreature = player:GetNearestGameObject(100)
             if TestCreature then
                 player:GossipComplete()
                 player:GossipSendMenu(100, TestCreature)

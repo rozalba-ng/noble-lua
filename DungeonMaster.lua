@@ -68,24 +68,50 @@ end
 	end
 end]]--
 ------------------------- Спавн гошек ------------------------------
+local allowedTypes = {
+	0, -- GAMEOBJECT_TYPE_DOOR
+	5, -- GAMEOBJECT_TYPE_GENERIC
+	7, -- GAMEOBJECT_TYPE_CHAIR
+	9, -- GAMEOBJECT_TYPE_TEXT
+	10, -- GAMEOBJECT_TYPE_GOOBER
+}
+local function GOBIsAllowed( entry )
+--	Проверка ID
+	if ( entry >= 530000 ) and ( entry <= 540000 ) then
+		return false
+	else
+	--	Проверка типа
+		local Q = WorldDBQuery( "SELECT type FROM `world`.`gameobject_template` WHERE entry = "..entry )
+		local t = Q:GetInt32(0)
+		for i = 1, #allowedTypes do
+			if t == allowedTypes[i] then
+				return true
+			end
+		end
+		return false
+	end
+end
+
 local function performGobjectSpawn(player, gobEntry, save)
-	if (gobEntry < 300000) then
-		local x, y, z, o = player:GetLocation();
-		local pid = player:GetGUIDLow();
-		local map = player:GetMapId();
-		local phase = player:GetPhaseMask();
-		local DMobject = PerformIngameSpawn( 2, gobEntry, map, 0, x, y, z, o, save, pid, 0, phase);
-		player:SendBroadcastMessage('Объект ID: '..DMobject:GetGUIDLow()..' ['..DMobject:GetName()..'] установлен.');
-		PrintError(player:GetName().." поставил ГОБ: "..gobEntry);
-        return DMobject;
+	if ( gobEntry < 300000 ) then
+		if GOBIsAllowed( gobEntry ) then
+			local x, y, z, o = player:GetLocation();
+			local pid = player:GetGUIDLow();
+			local map = player:GetMapId();
+			local phase = player:GetPhaseMask();
+			local DMobject = PerformIngameSpawn( 2, gobEntry, map, 0, x, y, z, o, save, pid, 0, phase);
+			player:SendBroadcastMessage('Объект ID: '..DMobject:GetGUIDLow()..' ['..DMobject:GetName()..'] установлен.');
+			PrintError(player:GetName().." поставил ГОБ: "..gobEntry);
+			return DMobject;
+		else
+			player:SendBroadcastMessage("Объект имеет запрещенный тип.")
+		end
 	else
 		player:SendBroadcastMessage("Данный объект недоступен для использования. Используйте объекты с ID меньше 300000")
 	end
 end
 local function performDm3GobjectSpawn(player, gobEntry, save)
-	local queryType = WorldDBQuery("SELECT type FROM `world`.`gameobject_template` WHERE entry = "..gobEntry.."")
-	local gobType = queryType:GetInt32(0)
-	if gobEntry < 300000 or (gobType == 0 or gobType == 5 or gobType == 7 or gobType == 9 or gobType == 10 or gobType == 32 or gobType == 34) then
+	if GOBIsAllowed( gobEntry ) then
 		local x, y, z, o = player:GetLocation();
 		local pid = player:GetGUIDLow();
 		local map = player:GetMapId();
@@ -346,7 +372,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                 end            
             elseif (arguments[1] == "npcemote") then
                 local DMcreature = player:GetTargetCreature();
-                if(DMcreature:GetOwner() == player)then
+                if(DMcreature:GetOwner() == player or player:GetGMRank() >= 1)then
                     local msg = "";
                     for i = 2, #arguments do
                         msg = msg.." "..arguments[i]
@@ -359,19 +385,19 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                 end            
             elseif (arguments[1] == "npcplayemote" and (#arguments == 2 or #arguments == 3)) then
                 local DMcreature = player:GetTargetCreature();
-                if(DMcreature:GetOwner() == player)then
+                if(DMcreature:GetOwner() == player or player:GetGMRank() >= 1)then
                     local emoteid = tonumber(arguments[2])
                     if(emoteid == nil)then
                         player:SendBroadcastMessage("ОШИБКА: некорректное значение! Допустимы только целые числа.")
                     else
-			if(#arguments == 2)then
+                        if(#arguments == 2)then
                             DMcreature:Emote( emoteid )
-			elseif(#arguments == 3)then
-			    local param = tonumber(arguments[3])
-			    if(param == 1)then
-				DMcreature:EmoteState( emoteid )
-			    end
-			end
+                        elseif(#arguments == 3)then
+                            local param = tonumber(arguments[3])
+                            if(param == 1)then
+                                DMcreature:EmoteState( emoteid )
+                            end
+                        end
                     end
                     return false;
                 else
@@ -445,7 +471,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                     obj:SetScale(gobSize);
                 end
 				return false
-            elseif (arguments[1] == 'gobsize' and #arguments == 3 and (player:GetGMRank() > 0 or IsThirdDM(player))) then
+            elseif (arguments[1] == 'gobsize' and #arguments == 3 and (player:GetGMRank() > 0 or IsThirdDM(player) or player:GetDmLevel() == 2)) then
 				local guidLow = tostring(arguments[2])
                 local gobSize = tonumber(arguments[3])
 				local gobjects = player:GetGameObjectsInRange(533);
@@ -453,17 +479,17 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 				for var=1,rowCount,1 do	
 					local targuid = tostring(gobjects[var]:GetDBTableGUIDLow());
 					if( targuid == guidLow) then
-						if((gobjects[var]:GetOwner() == player or player:GetGMRank() > 0) and gobSize >= 0.01 and gobSize <= 3)then
+						if((gobjects[var]:GetOwner() == player or player:GetGMRank() > 0) and gobSize >= 0.05 and gobSize <= 3)then
 							local map = player:GetMap();	
 							local gob = gobjects[var];
-							gob:SetScale(gobSize)
-							local phase = player:GetPhaseMask()
+							gob:SetGoScale(gobSize);
+							local phase = gob:GetPhaseMask()
 							gob:SetPhaseMask(4096)
 							gob:SetPhaseMask(phase)
-							player:SendBroadcastMessage('Объект увеличен.');
+							player:SendBroadcastMessage('Размер изменен.');
                             return false;                            
 						else
-							player:SendBroadcastMessage('Ошибка: объект Вам не принадлежит или введены неверные данные.');
+							player:SendBroadcastMessage('Ошибка: объект Вам не принадлежит или введены неверные данные. Данная команда принимает дробные значения от 0.05 до 3');
                             return false;
 						end
 					end
@@ -866,11 +892,18 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
             end
         elseif(code == "deskin")then
             local DM_target = player:GetSelectedUnit();
-            if(DM_target)then
+            local targetPlayer = DM_target:ToPlayer()
+            if(targetPlayer)then
+                if (targetPlayer == player) then
+                    player:DeMorph();
+                    return false;
+                end
+                player:SendBroadcastMessage("ОШИБКА: вы не можете снимать морфы с игроков. Для снятия морфа попросите игрока релогнуться.")
+            elseif(DM_target:GetOwner() == player)then
                 DM_target:DeMorph();
                 return false;
             else
-                player:SendBroadcastMessage("ОШИБКА: нет цели.")
+                player:SendBroadcastMessage("ОШИБКА: нет подходящей цели.")
                 return false;
             end
         elseif (code == "npcspanwer") then
