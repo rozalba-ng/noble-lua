@@ -22,9 +22,9 @@ local function countBoralusBonus(player)
 
         if player:GetData("boralus_playtime_iterations") == 3 then
             --	Игрок отыграл 4 итерации, выдаем награду
-            local added = player:AddItem(money);
+            local added = player:AddItem(moneyItem);
             if (added == nil) then
-                SendMail("Мешочек монет", "Мешочек монет не влез в ваши карманы и был выслан на почту.", player:GetGUIDLow(), 0, 61, 20, 0, 0, money, 1)
+                SendMail("Мешочек монет", "Мешочек монет не влез в ваши карманы и был выслан на почту.", player:GetGUIDLow(), 0, 61, 20, 0, 0, moneyItem, 1)
                 player:SendBroadcastMessage("|cff629404[-X-] |cff8bad4cМешочек монет не влез в ваши карманы и был выслан на почту.")
             else
                 player:SendBroadcastMessage("|cff629404[-X-] |cff8bad4cВы получаете мешочек монет за активную игру.")
