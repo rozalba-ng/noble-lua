@@ -105,7 +105,9 @@ hpBuffAuraList = {
     { id = 88048, bonus = 2 },
     { id = 88049, bonus = 2 },
     { id = 88074, bonus = 2 },
-    { id = 88073, bonus = 2 }
+    { id = 88078, bonus = 2 },
+    { id = 88073, bonus = 2 },
+    { id = 88079, bonus = 1 },
 }
 
 local healthByType = {
