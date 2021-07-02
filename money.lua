@@ -79,24 +79,17 @@ end
 
 local function countQueltalasReputation(player)
     local faction
-    if player:GetQuestStatus(110104) == 6 or player:GetQuestStatus(110106) == 6 then
+    if player:HasAura(100024) or player:HasAura(100025) then
         --	Игрок выполнил квест на выбор фракции луносвета
         faction = quel_faction
     end
     if faction then
-        local map, x = player:GetMapId(), player:GetXfalse
-        local trueZone, r = false, 0
+        local map, x = player:GetMapId(), player:GetX()
         if (map == 901 and x > 3524) then
             --	Игрок в Кельталасе
-            trueZone = true
-        end
-        if trueZone and ActionTime() then
-            --	Если время суперактива - идёт маленький бонус.
-            r = 25
+            player:SetReputation(faction, player:GetReputation(faction) + 25)
         end
 
-        --	Начисление репутации
-        player:SetReputation(faction, player:GetReputation(faction) + r)
     end
 end
 
