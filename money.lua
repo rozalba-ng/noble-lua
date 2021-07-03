@@ -6,6 +6,8 @@ local entry_bonus_npc = 1211002
 local guildzone_stormwind_aura = 91065
 local guildzone_boralus_aura = 91175
 
+local quel_faction = 1165
+
 local function countMoneyBonus(player)
     player:ModifyMoney(25);
     local guild = player:GetGuild();
@@ -75,6 +77,22 @@ local function countStormwindReputation(player)
     end
 end
 
+local function countQueltalasReputation(player)
+    local faction
+    if player:HasAura(100024) or player:HasAura(100025) then
+        --	Игрок выполнил квест на выбор фракции луносвета
+        faction = quel_faction
+    end
+    if faction then
+        local map, x = player:GetMapId(), player:GetX()
+        if (map == 901 and x > 3524) or player:HasAura(91198) then
+            --	Игрок в Кельталасе
+            player:SetReputation(faction, player:GetReputation(faction) + 25)
+        end
+
+    end
+end
+
 --[[Every 15 minutes runs script of online bonuses for all players in world]]
 local function calculateBonuses()
     local onlinePlayers = GetPlayersInWorld(2); --[[ 2-neutral, both horde and aliance]]
@@ -86,6 +104,7 @@ local function calculateBonuses()
             if (SocialTime() and player:GetPhaseMask() == 1) then
                 countStormwindReputation(player)
                 countBoralusBonus(player)
+                countQueltalasReputation(player)
             end
         end;
     end
