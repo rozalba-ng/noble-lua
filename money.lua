@@ -85,7 +85,7 @@ local function countQueltalasReputation(player)
     end
     if faction then
         local map, x = player:GetMapId(), player:GetX()
-        if (map == 901 and x > 3524) then
+        if (map == 901 and x > 3524) or player:HasAura(91198) then
             --	Игрок в Кельталасе
             player:SetReputation(faction, player:GetReputation(faction) + 25)
         end
