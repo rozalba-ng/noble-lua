@@ -83,8 +83,8 @@ local function OnPlayerCommandWithArg(event, player, code)
                 end
             end
             return false;
-		elseif (arguments[1] == "addtagitem") then
-			if #arguments < 7 then
+		elseif (arguments[1] == "addtagitem") then -- custom text enchantment - занимаем 5 и 6 слот чантов (если считать с 0 то 4 и 5, т.е. SOCK_ENCHANTMENT_SLOT_3 и BONUS_ENCHANTMENT_SLOT)
+			if #arguments < 5 then
 				local entry = tonumber(arguments[2])
 				if (player:GetGMRank() > 1 and entry > 2110896) then -- 2110896 - с этого ID начинаются созданные мастерами итемы	
 					if (entry == 2110926 or entry == 2110924 or entry == 2110923 or entry == 2110922 or entry == 2110921) then
@@ -107,7 +107,7 @@ local function OnPlayerCommandWithArg(event, player, code)
 					end
 				end
 			else
-				player:SendBroadcastMessage("Ошибка. Не более 4 плашек на предмет")
+				player:SendBroadcastMessage("Ошибка. Не более 2 плашек на предмет")
 			end
 		elseif (arguments[1] == "sendmessage") then
 			if player:GetGMRank() >0 then
