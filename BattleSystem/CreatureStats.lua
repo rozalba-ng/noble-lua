@@ -69,13 +69,13 @@ local function loadDefaultCreatureStats(event, creature)
 
     if npcStats[guid] then
         creature:RemoveAura(EBS_HP_AURA)
-        if tonumber(npcStats[guid][ROLE_STAT_HEALTH]) > 0 then
+        if tonumber(npcStats[guid][ROLE_STAT_HEALTH]) ~= nil and tonumber(npcStats[guid][ROLE_STAT_HEALTH]) > 0 then
             local hpAura = creature:AddAura(EBS_HP_AURA, creature)
             hpAura:SetStackAmount(npcStats[guid][ROLE_STAT_HEALTH])
         end
 
         creature:RemoveAura(EBS_ARMOR_AURA)
-        if tonumber(npcStats[guid][ROLE_STAT_ARMOR]) > 0 then
+        if tonumber(npcStats[guid][ROLE_STAT_ARMOR]) ~= nil and tonumber(npcStats[guid][ROLE_STAT_ARMOR]) > 0 then
             local ammoAura = creature:AddAura(EBS_ARMOR_AURA, creature)
             ammoAura:SetStackAmount(npcStats[guid][ROLE_STAT_ARMOR])
         end
