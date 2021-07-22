@@ -11,9 +11,9 @@ function GoToNextWaypoint(eventId, delay, repeats)
 	if creatureGUID then
 		local map = GetMapById(queryManager[eventId].map)
 		local creature = map:GetWorldObject(creatureGUID)
-		creature:SetWalk(true)
-		creature:RemoveAura(WALK_AURA)
 		if creature then
+			creature:SetWalk(true)
+			creature:RemoveAura(WALK_AURA)
 			local id = nil
 			if npcPoint[queryManager[eventId].guid][queryManager[eventId].nextOrder].c_type == 1 then
 				local pos = npcPoint[queryManager[eventId].guid][queryManager[eventId].nextOrder]
