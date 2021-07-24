@@ -718,7 +718,6 @@ RegisterGameObjectGossipEvent(GobId, 2, OnGossipSelect)
 RegisterPlayerEvent(EVENT_ON_LOGIN, loginEvent);
 RegisterPlayerEvent(PLAYER_EVENT_ON_LOGOUT, logoutEvent);
 RegisterPlayerEvent(42, OnPlayerCommand)
-RegisterPlayerEvent(PLAYER_EVENT_ON_FIRST_LOGIN, OnPlayerCreate )
 RegisterPlayerGossipEvent(MenuId, 2, OnGossipSelect)
 
 RegisterServerEvent(TRIGGER_EVENT_ON_TRIGGER, OnAreaTrigger)
