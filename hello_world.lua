@@ -1,4 +1,6 @@
-﻿local EVENT_ON_LOGIN = 3;
+﻿-- обработчики событий на создании, логине и логауте персонажа
+-- также тут размещена часть кастомных команд, не распределенных по отдельным файлам
+local EVENT_ON_LOGIN = 3;
 local PLAYER_EVENT_ON_LOGOUT = 4;
 local EVENT_ON_CAST = 5;
 local PLAYER_EVENT_ON_FIRST_LOGIN = 30;
@@ -11,7 +13,28 @@ function Player:CustomFunc()
    self:SendBroadcastMessage(self:GetAccountId())
 end
 ----------------- Белый список визуальных аур ----------------------------------------
-aura_whitelist = {16592,88053, 34807, 48083, 52663, 54141, 56327, 64785, 68855, 56741, 55708, 40158, 68862, 47503, 47335, 47428, 47704, 47705, 47706, 48795, 49774, 49733, 62021, 51638, 63678, 52619, 52670, 53160, 57901, 56075, 55928, 56102, 56740, 57551, 57887, 58429, 70491, 58712, 60857, 61372, 59908, 60342, 61023, 61942, 62192, 62300, 62579, 62640, 63893, 63962, 64017, 64393, 64469, 65593, 66969, 68302, 69136, 69198, 69422, 69658, 70022, 70571, 70763, 71304, 71706, 71986, 71994, 72054, 72100, 72304, 72521, 72523, 73078, 74621, 75041, 75498, 36945, 40158, 42571, 42586, 42610, 42656, 42709, 42744, 43085, 43328, 45576, 46679, 46928, 46933, 46957, 47044, 47840, 50036, 50200, 51193, 51195, 52855, 52952, 55474, 55664, 55766, 56093, 57446, 59044, 59069, 59562, 62192, 67924, 68341, 47840, 51282, 57816, 58292, 58812, 58860, 60044, 61709, 62398, 70789, 72712, 37450, 60451, 76006, 39284, 39295, 42146, 42294, 47417, 74836, 61358, 74069, 74543, 75433, 75513, 48522, 48786, 49757, 50008, 51283, 56512, 57598, 57613, 51201, 51518, 51619, 52148, 48044, 48141, 48308, 48311, 48312, 48313, 55701, 56274, 57931, 59123, 60044, 58226, 58964, 60796, 65444, 65755, 72366, 61358, 69861, 55664, 47044, 42075, 42525, 49310, 49311, 49837, 50057, 50442, 50549, 50777, 51892, 51939, 52667, 59833, 53444, 53770, 53797, 54111, 54134, 71025, 55949, 61236, 56133, 56717, 56914, 57630, 57687, 57932, 58016, 58020, 58022, 58023, 59551, 59862, 62348, 62398, 62538, 62639, 63096, 63319, 63369, 63084, 64416, 64690, 65087, 69663, 69703, 70300, 72130, 71947, 35994, 40071, 42344, 42345, 42346, 42971, 43184, 43312, 45631, 45814, 46581, 68085, 46583, 46767, 46934, 47172, 50381, 50544, 53143, 54690, 54942};
+aura_whitelist = {16592,88053, 34807, 48083, 52663, 54141, 56327, 64785, 68855,
+    56741, 55708, 40158, 68862, 47503, 47335, 47428, 47704, 47705, 47706, 48795,
+    49774, 49733, 62021, 51638, 63678, 52619, 52670, 53160, 57901, 56075, 55928,
+    56102, 56740, 57551, 57887, 58429, 70491, 58712, 60857, 61372, 59908, 60342,
+    61023, 61942, 62192, 62300, 62579, 62640, 63893, 63962, 64017, 64393, 64469,
+    65593, 66969, 68302, 69136, 69198, 69422, 69658, 70022, 70571, 70763, 71304,
+    71706, 71986, 71994, 72054, 72100, 72304, 72521, 72523, 73078, 74621, 75041,
+    75498, 36945, 40158, 42571, 42586, 42610, 42656, 42709, 42744, 43085, 43328,
+    45576, 46679, 46928, 46933, 46957, 47044, 47840, 50036, 50200, 51193, 51195,
+    52855, 52952, 55474, 55664, 55766, 56093, 57446, 59044, 59069, 59562, 62192,
+    67924, 68341, 47840, 51282, 57816, 58292, 58812, 58860, 60044, 61709, 62398,
+    70789, 72712, 37450, 60451, 76006, 39284, 39295, 42146, 42294, 47417, 74836,
+    61358, 74069, 74543, 75433, 75513, 48522, 48786, 49757, 50008, 51283, 56512,
+    57598, 57613, 51201, 51518, 51619, 52148, 48044, 48141, 48308, 48311, 48312,
+    48313, 55701, 56274, 57931, 59123, 60044, 58226, 58964, 60796, 65444, 65755,
+    72366, 61358, 69861, 55664, 47044, 42075, 42525, 49310, 49311, 49837, 50057,
+    50442, 50549, 50777, 51892, 51939, 52667, 59833, 53444, 53770, 53797, 54111,
+    54134, 71025, 55949, 61236, 56133, 56717, 56914, 57630, 57687, 57932, 58016,
+    58020, 58022, 58023, 59551, 59862, 62348, 62398, 62538, 62639, 63096, 63319,
+    63369, 63084, 64416, 64690, 65087, 69663, 69703, 70300, 72130, 71947, 35994,
+    40071, 42344, 42345, 42346, 42971, 43184, 43312, 45631, 45814, 46581, 68085,
+    46583, 46767, 46934, 47172, 50381, 50544, 53143, 54690, 54942};
 
 ------------------ Донатные маунты -----------------------------------------
 
@@ -104,9 +127,39 @@ local class_spell_list = {  [1] = {88005, 88006, 88007, 88008, 91154, 91155, 911
 local function updateCharacterSpells(player, playerGUID)
     local class = player:GetClass()
 	player:LearnSpell(668);
+    player:LearnSpell(75); -- автоматическая стрельба
 	player:LearnSpell(33389); -- верховая езда
+    player:LearnSpell(90005); -- режим строительства
+    player:LearnSpell(90010); -- поднять объект
+    player:LearnSpell(91000); -- обычный костер
+    player:LearnSpell(26659); -- аура сэма
+    player:LearnSpell(18960); -- телепорт на лунку
+
     player:SetSkill(673,1,300,300); -- Низкий всеобщий.
     player:SetSkill(98,1,300,300); -- Всеобщий.
+
+    -- броня и оружие
+    player:SetSkill(673,1,300,300);
+    player:SetSkill(44,1,300,300);
+    player:SetSkill(45,1,300,300);
+    player:SetSkill(415,1,300,300);
+    player:SetSkill(226,1,300,300);
+    player:SetSkill(173,1,300,300);
+    player:SetSkill(95,1,300,300);
+    player:SetSkill(118,1,300,300);
+    player:SetSkill(46,1,300,300);
+    player:SetSkill(54,1,300,300);
+    player:SetSkill(229,1,300,300);
+    player:SetSkill(433,1,300,300);
+    player:SetSkill(136,1,300,300);
+    player:SetSkill(43,1,300,300);
+    player:SetSkill(176,1,300,300);
+    player:SetSkill(172,1,300,300);
+    player:SetSkill(160,1,300,300);
+    player:SetSkill(55,1,300,300);
+    player:SetSkill(162,1,300,300);
+    player:SetSkill(228,1,300,300);
+
     --local playerGUID = player:GetGUIDLow()
     local spellsNeedUpdate = false;
     local result = CharDBQuery("SELECT version FROM character_spells_version WHERE ID = "..playerGUID)
@@ -150,37 +203,51 @@ local function updateCharacterSpells(player, playerGUID)
 end
 ----------------- Обновление способностей персонажа END -----------------
 
---------------------------- Обработчик событий при логине в игру ------------------
+----------------- Очистка с персонажа аур, навешиваемых фичами типа лодки, дилижанса, etc
+function cleanForcedAuras(player)
+    if(player:HasAura(84047)) then -- весло на лодке
+        player:RemoveAura(84047);
+    end
+    if(player:HasAura(60968)) then -- аура1 дилижанса
+        player:RemoveAura(60968);
+    end
+    if(player:HasAura(65635)) then -- аура2 дилижанса
+        player:RemoveAura(65635);
+    end
+end
+
+-----------------------------------------------------------------------------------
+--------------------- ОБРАБОЧИК СОБЫТИЙ ПРИ ЛОГИНЕ В ИГРУ -------------------------
+-----------------------------------------------------------------------------------
 function loginEvent(event, player, arg2, arg3, arg4)	
 
-	if (event == 3) then
-		--player:SendBroadcastMessage("Test  login!!!");
-	end
     local playerGUID = player:GetGUIDLow();
     local accountId = player:GetAccountId();
+
+    ----------- возвращаем игрока в основную фазу (перманентная и творческая обрабатываются позже в этом же методе)
+    player:SetPhaseMask( 1, true );
+
+    ----------- убираем с игрока лишние ауры
+    cleanForcedAuras(player)
+
+    ----------- инициируем стартовый квест
     local welcome_quest_status = player:GetQuestStatus( 110005 );
     if(welcome_quest_status == 3 or welcome_quest_status == 0)then
         player:AddQuest( 110005 );
     end
-	
---------------------------------------------------------
---------- ДОНАТЫ НАЧАЛО --------------------------------
-	
+
+    ------------- обновляем абилки персонажа
+    updateCharacterSpells(player, playerGUID)
+
+
+    --------- Выдаем донатные плюшки (маунты и т.п.)
 	checkWhiteHorseDonations(player);
 	checkBlackGoatDonations(player);
 	checkGoldGoatDonations(player);
 	checkWhiteGoatDonations(player);
-	
---------- ДОНАТЫ - ОКОНЧАНИЕ ---------------------------
---------------------------------------------------------
-      
-	updateCharacterSpells(player, playerGUID)
-	if player:HasAura(CREATIVE_PHASE_AURA) then-- Если игрок в Творческой фазе, то вернуть его в нее
-		player:SetPhaseMask(1024, true );
-		player:SendBroadcastMessage("Вы находитесь в творческой фазе. Выйти из фазы можно командой .leavephase.\n|cFFC43533ВНИМАНИЕ! Все поставленные ГО-Объекты нельзя будет вернуть обратно в инвентарь!")
-	else
-		player:SetPhaseMask( 1, true );
-	end
+
+
+    ----------- применяем перманентный рост, морф, фазу
     local result = CharDBQuery("SELECT display_id, height, phase FROM character_customs WHERE char_id = "..playerGUID)
     if result then
         repeat
@@ -200,8 +267,14 @@ function loginEvent(event, player, arg2, arg3, arg4)
             ------///
         until not result:NextRow()
     end
+
+    --------- обработываем творческую фазу (творческая фаза имеет больший приоритет, чем перманентная, потому обрабатывается позже)
+    if player:HasAura(CREATIVE_PHASE_AURA) then-- Если игрок в Творческой фазе, то вернуть его в нее
+        player:SetPhaseMask(1024, true );
+        player:SendBroadcastMessage("Вы находитесь в творческой фазе. Выйти из фазы можно командой .leavephase.\n|cFFC43533ВНИМАНИЕ! Все поставленные ГО-Объекты нельзя будет вернуть обратно в инвентарь!")
+    end
     
-    if (accountId == 3) then
+    if (accountId == 3) then -- митон посылал розальбе открытку на день святого валентина
         local currentTime = os.time();
         if (not player:HasItem( 300025 ) and currentTime >= 1550094000 and currentTime <= 1550350800) then
             playerTempVariable = player:GetName();
@@ -212,6 +285,7 @@ end
 
 --------------------------- Обработчик кастомных комманд (кроме дм-ских) --------------
 local function OnPlayerCommand(event, player, command)
+    ---------------- звания --------------------------------------
 	if (string.match(command, 'addtitle %d+$')) then -- Присвоение игроком себе звания
 		local title = string.match(command, '%d+$')
 		player:SetKnownTitle( title )
@@ -224,13 +298,14 @@ local function OnPlayerCommand(event, player, command)
         OnGossipHello(event, player, player)
         return false
 	---------------------- АУРЫ ----------------------------------
-	elseif (string.match(command, 'clearauras')) then -- Удаление игроком у себя всех аур белого списка, доступно всем
+	elseif (string.match(command, 'clearauras')) then -- Удаление игроком у себя всех аур белого списка, доступно всем + удаление багованных аур от лодок и т.п.
 		for i,v in pairs(aura_whitelist) do
 			if(player:HasAura( v )) then
 				player:RemoveAura( v );
 				player:SendBroadcastMessage("Удалена аура " .. v);
 			end
-		end
+        end
+        cleanForcedAuras(player)
         return false
 	elseif (string.match(command, 'cleartargetauras')) then -- Удаление игроком у цели всех аур белого списка, доступно всем
 		if(player:GetGMRank() > 0)then
@@ -255,6 +330,7 @@ local function OnPlayerCommand(event, player, command)
 			end
 		end
         return false
+    ------------------- гошки-телепортаторы установка, изменение -----------------------
 	elseif (string.match(command, 'gobtele %d+$')) then -- Привязка телепорта к гошке
         local guid = string.match(command, '%d+$')
         if(player:GetGMRank() > 0 or IsThirdDM(player))then
@@ -291,7 +367,8 @@ local function OnPlayerCommand(event, player, command)
             end
         end
         return false
-	elseif (string.match(command, 'itemadd %d+$')) then -- мастерское добавление итемов
+    ----------------------- мастерское добавление итемов ----------------------------
+	elseif (string.match(command, 'itemadd %d+$')) then
 		local entry = tonumber(string.match(command, '%d+$'))
 		if (player:GetGMRank() > 1 and entry > 2110896) then -- 2110896 - с этого ID начинаются созданные мастерами итемы	
 			if (entry == 2110926 or entry == 2110924 or entry == 2110923 or entry == 2110922 or entry == 2110921) then
@@ -378,42 +455,6 @@ local function logoutEvent(event, player, arg2, arg3, arg4)
     -- nothing
 end
 
---------------------------- Обработчик событий при создании персонажа ----------------
-
-local function OnPlayerCreate(event, player)
-    if(player:IsAlliance())then
-        print("Олени на колени");
-        player:SetSkill(98,1,300,300);
-    end;
-    player:SetSkill(673,1,300,300);
-    
-    player:SetSkill(44,1,300,300);
-    player:SetSkill(45,1,300,300);
-    player:SetSkill(415,1,300,300);
-    player:SetSkill(226,1,300,300);
-    player:SetSkill(173,1,300,300);
-    player:SetSkill(95,1,300,300);
-    player:SetSkill(118,1,300,300);
-    player:SetSkill(46,1,300,300);
-    player:SetSkill(54,1,300,300);
-    player:SetSkill(229,1,300,300);
-    player:SetSkill(433,1,300,300);
-    player:SetSkill(136,1,300,300);
-    player:SetSkill(43,1,300,300);
-    player:SetSkill(176,1,300,300);
-    player:SetSkill(172,1,300,300);
-    player:SetSkill(160,1,300,300);
-    player:SetSkill(55,1,300,300);
-    player:SetSkill(162,1,300,300);
-    player:SetSkill(228,1,300,300);
-    player:LearnSpell(90005);
-    player:LearnSpell(90010);    
-
-    player:LearnSpell(91000);
-    player:LearnSpell(26659);
-	player:LearnSpell(18960);
-
-end
 
 local function OnAreaTrigger(event, player, triggerId)
     --player:SendBroadcastMessage(triggerId);
@@ -474,6 +515,14 @@ local function OnAreaTrigger(event, player, triggerId)
         end
     end
 end
+
+
+
+
+
+
+
+----------------------- ниже просто тестовый неразобранный код, чисто чтоб не забыть оставлено ----------------------
 
 --[[local function castEvent(event, playerq, spell, skipCheck)
 	if (event == 5) then
