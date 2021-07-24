@@ -31,13 +31,13 @@ function ItemForge.OnForge(event, player, spell)
     local spellId = spell:GetEntry();
 
     -- очищаем слоты статов
-    item:ClearEnchantment( slot9 )
-    item:ClearEnchantment( slot10 )
+    item:ClearEnchantment(slot9)
+    item:ClearEnchantment(slot10)
 
     if item == nil then return end
 
     if spellId == 88086 then
         local chant = math.random(1,allNum)
-        item:SetEnchantment(chant,slot9)
+        item:SetEnchantment(allStatsPlusOne{chant},slot9)
     end
 end
