@@ -19,8 +19,13 @@ local function castEvent(event, player, spell, skipCheck)
     if (player:GetGMRank() == 3) then
 		player:SendBroadcastMessage(spellId)
     end
+
+    -- обработка спеллов или вызов хендлеров
     if (spellId == 1804) then -- взлом замка
 
+    elseif (spellId == 88086) then -- перековка
+        ItemForge.OnForge(event, player, spell)
+        return false;
     elseif (spellId == 91095) then -- обшаривание карманов
         local zone = player:GetZoneId();
 
@@ -103,8 +108,6 @@ local function castEvent(event, player, spell, skipCheck)
             playersRubberyTime[selection:GetName()] = os.time();
             return true;
         end
-
-
 
         return true;
 
