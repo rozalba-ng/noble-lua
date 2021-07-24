@@ -36,8 +36,11 @@ function ItemForge.OnForge(event, player, spell)
 
     if item == nil then return end
 
-    if spellId == 88086 then
+    if spellId == 88086 then -- хаос 1 (рандомный стат +1 на плечи, грудь, шапку, ноги, перчи
         local chant = math.random(1,allNum)
         item:SetEnchantment(allStatsPlusOne[chant],slot9)
+    elseif spellId == 88087 then -- хаос 2 (рандомный стат +2 на плечи, грудь, шапку, ноги, перчи
+        local chant = math.random(1,allNum)
+        item:SetEnchantment(allStatsPlusTwo[chant],slot9)
     end
 end

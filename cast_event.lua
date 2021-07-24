@@ -23,7 +23,7 @@ local function castEvent(event, player, spell, skipCheck)
     -- обработка спеллов или вызов хендлеров
     if (spellId == 1804) then -- взлом замка
 
-    elseif (spellId == 88086) then -- перековка
+    elseif (spellId == 88086 or spellId == 88087) then -- перековка
         ItemForge.OnForge(event, player, spell)
         return false;
     elseif (spellId == 91095) then -- обшаривание карманов
