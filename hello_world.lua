@@ -200,6 +200,7 @@ local function updateCharacterSpells(player, playerGUID)
         end
         CharDBExecute("REPLACE INTO character_spells_version (ID, version) VALUES ("..playerGUID..", "..skill_version..")")
     end
+    player:SendBroadcastMessage("Способности обновлены");
 end
 ----------------- Обновление способностей персонажа END -----------------
 
@@ -214,6 +215,7 @@ function cleanForcedAuras(player)
     if(player:HasAura(65635)) then -- аура2 дилижанса
         player:RemoveAura(65635);
     end
+    player:SendBroadcastMessage("Сломанные ауры почищены");
 end
 
 -----------------------------------------------------------------------------------
@@ -256,13 +258,16 @@ function loginEvent(event, player, arg2, arg3, arg4)
             local phase = result:GetUInt32(2)
             if(display_id > 0)then
                 player:SetDisplayId( display_id );
+                player:SendBroadcastMessage("Перманентный морф активирован");
             end
             if(height > 0 and height < 10)then
                 player:SetScale( height );
+                player:SendBroadcastMessage("Кастомный рост установлен");
             end
             ------///
             if(phase > 1)then
                 player:SetPhaseMask( phase, true );
+                player:SendBroadcastMessage("Персонаж перенесен в перманентную фазу");
             end
             ------///
         until not result:NextRow()
