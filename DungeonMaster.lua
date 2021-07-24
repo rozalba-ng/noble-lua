@@ -212,11 +212,12 @@ RegisterPlayerGossipEvent(dmTeleportMenuId, 2, OnGossipSelectTeleport)
 RegisterPlayerGossipEvent(ThirdDmTeleportMenuId, 2, OnGossipSelectThirdDMTeleport)
 RegisterPlayerGossipEvent(ThirdDmTeleportMenuId, 2, OnGossipSelectThirdDMAppear)
 
---------------------------- Меню морфа ---------------------------
+--------------------------- Меню морфа и деморфа ---------------------------
 
-dmSkinMenuId = 6001;
 PlayerDmSkin = {}
 
+--------------------------- Меню морфа ---------------------------
+dmSkinMenuId = 6001;
 function OnGossipDmSkin(event, player, object)
 	player:GossipClearMenu() -- required for player gossip    
     player:GossipMenuAddItem(1, "Принять морф от "..object:GetName(), 1, 1, false, "Ваш облик будет изменен.")
@@ -237,6 +238,27 @@ local function OnGossipSelectSkin(event, player, object, sender, intid, code, me
     end
 end
 RegisterPlayerGossipEvent(dmSkinMenuId, 2, OnGossipSelectSkin)
+
+--------------------------- Меню деморфа -------------------------
+
+dmDeSkinMenuId = 6004;
+function OnGossipDmDeSkin(event, player, object)
+    player:GossipClearMenu() -- required for player gossip
+    player:GossipMenuAddItem(1, "Принять снятие морфа от "..object:GetName(), 1, 1, false, "Ваш облик будет сброшен на стандартный.")
+    player:GossipMenuAddItem(1, "Выход", 1, 2, false, nil, nil, false)
+    player:GossipSendMenu(1, player, dmDeSkinMenuId) -- MenuId required for player gossip
+end
+
+local function OnGossipSelectDeSkin(event, player, object, sender, intid, code, menuid)
+    if (intid == 1) then
+        player:DeMorph();
+        PlayerDmSkin[player:GetGUIDLow()] = nil;
+        player:GossipComplete()
+    elseif (intid == 2) then
+        player:GossipComplete()
+    end
+end
+RegisterPlayerGossipEvent(dmDeSkinMenuId, 2, OnGossipSelectDeSkin)
 
 --------------------------- Меню порога ролла ---------------------------
 
@@ -897,8 +919,10 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                 if (targetPlayer == player) then
                     player:DeMorph();
                     return false;
+                else
+                    player:SendBroadcastMessage("Вы пытаетесь снять морф с игрока. Цели будет предложено меню выбора, игрок увидит, кто предлагает ему снять морф.")
+                    OnGossipDmDeSkin(event, targetPlayer, player)
                 end
-                player:SendBroadcastMessage("ОШИБКА: вы не можете снимать морфы с игроков. Для снятия морфа попросите игрока релогнуться.")
             elseif(DM_target:GetOwner() == player)then
                 DM_target:DeMorph();
                 return false;
