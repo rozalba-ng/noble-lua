@@ -38,6 +38,6 @@ function ItemForge.OnForge(event, player, spell)
 
     if spellId == 88086 then
         local chant = math.random(1,allNum)
-        item:SetEnchantment(allStatsPlusOne{chant},slot9)
+        item:SetEnchantment(allStatsPlusOne[chant],slot9)
     end
 end
