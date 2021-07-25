@@ -41,6 +41,8 @@ function ItemForge.OnForge(event, player, spell)
         item:SetEnchantment(allStatsPlusOne[chant],slot9)
     elseif spellId == 88087 then -- хаос 2 (рандомный стат +2 на плечи, грудь, шапку, ноги, перчи
         local chant = math.random(1,allNum)
-        item:SetEnchantment(allStatsPlusTwo[chant],slot9)
+        item:SetEnchantment(allStatsPlusOne[chant],slot9)
+        chant = math.random(1,allNum)
+        item:SetEnchantment(allStatsPlusOne[chant],slot10)
     end
 end
