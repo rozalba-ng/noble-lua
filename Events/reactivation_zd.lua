@@ -8,7 +8,7 @@ mount_raptor_id = 1200060;
 local function OnGossipGoblin(event, player, object)
     player:GossipClearMenu() -- required for player gossip
     local accountId = player:GetAccountId();
-    local result = AuthDBQuery("SELECT * FROM account WHERE accountId = "..accountId .." and zd_mount=1");
+    local result = AuthDBQuery("SELECT * FROM account WHERE id = "..accountId .." and zd_mount=1");
     if(result ~= nil) then
         player:GossipMenuAddItem(0, "Жевра Западной Долины", 1, 1, false, "Вы выбрали: Жевра Западной Долины. Выбор нельзя будет отменить. Вы уверены?")
         player:GossipMenuAddItem(0, "Гиена диких степей", 1, 2, false, "Вы выбрали: Гиена диких степей. Выбор нельзя будет отменить. Вы уверены?")
