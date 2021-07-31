@@ -29,14 +29,17 @@ local function OnGossipGoblinSelect(event, player, object, sender, intid, code, 
         AuthDBExecute("REPLACE INTO `donations` (`accountId`, `accountName`, `amount`, `currency`, `donateType`, `gift_done`, `comment`) VALUES ("..accountId ..", '"..accountId .."', '0', NULL, 'zevra', 0, 'reactivation'); ")
         AuthDBExecute("UPDATE account SET zd_mount=0 WHERE id = "..accountId)
         player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500Чтобы получить выбранного ездового спутника - перезайдите в игру!");
+        player:GossipComplete()
     elseif (intid == 2) then
         AuthDBExecute("REPLACE INTO `donations` (`accountId`, `accountName`, `amount`, `currency`, `donateType`, `gift_done`, `comment`) VALUES ("..accountId ..", '"..accountId .."', '0', NULL, 'gien', 0, 'reactivation'); ")
         AuthDBExecute("UPDATE account SET zd_mount=0 WHERE id = "..accountId)
         player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500Чтобы получить выбранного ездового спутника - перезайдите в игру!");
+        player:GossipComplete()
     elseif (intid == 3) then
         AuthDBExecute("REPLACE INTO `donations` (`accountId`, `accountName`, `amount`, `currency`, `donateType`, `gift_done`, `comment`) VALUES ("..accountId ..", '"..accountId .."', '0', NULL, 'raptor', 0, 'reactivation'); ")
         AuthDBExecute("UPDATE account SET zd_mount=0 WHERE id = "..accountId)
         player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500Чтобы получить выбранного ездового спутника - перезайдите в игру!");
+        player:GossipComplete()
     elseif (intid == 4) then
         player:GossipComplete()
     end

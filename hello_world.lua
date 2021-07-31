@@ -297,6 +297,9 @@ function loginEvent(event, player, arg2, arg3, arg4)
 	checkBlackGoatDonations(player);
 	checkGoldGoatDonations(player);
 	checkWhiteGoatDonations(player);
+    checkZevraDonations(player);
+    checkGienDonations(player);
+    checkRaptorDonations(player);
 
 
     ----------- применяем перманентный рост, морф, фазу
