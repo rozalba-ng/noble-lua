@@ -42,5 +42,5 @@ local function OnGossipGoblinSelect(event, player, object, sender, intid, code, 
     end
 end
 
-RegisterCreatureGossipEvent(NpcChargerId, 1, OnGossipGoblin)
-RegisterCreatureGossipEvent(NpcChargerId, 2, OnGossipGoblinSelect)
+RegisterCreatureGossipEvent(goblinId, 1, OnGossipGoblin)
+RegisterCreatureGossipEvent(goblinId, 2, OnGossipGoblinSelect)
