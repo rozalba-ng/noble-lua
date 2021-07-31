@@ -26,16 +26,16 @@ end
 local function OnGossipGoblinSelect(event, player, object, sender, intid, code, menuid)
     local accountId = player:GetAccountId();
     if (intid == 1) then
-        AuthDBExecute("REPLACE INTO `donations` (`accountId`, `accountName`, `amount`, `currency`, `donateType`, `gift_done`, `comment`, `donateDate`) VALUES ("..accountId ..", '"..accountId .."', '0', NULL, 'zevra', 0, 'reactivation'); ")
-        AuthDBExecute("UPDATE account WHERE accountId = "..accountId .." SET zd_mount=0")
+        AuthDBExecute("REPLACE INTO `donations` (`accountId`, `accountName`, `amount`, `currency`, `donateType`, `gift_done`, `comment`) VALUES ("..accountId ..", '"..accountId .."', '0', NULL, 'zevra', 0, 'reactivation'); ")
+        AuthDBExecute("UPDATE account WHERE id = "..accountId .." SET zd_mount=0")
         player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500Чтобы получить выбранного ездового спутника - перезайдите в игру!");
     elseif (intid == 2) then
-        AuthDBExecute("REPLACE INTO `donations` (`accountId`, `accountName`, `amount`, `currency`, `donateType`, `gift_done`, `comment`, `donateDate`) VALUES ("..accountId ..", '"..accountId .."', '0', NULL, 'gien', 0, 'reactivation'); ")
-        AuthDBExecute("UPDATE account WHERE accountId = "..accountId .." SET zd_mount=0")
+        AuthDBExecute("REPLACE INTO `donations` (`accountId`, `accountName`, `amount`, `currency`, `donateType`, `gift_done`, `comment`) VALUES ("..accountId ..", '"..accountId .."', '0', NULL, 'gien', 0, 'reactivation'); ")
+        AuthDBExecute("UPDATE account WHERE id = "..accountId .." SET zd_mount=0")
         player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500Чтобы получить выбранного ездового спутника - перезайдите в игру!");
     elseif (intid == 3) then
-        AuthDBExecute("REPLACE INTO `donations` (`accountId`, `accountName`, `amount`, `currency`, `donateType`, `gift_done`, `comment`, `donateDate`) VALUES ("..accountId ..", '"..accountId .."', '0', NULL, 'raptor', 0, 'reactivation'); ")
-        AuthDBExecute("UPDATE account WHERE accountId = "..accountId .." SET zd_mount=0")
+        AuthDBExecute("REPLACE INTO `donations` (`accountId`, `accountName`, `amount`, `currency`, `donateType`, `gift_done`, `comment`) VALUES ("..accountId ..", '"..accountId .."', '0', NULL, 'raptor', 0, 'reactivation'); ")
+        AuthDBExecute("UPDATE account WHERE id = "..accountId .." SET zd_mount=0")
         player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500Чтобы получить выбранного ездового спутника - перезайдите в игру!");
     elseif (intid == 4) then
         player:GossipComplete()
