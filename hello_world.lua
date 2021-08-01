@@ -44,13 +44,16 @@ mount_white_horse_id = 1200006;
 mount_black_goat_id = 1200023;
 mount_gold_goat_id = 1200024;
 mount_white_goat_id = 1200025;
+---- маунты реактивации Западная Долина
+mount_zevra_id = 1200058;
+mount_gien_id = 1200059;
+mount_raptor_id = 1200060;
 
 
 function checkWhiteHorseDonations(player)
 	local accountId = player:GetAccountId();
 	local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='white_horse'");
 	if(result ~= nil) then
-	
 		if((player:HasItem(mount_white_horse_id) or player:HasSpell(mount_white_horse_id)) == false) then
 			local added = player:AddItem(mount_white_horse_id);                    
 			if(added == nil)then
@@ -110,7 +113,54 @@ function checkWhiteGoatDonations(player)
 		end
     end
 end
+function checkZevraDonations(player)
+    local accountId = player:GetAccountId();
+    local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='zevra'");
+    if(result ~= nil) then
 
+        if((player:HasItem(mount_zevra_id) or player:HasSpell(mount_zevra_id)) == false) then
+            local added = player:AddItem(mount_zevra_id);
+            if(added == nil)then
+                SendMail( "Жевра Западной Долины", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, mount_zevra_id, 1 )
+                player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник - Жевра Западной Долины - отправлен по почте. Приятной игры!");
+            else
+                player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентарь добавлен выбранный вами ездовой спутник - Жевра Западной Долины. Приятной игры!");
+            end
+        end
+    end
+end
+function checkGienDonations(player)
+    local accountId = player:GetAccountId();
+    local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='gien'");
+    if(result ~= nil) then
+
+        if((player:HasItem(mount_gien_id) or player:HasSpell(mount_gien_id)) == false) then
+            local added = player:AddItem(mount_gien_id);
+            if(added == nil)then
+                SendMail( "Гиена диких степей", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, mount_gien_id, 1 )
+                player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник - Гиена диких степей - отправлен по почте. Приятной игры!");
+            else
+                player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентарь добавлен выбранный вами ездовой спутник - Гиена диких степей. Приятной игры!");
+            end
+        end
+    end
+end
+function checkRaptorDonations(player)
+    local accountId = player:GetAccountId();
+    local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='raptor'");
+    if(result ~= nil) then
+
+        if((player:HasItem(mount_raptor_id) or player:HasSpell(mount_raptor_id)) == false) then
+            local added = player:AddItem(mount_raptor_id);
+            if(added == nil)then
+                SendMail( "Джунглевый раптор", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, mount_raptor_id, 1 )
+                player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник - Джунглевый раптор - отправлен по почте. Приятной игры!");
+            else
+                player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентарь добавлен выбранный вами ездовой спутник - Джунглевый раптор. Приятной игры!");
+            end
+        end
+    end
+end
 ----------------- Обновление способностей персонажа BEGIN -----------------
 local skill_version = 8;
 local class_spell_list = {  [1] = {88005, 88006, 88007, 88008, 91154, 91155, 91156, 91157, 91158, 91159, 91160, 91161, 91162, 87001, 87002, 87003, 87004, 87008, 87005, 87006, 87007, 87009, 87010, 86003, 86004, 75}, -- Воин
@@ -247,6 +297,9 @@ function loginEvent(event, player, arg2, arg3, arg4)
 	checkBlackGoatDonations(player);
 	checkGoldGoatDonations(player);
 	checkWhiteGoatDonations(player);
+    checkZevraDonations(player);
+    checkGienDonations(player);
+    checkRaptorDonations(player);
 
 
     ----------- применяем перманентный рост, морф, фазу
