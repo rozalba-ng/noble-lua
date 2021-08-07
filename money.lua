@@ -8,6 +8,14 @@ local guildzone_boralus_aura = 91175
 
 local quel_faction = 1165
 
+local venture_faction = 1168
+local ekspedition_faction = 1169
+local zulhetis_faction = 1170
+local brothers_faction = 1171
+local blacksun_faction = 1173
+
+local korus_faction = 1172
+
 local function countMoneyBonus(player)
     player:ModifyMoney(25);
     local guild = player:GetGuild();
@@ -69,8 +77,42 @@ local function countStormwindReputation(player)
             r = r + 3
         end
 
-        -- бонус за финал сюжета
-        r = r * 3;
+        --	Начисление репутации
+        player:SetReputation(faction, player:GetReputation(faction) + r)
+    end
+end
+
+local function countZdReputation(player)
+    local map, zone, trueZone, r = player:GetMapId(), player:GetZoneId(), false, 0
+    if (zone == 10267) then
+        --	Игрок в Корусе
+        player:SetReputation(korus_faction, player:GetReputation(korus_faction) + 15)
+    end
+
+    local faction
+    if player:GetQuestStatus(110133) == 6 then
+        --	Игрок выполнил квест на вступление в Тени Штормграда
+        faction = venture_faction
+    elseif player:GetQuestStatus(110124) == 6 then
+        --	Игрок выполнил квест на вступление в Королевство Штормград
+        faction = ekspedition_faction
+    elseif player:GetQuestStatus(110169) == 6 then
+        --	Игрок выполнил квест на вступление в Королевство Штормград
+        faction = zulhetis_faction
+    elseif player:GetQuestStatus(110168) == 6 then
+        --	Игрок выполнил квест на вступление в Королевство Штормград
+        faction = brothers_faction
+    elseif player:GetQuestStatus(110170) == 6 then
+        --	Игрок выполнил квест на вступление в Королевство Штормград
+        faction = blacksun_faction
+    end
+
+    if faction then
+        local map, r = player:GetMapId(), 0
+        if (map == 9006) then
+            --	Игрок в Корусе
+            r = 15
+        end
 
         --	Начисление репутации
         player:SetReputation(faction, player:GetReputation(faction) + r)
@@ -105,6 +147,7 @@ local function calculateBonuses()
                 countStormwindReputation(player)
                 countBoralusBonus(player)
                 countQueltalasReputation(player)
+                countZdReputation(player)
             end
         end;
     end
