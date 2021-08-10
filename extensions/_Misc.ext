@@ -12,14 +12,3 @@ math.randomseed(tonumber(tostring(os.time()):reverse():sub(1,6)))
 -- Set debug.traceback to use StackTracePlus to print full stack trace
 local trace = require("StackTracePlus")
 debug.traceback = trace.stacktrace
-
-reputation_friendly = 3000;
-reputation_honored = 9000;
-reputation_revered = 21000;
-
-venture_faction = 1168
-ekspedition_faction = 1169
-zulhetis_faction = 1170
-brothers_faction = 1171
-blacksun_faction = 1173
-korus_faction = 1172

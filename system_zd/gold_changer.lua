@@ -2,6 +2,16 @@ local NpcChargerId = 110005;
 local veksel = 301115;
 local crown = 600254;
 
+local venture_faction = 1168
+local ekspedition_faction = 1169
+local zulhetis_faction = 1170
+local brothers_faction = 1171
+local blacksun_faction = 1173
+local korus_faction = 1172
+
+local reputation_friendly = 3000;
+local reputation_honored = 9000;
+local reputation_revered = 21000;
 local MenuId = 61319;
 
 local function OnGossipCharger(event, player, object)
