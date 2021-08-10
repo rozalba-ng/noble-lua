@@ -135,7 +135,7 @@ local function calculateBonuses()
             --	Добавление денег
             countMoneyBonus(player)
             --	Бонусы за онлайн
-            if (SocialTime() and player:GetPhaseMask() == 1) then
+            if (player:GetPhaseMask() == 1) then
                 countStormwindReputation(player)
                 countBoralusBonus(player)
                 countQueltalasReputation(player)
