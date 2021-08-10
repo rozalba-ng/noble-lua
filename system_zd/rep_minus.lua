@@ -9,10 +9,11 @@ local function onCreatureKill(event, player, killed)
             local Group = player:GetGroup():GetMembers()
             local RowGroup = #Group;
             for var=1,RowGroup,1 do
-                Group[var]:SetReputation(korus_faction, Group[var]:GetReputation(korus_faction) - 100)
-                Group[var]:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFУбийство невинных привело к понижению репутации с Поротом Корус.")
+                if Group[var] ~= player then
+                    Group[var]:SetReputation(korus_faction, Group[var]:GetReputation(korus_faction) - 100)
+                    Group[var]:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFУбийство невинных привело к понижению репутации с Поротом Корус.")
+                end
             end
-
             return
         end
     end
