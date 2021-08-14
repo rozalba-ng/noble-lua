@@ -532,7 +532,8 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
             elseif (arguments[1] == 'reloaddoors' and #arguments == 1) then
                 if (player:GetGMRank() > 1) then
                     assignDoorsEvents();
-                    assignFactionsData();  	
+                    assignFactionsData();
+                    player:SendBroadcastMessage('Двери перезагружены.');
                 end;
                 return false
             elseif (arguments[1] == 'rolecombatprep' and #arguments == 2) then
