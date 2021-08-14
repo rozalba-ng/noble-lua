@@ -6,18 +6,23 @@ local function onCreatureKill(event, player, killed)
             player:SetReputation(korus_faction, player:GetReputation(korus_faction) - 100)
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFУбийство невинных привело к понижению репутации с Поротом Корус.")
 
-            local Group = player:GetGroup():GetMembers()
-            local RowGroup = #Group;
+            local Group = player:GetGroup()
+            if Group == nil then
+                return
+            end
+
+            local GroupMembers = Group:GetMembers()
+            local RowGroup = #GroupMembers;
             for var=1,RowGroup,1 do
-                if Group[var] ~= player then
-                    Group[var]:SetReputation(korus_faction, Group[var]:GetReputation(korus_faction) - 100)
-                    Group[var]:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFУбийство невинных привело к понижению репутации с Поротом Корус.")
+                if GroupMembers[var] ~= player then
+                    GroupMembers[var]:SetReputation(korus_faction, GroupMembers[var]:GetReputation(korus_faction) - 100)
+                    GroupMembers[var]:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFУбийство невинных привело к понижению репутации с Поротом Корус.")
                 end
             end
+
             return
         end
     end
-
 end
 
 RegisterPlayerEvent(PLAYER_EVENT_ON_KILL_CREATURE, onCreatureKill)
