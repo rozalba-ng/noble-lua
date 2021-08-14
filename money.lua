@@ -8,14 +8,6 @@ local guildzone_boralus_aura = 91175
 
 local quel_faction = 1165
 
-local venture_faction = 1168
-local ekspedition_faction = 1169
-local zulhetis_faction = 1170
-local brothers_faction = 1171
-local blacksun_faction = 1173
-
-local korus_faction = 1172
-
 local function countMoneyBonus(player)
     player:ModifyMoney(25);
     local guild = player:GetGuild();
@@ -143,7 +135,7 @@ local function calculateBonuses()
             --	Добавление денег
             countMoneyBonus(player)
             --	Бонусы за онлайн
-            if (SocialTime() and player:GetPhaseMask() == 1) then
+            if (player:GetPhaseMask() == 1) then
                 countStormwindReputation(player)
                 countBoralusBonus(player)
                 countQueltalasReputation(player)
