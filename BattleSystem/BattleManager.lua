@@ -14,8 +14,13 @@ WOUND_AURA = 88010
 DOUBLE_ATTACK_AURA = 88076
 DEAD_AURA = 45801
 
+local classSpells = {100203,100200,100204,100201,100202,100205,100206,100212,100207,100218,100217,100226,
+	100228,100236,100240,100233,100229,100239,100215,100230,100235,100258,100259,100260,100261,
+	100241,100242,100243,100244,100245,100246,100263,100264,100265,100266,100267,100268,100269,
+	100247,100248,100249,100250,100251,100252,100270,100271,100272,100273,100274,100275,100276}
 
 local TIMER_FOR_TURN = 90
+local TIMER_FOR_ESCAPE = 15
 local TIMER_FOR_PREPARATION = 60
 --Cостояния персонажа
 local PState_DEAD = 0
@@ -33,7 +38,7 @@ local BState_CANCELED = 5
 local BState_ESCAPING = 6 
 ---
 
-
+-- вынести
 function tcontain(table,key)
 	for i = 1, #table do
 		if table[i] == key then
@@ -51,9 +56,10 @@ function findPlayer(table,key)
 	end
 	return false
 end
+
 function round(n)
-	    return n % 1 >= 0.5 and math.ceil(n) or math.floor(n)
-	end
+	return n % 1 >= 0.5 and math.ceil(n) or math.floor(n)
+end
 
 local battleList = {}
 
@@ -80,6 +86,7 @@ local listPlayersInBattleTemplate = {battleId = 0}
 
 local function createBattleData()
 	local battleTemplate = {	battleId = 0,
+								turnTimer = TIMER_FOR_TURN,
 								initorName = "", 				--|Заготовка объекта боя
 								victimName = "", 				--|
 								players = {},					--|
@@ -278,9 +285,14 @@ function startBattle(battle)
 		end
 	end
 	battle.livePlayers = #battle.players
+
+	if battle.livePlayers > 4 then
+		battle.turnTimer = 60
+	end
+
 	client_UpdatePlayersFrame(battle)
 	SayToBattle("Участники: "..playerListText,battle)
-	SetTurnTimer(battle,TIMER_FOR_TURN)
+	SetTurnTimer(battle, TIMER_FOR_TURN) -- первый ход всегда длительный
 end
 function endBattle(battle)
 	for i = 1, #battle.players do
@@ -420,7 +432,7 @@ function nextTurnBattle(battleId)
 			table.insert(battle.players,firstPlayer)
 		end
 	end
-	SetTurnTimer(battle,TIMER_FOR_TURN)
+	SetTurnTimer(battle, battle.turnTimer)
 	updateStatePlayers(battleId)
 	local firstPlayer = GetPlayerByName(battle.players[1].name)
 	firstPlayer:SendNotification("Ваш ход!")
@@ -695,7 +707,7 @@ function BM_Handlers.TryToEscape(player)
 	if battle.players[1].name == player:GetName() and battle.state == BState_STARTED then
 		battle.state = BState_ESCAPING
 		SayToBattle(player:GetName().." пытается бежать с поля боя!",battle)
-		SetEscapeTimer(battle, TIMER_FOR_TURN/2)
+		SetEscapeTimer(battle, TIMER_FOR_ESCAPE)
 		client_UpdatePlayersFrame(battle)
 		return false
 	end
@@ -996,6 +1008,9 @@ local function castEvent(event, player, spell, skipCheck)
 				local target = spell:GetTarget()
 				target:DespawnOrUnsummon()
 			end
+		elseif tcontain(classSpells,spellId) then
+			player:SendBroadcastMessage("Запрещено использовать механические способности класса в ролевом бою.")
+			return false
 		end
 	end
 end
