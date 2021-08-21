@@ -600,15 +600,15 @@ AcceptionMainFrame:SetBackdrop( { bgFile="Interface\\DialogFrame\\UI-DialogBox-B
 	AcceptionMainFrame.annotation = AcceptionMainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	AcceptionMainFrame.annotation:SetText("Памятка: |cffffffffВы можете отказаться, если уверены,\n что нападают без причины, либо сдаться\n без боя - будет засчитано ролевое поражение.|r")
 	AcceptionMainFrame.annotation:SetFont("Fonts\\MORPHEUS.TTF", 13, "OUTLINE")
-	AcceptionMainFrame.annotation:SetPoint("CENTER",0,20)
+	AcceptionMainFrame.annotation:SetPoint("CENTER",0,10)
 local AcceptButtonHolder = CreateFrame("Frame", "BM_AcceptButtonHolder", AcceptionMainFrame)
 AcceptButtonHolder:SetWidth(250)
 AcceptButtonHolder:SetHeight(40)
-AcceptButtonHolder:SetPoint("CENTER",0,-20)
+AcceptButtonHolder:SetPoint("CENTER",0,-30)
 
 	local btnAccept = CreateFrame("BUTTON", "BM_BtnAccept", AcceptButtonHolder, "UIPanelButtonTemplate");
 	btnAccept:SetSize(90, 25)
-	btnAccept:SetPoint("LEFT",10,0)
+	btnAccept:SetPoint("LEFT",10,-10)
 	btnAccept:SetText("Согласиться")
 	btnAccept:SetScript("OnClick",
 	function(self)
@@ -625,17 +625,17 @@ AcceptButtonHolder:SetPoint("CENTER",0,-20)
 	end)
 	local btnDecline = CreateFrame("BUTTON", "BM_BtnDecline", AcceptButtonHolder, "UIPanelButtonTemplate");
 	btnDecline:SetSize(90, 25)
-	btnDecline:SetPoint("RIGHT",-10,0)
+	btnDecline:SetPoint("RIGHT",-10,-10)
 	btnDecline:SetText("Отказаться")
 	btnDecline:SetScript("OnClick",
 	function(self)
-		AIO.Handle("BM_Handlers","PlayerDesclineInvite")
+		AIO.Handle("BM_Handlers","PlayerDeclineInvite")
 		AcceptionMainFrame:Hide()
 	end)
 
 	local btnLoose = CreateFrame("BUTTON", "BM_BtnDecline", AcceptButtonHolder, "UIPanelButtonTemplate");
 	btnLoose:SetSize(120, 25)
-	btnLoose:SetPoint("LEFT",65,-30)
+	btnLoose:SetPoint("LEFT",65,-45)
 	btnLoose:SetText("Сдаться без боя")
 	btnLoose:SetScript("OnClick",
 		function(self)

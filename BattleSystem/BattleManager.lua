@@ -762,7 +762,45 @@ function BM_Handlers.PlayerAcceptInvite(player)
 	startBattlePreparation(battle)
 end
 
-function BM_Handlers.PlayerDesclineInvite(player)
+function BM_Handlers.PlayerAutolooseInvite(player)
+	local battle = battleList[listPlayersInBattle[player:GetName()].battleId]
+	local initor = GetPlayerByName(battle.initorName)
+	initor:SendBroadcastMessage(player:GetName().." сдается без боя. Засчитано ролевое поражение.")
+	player:SendBroadcastMessage(player:GetName().." сдается без боя. Засчитано ролевое поражение.")
+	local newOccMessage = ""
+	local oocMessage = battle.oocMessage
+
+	local newRpMessage = ""
+	local rpMessage = battle.rpMessage
+
+	local max_char = 1500
+	for S in string.gmatch(oocMessage, "[^\"\'\\]") do
+		if string.len(newOccMessage) < max_char then
+			newOccMessage = (newOccMessage..S)
+		else
+			SayToBattle("Возникла ошибка",battle)
+			endBattle(battle)
+			break
+		end
+	end
+
+	for S in string.gmatch(rpMessage, "[^\"\'\\]") do
+		if string.len(newRpMessage) < max_char then
+			newRpMessage = (newRpMessage..S)
+		else
+			SayToBattle("Возникла ошибка",battle)
+			endBattle(battle)
+			break
+		end
+	end
+	WorldDBExecute("INSERT INTO `world`.`BattleSystem_initiations` (`initiatorName`, `targetName`, `oocReason`, `rpReason`, `accepted`) VALUES ('"..battle.initorName.."', '"..battle.victimName.."', '"..newOccMessage.."', '"..newRpMessage.."', '2');")
+	listPlayersInBattle[battle.initorName] = nil
+	listPlayersInBattle[battle.victimName] = nil
+	battleInitiations[battle.initorName] = nil
+	battle = nil
+end
+
+function BM_Handlers.PlayerDeclineInvite(player)
 	local battle = battleList[listPlayersInBattle[player:GetName()].battleId]
 	local initor = GetPlayerByName(battle.initorName)
 	initor:SendBroadcastMessage(player:GetName().." отклоняет вызов боя.")
