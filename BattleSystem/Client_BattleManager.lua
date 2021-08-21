@@ -635,7 +635,7 @@ AcceptButtonHolder:SetPoint("CENTER",0,-30)
 
 	local btnLoose = CreateFrame("BUTTON", "BM_BtnDecline", AcceptButtonHolder, "UIPanelButtonTemplate");
 	btnLoose:SetSize(120, 25)
-	btnLoose:SetPoint("LEFT",65,-45)
+	btnLoose:SetPoint("LEFT",65,-40)
 	btnLoose:SetText("Сдаться без боя")
 	btnLoose:SetScript("OnClick",
 		function(self)
