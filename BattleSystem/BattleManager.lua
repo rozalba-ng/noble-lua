@@ -765,7 +765,7 @@ end
 function BM_Handlers.PlayerAutolooseInvite(player)
 	local battle = battleList[listPlayersInBattle[player:GetName()].battleId]
 	local initor = GetPlayerByName(battle.initorName)
-	initor:SendBroadcastMessage("|cffff0000Игрок |r" ..player:GetName().."|cffff0000 сдается без боя. |cffff0000Засчитано ролевое поражение.|r")
+	initor:SendBroadcastMessage("|cffff0000Игрок |cff00ffff" ..player:GetName().."|cffff0000 сдается без боя. |cffff0000Засчитано ролевое поражение.|r")
 	player:SendBroadcastMessage("Игрок " ..player:GetName().." сдается без боя. |cffff0000Засчитано ролевое поражение.|r")
 	local newOccMessage = ""
 	local oocMessage = battle.oocMessage
