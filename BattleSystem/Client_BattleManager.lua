@@ -584,7 +584,7 @@ local attackerName = "playerName"
 local AcceptionMainFrame = CreateFrame("Frame", "BM_AcceptionMainFrame", UIParent)
 AcceptionMainFrame:SetWidth(300)
 AcceptionMainFrame:Hide()
-AcceptionMainFrame:SetHeight(200)
+AcceptionMainFrame:SetHeight(220)
 AcceptionMainFrame:SetPoint("CENTER")
 AcceptionMainFrame:SetBackdrop( { bgFile="Interface\\DialogFrame\\UI-DialogBox-Background", insets={left=4,right=4,top=4,bottom=4}, tileSize=16, tile=true, edgeFile="Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16 } )
 	AcceptionMainFrame.topLabel = AcceptionMainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -600,7 +600,7 @@ AcceptionMainFrame:SetBackdrop( { bgFile="Interface\\DialogFrame\\UI-DialogBox-B
 	AcceptionMainFrame.annotation = AcceptionMainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	AcceptionMainFrame.annotation:SetText("Памятка: |cffffffffВы можете отказаться, если уверены,\n что нападают без причины, либо сдаться\n без боя - будет засчитано ролевое поражение.|r")
 	AcceptionMainFrame.annotation:SetFont("Fonts\\MORPHEUS.TTF", 13, "OUTLINE")
-	AcceptionMainFrame.annotation:SetPoint("CENTER",0,-10)
+	AcceptionMainFrame.annotation:SetPoint("CENTER",0,20)
 local AcceptButtonHolder = CreateFrame("Frame", "BM_AcceptButtonHolder", AcceptionMainFrame)
 AcceptButtonHolder:SetWidth(250)
 AcceptButtonHolder:SetHeight(100)
@@ -635,8 +635,8 @@ AcceptButtonHolder:SetPoint("BOTTOM",130)
 
 	local btnLoose = CreateFrame("BUTTON", "BM_BtnDecline", AcceptButtonHolder, "UIPanelButtonTemplate");
 	btnLoose:SetSize(120, 25)
-	btnLoose:SetPoint("LEFT",75,0)
-	btnLoose:SetPoint("BOTTOM",45)
+	btnLoose:SetPoint("LEFT",65,0)
+	btnLoose:SetPoint("BOTTOM",50)
 	btnLoose:SetText("Сдаться без боя")
 	btnLoose:SetScript("OnClick",
 		function(self)
