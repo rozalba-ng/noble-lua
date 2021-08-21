@@ -584,7 +584,7 @@ local attackerName = "playerName"
 local AcceptionMainFrame = CreateFrame("Frame", "BM_AcceptionMainFrame", UIParent)
 AcceptionMainFrame:SetWidth(300)
 AcceptionMainFrame:Hide()
-AcceptionMainFrame:SetHeight(220)
+AcceptionMainFrame:SetHeight(190)
 AcceptionMainFrame:SetPoint("CENTER")
 AcceptionMainFrame:SetBackdrop( { bgFile="Interface\\DialogFrame\\UI-DialogBox-Background", insets={left=4,right=4,top=4,bottom=4}, tileSize=16, tile=true, edgeFile="Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16 } )
 	AcceptionMainFrame.topLabel = AcceptionMainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
