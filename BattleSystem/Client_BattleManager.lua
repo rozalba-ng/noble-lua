@@ -584,7 +584,7 @@ local attackerName = "playerName"
 local AcceptionMainFrame = CreateFrame("Frame", "BM_AcceptionMainFrame", UIParent)
 AcceptionMainFrame:SetWidth(300)
 AcceptionMainFrame:Hide()
-AcceptionMainFrame:SetHeight(250)
+AcceptionMainFrame:SetHeight(225)
 AcceptionMainFrame:SetPoint("CENTER")
 AcceptionMainFrame:SetBackdrop( { bgFile="Interface\\DialogFrame\\UI-DialogBox-Background", insets={left=4,right=4,top=4,bottom=4}, tileSize=16, tile=true, edgeFile="Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16 } )
 	AcceptionMainFrame.topLabel = AcceptionMainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -604,7 +604,7 @@ AcceptionMainFrame:SetBackdrop( { bgFile="Interface\\DialogFrame\\UI-DialogBox-B
 local AcceptButtonHolder = CreateFrame("Frame", "BM_AcceptButtonHolder", AcceptionMainFrame)
 AcceptButtonHolder:SetWidth(250)
 AcceptButtonHolder:SetHeight(100)
-AcceptButtonHolder:SetPoint("BOTTOM",125)
+AcceptButtonHolder:SetPoint("BOTTOM",130)
 
 	local btnAccept = CreateFrame("BUTTON", "BM_BtnAccept", AcceptButtonHolder, "UIPanelButtonTemplate");
 	btnAccept:SetSize(90, 25)
@@ -635,8 +635,8 @@ AcceptButtonHolder:SetPoint("BOTTOM",125)
 
 	local btnLoose = CreateFrame("BUTTON", "BM_BtnDecline", AcceptButtonHolder, "UIPanelButtonTemplate");
 	btnLoose:SetSize(120, 25)
-	btnLoose:SetPoint("LEFT",30,0)
-	btnLoose:SetPoint("BOTTOM",30)
+	btnLoose:SetPoint("LEFT",50,0)
+	btnLoose:SetPoint("BOTTOM",40)
 	btnLoose:SetText("Сдаться без боя")
 	btnLoose:SetScript("OnClick",
 		function(self)
