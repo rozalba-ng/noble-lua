@@ -471,7 +471,7 @@ function SayToBattleAndRadius(text,battle)
 	if lastPlayer then
 		local playersAround = lastPlayer:GetPlayersInRange(40)
 		for i = 1, #playersAround do
-			if sent[playersAround[i]:GetName()] ~= nil then
+			if sent[playersAround[i]:GetName()] == nil then
 				playersAround[i]:SendBroadcastMessage(text)
 			end
 		end
