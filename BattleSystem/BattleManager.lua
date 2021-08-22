@@ -452,8 +452,30 @@ function SayToBattle(text,battle)
 	end
 end
 
-function SayToRadius(text,battle)
+function SayToBattleAndRadius(text,battle)
+	local sent = {}
+	local lastPlayer
+	if battle ~= nil then
+		if battle.players ~= nil then
+			for i = 1, #battle.players do
+				local player = GetPlayerByName(battle.players[i].name)
+				if player then
+					player:SendBroadcastMessage(text)
+					sent[battle.players[i].name] = 1
+					lastPlayer = player
+				end
+			end
+		end
+	end
 
+	if lastPlayer then
+		local playersAround = lastPlayer:GetPlayersInRange(40)
+		for i = 1, #playersAround do
+			if sent[playersAround[i]:GetName()] ~= nil then
+				playersAround[i]:SendBroadcastMessage(text)
+			end
+		end
+	end
 end
 
 function SayToRadius(text,player)
