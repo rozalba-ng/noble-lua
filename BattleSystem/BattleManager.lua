@@ -4,7 +4,7 @@ local BM_Handlers = AIO.AddHandlers("BM_Handlers", {})
 
 local EVENT_ON_CAST = 5;
 
-
+BATTLE_RADIUS = 40
 
 TURN_AURA = 88037
 IS_IN_BATTLE_AURA = 88057
@@ -14,8 +14,13 @@ WOUND_AURA = 88010
 DOUBLE_ATTACK_AURA = 88076
 DEAD_AURA = 45801
 
+local classSpells = {100203,100200,100204,100201,100202,100205,100206,100212,100207,100218,100217,100226,100227,
+	100228,100236,100240,100233,100229,100239,100215,100230,100235,100258,100259,100260,100261,
+	100241,100242,100243,100244,100245,100246,100263,100264,100265,100266,100267,100268,100269,
+	100247,100248,100249,100250,100251,100252,100270,100271,100272,100273,100274,100275,100276}
 
-local TIMER_FOR_TURN = 90
+local TIMER_FOR_TURN = 60
+local TIMER_FOR_ESCAPE = 15
 local TIMER_FOR_PREPARATION = 60
 --Cостояния персонажа
 local PState_DEAD = 0
@@ -33,7 +38,7 @@ local BState_CANCELED = 5
 local BState_ESCAPING = 6 
 ---
 
-
+-- вынести
 function tcontain(table,key)
 	for i = 1, #table do
 		if table[i] == key then
@@ -51,9 +56,10 @@ function findPlayer(table,key)
 	end
 	return false
 end
+
 function round(n)
-	    return n % 1 >= 0.5 and math.ceil(n) or math.floor(n)
-	end
+	return n % 1 >= 0.5 and math.ceil(n) or math.floor(n)
+end
 
 local battleList = {}
 
@@ -80,6 +86,7 @@ local listPlayersInBattleTemplate = {battleId = 0}
 
 local function createBattleData()
 	local battleTemplate = {	battleId = 0,
+								turnTimer = TIMER_FOR_TURN,
 								initorName = "", 				--|Заготовка объекта боя
 								victimName = "", 				--|
 								players = {},					--|
@@ -264,7 +271,7 @@ function startBattle(battle)
 	for k,v in pairs (randomizeTable(sortTable.midDist)) do table.insert(newQuery,v) end
 	for k,v in pairs (randomizeTable(sortTable.highDist)) do table.insert(newQuery,v) end
 	battle.players = newQuery
-	SayToBattle(cGreen.."Начало битвы!"..cR.." Количество игроков - "..cGreen..#battle.players..cR,battle)
+	SayToBattleAndRadius(cGreen.."Начало битвы!"..cR.." Количество игроков - "..cGreen..#battle.players..cR,battle)
 	local playerListText = ""
 	for i = 1, #battle.players do
 		local player = GetPlayerByName(battle.players[i].name)
@@ -278,9 +285,14 @@ function startBattle(battle)
 		end
 	end
 	battle.livePlayers = #battle.players
+
+	if battle.livePlayers > 4 then
+		battle.turnTimer = 60
+	end
+
 	client_UpdatePlayersFrame(battle)
-	SayToBattle("Участники: "..playerListText,battle)
-	SetTurnTimer(battle,TIMER_FOR_TURN)
+	SayToBattleAndRadius("Участники: "..playerListText,battle)
+	SetTurnTimer(battle, TIMER_FOR_TURN) -- первый ход всегда длительный
 end
 function endBattle(battle)
 	for i = 1, #battle.players do
@@ -311,7 +323,7 @@ function endBattle(battle)
 			AIO.Handle(player,"BM_Handlers","EndBattle")
 		end
 	end
-	SayToBattle("Бой завершен.",battle)
+	SayToBattleAndRadius("Бой завершен.",battle)
 	local winnerList = ""
 	for i = 1, #battle.players do
 		if battle.players[i].state == PState_LIVE then
@@ -328,12 +340,12 @@ function endBattle(battle)
 	end
 	
 	if #battle.diedPlayers > 0 then
-		SayToBattle("Поверженные: "..diedList,battle)
+		SayToBattleAndRadius("Поверженные: "..diedList,battle)
 	end
 	if #battle.runAwayPlayers > 0 then
-		SayToBattle("Сбежали: "..runAwayList,battle)
+		SayToBattleAndRadius("Сбежали: "..runAwayList,battle)
 	end
-	SayToBattle("Победители: "..winnerList,battle)
+	SayToBattleAndRadius("Победители: "..winnerList,battle)
 	
 	local clearWinnerList = ""
 	for i = 1, #battle.players do
@@ -420,7 +432,7 @@ function nextTurnBattle(battleId)
 			table.insert(battle.players,firstPlayer)
 		end
 	end
-	SetTurnTimer(battle,TIMER_FOR_TURN)
+	SetTurnTimer(battle, battle.turnTimer)
 	updateStatePlayers(battleId)
 	local firstPlayer = GetPlayerByName(battle.players[1].name)
 	firstPlayer:SendNotification("Ваш ход!")
@@ -437,6 +449,39 @@ function SayToBattle(text,battle)
 				end
 			end
 		end
+	end
+end
+
+function SayToBattleAndRadius(text,battle)
+	local sent = {}
+	local lastPlayer
+	if battle ~= nil then
+		if battle.players ~= nil then
+			for i = 1, #battle.players do
+				local player = GetPlayerByName(battle.players[i].name)
+				if player then
+					player:SendBroadcastMessage(text)
+					sent[battle.players[i].name] = 1
+					lastPlayer = player
+				end
+			end
+		end
+	end
+
+	if lastPlayer then
+		local playersAround = lastPlayer:GetPlayersInRange(40)
+		for i = 1, #playersAround do
+			if sent[playersAround[i]:GetName()] == nil then
+				playersAround[i]:SendBroadcastMessage(text)
+			end
+		end
+	end
+end
+
+function SayToRadius(text,player)
+	local playersAround = player:GetPlayersInRange(BATTLE_RADIUS)
+	for i = 1, #playersAround do
+		playersAround[i]:SendBroadcastMessage(text)
 	end
 end
 
@@ -549,7 +594,7 @@ local function startBattlePreparation(battle)
 							}
 	local initor = GetPlayerByName(battle.initorName)
 	local victim = GetPlayerByName(battle.victimName)
-	local playersAround = initor:GetPlayersInRange(40)
+	local playersAround = initor:GetPlayersInRange(BATTLE_RADIUS)
 	for i = 1, #playersAround do
 		if playersAround[i]:GetName() ~= battle.victimName and playersAround[i]:GetName() ~= battle.initorName then
 			table.insert(playersCanEnter, {name = playersAround[i]:GetName(), dist = initor:GetDistance(playersAround[i]) })
@@ -642,7 +687,7 @@ local function EscapeTimer(eventId, delay, repeats)
 	local battle = battleTimerList[eventId]
 	if battle.state == BState_ESCAPING then
 		if #battle.escapeResistors == 0 then
-			SayToBattle("Игроку "..battle.players[1].name.." никто не мешает и он успешно сбегает с поле боя!",battle)
+			SayToBattleAndRadius("Игроку "..battle.players[1].name.." никто не мешает и он успешно сбегает с поле боя!",battle)
 			LetEscape(battle)
 		else
 			local escapeRoll = math.random(1,12)
@@ -665,7 +710,7 @@ local function EscapeTimer(eventId, delay, repeats)
 			end
 			SayToBattle("Порог побега: 6 + "..#battle.escapeResistors.." (Сопротивление - "..playerListText..") = "..resistPoints + 6 ..". Результат броска на побег - "..color..escapeRoll,battle)
 			if isSuccess then
-				SayToBattle(battle.players[1].name.." успешно сбегает с поля боя!",battle)
+				SayToBattleAndRadius(battle.players[1].name.." успешно сбегает с поля боя!",battle)
 				LetEscape(battle)
 			else
 				SayToBattle(battle.players[1].name.." проваливает попытку побега!",battle)
@@ -695,7 +740,7 @@ function BM_Handlers.TryToEscape(player)
 	if battle.players[1].name == player:GetName() and battle.state == BState_STARTED then
 		battle.state = BState_ESCAPING
 		SayToBattle(player:GetName().." пытается бежать с поля боя!",battle)
-		SetEscapeTimer(battle, TIMER_FOR_TURN/2)
+		SetEscapeTimer(battle, TIMER_FOR_ESCAPE)
 		client_UpdatePlayersFrame(battle)
 		return false
 	end
@@ -750,7 +795,46 @@ function BM_Handlers.PlayerAcceptInvite(player)
 	startBattlePreparation(battle)
 end
 
-function BM_Handlers.PlayerDesclineInvite(player)
+function BM_Handlers.PlayerAutolooseInvite(player)
+	local battle = battleList[listPlayersInBattle[player:GetName()].battleId]
+	local initor = GetPlayerByName(battle.initorName)
+	initor:SendBroadcastMessage("|cffff0000Игрок |cff00ffff" ..player:GetName().."|cffff0000 сдается без боя. |cffff0000Засчитано ролевое поражение.|r")
+	--player:SendBroadcastMessage("|cffff0000Игрок |cff00ffff" ..player:GetName().."|cffff0000 сдается без боя. |cffff0000Засчитано ролевое поражение.|r")
+	SayToRadius("|cffff0000Игрок |cff00ffff" ..player:GetName().."|cffff0000 сдается без боя. |cffff0000Засчитано ролевое поражение.|r", initor)
+	local newOccMessage = ""
+	local oocMessage = battle.oocMessage
+
+	local newRpMessage = ""
+	local rpMessage = battle.rpMessage
+
+	local max_char = 1500
+	for S in string.gmatch(oocMessage, "[^\"\'\\]") do
+		if string.len(newOccMessage) < max_char then
+			newOccMessage = (newOccMessage..S)
+		else
+			SayToBattle("Возникла ошибка",battle)
+			endBattle(battle)
+			break
+		end
+	end
+
+	for S in string.gmatch(rpMessage, "[^\"\'\\]") do
+		if string.len(newRpMessage) < max_char then
+			newRpMessage = (newRpMessage..S)
+		else
+			SayToBattle("Возникла ошибка",battle)
+			endBattle(battle)
+			break
+		end
+	end
+	WorldDBExecute("INSERT INTO `world`.`BattleSystem_initiations` (`initiatorName`, `targetName`, `oocReason`, `rpReason`, `accepted`) VALUES ('"..battle.initorName.."', '"..battle.victimName.."', '"..newOccMessage.."', '"..newRpMessage.."', '2');")
+	listPlayersInBattle[battle.initorName] = nil
+	listPlayersInBattle[battle.victimName] = nil
+	battleInitiations[battle.initorName] = nil
+	battle = nil
+end
+
+function BM_Handlers.PlayerDeclineInvite(player)
 	local battle = battleList[listPlayersInBattle[player:GetName()].battleId]
 	local initor = GetPlayerByName(battle.initorName)
 	initor:SendBroadcastMessage(player:GetName().." отклоняет вызов боя.")
@@ -903,7 +987,7 @@ function BM_Handlers.TechnicalLeave(player)
 	
 	local playerName = player:GetName()
 	local pid = findPlayer(battle.players,player:GetName())
-	SayToBattle(playerName.." покидает бой по неролевой причине. В случае нарушения правил сервера обратитесь к игровому мастеру.",battle)
+	SayToBattleAndRadius(playerName.." покидает бой по неролевой причине. В случае нарушения правил сервера обратитесь к игровому мастеру.",battle)
 	AIO.Handle(player,"BM_Handlers","EndBattle")
 	player:EmoteState( 0)
 	player:RemoveAura(HP_AURA)
@@ -967,7 +1051,7 @@ local function castEvent(event, player, spell, skipCheck)
 		if (spellId == 88041) and not battle then
 			local itemLink = GetItemLink(600054,8)
 				player:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное очко здоровья!|r")
-			local nearPlayers = player:GetPlayersInRange( 40, 0, 0 )
+			local nearPlayers = player:GetPlayersInRange( BATTLE_RADIUS, 0, 0 )
 			for index, nearPlayer in pairs(nearPlayers) do
 				nearPlayer:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное очко здоровья!|r")
 			end
@@ -979,7 +1063,7 @@ local function castEvent(event, player, spell, skipCheck)
 			if hpCount < battle.players[pid].maxHp then
 				local itemLink = GetItemLink(600054,8)
 				player:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное в бою очко здоровья!|r")
-				local nearPlayers = player:GetPlayersInRange( 40, 0, 0 )
+				local nearPlayers = player:GetPlayersInRange( BATTLE_RADIUS, 0, 0 )
 				for index, nearPlayer in pairs(nearPlayers) do
 					nearPlayer:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное в бою очко здоровья!|r")
 				end
@@ -996,6 +1080,9 @@ local function castEvent(event, player, spell, skipCheck)
 				local target = spell:GetTarget()
 				target:DespawnOrUnsummon()
 			end
+		elseif tcontain(classSpells,spellId) then
+			player:SendBroadcastMessage("Нарушение правил: запрещено использовать механические способности класса в ролевом бою для получения преимущества.")
+			return false
 		end
 	end
 end

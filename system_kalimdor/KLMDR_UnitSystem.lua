@@ -14,7 +14,7 @@ function TroopAiUpdate(event, creature, diff)
 		if playerList then
 			for i, player in pairs(playerList) do
 				if KAL_playerInfo[player:GetName()] then
-					local fid = KAL_playerIn	fo[player:GetName()].fid
+					local fid = KAL_playerInfo[player:GetName()].fid
 					--print("crFid "..crFid.." fid "..fid)
 					if crFid ~= fid then
 						creature:Attack(player)
