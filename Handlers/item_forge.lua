@@ -23,8 +23,10 @@ local allStatsPlusOne = {str1,agi1,int1,sta1,ver1,wil1,spi1}
 local allStatsPlusTwo = {str2,agi2,int2,sta2,ver2,wil2,spi2}
 local allNum = 7
 
-local allDefPlusOne = {sta1,ver1,wil1}
-local allAttackPlusOne = {str1,agi1,int1}
+local allDefPlusOne = {sta1,ver1,wil1 }
+local defNum = 3
+local allAttackPlusOne = {str1,agi1,int1 }
+local attackNum = 3
 
 function ItemForge.OnForge(event, player, spell)
     local item = spell:GetTarget();
@@ -44,5 +46,27 @@ function ItemForge.OnForge(event, player, spell)
         item:SetEnchantment(allStatsPlusOne[chant],slot9)
         chant = math.random(1,allNum)
         item:SetEnchantment(allStatsPlusOne[chant],slot10)
+
+    elseif spellId == 88088 then -- атака 1 на плечи, грудь, шапку, ноги, перчи
+        local chant = math.random(1,attackNum)
+        item:SetEnchantment(allAttackPlusOne[chant],slot9)
+    elseif spellId == 88089 then -- защита на плечи, грудь, шапку, ноги, перчи
+        local chant = math.random(1,defNum)
+        item:SetEnchantment(allDefPlusOne[chant],slot9)
+    elseif spellId == 88090 then -- дух 1 на плечи, грудь, шапку, ноги, перчи
+        item:SetEnchantment(spi1,slot9)
+
+    elseif spellId == 88091 then -- атака +2 на плечи, грудь, шапку, ноги, перчи
+        local chant = math.random(1,attackNum)
+        item:SetEnchantment(allAttackPlusOne[chant],slot9)
+        chant = math.random(1,attackNum)
+        item:SetEnchantment(allAttackPlusOne[chant],slot10)
+    elseif spellId == 88092 then -- защита +2 на плечи, грудь, шапку, ноги, перчи
+        local chant = math.random(1,defNum)
+        item:SetEnchantment(allDefPlusOne[chant],slot9)
+        chant = math.random(1,defNum)
+        item:SetEnchantment(allDefPlusOne[chant],slot10)
+    elseif spellId == 88090 then -- дух 2 на плечи, грудь, шапку, ноги, перчи
+        item:SetEnchantment(spi2,slot9)
     end
 end
