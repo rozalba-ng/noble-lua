@@ -38,10 +38,10 @@ function ItemForge.OnForge(event, player, spell)
 
     if item == nil then return end
 
-    if spellId == 88086 then -- хаос 1 (рандомный стат +1 на плечи, грудь, шапку, ноги, перчи
+    if spellId == 88086 or spellId == 88094 then -- хаос 1 (рандомный стат +1 на плечи, грудь, шапку, ноги, перчи
         local chant = math.random(1,allNum)
         item:SetEnchantment(allStatsPlusOne[chant],slot9)
-    elseif spellId == 88087 then -- хаос 2 (рандомный стат +2 на плечи, грудь, шапку, ноги, перчи
+    elseif spellId == 88087 or spellId == 88095 then -- хаос 2 (рандомный стат +2 на плечи, грудь, шапку, ноги, перчи
         local chant = math.random(1,allNum)
         item:SetEnchantment(allStatsPlusOne[chant],slot9)
         chant = math.random(1,allNum)
@@ -68,5 +68,53 @@ function ItemForge.OnForge(event, player, spell)
         item:SetEnchantment(allDefPlusOne[chant],slot10)
     elseif spellId == 88093 then -- дух 2 на плечи, грудь, шапку, ноги, перчи
         item:SetEnchantment(spi2,slot9)
+    elseif spellId == 88096 then -- мощь
+        local variant = math.random(1,100)
+        if variant < 6 then
+            item:SetEnchantment(str2,slot9)
+            item:SetEnchantment(sta1,slot10)
+        elseif variant < 11 then
+            item:SetEnchantment(str1,slot9)
+            item:SetEnchantment(sta2,slot10)
+        elseif variant < 41 then
+            item:SetEnchantment(str2,slot9)
+        elseif variant < 71 then
+            item:SetEnchantment(sta2,slot9)
+        else
+            item:SetEnchantment(str1,slot9)
+            item:SetEnchantment(sta1,slot10)
+        end
+    elseif spellId == 88097 then -- проворство
+        local variant = math.random(1,100)
+        if variant < 6 then
+            item:SetEnchantment(agi2,slot9)
+            item:SetEnchantment(ver1,slot10)
+        elseif variant < 11 then
+            item:SetEnchantment(agi1,slot9)
+            item:SetEnchantment(ver2,slot10)
+        elseif variant < 41 then
+            item:SetEnchantment(agi2,slot9)
+        elseif variant < 71 then
+            item:SetEnchantment(ver2,slot9)
+        else
+            item:SetEnchantment(agi1,slot9)
+            item:SetEnchantment(ver1,slot10)
+        end
+    elseif spellId == 88098 then -- разум
+        local variant = math.random(1,100)
+        if variant < 6 then
+            item:SetEnchantment(int2,slot9)
+            item:SetEnchantment(wil1,slot10)
+        elseif variant < 11 then
+            item:SetEnchantment(int1,slot9)
+            item:SetEnchantment(wil2,slot10)
+        elseif variant < 41 then
+            item:SetEnchantment(int2,slot9)
+        elseif variant < 71 then
+            item:SetEnchantment(wil2,slot9)
+        else
+            item:SetEnchantment(int1,slot9)
+            item:SetEnchantment(wil1,slot10)
+        end
     end
 end
