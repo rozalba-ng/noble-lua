@@ -1,4 +1,6 @@
-local friendly_creatures = {987753}
+local friendly_creatures = {987753 }
+local korus_faction = 1172
+local PLAYER_EVENT_ON_KILL_CREATURE = 7
 
 local function onCreatureKill(event, player, killed)
     for i = 1, #friendly_creatures do
