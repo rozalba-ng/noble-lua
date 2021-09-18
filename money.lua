@@ -8,6 +8,17 @@ local guildzone_boralus_aura = 91175
 
 local quel_faction = 1165
 
+venture_faction = 1168
+ekspedition_faction = 1169
+zulhetis_faction = 1170
+brothers_faction = 1171
+blacksun_faction = 1173
+korus_faction = 1172
+
+reputation_friendly = 3000
+reputation_honored = 9000
+reputation_revered = 21000
+
 local function countMoneyBonus(player)
     player:ModifyMoney(25);
     local guild = player:GetGuild();

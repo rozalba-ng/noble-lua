@@ -15,6 +15,15 @@ function GoToNextWaypoint(eventId, delay, repeats)
 			creature:SetWalk(true)
 			creature:RemoveAura(WALK_AURA)
 			local id = nil
+			if queryManager[eventId] == nil then
+				return
+			end
+			if npcPoint[queryManager[eventId].guid] == nil then
+				return
+			end
+			if npcPoint[queryManager[eventId].guid][queryManager[eventId].nextOrder] == nil then
+				return
+			end
 			if npcPoint[queryManager[eventId].guid][queryManager[eventId].nextOrder].c_type == 1 then
 				local pos = npcPoint[queryManager[eventId].guid][queryManager[eventId].nextOrder]
 				local dest = distance(creature:GetX(),creature:GetY(),pos.x,pos.y)
