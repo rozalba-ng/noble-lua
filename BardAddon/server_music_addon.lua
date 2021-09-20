@@ -83,13 +83,12 @@ function BardSystem.StartNewMusic(player, songId)
 		local x,y,z,o = player:GetLocation()
 		local npc = player:SpawnCreature( BARD_NPC, x, y, z, o, 8 ) -- TEMPSUMMON_MANUAL_DESPAWN
 		local npcGuid = npc:GetGUID()
-		print(npc:GetGUID())
 		if player:GetData("SongSessionId") then
 		--	Прекращение предыдущей песни
 			BardSystem.StopMusic(player)
 		end
 		npc:MoveFollow( player, -2 )
-		player:PlayDistanceSound( songId )
+		
 		
 		local T = {
 			playerName = playerName,
@@ -98,7 +97,7 @@ function BardSystem.StartNewMusic(player, songId)
 			songId = songId,
 		}
 		BardSystem.songs[T.id] = T
-		
+		npc:PlayDistanceSound( songId )
 		BardSystem.lastSongSessionId = BardSystem.lastSongSessionId + 1
 		
 		npc:SetData("SongSessionId", T.id)
@@ -129,7 +128,7 @@ function BardSystem.StartExistingMusic(player, SongSessionId)
 	if BardSystem.songs[SongSessionId] then
 	
 		local T = BardSystem.songs[SongSessionId]
-		GetPlayerByName(T.playerName):PlayDistanceSound( T.songId, player )
+		player:GetMap():GetWorldObject(GetUnitGUID(T.npcGuid,BARD_NPC)):PlayDistanceSound( T.songId, player )
 	end
 	return false
 end
@@ -150,7 +149,7 @@ function BardSystem.StopMusic(player)
 		local T = BardSystem.songs[SongSessionId]
 		if ( T.playerName == player:GetName() ) then
 			local npc = player:GetMap():GetWorldObject( GetUnitGUID(T.npcGuid,BARD_NPC))
-
+			npc:PlayDistanceSound(ALLOWED_SONGS.stop)
 			if npc then
 				npc:DespawnOrUnsummon()
 			else
@@ -159,7 +158,6 @@ function BardSystem.StopMusic(player)
 				player:SetData("SongSessionId", nil)
 			end
 			player:RemoveAura(AURA)
-			player:PlayDistanceSound(ALLOWED_SONGS.stop)
 			return true
 		end
 	end
