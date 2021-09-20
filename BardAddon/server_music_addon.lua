@@ -149,7 +149,8 @@ function BardSystem.StopMusic(player)
 		local T = BardSystem.songs[SongSessionId]
 		if ( T.playerName == player:GetName() ) then
 			local npc = player:GetMap():GetWorldObject( GetUnitGUID(T.npcGuid,BARD_NPC))
-			if npc 
+			
+			if npc then
 				npc:PlayDistanceSound(ALLOWED_SONGS.stop)
 				npc:DespawnOrUnsummon()
 			else
