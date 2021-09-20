@@ -2,7 +2,7 @@ local AIO = AIO or require("AIO")
 local MusicalHandlers = AIO.AddHandlers("MusicalHandlers", {})
 
 --	Невидимый NPC который проигрывает музыку
-local BARD_NPC = 50001
+local BARD_NPC = 1001177
 --	Время в МС между обновлениями НПС (Телепорт, отправка музыки игрокам рядом)
 local NPC_UPDATE_TIME = 2000
 
