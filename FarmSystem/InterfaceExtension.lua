@@ -28,6 +28,7 @@ function Player:CreateInterface()
 		self.connectedFunctions[self.lastRowId] = {}
 		self.connectedFunctions[self.lastRowId].func = funcToCall
 		self.connectedFunctions[self.lastRowId].args =  table.pack(...)
+
 		self.connectedFunctions[self.lastRowId].willClose = willClose
 		local row = RowObject(self.lastRowId,text,false,nil)
 		

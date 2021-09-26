@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `farms_plant_template` (
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
+AUTO_INCREMENT=1
 ;
 ]]
 
@@ -39,11 +40,12 @@ CREATE TABLE IF NOT EXISTS `farms_places` (
 	`place_guid` INT(11) NULL DEFAULT NULL,
 	`id` INT(11) NULL DEFAULT NULL,
 	`type` INT(11) NULL DEFAULT NULL,
-	`bind_to` INT NULL
+	`bind_to` INT(11) NULL DEFAULT NULL
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
+
 ]]
 
 
@@ -52,28 +54,28 @@ CREATE TABLE  IF NOT EXISTS `farms_plant_loot` (
 	`loot_id` INT(11) NOT NULL AUTO_INCREMENT,
 	`item_entry` INT(11) NULL DEFAULT NULL,
 	`count` INT(11) NULL DEFAULT NULL,
-	`chance` FLOAT NULL DEFAULT NULL,
-	PRIMARY KEY (`loot_id`) USING BTREE
+	`chance` FLOAT NULL DEFAULT NULL
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
-;
 ]]
 
 sql_createPlantVisual = [[
 CREATE TABLE IF NOT EXISTS `farms_plant_visual` (
-	`visual_id` INT(11) NULL DEFAULT NULL,
+	`visual_id` INT(11) NOT NULL AUTO_INCREMENT,
 	`visual_entry` INT(11) NULL DEFAULT NULL,
 	`start_size` FLOAT NULL DEFAULT NULL,
-	`end_size` FLOAT NULL DEFAULT NULL
+	`end_size` FLOAT NULL DEFAULT NULL,
+	PRIMARY KEY (`visual_id`) USING BTREE
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
+AUTO_INCREMENT=1
 ;
 
 ]]
 local function LoadPlantVisual()
-	WorldDBExecute(sql_createPlantVisual)
+	WorldDBQuery(sql_createPlantVisual)
 	FarmSystem.plant_visual = {}
 	
 	local Q = WorldDBQuery("SELECT * FROM farms_plant_visual")
@@ -93,7 +95,7 @@ local function LoadPlantVisual()
 	end
 end
 local function LoadLoot()
-	WorldDBExecute(sql_createLoot)
+	WorldDBQuery(sql_createLoot)
 	FarmSystem.loot = {}
 	
 	local Q = WorldDBQuery("SELECT * FROM farms_plant_loot")
@@ -117,7 +119,7 @@ local function LoadLoot()
 	end
 end
 local function LoadPlantTemplate()
-	WorldDBExecute(sql_createPlantTemplate)
+	WorldDBQuery(sql_createPlantTemplate)
 	FarmSystem.plantTemplate = {}
 	
 	local Q = WorldDBQuery("SELECT * FROM farms_plant_template")
@@ -208,7 +210,7 @@ local function PlaceObject()
 end
 
 local function LoadPlants()
-	WorldDBExecute(sql_createPlants)
+	WorldDBQuery(sql_createPlants)
 	FarmSystem.plants = {}
 	
 	local Q = WorldDBQuery("SELECT * FROM farms_plants")
@@ -240,7 +242,7 @@ end
 
 
 local function LoadPlaces()
-	WorldDBExecute(sql_createPlaces)
+	WorldDBQuery(sql_createPlaces)
 	FarmSystem.places = {}
 	
 	local Q = WorldDBQuery("SELECT * FROM farms_places")
@@ -259,14 +261,17 @@ local function LoadPlaces()
 	end
 end
 
-function FarmSystem.InitNewFarmPlace(place_object)
+function FarmSystem.InitNewFarmPlace(place_object, place_type,bind_to)
 	local place_guid = place_object:GetDBTableGUIDLow()
-	WorldDBExecute("INSERT INTO `world`.`farms_places` (`place_guid`, `id`) VALUES ('"..place_guid.."', '0');")
+	
+	WorldDBQuery("INSERT INTO `world`.`farms_places` (`place_guid`, `id`,`type`, `bind_to`) VALUES ('"..place_guid.."', '0','"..place_type.."','"..bind_to.."');")
 	local place = PlaceObject()
-	place = {
-				["guid"] = place_guid,
-				["plant_id"] = 0,
-				}
+	place["guid"] = place_guid
+	place["plant_id"] = 0
+	place["type"] = place_type
+	place["bind"] = bind_to
+	
+	
 	FarmSystem.places[place_guid] = place
 end
 
