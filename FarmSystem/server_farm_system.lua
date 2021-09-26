@@ -6,9 +6,6 @@ local ON_COLLECT_REDUCTION = 0.5
 
 local CYCLE_TIME = 1*60*60*1000
 
-local FARM_PLACES_TYPES = {[508903] = 1}
-local FARM_PLACES_TYPES = {[508903] = 1}
-
 local PHASE_FOR_SCALE_CHANGE = 65536
 
 local placeAdditionalInfo = {
