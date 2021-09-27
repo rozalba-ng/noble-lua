@@ -188,15 +188,14 @@ local function OnPlaceUsed(event, player, place_object)
 		place.init_object = {}
 		place.init_object.map = place_object:GetMapId()
 		place.init_object.guid_low = place_object:GetGUIDLow()
-		place.init_object.entry = place_object:GetEntry()
-		FarmSystem.LoadVisuals(place_object)
-		
+		place.init_object.entry = place_object:GetEntry()		
 		function place.init_object:GetGameobject()
 			local mapObject= GetMapById(self.map)
 			local guid = GetObjectGUID(self.guid_low,self.entry)
 			local object = mapObject:GetWorldObject(guid)
 			return object
 		end
+		FarmSystem.LoadVisuals(place_object)
 		if player ~= place_object:GetOwner() then
 			return false
 		end
