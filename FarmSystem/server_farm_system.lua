@@ -170,6 +170,7 @@ local function Interface_Collect(player,place_object,intid)
 	local template = FarmSystem.plantTemplate[plant.plant_id]
 	if template.one_time == 1 then
 		place:DeletePlant()
+		FarmSystem.LoadVisuals(place_object)
 	else
 		plant.current_cycle = math.floor(plant.current_cycle * ON_COLLECT_REDUCTION)
 		plant:UpdateInDB()
@@ -181,29 +182,23 @@ end
 local function OnPlaceUsed(event, player, place_object)
 	local place = GetFarmPlace(place_object)
 	
-	if player ~= place_object:GetOwner() then
-		return false
-	end
-	if not place then
-		if player:GetGMRank() > 1 then
-			local interface = player:CreateInterface()
-			interface:AddRow("[GM] Инициализировать ферму",Interface_InitFarmPlace,true)
-			interface:AddClose()
-			interface:Send("Данная ферма не находится в системе и не может быть использована. Требуется инициализация", place_object,true)
-		else
-			player:Print("Данная ферма [GUID:"..place_object:GetDBTableGUIDLow().."] недоступна. Обратитесь к администрации.")
-			return true
-		end
-	else
+	
+	if place then
+		
 		place.init_object = {}
 		place.init_object.map = place_object:GetMapId()
 		place.init_object.guid_low = place_object:GetGUIDLow()
 		place.init_object.entry = place_object:GetEntry()
+		FarmSystem.LoadVisuals(place_object)
+		
 		function place.init_object:GetGameobject()
 			local mapObject= GetMapById(self.map)
 			local guid = GetObjectGUID(self.guid_low,self.entry)
 			local object = mapObject:GetWorldObject(guid)
 			return object
+		end
+		if player ~= place_object:GetOwner() then
+			return false
 		end
 		local interface = player:CreateInterface()
 		local title = ""
@@ -211,6 +206,7 @@ local function OnPlaceUsed(event, player, place_object)
 			title = "Перед вами пустой горшок, пока что в нем ничего не посажено"
 			interface:AddRow("Посадить растение",Interface_Seed,false)
 		else
+			
 			local plant = place:GetPlant()
 			local template = FarmSystem.plantTemplate[plant.plant_id]
 			title = ("Здесь растет "..plant:GetName())
@@ -229,6 +225,9 @@ local function OnPlaceUsed(event, player, place_object)
 			
 			if plant.current_cycle == template.cycles then
 				interface:AddRow("Собрать урожай", Interface_Collect, true):SetIcon(5)
+			end
+			if player:GetGMRank()>1 then
+				interface:AddRow("[GM] Собрать урожай", Interface_Collect, true):SetIcon(5)
 			end
 			if plant.is_dry == 1 then
 				interface:AddRow("Полить", Interface_AddWater, true):SetIcon(5)
@@ -271,12 +270,13 @@ function math.lerp(from, to, t)
 end
 function FarmSystem.LoadVisuals(place_object)
 	local place = GetFarmPlace(place_object)
-	visualList[place.guid] = visualList[place.guid] or {}
-	local visual = visualList[place.guid]
-	local info = placeAdditionalInfo[place_object:GetEntry()]
 	if place == nil then
 		return false
 	end
+	visualList[place.guid] = visualList[place.guid] or {}
+	local visual = visualList[place.guid]
+	local info = placeAdditionalInfo[place_object:GetEntry()]
+	
 	local plant = place:GetPlant()
 	local map = place_object:GetMap()
 	if plant == nil then
