@@ -108,6 +108,7 @@ hpBuffAuraList = {
     { id = 88078, bonus = 2 },
     { id = 88073, bonus = 2 },
     { id = 88079, bonus = 1 },
+	{ id = 91205, bonus = 1 }, -- Бонус от Мастерская. 3 часа
 }
 
 local healthByType = {
