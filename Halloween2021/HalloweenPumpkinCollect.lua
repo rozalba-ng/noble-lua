@@ -34,8 +34,12 @@ end
 local function OnPumpkinClick(event, player, object)
 	if player:HasItem(LANTER_ENTRY) then
 		local entry = ITEMS[math.random(1,#ITEMS)]
-		local item = player:AddItem(entry)
 		local count = tonumber(player:GetInfo("HalloweenLanternCount")) or 10
+		if count < 1 then
+			return false
+		end
+		local item = player:AddItem(entry)
+		
 		if item and count > 0then
 			count = count - 1
 			player:SetInfo("HalloweenLanternCount",tostring(count))
