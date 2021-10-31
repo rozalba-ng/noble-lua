@@ -49,7 +49,7 @@ local function OnPumpkinClick(event, player, object)
 				player:Print("|cffff7588В вашем фонаре тухнет последний язычек пламемни.")
 				player:AddItem(DEAD_LANTER_ENTRY)
 			end
-			object:RemoveFromWorld()
+			object:RemoveFromWorld(false)
 		else
 			player:Print("Повторите со свободным местом в инвентаре.")
 		end
