@@ -36,6 +36,18 @@ function Player:CreateInterface()
 		self.lastRowId = self.lastRowId + 1
 		return row
 	end
+	function interface:AddAskRow(text, funcToCall, willClose, ...)		
+		self.connectedFunctions[self.lastRowId] = {}
+		self.connectedFunctions[self.lastRowId].func = funcToCall
+		self.connectedFunctions[self.lastRowId].args =  table.pack(...)
+
+		self.connectedFunctions[self.lastRowId].willClose = willClose
+		local row = RowObject(self.lastRowId,text,true,nil)
+		
+		table.insert(self.rows,row)
+		self.lastRowId = self.lastRowId + 1
+		return row
+	end
 	function interface:AddClose(name)
 		name = name or "Закрыть"
 		self.connectedFunctions[self.lastRowId] = {}
@@ -58,11 +70,15 @@ function Player:CreateInterface()
 		self.lastRowId = self.lastRowId + 1
 		return row
 	end
-
-	function interface:Click(intid,object)
+	
+	function interface:Click(intid,object,code)
 		local player = GetPlayerByName(self.player_name)
 		local func = self.connectedFunctions[intid].func
-		func(player,object,intid,unpack(self.connectedFunctions[intid].args))
+		if code == nil then
+			func(player,object,intid,unpack(self.connectedFunctions[intid].args))
+		else
+			func(player,object,intid,code,unpack(self.connectedFunctions[intid].args))
+		end
 		if self.connectedFunctions[intid].willClose then
 			player:GossipComplete()
 		end
