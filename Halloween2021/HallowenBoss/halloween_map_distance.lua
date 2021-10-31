@@ -1,0 +1,1 @@
+SetMapVisibilityRange(9001,0, 400)
