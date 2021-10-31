@@ -355,7 +355,7 @@ RegisterCreatureGossipEvent( FAKE_PUMPKIN_NPC, 1, function(_, player, pumpkin)
 		player:CastCustomSpell(mortis, PUMPKIN_SPELL, true, 1)
 		mortis:RegisterEvent(function(_,_,_, mortis)
 			pumpkinsDamage = pumpkinsDamage + 1
-			if pumpkinsDamage > 0 and vladToThird == false then --					<--	9
+			if pumpkinsDamage > 9 and vladToThird == false then --					<--	9
 				vladToThird = true
 				mortis:SendUnitSay(text[3][math.random(1,#text[3])], 0)
 				Halloween.MortisStage = 3
