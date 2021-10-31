@@ -44,7 +44,10 @@ local function OnClick(_,player, creature)
 		end
 		
 		local map = creature:GetMap()
-		local players = map:GetPlayers()
+		print("MAP")
+		print(map)
+		print("MAP")
+		local players = creature:GetPlayersInRange(400)
 		for i = 1, #players do
 			players[i]:SendBroadcastMessage("|cffff7588"..Halloween.DeerWorldMessages[counter])
 		end

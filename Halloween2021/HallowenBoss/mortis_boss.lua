@@ -111,7 +111,7 @@ RegisterServerEvent( 16, OnReloadEluna ) -- ELUNA_EVENT_ON_LUA_STATE_CLOSE
 function Halloween.BossAppear(dearCreature)
 	--local mortis = SpawnMortis()
 	local halloweenMap = GetMapById(9001)
-	local playersOnMap = halloweenMap:GetPlayers()
+	local playersOnMap = dearCreature:GetPlayersInRange(400)
 	
 	for i = 1, #playersOnMap do
 		playersOnMap[i]:CastSpell( playersOnMap[i], CAMERA_SHAKE_SPELL, true )
@@ -129,7 +129,7 @@ function Halloween.BossAppear(dearCreature)
 	
 	dearCreature:RegisterEvent(function(_,_,_, dearCreature)
 		SpawnMortis(dearCreature)
-	end, 30000)
+	end, 30000,1)
 end
 
 Halloween.MortisStage = 0
@@ -195,11 +195,11 @@ local function OnEnterCombat(_,mortis, target)
 							players[i]:CastSpell(players[i], 68848)
 						end
 					end
-				end, (t*2)-250)
+				end, (t*2)-250,1)
 				
 				target:RegisterEvent(function(_,_,_, player)
 					player:CastSpell(player, 68848)
-				end, t+250)
+				end, t+250,1)
 				mortis:RegisterEvent(function(_,_,_, mortis)
 					local t = mortis:Jump(x,y,z, 30, 20)
 					mortis:RegisterEvent(function(_,_,_, mortis)
@@ -207,8 +207,8 @@ local function OnEnterCombat(_,mortis, target)
 						mortis:ClearThreatList()
 						mortis:AddThreat(x, 10)
 						mortis:AttackStart(x)
-					end, t+250)
-				end, t+250)
+					end, t+250,1)
+				end, t+250,1)
 			end
 		end
 	end, 5000, 0)
@@ -239,12 +239,12 @@ local function Fly(_,_,_, mortis)
 					pumpkin:SetRooted(true)
 					pumpkin:RegisterEvent(function(_,_,_, pumpkin)
 						pumpkin:SetRooted(false)
-					end, 1800)
-				end, 2000)
+					end, 1800,1)
+				end, 2000,1)
 			end
 			mortis:CastCustomSpell(players[r], PUMPKIN_SPELL, true, PUMPKIN_SPELL_DAMAGE+pumpkins)
-		end, t)
-		mortis:RegisterEvent(Fly, t+5000)
+		end, t,1)
+		mortis:RegisterEvent(Fly, t+5000,1)
 	end
 end
 
@@ -269,7 +269,7 @@ local function MortisRageAttack(_,_,_,mortis)
 				mortis:CastCustomSpell(player,DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE*1.5)
 			end
 		end
-		mortis:RegisterEvent(MortisRageAttack,1*1000)
+		mortis:RegisterEvent(MortisRageAttack,1*1000,1)
 	end
 end
 
@@ -289,12 +289,12 @@ local function MortisRageStage(_,_,_,mortis)
 	mortis:AddAura(47705,mortis) --Красная аура
 	shieldObject:AddAura(40158,shieldObject) --Щит
 	shieldObject:AddAura(60857,shieldObject) --Покраска щита в красный
-	mortis:RegisterEvent(MortisRageAttack,1*1000)
+	mortis:RegisterEvent(MortisRageAttack,1*1000,1)
 	shieldObject:RegisterEvent(function(_,_,_,shieldObject)
 		rageStarted = false
 		local mortis = GetMortis()
 		mortis:RegisterEvent(MortisThirdStage,300)
-	end,shieldTime*1000)
+	end,shieldTime*1000,1)
 
 
 end
@@ -324,7 +324,7 @@ function MortisThirdStage(_,_,_,mortis)
 			vladOnPoint = true
 			
 			lastRage = os.time()-10
-		end,t+1000)
+		end,t+1000,1)
 	end
 	local players = mortis:GetPlayersInRange(40,1,1)
 
@@ -339,9 +339,9 @@ function MortisThirdStage(_,_,_,mortis)
 	
 	mortis:CastCustomSpell(players[id1],DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE)
 	if (os.time()-lastRage) > 15 then
-		mortis:RegisterEvent(MortisRageStage,4*1000)
+		mortis:RegisterEvent(MortisRageStage,4*1000,1)
 	else
-		mortis:RegisterEvent(MortisThirdStage,3*1000)
+		mortis:RegisterEvent(MortisThirdStage,3*1000,1)
 	end
 end
 local vladToThird = false
@@ -375,20 +375,20 @@ RegisterCreatureGossipEvent( FAKE_PUMPKIN_NPC, 1, function(_, player, pumpkin)
 							vladOnPoint = false
 							thirdStageStart = false
 							lastRage = os.time()+100
-							mortis:RegisterEvent(MortisThirdStage,1000)
-						end, t+250)
+							mortis:RegisterEvent(MortisThirdStage,1000,1)
+						end, t+250,1)
 					else
 						mortis:SetRooted(true)
 						mortis:CastSpell(mortis, CAMERA_SHAKE_SPELL)
 						vladOnPoint = false
 						thirdStageStart = false
 						lastRage = os.time()+100
-						mortis:RegisterEvent(MortisThirdStage,1000)
+						mortis:RegisterEvent(MortisThirdStage,1000,1)
 					end
 					
-				end, t+250)
+				end, t+250,1)
 			end
-		end, 2000)
+		end, 2000,1)
 	end
 	pumpkin:DespawnOrUnsummon()
 end) -- GOSSIP_EVENT_ON_HELLO
@@ -404,8 +404,8 @@ local function OnDamageTaken(_, mortis, player, dmg)
 		local t = mortis:Jump(flyPoints[1][1], flyPoints[1][2], flyPoints[1][3], 20, 2)
 		mortis:RegisterEvent(function(_,_,_, mortis)
 			mortis:SetRooted(true)
-			mortis:RegisterEvent(Fly, 2000)
-		end, t)
+			mortis:RegisterEvent(Fly, 2000,1)
+		end, t,1)
 	elseif Halloween.MortisStage == 2 then
 		return true, 1
 	end
@@ -443,7 +443,7 @@ local function OnDead(event, creature, killer)
 	vlad:RegisterEvent(function(_,_,_,vlad)
 		vlad:DespawnOrUnsummon()
 		vladInit = nil
-	end,22*1000)
+	end,22*1000,1)
 	vladToThird = false
 	pumpkinsDamage = 0
 	pumpkins = 0
