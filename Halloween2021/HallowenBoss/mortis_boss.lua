@@ -341,7 +341,7 @@ function MortisThirdStage(_,_,_,mortis)
 	if (os.time()-lastRage) > 25 then
 		mortis:RegisterEvent(MortisRageStage,4*1000,1)
 	else
-		mortis:RegisterEvent(MortisThirdStage,7*1000,1)
+		mortis:RegisterEvent(MortisThirdStage,5.5*1000,1)
 	end
 end
 local vladToThird = false
