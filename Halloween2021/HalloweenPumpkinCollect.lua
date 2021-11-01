@@ -1,5 +1,6 @@
 local LANTER_ENTRY = 5059250 
-local DEAD_LANTER_ENTRY = 5059254 
+local DEAD_LANTER_ENTRY = 5059254
+local LIVE_FIRE = 301298 
 local NPC_ENTRY = 987830
 local ITEMS = {
 5059193, 5059194, 5059194,5059195,5059196,5059197,5059198,5059199,5059200,5059201,5059202,5059203,5059236, 5059204,5059205,5059206,5059207,5059208,5059209
@@ -53,6 +54,16 @@ local function OnPumpkinClick(event, player, object)
 				player:Print("|cffff7588В вашем фонаре тухнет последний язычек пламени.")
 				player:AddItem(DEAD_LANTER_ENTRY)
 			end
+			object:RemoveFromWorld(false)
+		else
+			player:Print("Повторите со свободным местом в инвентаре.")
+		end
+	elseif player:HasItem(LIVE_FIRE) then
+		local entry = ITEMS[math.random(1,#ITEMS)]
+		local item = player:AddItem(entry)
+		if item then
+			player:Print("|cffff7588Вы подносите огонек Страхвилла к тыкве и та всыхивает зеленым пламенем. Из пепла вы достаете|r "..item:GetItemLink())
+			player:RemoveItem(LIVE_FIRE,1)
 			object:RemoveFromWorld(false)
 		else
 			player:Print("Повторите со свободным местом в инвентаре.")

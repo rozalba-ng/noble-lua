@@ -244,7 +244,7 @@ local function Fly(_,_,_, mortis)
 			end
 			mortis:CastCustomSpell(players[r], PUMPKIN_SPELL, true, PUMPKIN_SPELL_DAMAGE+pumpkins)
 		end, t,1)
-		mortis:RegisterEvent(Fly, t+5000,1)
+		mortis:RegisterEvent(Fly, t+3500,1)
 	end
 end
 
@@ -277,6 +277,10 @@ local function MortisRageStage(_,_,_,mortis)
 	if not notDead then
 		return false
 	end
+	local t_jump = mortis:Jump(104,-14,0.01,20,10)
+	mortis:RegisterEvent(function(_,_,_,mortis)
+		mortis:SetRooted(true)
+	end,t_jump+100,1)
 	rageStarted = true	
 	lastRage = os.time()
 	local shieldTime = 12
@@ -300,6 +304,7 @@ local function MortisRageStage(_,_,_,mortis)
 end
 
 function MortisThirdStage(_,_,_,mortis)
+	mortis:SetRooted(false)
 	mortis:RemoveAura(47705)
 	if not notDead then
 		return false
@@ -339,9 +344,10 @@ function MortisThirdStage(_,_,_,mortis)
 	
 	mortis:CastCustomSpell(players[id1],DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE)
 	if (os.time()-lastRage) > 25 then
+		
 		mortis:RegisterEvent(MortisRageStage,4*1000,1)
 	else
-		mortis:RegisterEvent(MortisThirdStage,5.5*1000,1)
+		mortis:RegisterEvent(MortisThirdStage,7*1000,1)
 	end
 end
 local vladToThird = false
@@ -370,7 +376,7 @@ RegisterCreatureGossipEvent( FAKE_PUMPKIN_NPC, 1, function(_, player, pumpkin)
 					if z > 0.01 then
 						local t = mortis:Jump(103.988, -15.34, 0.001, 10, 10)
 						mortis:RegisterEvent(function(_,_,_, mortis)
-							mortis:SetRooted(true)
+							
 							mortis:CastSpell(mortis, CAMERA_SHAKE_SPELL)
 							vladOnPoint = false
 							thirdStageStart = false
@@ -378,7 +384,6 @@ RegisterCreatureGossipEvent( FAKE_PUMPKIN_NPC, 1, function(_, player, pumpkin)
 							mortis:RegisterEvent(MortisThirdStage,1000,1)
 						end, t+250,1)
 					else
-						mortis:SetRooted(true)
 						mortis:CastSpell(mortis, CAMERA_SHAKE_SPELL)
 						vladOnPoint = false
 						thirdStageStart = false

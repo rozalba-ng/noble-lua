@@ -68,7 +68,7 @@ function Halloween.DeerRespawn()
 			creature:RegisterEvent(function(_,_,_, creature)
 				creature:AddAura(AURA_RED, creature)
 				creature:RemoveAura(AURA_BLUE)
-			end, 1*60*60*1000,1)	--			ЗАМЕНИТЬ НА 1 час
+			end, 0.5*60*60*1000,1)	--			ЗАМЕНИТЬ НА 1 час
 		end
 	end
 end
