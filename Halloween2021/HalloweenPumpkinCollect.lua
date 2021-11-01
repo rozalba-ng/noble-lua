@@ -6,12 +6,16 @@ local ITEMS = {
 }
 local PUMPKIN_ENTRY = 508905
 local function Interface_AskFire(player,npc,intid)
-	local lantern = player:AddItem(LANTER_ENTRY)
-	if lantern then
-		player:SetInfo("HalloweenHasLantern","1")
-		player:SetInfo("HalloweenLanternCount","10")
+	if player:GetTotalPlayedTime() > 60*60*24*2 then
+		local lantern = player:AddItem(LANTER_ENTRY)
+		if lantern then
+			player:SetInfo("HalloweenHasLantern","1")
+			player:SetInfo("HalloweenLanternCount","10")
+		else
+			player:Print("Повторите со свободным местом в инвентаре.")
+		end
 	else
-		player:Print("Повторите со свободным местом в инвентаре.")
+		player:Print("Ты пока еще не достоин. Подходи когда наберешься мудрости.")
 	end
 end
 
@@ -46,7 +50,7 @@ local function OnPumpkinClick(event, player, object)
 			player:Print("|cffff7588Вы подносите фонарь к тыкве и та всыхивает зеленым пламенем. Из пепла вы достаете|r "..item:GetItemLink())
 			if count == 0 then
 				player:RemoveItem(LANTER_ENTRY,1)
-				player:Print("|cffff7588В вашем фонаре тухнет последний язычек пламемни.")
+				player:Print("|cffff7588В вашем фонаре тухнет последний язычек пламени.")
 				player:AddItem(DEAD_LANTER_ENTRY)
 			end
 			object:RemoveFromWorld(false)
