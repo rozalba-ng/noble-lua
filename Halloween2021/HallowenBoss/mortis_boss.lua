@@ -342,7 +342,7 @@ function MortisThirdStage(_,_,_,mortis)
 		mortis:CastCustomSpell(players[id2],DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE*2)
 	end
 	
-	mortis:CastCustomSpell(players[id1],DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE*2)
+	mortis:CastCustomSpell(players[id1],DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE*1.5)
 	if (os.time()-lastRage) > 25 then
 		
 		mortis:RegisterEvent(MortisRageStage,4*1000,1)
