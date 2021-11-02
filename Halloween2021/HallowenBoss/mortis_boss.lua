@@ -266,10 +266,10 @@ local function MortisRageAttack(_,_,_,mortis)
 		local players = mortis:GetPlayersInRange(40,1,1)
 		for i, player in pairs (players) do
 			if not player:GetNearestCreature(1.4,TRIGGER_NPC) then
-				mortis:CastCustomSpell(player,DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE	*4)
+				mortis:CastCustomSpell(player,DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE	*2)
 			end
 		end
-		mortis:RegisterEvent(MortisRageAttack,1*1000,1)
+		mortis:RegisterEvent(MortisRageAttack,0.5*1000,1)
 	end
 end
 
