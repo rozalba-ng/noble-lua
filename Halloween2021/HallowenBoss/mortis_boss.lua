@@ -244,7 +244,7 @@ local function Fly(_,_,_, mortis)
 			end
 			mortis:CastCustomSpell(players[r], PUMPKIN_SPELL, true, PUMPKIN_SPELL_DAMAGE+pumpkins)
 		end, t,1)
-		mortis:RegisterEvent(Fly, t+3500,1)
+		mortis:RegisterEvent(Fly, t+5000,1)
 	end
 end
 
@@ -266,7 +266,7 @@ local function MortisRageAttack(_,_,_,mortis)
 		local players = mortis:GetPlayersInRange(40,1,1)
 		for i, player in pairs (players) do
 			if not player:GetNearestCreature(1.4,TRIGGER_NPC) then
-				mortis:CastCustomSpell(player,DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE*1.5)
+				mortis:CastCustomSpell(player,DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE	*4)
 			end
 		end
 		mortis:RegisterEvent(MortisRageAttack,1*1000,1)
@@ -339,10 +339,10 @@ function MortisThirdStage(_,_,_,mortis)
 		while id2 == id1 do
 			id2 = math.random(1,#players)
 		end
-		mortis:CastCustomSpell(players[id2],DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE)
+		mortis:CastCustomSpell(players[id2],DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE*2)
 	end
 	
-	mortis:CastCustomSpell(players[id1],DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE)
+	mortis:CastCustomSpell(players[id1],DARKBOLT_SPELL, true, DARKBOLT_SPELL_DAMAGE*2)
 	if (os.time()-lastRage) > 25 then
 		
 		mortis:RegisterEvent(MortisRageStage,4*1000,1)
