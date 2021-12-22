@@ -405,7 +405,7 @@ local function SetFakeEntry(item, entry)
         local iAuraNew = 0
         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entry)
 
-        if item:GetSlot() == EQUIPMENT_SLOT_WAIST and item:GetEntry() > 0 then
+        if item:GetSlot() == EQUIPMENT_SLOT_WAIST and item:GetEntry() then
             local auraItem = CharDBQuery('SELECT spellid_1 FROM item_template where spellid_1 > 0 and entry = ' .. item:GetEntry() );
             if auraItem then
                 local aura = tonumber(auraItem:GetString(0))
