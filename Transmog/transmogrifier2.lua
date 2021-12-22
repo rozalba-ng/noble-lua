@@ -409,11 +409,9 @@ local function SetFakeEntry(item, entry)
             print(entry)
             local auraItem = WorldDBQuery('SELECT spellid_1 FROM item_template where spellid_1 > 0 and entry = ' .. entry );
             if auraItem then
-                print(333333333)
-                local aura = tonumber(auraItem:GetString(0))
-                print(aura)
-                if player:HasAura(aura) then -- удаляем старую ауру трансмога
-                    player:RemoveAura(aura);
+                iAuraNew = tonumber(auraItem:GetString(0))
+                if player:HasAura(iAuraNew) then -- удаляем старую ауру трансмога
+                    player:RemoveAura(iAuraNew);
                 end
                 player:AddAura( iAuraNew, player ) --добавляем ауру
             end
