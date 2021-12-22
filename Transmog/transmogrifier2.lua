@@ -405,8 +405,8 @@ local function SetFakeEntry(item, entry)
         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entry)
 
         -- получаем ауру пояса
-        if item:GetSlot() == EQUIPMENT_SLOT_WAIST and item:GetSpellId > 0 then
-            iAuraNew = item:GetSpellId
+        if item:GetSlot() == EQUIPMENT_SLOT_WAIST and item:GetSpellId(1) > 0 then
+            iAuraNew = item:GetSpellId(1)
             player:AddAura( iAuraNew, player )
         end
         if not entryMap[pGUID] then
