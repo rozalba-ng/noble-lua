@@ -410,6 +410,13 @@ local function SetFakeEntry(item, entry)
 
         print(5)
         -- получаем ауру пояса
+        if item:GetSlot() == EQUIPMENT_SLOT_WAIST then
+            print(777)
+        end
+        if item:GetSpellId(1) > 0 then
+            print(444)
+            print(item:GetSpellId(1))
+        end
         if item:GetSlot() == EQUIPMENT_SLOT_WAIST and item:GetSpellId(1) > 0 then
             print(6)
             iAuraNew = item:GetSpellId(1)
