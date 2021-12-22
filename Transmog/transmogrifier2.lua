@@ -413,6 +413,7 @@ local function SetFakeEntry(item, entry)
         if item:GetSlot() == EQUIPMENT_SLOT_WAIST then
             print(777)
         end
+        print(item:GetSpellId(0))
         if item:GetSpellId(1) > 0 then
             print(444)
             print(item:GetSpellId(1))
