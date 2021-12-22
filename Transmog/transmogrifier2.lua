@@ -404,19 +404,15 @@ local function SetFakeEntry(item, entry)
         local iGUID = item:GetGUIDLow()
         local iAuraNew = 0
         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entry)
-        print(item:GetEntry())
 
-        if item:GetSlot() == EQUIPMENT_SLOT_WAIST and item:GetEntry() then
-            print(34333)
-            local auraItem = WorldDBQuery('SELECT spellid_1 FROM item_template where spellid_1 > 0 and entry = ' .. item:GetEntry() );
+        if item:GetSlot() == EQUIPMENT_SLOT_WAIST then
+            local auraItem = WorldDBQuery('SELECT spellid_1 FROM item_template where spellid_1 > 0 and entry = ' .. entry );
             if auraItem then
-                print(8888)
                 local aura = tonumber(auraItem:GetString(0))
                 if player:HasAura(aura) then -- удаляем старую ауру трансмога
                     player:RemoveAura(aura);
+                    player:AddAura( iAuraNew, player ) --добавляем ауру
                 end
-                print(99999)
-                player:AddAura( iAuraNew, player ) --добавляем ауру
             end
         end
         if not entryMap[pGUID] then
