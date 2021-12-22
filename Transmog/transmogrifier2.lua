@@ -363,9 +363,10 @@ local function remmoveFakeAuraFromPlayer(item)
     local playerAuraOld = CharDBQuery('SELECT FakeAura FROM custom_transmogrification where GUID = ' .. item:GetGUIDLow() );
     if playerAuraOld then
         print(2)
-        if(playerAuraOld:GetInt(0) > 0 and player:HasAura(playerAuraOld:GetInt(0))) then -- удаляем старую ауру трансмога
+        local aura = tonumber(playerAuraOld:GetString(0))
+        if(aura) > 0 and player:HasAura(aura) then -- удаляем старую ауру трансмога
             print(3)
-            player:RemoveAura(playerAuraOld:GetInt(0));
+            player:RemoveAura(aura);
         end
     end
 end
