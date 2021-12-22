@@ -358,14 +358,11 @@ local function GetFakePrice(item)
 end
 
 local function remmoveFakeAuraFromPlayer(item)
-    print(1)
     local player = item:GetOwner()
     local playerAuraOld = CharDBQuery('SELECT FakeAura FROM custom_transmogrification where GUID = ' .. item:GetGUIDLow() );
     if playerAuraOld then
-        print(2)
         local aura = tonumber(playerAuraOld:GetString(0))
         if(aura) > 0 and player:HasAura(aura) then -- удаляем старую ауру трансмога
-            print(3)
             player:RemoveAura(aura);
         end
     end
@@ -408,18 +405,15 @@ local function SetFakeEntry(item, entry)
         local iAuraNew = 0
         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entry)
 
-        print(item:GetSpellId(0))
-        print(item:GetSpellId(1))
-        print(item:GetSpellId(2))
-        if item:GetSpellId(1) > 0 then
-            print(444)
-            print(item:GetSpellId(1))
-        end
-        if item:GetSlot() == EQUIPMENT_SLOT_WAIST and item:GetSpellId(1) > 0 then
-            print(6)
-            iAuraNew = item:GetSpellId(1)
-            print(iAuraNew)
-            player:AddAura( iAuraNew, player )
+        if item:GetSlot() == EQUIPMENT_SLOT_WAIST then
+            local auraItem = CharDBQuery('SELECT spellid_1 FROM item_template where spellid_1 > 0 and entry = ' .. item:GetEntry() );
+            if auraItem then
+                local aura = tonumber(auraItem:GetString(0))
+                if player:HasAura(aura) then -- удаляем старую ауру трансмога
+                    player:RemoveAura(aura);
+                end
+                player:AddAura( iAuraNew, player ) --добавляем ауру
+            end
         end
         if not entryMap[pGUID] then
             entryMap[pGUID] = {}
