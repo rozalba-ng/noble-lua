@@ -408,12 +408,9 @@ local function SetFakeEntry(item, entry)
         local iAuraNew = 0
         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entry)
 
-        print(5)
-        -- получаем ауру пояса
-        if item:GetSlot() == EQUIPMENT_SLOT_WAIST then
-            print(777)
-        end
         print(item:GetSpellId(0))
+        print(item:GetSpellId(1))
+        print(item:GetSpellId(2))
         if item:GetSpellId(1) > 0 then
             print(444)
             print(item:GetSpellId(1))
