@@ -357,6 +357,16 @@ local function GetFakePrice(item)
     return sellPrice
 end
 
+local function remmoveFakeAuraFromPlayer(item)
+    local player = item:GetOwner()
+    local playerAuraOld = CharDBQuery('SELECT FakeAura FROM custom_transmogrification where GUID = ' .. item:GetGUIDLow() );
+    if playerAuraOld then
+        if(playerAuraOld:GetInt(0) > 0 and player:HasAura(playerAuraOld:GetInt(0))) then -- удаляем старую ауру трансмога
+            player:RemoveAura(playerAuraOld:GetInt(0));
+        end
+    end
+end
+
 function GetFakeEntry(item)
     local guid = item and item:GetGUIDLow()
     if guid and dataMap[guid] then
@@ -381,6 +391,7 @@ local function DeleteFakeEntry(item)
         return false
     end
     item:GetOwner():UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), item:GetEntry())
+    remmoveFakeAuraFromPlayer(item)
     DeleteFakeFromDB(item:GetGUIDLow())
     return true
 end
@@ -390,13 +401,22 @@ local function SetFakeEntry(item, entry)
     if player then
         local pGUID = player:GetGUIDLow()
         local iGUID = item:GetGUIDLow()
+        local iAuraNew = 0
         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entry)
+
+        -- получаем ауру пояса
+        if item:GetSlot() == EQUIPMENT_SLOT_WAIST and item:GetSpellId > 0 then
+            iAuraNew = item:GetSpellId
+            player:AddAura( iAuraNew, player )
+        end
         if not entryMap[pGUID] then
             entryMap[pGUID] = {}
         end
         entryMap[pGUID][iGUID] = entry
         dataMap[iGUID] = pGUID
-        CharDBExecute("REPLACE INTO custom_transmogrification (GUID, FakeEntry, Owner) VALUES ("..iGUID..", "..entry..", "..pGUID..")")
+        remmoveFakeAuraFromPlayer(item)
+
+        CharDBExecute("REPLACE INTO custom_transmogrification (GUID, FakeEntry, FakeAura, Owner) VALUES ("..iGUID..", "..entry..", "..iAuraNew..", "..pGUID..")")
     end
 end
 
@@ -986,6 +1006,7 @@ CharDBQuery([[
 CREATE TABLE IF NOT EXISTS `custom_transmogrification` (
 `GUID` INT(10) UNSIGNED NOT NULL COMMENT 'Item guidLow',
 `FakeEntry` INT(10) UNSIGNED NOT NULL COMMENT 'Item entry',
+`FakeAura` INT(10) UNSIGNED NOT NULL COMMENT 'Item aura',
 `Owner` INT(10) UNSIGNED NOT NULL COMMENT 'Player guidLow',
 PRIMARY KEY (`GUID`)
 )
