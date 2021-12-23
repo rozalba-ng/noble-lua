@@ -384,6 +384,8 @@ function GetFakeAura(item)
             return entryMap[dataMap[guid]]["auras"][guid]
         end
     end
+
+    return 0
 end
 
 local function DeleteFakeFromDB(itemGUID)
