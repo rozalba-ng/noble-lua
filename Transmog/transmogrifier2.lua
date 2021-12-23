@@ -380,8 +380,10 @@ end
 function GetFakeAura(item)
     local guid = item and item:GetGUIDLow()
     if guid and dataMap[guid] then
+        print(1111)
         if entryMap[dataMap[guid]] then
-            return entryMap[dataMap[guid]]["auras"][guid]
+            print(22222)
+            return entryMap[dataMap[guid]]["auras"][item:GetGUIDLow()]
         end
     end
 
