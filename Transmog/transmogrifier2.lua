@@ -757,7 +757,7 @@ local function OnLogin(event, player)
                 if entryMap[playerGUID] then
                     if entryMap[playerGUID][item:GetGUIDLow()] then
                         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entryMap[playerGUID][item:GetGUIDLow()])
-                        if entryMap[playerGUID]["auras"][item:GetGUIDLow()] > 0 then
+                        if entryMap[playerGUID]["auras"][item:GetGUIDLow()] and entryMap[playerGUID]["auras"][item:GetGUIDLow()] > 0 then
                             player:AddAura(entryMap[playerGUID]["auras"][item:GetGUIDLow()])
                         end
                         if((slot == 4 or slot == 14) and player:HasAura(84046))then
