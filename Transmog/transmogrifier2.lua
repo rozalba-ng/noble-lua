@@ -357,7 +357,7 @@ local function GetFakePrice(item)
     return sellPrice
 end
 
-local function remmoveFakeAuraFromPlayer(item)
+local function removeFakeAuraFromPlayer(item)
     local player = item:GetOwner()
     local playerAuraOld = CharDBQuery('SELECT FakeAura FROM custom_transmogrification where GUID = ' .. item:GetGUIDLow() );
     if playerAuraOld then
@@ -377,6 +377,15 @@ function GetFakeEntry(item)
     end
 end
 
+function GetFakeAura(item)
+    local guid = item and item:GetGUIDLow()
+    if guid and dataMap[guid] then
+        if entryMap[dataMap[guid]] then
+            return entryMap[dataMap[guid]]["auras"][guid]
+        end
+    end
+end
+
 local function DeleteFakeFromDB(itemGUID)
     if dataMap[itemGUID] then
         if entryMap[dataMap[itemGUID]] then
@@ -392,7 +401,7 @@ local function DeleteFakeEntry(item)
         return false
     end
     item:GetOwner():UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), item:GetEntry())
-    remmoveFakeAuraFromPlayer(item)
+    removeFakeAuraFromPlayer(item)
     DeleteFakeFromDB(item:GetGUIDLow())
     return true
 end
@@ -421,7 +430,7 @@ local function SetFakeEntry(item, entry)
         end
         entryMap[pGUID][iGUID] = entry
         dataMap[iGUID] = pGUID
-        remmoveFakeAuraFromPlayer(item)
+        removeFakeAuraFromPlayer(item)
 
         CharDBExecute("REPLACE INTO custom_transmogrification (GUID, FakeEntry, FakeAura, Owner) VALUES ("..iGUID..", "..entry..", "..iAuraNew..", "..pGUID..")")
     end
@@ -717,15 +726,21 @@ end
 local function OnLogin(event, player)
     local playerGUID = player:GetGUIDLow()
     entryMap[playerGUID] = {}
-    local result = CharDBQuery("SELECT GUID, FakeEntry FROM custom_transmogrification WHERE Owner = "..playerGUID)
+    local result = CharDBQuery("SELECT GUID, FakeEntry, FakeAura FROM custom_transmogrification WHERE Owner = "..playerGUID)
     if result then
         repeat
             local itemGUID = result:GetUInt32(0)
             local fakeEntry = result:GetUInt32(1)
+            local fakeAura = result:GetUInt32(2)
             -- if sObjectMgr:GetItemTemplate(fakeEntry) then
             -- {
             dataMap[itemGUID] = playerGUID
             entryMap[playerGUID][itemGUID] = fakeEntry
+            entryMap[playerGUID]["auras"][itemGUID] = fakeAura
+
+            if player:HasAura(fakeAura) then
+                player:RemoveAura(fakeAura)
+            end
             -- }
             -- else
             --     sLog:outError(LOG_FILTER_SQL, "Item entry (Entry: %u, itemGUID: %u, playerGUID: %u) does not exist, deleting.", fakeEntry, itemGUID, playerGUID)
@@ -739,6 +754,9 @@ local function OnLogin(event, player)
                 if entryMap[playerGUID] then
                     if entryMap[playerGUID][item:GetGUIDLow()] then
                         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entryMap[playerGUID][item:GetGUIDLow()])
+                        if entryMap[playerGUID]["auras"][item:GetGUIDLow()] > 0 then
+                            player:AddAura(entryMap[playerGUID]["auras"][item:GetGUIDLow()])
+                        end
                         if((slot == 4 or slot == 14) and player:HasAura(84046))then
                             local trinket1 = player:GetItemByPos( 255, 12 );
                             local trinket2 = player:GetItemByPos( 255, 13 );
@@ -930,7 +948,19 @@ local function OnEquip(event, player, item, bag, slot)
         end
         player:SetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (slot * ITEM_SLOT_MULTIPLIER), fentry)
     end
-    
+
+    if entryMap[player:GetGUID()] and entryMap[player:GetGUID()]["auras"] then
+        for _, aura in pairs(entryMap[player:GetGUID()]["auras"]) do
+            if aura > 0 then
+                player:RemoveAura(aura)
+            end
+        end
+
+        local faura = GetFakeAura(item)
+        if faura > 0 then
+            player:AddAura(faura)
+        end
+    end
     if((slot == 4 or slot == 14) and player:HasAura(84046))then
         local trinket1 = player:GetItemByPos( 255, 12 );
         local trinket2 = player:GetItemByPos( 255, 13 );
@@ -960,6 +990,10 @@ local function OnEquip(event, player, item, bag, slot)
 end
 
 local function OnUnEquip(event, player, item, bag, slot)
+    local faura = GetFakeAura(item)
+    if faura > 0 then
+        player:RemoveAura(faura)
+    end
     if((slot == 4 or slot == 14) and player:HasAura(84046))then
         local trinket1 = player:GetItemByPos( 255, 12 );
         local trinket2 = player:GetItemByPos( 255, 13 );
