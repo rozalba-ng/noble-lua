@@ -738,6 +738,7 @@ local function OnLogin(event, player)
             -- {
             dataMap[itemGUID] = playerGUID
             entryMap[playerGUID][itemGUID] = fakeEntry
+            entryMap[playerGUID]["auras"] = {}
             entryMap[playerGUID]["auras"][itemGUID] = fakeAura
 
             if player:HasAura(fakeAura) then
