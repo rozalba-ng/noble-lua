@@ -380,10 +380,7 @@ end
 function GetFakeAura(item)
     local guid = item and item:GetGUIDLow()
     if guid and dataMap[guid] then
-        print(guid)
-        print(8888)
         if entryMap[dataMap[guid]] and entryMap[dataMap[guid]]["auras"] then
-            print(6666)
             return entryMap[dataMap[guid]]["auras"][guid]
         end
     end
@@ -742,10 +739,6 @@ local function OnLogin(event, player)
             entryMap[playerGUID][itemGUID] = fakeEntry
             entryMap[playerGUID]["auras"] = {}
             entryMap[playerGUID]["auras"][itemGUID] = fakeAura
-            print("start loading auras")
-            print(itemGUID)
-            print(fakeAura)
-            print("end loading auras")
 
             if player:HasAura(fakeAura) then
                 player:RemoveAura(fakeAura)
@@ -763,10 +756,8 @@ local function OnLogin(event, player)
                 if entryMap[playerGUID] then
                     if entryMap[playerGUID][item:GetGUIDLow()] then
                         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entryMap[playerGUID][item:GetGUIDLow()])
-                        print(44445555)
                         if entryMap[playerGUID]["auras"][item:GetGUIDLow()] and entryMap[playerGUID]["auras"][item:GetGUIDLow()] > 0 then
-                            print(888885555)
-                            player:AddAura(entryMap[playerGUID]["auras"][item:GetGUIDLow()])
+                            player:AddAura(entryMap[playerGUID]["auras"][item:GetGUIDLow()], player)
                         end
                         if((slot == 4 or slot == 14) and player:HasAura(84046))then
                             local trinket1 = player:GetItemByPos( 255, 12 );
@@ -828,7 +819,7 @@ function TransmogItem(player,slot,id)
 		return false
 	end
 	if player:HasAura(TRANSMOG_AURA) == false then
-		player:AddAura(TRANSMOG_AURA,player)
+		player:AddAura(TRANSMOG_AURA, player)
 		local transmogrified = player:GetItemByPos(INVENTORY_SLOT_BAG_0, slot)
 		if transmogrified then
 			
@@ -852,7 +843,7 @@ function TransmogItem(player,slot,id)
 end
 function TransmogSet(player,code, state)
 	if player:HasAura(TRANSMOG_AURA) == false then
-		player:AddAura(TRANSMOG_AURA,player)
+		player:AddAura(TRANSMOG_AURA, player)
 		local ids = splitter(code,"#")
 		if state == nil or state ~= 1 then
             for i = 1, #Transmog_ItemSetID-3 do
@@ -962,20 +953,14 @@ local function OnEquip(event, player, item, bag, slot)
 
     if entryMap[player:GetGUIDLow()] and entryMap[player:GetGUIDLow()]["auras"] then
         for x, aura in pairs(entryMap[player:GetGUIDLow()]["auras"]) do
-            print(x)
-            print(aura)
-            print(999900001111)
             if aura > 0 then
-                print(aura)
                 player:RemoveAura(aura)
             end
         end
 
         local faura = GetFakeAura(item)
-        print(555444455566)
-        print(faura)
         if faura > 0 then
-            player:AddAura(faura)
+            player:AddAura(faura, player)
         end
     end
     if((slot == 4 or slot == 14) and player:HasAura(84046))then
