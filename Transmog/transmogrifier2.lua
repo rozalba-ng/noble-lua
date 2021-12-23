@@ -961,8 +961,10 @@ local function OnEquip(event, player, item, bag, slot)
         player:SetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (slot * ITEM_SLOT_MULTIPLIER), fentry)
     end
 
-    if entryMap[player:GetGUID()] and entryMap[player:GetGUID()]["auras"] then
-        for _, aura in pairs(entryMap[player:GetGUID()]["auras"]) do
+    if entryMap[player:GetGUIDLow()] and entryMap[player:GetGUIDLow()]["auras"] then
+        for x, aura in pairs(entryMap[player:GetGUIDLow()]["auras"]) do
+            print(x)
+            print(aura)
             print(999900001111)
             if aura > 0 then
                 print(aura)
@@ -971,8 +973,8 @@ local function OnEquip(event, player, item, bag, slot)
         end
 
         local faura = GetFakeAura(item)
-    print(555444455566)
-    print(faura)
+        print(555444455566)
+        print(faura)
         if faura > 0 then
             player:AddAura(faura)
         end
