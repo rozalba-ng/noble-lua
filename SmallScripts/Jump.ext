@@ -1,0 +1,15 @@
+function Player:Jump(x,y,z,speed,height)
+	local dist = self:GetDistance(x,y,z)
+	self:MoveJump(x,y,z,speed,height)
+	return (dist/speed)*1000
+end
+function Creature:Jump(x,y,z,speed,height)
+	local dist = self:GetDistance(x,y,z)
+	self:MoveJump(x,y,z,speed,height)
+	return (dist/speed)*1000
+end
+function Unit:Jump(x,y,z,speed,height)
+	local dist = self:GetDistance(x,y,z)
+	self:MoveJump(x,y,z,speed,height)
+	return (dist/speed)*1000
+end

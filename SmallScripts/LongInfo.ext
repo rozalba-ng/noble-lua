@@ -1,0 +1,129 @@
+local sqlCreate = [[
+CREATE TABLE IF NOT EXISTS `long_info_memory` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`guid` INT(11) NOT NULL,
+	`type` INT(11) NULL DEFAULT NULL,
+	`key` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`value` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	PRIMARY KEY (`id`) USING BTREE
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;
+]]
+WorldDBQuery(sqlCreate)
+
+local playerMemory = {}
+local creatureMemory = {}
+local goMemory = {}
+local function LoadMemory()
+	
+	local Q = WorldDBQuery("SELECT * FROM long_info_memory")
+	if Q then
+		repeat
+			local id, guid, memType, key, value = Q:GetUInt32(0),Q:GetUInt32(1), Q:GetUInt32(2), Q:GetString(3), Q:GetString(4)
+			guid = tonumber(tostring(guid))
+			if memType == 1 then
+				playerMemory[guid] = playerMemory[guid] or {}
+				playerMemory[guid][key] = value
+			elseif memType == 2 then
+				creatureMemory[guid] = creatureMemory[guid] or {}
+				creatureMemory[guid][key] = value
+			elseif memType == 3 then
+				goMemory[guid] = goMemory[guid] or {}
+				goMemory[guid][key] = value
+			end
+			
+
+		until not Q:NextRow()
+	end
+	
+end
+LoadMemory()
+function Player:SetInfo(key,value)
+	local guid = self:GetGUID()
+	guid = tonumber(tostring(guid))
+
+	if playerMemory[guid] then
+		if playerMemory[guid][key] then
+			playerMemory[guid][key] = value
+			WorldDBQuery("UPDATE `world`.`long_info_memory` SET `value`='"..value.."' WHERE  guid='"..tostring(guid).."' and `key`= '"..key.."' and type = 1")
+		else
+			playerMemory[guid][key] = value
+			WorldDBQuery("INSERT INTO `world`.`long_info_memory` (`guid`, `type`, `key`, `value`) VALUES ('"..tostring(guid).."', '1', '"..key.."', '"..value.."');")
+		end
+	else
+		playerMemory[guid] = {}
+		playerMemory[guid][key] = value
+		WorldDBQuery("INSERT INTO `world`.`long_info_memory` (`guid`, `type`, `key`, `value`) VALUES ('"..tostring(guid).."', '1', '"..key.."', '"..value.."');")
+	end
+end
+function Creature:SetInfo(key,value)
+	local guid = self:GetDBTableGUIDLow()
+	guid = tonumber(tostring(guid))
+
+	if creatureMemory[guid] then
+		if creatureMemory[guid][key] then
+			creatureMemory[guid][key] = value
+			WorldDBQuery("UPDATE `world`.`long_info_memory` SET `value`='"..value.."' WHERE  guid="..tostring(guid).." and `key`= '"..key.."' and type = 2")
+		else
+			creatureMemory[guid][key] = value
+			WorldDBQuery("INSERT INTO `world`.`long_info_memory` (`guid`, `type`, `key`, `value`) VALUES ('"..tostring(guid).."', '2', '"..key.."', '"..value.."');")
+		end
+	else
+		creatureMemory[guid] = {}
+		creatureMemory[guid][key] = value
+		WorldDBQuery("INSERT INTO `world`.`long_info_memory` (`guid`, `type`, `key`, `value`) VALUES ('"..tostring(guid).."', '2', '"..key.."', '"..value.."');")
+	end
+end
+function GameObject:SetInfo(key,value)
+	local guid = self:GetDBTableGUIDLow()
+	guid = tonumber(tostring(guid))
+	if goMemory[guid] then
+		if goMemory[guid][key] then
+			goMemory[guid][key] = value
+			WorldDBQuery("UPDATE `world`.`long_info_memory` SET `value`='"..value.."' WHERE  guid="..tostring(guid).." and `key=` '"..key.."' and type = 3")
+		else
+			goMemory[guid][key] = value
+			WorldDBQuery("INSERT INTO `world`.`long_info_memory` (`guid`, `type`, `key`, `value`) VALUES ('"..tostring(guid).."', '3', '"..key.."', '"..value.."');")
+		end
+	else
+		goMemory[guid] = {}
+		goMemory[guid][key] = value
+		WorldDBQuery("INSERT INTO `world`.`long_info_memory` (`guid`, `type`, `key`, `value`) VALUES ('"..guid.."', '3', '"..key.."', '"..value.."');")
+	end
+end
+
+
+function Player:GetInfo(key)
+	local guid = self:GetGUID()
+	guid = tonumber(tostring(guid))
+	local memory = playerMemory[guid]
+	if memory then
+		if memory[key] then
+			return memory[key]
+		end
+	end
+end
+
+function Creature:GetInfo(key)
+	local guid = self:GetDBTableGUIDLow()
+	guid = tonumber(tostring(guid))
+	local memory = creatureMemory[guid]
+	if memory then
+		if memory[key] then
+			return memory[key]
+		end
+	end
+end
+
+function GameObject:GetInfo(key)
+	local guid = self:GetDBTableGUIDLow()
+	guid = tonumber(tostring(guid))
+	local memory = goMemory[guid]
+	if memory then
+		if memory[key] then
+			return memory[key]
+		end
+	end
+end
