@@ -420,7 +420,7 @@ local function SetFakeEntry(item, entry)
         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entry)
 
         if item:GetSlot() == EQUIPMENT_SLOT_WAIST then
-            print(entry)
+            removeFakeAuraFromPlayer(item)
             local auraItem = WorldDBQuery('SELECT spellid_1 FROM item_template where spellid_1 > 0 and entry = ' .. entry );
             if auraItem then
                 iAuraNew = tonumber(auraItem:GetString(0))
@@ -434,9 +434,8 @@ local function SetFakeEntry(item, entry)
             entryMap[pGUID] = {}
         end
         entryMap[pGUID][iGUID] = entry
+        entryMap[pGUID]["auras"][iGUID] = iAuraNew
         dataMap[iGUID] = pGUID
-        removeFakeAuraFromPlayer(item)
-
         CharDBExecute("REPLACE INTO custom_transmogrification (GUID, FakeEntry, FakeAura, Owner) VALUES ("..iGUID..", "..entry..", "..iAuraNew..", "..pGUID..")")
     end
 end
