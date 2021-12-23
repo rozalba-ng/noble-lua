@@ -727,6 +727,7 @@ end
 local function OnLogin(event, player)
     local playerGUID = player:GetGUIDLow()
     entryMap[playerGUID] = {}
+    entryMap[playerGUID]["auras"] = {}
     local result = CharDBQuery("SELECT GUID, FakeEntry, FakeAura FROM custom_transmogrification WHERE Owner = "..playerGUID)
     if result then
         repeat
@@ -737,7 +738,6 @@ local function OnLogin(event, player)
             -- {
             dataMap[itemGUID] = playerGUID
             entryMap[playerGUID][itemGUID] = fakeEntry
-            entryMap[playerGUID]["auras"] = {}
             entryMap[playerGUID]["auras"][itemGUID] = fakeAura
 
             if player:HasAura(fakeAura) then
