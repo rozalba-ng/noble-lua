@@ -380,10 +380,11 @@ end
 function GetFakeAura(item)
     local guid = item and item:GetGUIDLow()
     if guid and dataMap[guid] then
-        print(1111)
-        if entryMap[dataMap[guid]] then
-            print(22222)
-            return entryMap[dataMap[guid]]["auras"][item:GetGUIDLow()]
+        print(guid)
+        print(8888)
+        if entryMap[dataMap[guid]] and entryMap[dataMap[guid]]["auras"] then
+            print(6666)
+            return entryMap[dataMap[guid]]["auras"][guid]
         end
     end
 
@@ -742,6 +743,10 @@ local function OnLogin(event, player)
             entryMap[playerGUID][itemGUID] = fakeEntry
             entryMap[playerGUID]["auras"] = {}
             entryMap[playerGUID]["auras"][itemGUID] = fakeAura
+            print("start loading auras")
+            print(itemGUID)
+            print(fakeAura)
+            print("end loading auras")
 
             if player:HasAura(fakeAura) then
                 player:RemoveAura(fakeAura)
@@ -759,7 +764,9 @@ local function OnLogin(event, player)
                 if entryMap[playerGUID] then
                     if entryMap[playerGUID][item:GetGUIDLow()] then
                         player:UpdateUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (item:GetSlot() * ITEM_SLOT_MULTIPLIER), entryMap[playerGUID][item:GetGUIDLow()])
+                        print(44445555)
                         if entryMap[playerGUID]["auras"][item:GetGUIDLow()] and entryMap[playerGUID]["auras"][item:GetGUIDLow()] > 0 then
+                            print(888885555)
                             player:AddAura(entryMap[playerGUID]["auras"][item:GetGUIDLow()])
                         end
                         if((slot == 4 or slot == 14) and player:HasAura(84046))then
@@ -956,12 +963,16 @@ local function OnEquip(event, player, item, bag, slot)
 
     if entryMap[player:GetGUID()] and entryMap[player:GetGUID()]["auras"] then
         for _, aura in pairs(entryMap[player:GetGUID()]["auras"]) do
+            print(999900001111)
             if aura > 0 then
+                print(aura)
                 player:RemoveAura(aura)
             end
         end
 
         local faura = GetFakeAura(item)
+    print(555444455566)
+    print(faura)
         if faura > 0 then
             player:AddAura(faura)
         end
