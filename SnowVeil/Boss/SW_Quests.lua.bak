@@ -393,7 +393,7 @@ RegisterCreatureEvent( SNOWMAN_QUEST_STARTER,31, OnSnowmanQuestStart )
 
 local function CheckWater(eventid, delay, repeats, player)
     if player:IsInWater() or player:IsUnderWater() then
-        player:DealDamage(player,90)
+        player:DealDamage(90)
     end
 end
 local function OnMapChanged(event, player)
