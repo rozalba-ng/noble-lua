@@ -1,37 +1,37 @@
-local ENGINEER_ENTRY = 987829
-local ICE_ITEM_ENTRY = 4865
+local ENGINEER_ENTRY = 987853
+local ICE_ITEM_ENTRY = 5061736 
 local BRIDGE_TIME = 15*60*1000
-local ICE_GOB_ENTRY = 508905
-local ICE_PLATFORM_ENTRY = 190024
+local ICE_GOB_ENTRY = 5051949
+local ICE_PLATFORM_ENTRY = 5051948
 local currentIceCount = 0
 local iceBridge = false
 
-local STORY_NPC = 987830
-local STORY_QUEST =  102
+local STORY_NPC = 987847 
+local STORY_QUEST =  110204  
 
-local GIFTS_ENTRY = {508906}
+local GIFTS_ENTRY = {5051941,5051943,5051944,5051945,5051946, 5051947}
 
 
-local ITEM_QUEST =4866
-local ITEM_BOSS = 4867
+local ITEM_QUEST =5061694
+local ITEM_BOSS = 5061695
 
-local KID_QUEST_STARTER = 987830
-local KID_QUEST = 102
-local KID_ENTRY = 987830
-local KID_GIFT_ENTRY =4865
+local KID_QUEST_STARTER = 987839 
+local KID_QUEST = 110206 
+local KID_ENTRY = 987845  
+local KID_GIFT_ENTRY =5061737 
 
-local DEER_QUEST_STARTER = 987830
-local DEER_QUEST = 102
-local DEER_ENTRY = 987831
-local DEER_FOOD_ENTRY =4865
+local DEER_QUEST_STARTER = 987839 
+local DEER_QUEST = 110208 
+local DEER_ENTRY = 987846
+local DEER_FOOD_ENTRY =5061733 
 
-local SNOWMAN_ITEM_ENTRY = 5000001 
-local SNOWMAN_QUEST = 102
+local SNOWMAN_ITEM_ENTRY = 5061734  
+local SNOWMAN_QUEST = 110207 
 local SNOWMAN_ENTRY = 13636
-local SNOWMAN_QUEST_STARTER = 987830
+local SNOWMAN_QUEST_STARTER = 987839 
 local PLATFORMS_COORDS = 
     {   
-        {x=-1122,y=-23,z=0,o=0},
+        {x=-1113,y=-15,z=0,o=0},
         {x=-1118,y=18,z=0,o=0},
         {x=-1115,y=47,z=0,o=0},
         {x=-1107,y=80,z=0,o=0},
@@ -41,13 +41,13 @@ local PLATFORMS_COORDS =
     }
 
 local GNOMES = {
-    [987829]={entry = 987829, item = 4865, text = "Составляли список хороших и послушных детей с Дедушкой Зимой. Он попросил меня сходить за горячим какао для него и для меня. Ну я и сбегал, зараза!.. Как вернулся, дак его уже и нет нигде! Так удивился, так удивился, аж кружки выронил! Жаль какао, но больше, конечно, жаль Дедушку Зиму. Куда подевался?!"},
-    [987829]={entry = 987829, item = 4865, text = "Каждое утро я слышу, как Дедушка Зима напевает свою любимую песенку. На втором куплете я обычно успеваю проснуться, умыться и присоединиться к пениям. Но сегодня никакой песенки не было. Потому что Дедушка пропал! А ещё я проспал!! И теперь отстаю от графика! А-А-А!"},
-    [987829]={entry = 987829, item = 4865, text = 'Раз Дедушка Зима пропал, я не знаю, куда отсортировывать письма, адресованные "Дидушке Зыме", "Деду Морозу", "Кланте Саусу" и-и-и... "Самому доброму старичку". Кто все эти люди?!'},
-    [987830]={entry = 987830, item = 4865, text = "Вату в мягкую игрушку. Мягкую игрушку в упаковку. Упаковку в коробку. Коробку под ёлку. Ёлку в дом. Или... Или сначала игрушку в коробку, а коробку в упаковку?! А если уже ёлка стоит в доме?! Да что ж ты будешь делать! Я не могу запомнить последовательность без Дедушки Зимы!"},
+    [987848]={entry = 987848, item = 5061729, text = "Составляли список хороших и послушных детей с Дедушкой Зимой. Он попросил меня сходить за горячим какао для него и для меня. Ну я и сбегал, зараза!.. Как вернулся, дак его уже и нет нигде! Так удивился, так удивился, аж кружки выронил! Жаль какао, но больше, конечно, жаль Дедушку Зиму. Куда подевался?!"},
+    [987849]={entry = 987849, item = 5061730, text = "Каждое утро я слышу, как Дедушка Зима напевает свою любимую песенку. На втором куплете я обычно успеваю проснуться, умыться и присоединиться к пениям. Но сегодня никакой песенки не было. Потому что Дедушка пропал! А ещё я проспал!! И теперь отстаю от графика! А-А-А!"},
+    [987850]={entry = 987850, item = 5061731, text = 'Раз Дедушка Зима пропал, я не знаю, куда отсортировывать письма, адресованные "Дидушке Зыме", "Деду Морозу", "Кланте Саусу" и-и-и... "Самому доброму старичку". Кто все эти люди?!'},
+    [987851]={entry = 987851, item = 5061732, text = "Вату в мягкую игрушку. Мягкую игрушку в упаковку. Упаковку в коробку. Коробку под ёлку. Ёлку в дом. Или... Или сначала игрушку в коробку, а коробку в упаковку?! А если уже ёлка стоит в доме?! Да что ж ты будешь делать! Я не могу запомнить последовательность без Дедушки Зимы!"},
 
 }
-local GNOME_QUEST = 102
+local GNOME_QUEST = 110205 
 
 local currentPlaytform = 1
 local spawnedPlatform = 1
@@ -178,10 +178,10 @@ end
 
 
 local ITEMS = {
-    4867
+    5061697,5061698,5061699,5061700,5061701,5061702,5061703,5061704,5061705,5061706,5061707,5061708,5061709,5061710,5061711,5061713,5061724,5061725,5061713,5061714,5061726,5061727,5061728
     }
 local ITEMS_BOSS = {
-    4867
+    5061714,5061715,5061716,5061714,5061715,5061716,5061717,5061718,5061719,5061720,5061722,5061735,5061721
     }
 
 local function Interface_GiftQuest(player,obj,intid)
@@ -243,7 +243,7 @@ local function OnGnomeClick(event, player, gnome)
         if not player:HasItem(needItem) then
             local item = player:AddItem(needItem)
             if item then
-                gnome:SendChatMessageToPlayer(1,1,text,player)
+                gnome:SendChatMessageToPlayer(1,0,text,player)
             else
                 player:Print("Повторите со свободным местом в инвентаре.")
             end
@@ -366,9 +366,10 @@ local function OnSnowmanComplectUsed(event, player, item, target)
             local currentsnowman = tonumber(player:GetInfo("NewYear_SnowmanCount")) + 1
             local snowman = player:SpawnCreature(SNOWMAN_ENTRY,player:GetX(),player:GetY(),player:GetZ(),player:GetO(),1,15*60*1000)
             snowman:SetScale(2.5)
+            player:RemoveItem(SNOWMAN_ITEM_ENTRY,1)
             player:SetInfo("NewYear_SnowmanCount",tostring(currentsnowman))
             player:SendAreaTriggerMessage("Слеплено снеговиков "..currentsnowman.."/4")
-            if snowman == 4 then
+            if currentsnowman == 4 then
                 player:CompleteQuest(SNOWMAN_QUEST)
             end
         else

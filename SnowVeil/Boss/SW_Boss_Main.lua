@@ -1,11 +1,11 @@
 
-local bossEntryID = 123 
+local bossEntryID = 987843 
 local snowmans = {}
 local boss_stage = nil
 local spellKick = 10101 -- Отбрасывание игрока -- 65918 последствия
 local spellSnowball = 21343
-local snowmanEntry = 987834
-local gigamanEntry = 987826
+local snowmanEntry = 987854  
+local gigamanEntry = 987855  
 local BOSS_FIRST_JUMP = {x=-1068,y=111,z=8}
 local gigamanData = {}
 local rocketTarget = nil
@@ -26,16 +26,17 @@ local function Snowman(obj)
 end
 
 local function BossKickStage(_,_,_,boss)
-    boss:CastSpell( (boss:GetNearestPlayer(15,1,1)), spellKick,true)
+    --boss:CastCustomSpell( (boss:GetNearestPlayer(15,1,1)), spellKick,true,1,1,1)
+    boss:CastCustomSpell( (boss:GetNearestPlayer(15,1,1)), spellKick,true,3,1,1)
     if boss_stage == 1 or boss_stage == 2 then
-        boss:RegisterEvent(BossKickStage,2.5*1000,1)
+        boss:RegisterEvent(BossKickStage,5*1000,1)
     end
     
 end
 local function BossSnowballStage(_,_,_,boss)
     local target = boss:GetNearestPlayer(40,1,1)
     if target and boss_stage == 2 then
-        boss:CastSpell( target, spellSnowball,true)
+        boss:CastCustomSpell( target, spellSnowball,true,1,1,1)
         local dist = boss:GetDistance(target)
         local x,y,z = target:GetX(),target:GetY(),target:GetZ()
         boss:RegisterEvent(function(_,_,_,boss)
@@ -64,11 +65,14 @@ local function BossEnterCombat(event, boss, target)
 	elseif randomVariable == 4 then
 		boss:SendUnitSay("Черт... я даже не успел раздется к вашему приходу",0)
     end
-	boss:CastSpell( (boss:GetNearestPlayer(20,1,1)), spellKick,true)
+	boss:CastCustomSpell( (boss:GetNearestPlayer(20,1,1)), spellKick,true,1,1,1)
     boss:RegisterEvent(BossKickStage,1*1000,1)
 end
 
 local function StunRockets(_,_,_,gigaman)
+    if gigaman:GetHealthPct()>2 then
+        return
+    end
     local players =gigaman:GetPlayersInRange(29)
     local player = players[math.random(1,#players)]
     rocketTarget = player:GetName()
@@ -84,7 +88,7 @@ local function StunRockets(_,_,_,gigaman)
     end
     gigaman:RegisterEvent(function(_,_,_,gigaman)
         local p = GetPlayerByName(rocketTarget)
-        if p then
+        if p and gigaman:GetHealthPct()>1 then
             gigaman:CastSpell(p,25465)
             local dist = gigaman:GetDistance(p)
             p:RegisterEvent(function(_,_,_,playerEx)
@@ -116,7 +120,7 @@ local function BossLeave(boss)
                 gman:SetMaxHealth(gman:GetMaxHealth()+100)
                 gman:SetHealth(gman:GetMaxHealth())
                 snowman:DespawnOrUnsummon()
-            end,t+250,1)
+            end,(t+250)/2,1)
         end
     end
     local t = boss:Jump(BOSS_FIRST_JUMP.x, BOSS_FIRST_JUMP.y, BOSS_FIRST_JUMP.z, 16, 50)
