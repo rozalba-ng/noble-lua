@@ -59,6 +59,9 @@ local function SpawnPlatform(_,_,_,cannonObj)
     local data =PLATFORMS_COORDS[spawnedPlatform]
     cannonObj:SummonGameObject(ICE_PLATFORM_ENTRY,data.x,data.y,data.z,data.o,BRIDGE_TIME/1000)
     spawnedPlatform = spawnedPlatform + 1
+    if currentPlaytform >= #PLATFORMS_COORDS then
+        currentPlaytform = 0
+    end
 end
 
 local function ShootPlatform(_,_,_,cannonObj)
@@ -70,6 +73,8 @@ local function ShootPlatform(_,_,_,cannonObj)
     currentPlaytform = currentPlaytform + 1
     if currentPlaytform < #PLATFORMS_COORDS then
         cannonObj:RegisterEvent(ShootPlatform,0.5*1000,1)
+    else
+        currentPlaytform = 0
     end
 
 end
@@ -77,11 +82,12 @@ end
 local function Interface_AddIce(player,npc,intid)
     local iceCount = player:GetItemCount(ICE_ITEM_ENTRY)
     currentIceCount = currentIceCount + iceCount
-    if currentIceCount > 10 then
+    if currentIceCount > 5 then
         currentIceCount = 0
         iceBridge = true
         CreateLuaEvent(RemoveBridges,BRIDGE_TIME,1)
         npc:RegisterEvent(ShootPlatform,0.5*1000,1)
+        
     end
     player:RemoveItem(ICE_ITEM_ENTRY,iceCount)
 end
@@ -98,7 +104,7 @@ local function OnEngineerClick(event, player, npc)
     end
 
     interace:AddClose():SetIcon(0)
-	interace:Send("Вы слашали про это изобретение в деревне. Его поставили инженеры Сноувейла чтобы добраться до проклятого Анрилча, но использовать его придется вам! Однако... для его зарядки нужен мана-лед",npc)
+	interace:Send("Вы слашали про это изобретение в деревне. Его поставили инженеры Сноувейла чтобы добраться до проклятого Анрилча, но использовать его придется вам! Однако... для его зарядки нужен мана-лёд.\nМана-лёд "..currentIceCount.."/5",npc)
 end
 local function OnEngineerSelect(event, player, object, sender, intid, code, menu_id)
 	player:CurrentInterface():Click(intid,object,code)
@@ -393,16 +399,18 @@ RegisterCreatureEvent( SNOWMAN_QUEST_STARTER,31, OnSnowmanQuestStart )
 
 local function CheckWater(eventid, delay, repeats, player)
     if player:IsInWater() or player:IsUnderWater() then
-        player:DealDamage(player,90)
+        player:DealDamage(player,25)
     end
 end
 local function OnMapChanged(event, player)
     local oldId = player:GetData("NewYear_WaterCheck")
     if oldId then
         player:RemoveEventById(oldId)
+        player:SetData("NewYear_WaterCheck",nil)
     end
     if player:GetMapId() == 9008 then
-        local id = player:RegisterEvent(CheckWater,2*1000,0)
+        local id = player:RegisterEvent(CheckWater,0.5*1000,0)
+        player:SetData("NewYear_WaterCheck",id)
     end
     
 end
