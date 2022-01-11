@@ -1,0 +1,153 @@
+SWBattle = SWBattle or {}
+
+local ENGINEER_ENTRY = 987831
+local CRAP_ITEM_ENTRY = 4865
+local HOUSE_CANNON_ITEM_ENTRY = 5000001
+local BATTLE_CANNON_ITEM_ENTRY = 5000002
+
+local CANNON_AIR = 987832
+local CANNON_COMBAT = 987833
+
+
+local DAMAGE_TO_HOUSE = 100
+local BATTLE_CANNON_DAMAGE = 25
+local function Cannon(obj)
+    local cannon = {}
+    cannon.map = obj:GetMapId()
+    cannon.guid_low = obj:GetGUIDLow()
+    cannon.entry = obj:GetEntry()
+    function cannon:get()
+        local mapObject = GetMapById(self.map)
+		local guid = GetUnitGUID(self.guid_low,self.entry)
+		local creature = mapObject:GetWorldObject(guid)
+		if creature then
+			return creature
+		end
+    end
+    return cannon
+end
+
+function SWBattle.Init()
+    if not SWBattle.Current then
+        local battle = {}
+        battle.phase = 1
+        battle.house_health = 1000
+        battle.metall = 0
+        battle.battle_cannon_rate = 4
+
+        battle.cannons = {}
+
+
+        SWBattle.Current = battle
+    end
+end
+SWBattle.Init()
+
+local function Interface_AddCrap(player,npc,intid)
+    local battle = SWBattle.Current
+    if battle then
+	    local crapCount = player:GetItemCount(CRAP_ITEM_ENTRY)
+        battle.metall = battle.metall + (crapCount * 5)
+        player:RemoveItem(CRAP_ITEM_ENTRY,crapCount)
+    end
+end
+
+
+
+local function OnEngineerClick(event, player, npc)
+    if not SWBattle.Current then
+        return false
+    end
+
+	local interace = player:CreateInterface()
+    local crapCount = player:GetItemCount(CRAP_ITEM_ENTRY)
+    if crapCount > 0 then
+        interace:AddRow("Отдать металлолом",Interface_AddCrap,true)
+    end
+
+    interace:AddClose():SetIcon(0)
+	interace:Send("Привет",npc)
+end
+local function OnEngineerSelect(event, player, object, sender, intid, code, menu_id)
+	player:CurrentInterface():Click(intid,object,code)
+end
+
+RegisterCreatureGossipEvent(ENGINEER_ENTRY,2,OnEngineerSelect)
+RegisterCreatureGossipEvent(ENGINEER_ENTRY,1,OnEngineerClick)
+
+
+
+local function NextBattleStage()
+    SendWorldMessage("House")
+end
+
+local function HouseCannonAttack(_,_,_,cannonObj)
+    local battle = SWBattle.Current
+    if not battle then
+        return false 
+    end
+    if battle.house_health > 0  then
+        cannonObj:CastSpellAoF(-1233,-45,55,100278,true)
+        battle.house_health = battle.house_health - DAMAGE_TO_HOUSE
+        if battle.house_health <= 0 then
+            battle.house_health = 0
+            NextBattleStage()
+        else
+            cannonObj:RegisterEvent(HouseCannonAttack,4*1000,1)
+        end
+        
+    end
+    
+end
+
+local function BattleCannonAttack(_,_,_,cannonObj)
+    local battle = SWBattle.Current
+    if not battle then
+        return false
+    end
+    local target = cannonObj:GetVictim()
+    if target then
+        cannonObj:CastCustomSpell(target,100279,true, BATTLE_CANNON_DAMAGE)
+    end
+    cannonObj:RegisterEvent(BattleCannonAttack,battle.battle_cannon_rate*1000,1)
+end
+local function OnHouseCannonItemUsed(event, player, item, target)
+    if not SWBattle.Current then
+        return false
+    end
+    local battle = SWBattle.Current
+    local cannonObj = player:SpawnCreature(CANNON_AIR,player:GetX(),player:GetY(),player:GetZ(),player:GetO(),6,10)
+    table.insert(battle.cannons,Cannon(cannonObj))
+    cannonObj:RegisterEvent(HouseCannonAttack,4*1000,1)
+    
+end
+local function OnBattleCannonItemUsed(event, player, item, target)
+    if not SWBattle.Current then
+        return false
+    end
+    local battle = SWBattle.Current
+    local cannonObj = player:SpawnCreature(CANNON_COMBAT,player:GetX(),player:GetY(),player:GetZ(),player:GetO(),6,10)
+    cannonObj:SetRooted(true)
+    cannonObj:SetRegeneratingHealth(false)
+    table.insert(battle.cannons,Cannon(cannonObj))
+    cannonObj:RegisterEvent(BattleCannonAttack,1*1000,1)
+    
+end
+
+
+RegisterItemEvent(HOUSE_CANNON_ITEM_ENTRY,2,OnHouseCannonItemUsed)
+
+RegisterItemEvent(BATTLE_CANNON_ITEM_ENTRY,2,OnBattleCannonItemUsed)
+
+
+
+local function TestCommand(_, player, command)
+	if command == "shoot" and player:GetGMRank() > 1 then
+        for i, cannonData in ipairs(SWBattle.Current.cannons) do
+            local obj = cannonData:get()
+            obj:CastSpellAoF(-1233,-45,55,100278,false)
+        end
+		return false
+	end
+end
+RegisterPlayerEvent( 42, TestCommand )
