@@ -98,7 +98,6 @@ local function OnPlayerCommandWithArg(event, player, code)
 					gms[i]:SendBroadcastMessage("Перезагрузка обликов. Инициирована - "..player:GetName().." ("..player:GetAccountName()..")")
 				end
 			end
-			
 		end
     end
 end
