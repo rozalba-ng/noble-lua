@@ -40,6 +40,9 @@ local function performDmCreatureSpawn(player, entry, save)
 	else
 		PrintError(player:GetName().." поставил НПС: "..entry);
 		local spawnedCreature = spawnDMCreature(player, entry, save);
+        if entry >= 50000 and entry < 60000 then -- диапазон для специальных мобов с функциями, доступных дм-ам
+            return
+        end
 		if (isDeprecatedNpcType(spawnedCreature)) then
 			spawnedCreature:Delete();
 		end
