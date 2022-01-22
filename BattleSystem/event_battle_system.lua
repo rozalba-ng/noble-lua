@@ -5,6 +5,8 @@ EBS_WEAK_AURA = 88012
 DEATH_SOLDER_AURA = 88053
 EBS_ARMOR_AURA = 88050
 EBS_ENERGY_AURA = 88060
+EBS_PHYSICS_DEF_AURA = 102050 
+EBS_MAGIC_DEF_AURA = 102051 
 
 EBS_Auras = {	{	id = 88061,
 					name = "Усталость",},
@@ -187,6 +189,238 @@ local function OnPlayerCommandWithArg(event, player, code)
 					player:SendBroadcastMessage(GM_target:GetName().." потерял "..greenColor..value.."|r очков брони!")
 					if GM_target:ToPlayer() then
 						GM_target:SendBroadcastMessage("Вы потеряли "..greenColor..value.." очков брони!")	
+					end
+					
+				else
+					player:SendBroadcastMessage("Существо не имеет ауры")
+				end
+				
+			end
+		elseif (arguments[1] == "setpharmor" and #arguments == 2 ) then
+			local value = arguments[2]
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if tonumber(value) == 0 then
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_ARMOR, 0);
+					end
+					GM_target:RemoveAura(EBS_PHYSICS_DEF_AURA)
+					return false
+				end
+				if GM_target:HasAura(EBS_PHYSICS_DEF_AURA) then
+					local armorAura = GM_target:GetAura(EBS_PHYSICS_DEF_AURA)
+					armorAura:SetStackAmount(value)
+					player:SendBroadcastMessage(GM_target:GetName().." установлено "..greenColor..value.." очков физической защиты")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вам установлено "..greenColor..value.." физической защиты")
+					end
+					
+				else
+					local armorAura = GM_target:AddAura(EBS_PHYSICS_DEF_AURA,GM_target)
+					armorAura:SetStackAmount(value)
+					player:SendBroadcastMessage(GM_target:GetName().." установлено "..greenColor..value.." физической защиты")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вам установлено "..greenColor..value.." физической защиты")
+					end
+					
+				end
+				if not GM_target:ToPlayer() then
+					setNpcStats(GM_target, ROLE_STAT_ARMOR, value);
+				end
+			end
+		elseif (arguments[1] == "addpharmor" and #arguments == 2 ) then
+			local value = arguments[2]
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if GM_target:HasAura(EBS_PHYSICS_DEF_AURA) then
+					local armorAura = GM_target:GetAura(EBS_PHYSICS_DEF_AURA)
+					local stackAmount = armorAura:GetStackAmount()
+					armorAura:SetStackAmount(stackAmount + value)
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_ARMOR, stackAmount + value);
+					end
+					player:SendBroadcastMessage(GM_target:GetName().." добавлено "..greenColor..value.."|r физической брони!")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вам добавлено "..greenColor..value.." физической брони!")	
+					end
+					
+				else
+					player:SendBroadcastMessage("Существо не имеет ауры")
+				end
+			end
+		elseif (arguments[1] == "removepharmor" and #arguments == 2 ) then
+			local value = arguments[2]
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if GM_target:HasAura(EBS_PHYSICS_DEF_AURA) then
+					local armorAura = GM_target:GetAura(EBS_PHYSICS_DEF_AURA)
+					local stackAmount = armorAura:GetStackAmount()
+					if stackAmount - value  < 1 then
+						if not GM_target:ToPlayer() then
+							setNpcStats(GM_target, ROLE_STAT_ARMOR, 0);
+						end
+						GM_target:RemoveAura(EBS_PHYSICS_DEF_AURA)
+						return false
+					end
+					armorAura:SetStackAmount(stackAmount - value)
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_ARMOR, stackAmount - value);
+					end
+					player:SendBroadcastMessage(GM_target:GetName().." потерял "..greenColor..value.."|r физической брони!")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вы потеряли "..greenColor..value.." физической брони!")	
+					end
+					
+				else
+					player:SendBroadcastMessage("Существо не имеет ауры")
+				end
+				
+			end
+		elseif (arguments[1] == "setmagarmor" and #arguments == 2 ) then
+			local value = arguments[2]
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if tonumber(value) == 0 then
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_ARMOR, 0);
+					end
+					GM_target:RemoveAura(EBS_MAGIC_DEF_AURA)
+					return false
+				end
+				if GM_target:HasAura(EBS_MAGIC_DEF_AURA) then
+					local armorAura = GM_target:GetAura(EBS_MAGIC_DEF_AURA)
+					armorAura:SetStackAmount(value)
+					player:SendBroadcastMessage(GM_target:GetName().." установлено "..greenColor..value.." очков магической защиты")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вам установлено "..greenColor..value.." магической защиты")
+					end
+					
+				else
+					local armorAura = GM_target:AddAura(EBS_MAGIC_DEF_AURA,GM_target)
+					armorAura:SetStackAmount(value)
+					player:SendBroadcastMessage(GM_target:GetName().." установлено "..greenColor..value.." магической защиты")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вам установлено "..greenColor..value.." магической защиты")
+					end
+					
+				end
+				if not GM_target:ToPlayer() then
+					setNpcStats(GM_target, ROLE_STAT_ARMOR, value);
+				end
+			end
+		elseif (arguments[1] == "addmagarmor" and #arguments == 2 ) then
+			local value = arguments[2]
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if GM_target:HasAura(EBS_MAGIC_DEF_AURA) then
+					local armorAura = GM_target:GetAura(EBS_MAGIC_DEF_AURA)
+					local stackAmount = armorAura:GetStackAmount()
+					armorAura:SetStackAmount(stackAmount + value)
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_ARMOR, stackAmount + value);
+					end
+					player:SendBroadcastMessage(GM_target:GetName().." добавлено "..greenColor..value.."|r магической брони!")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вам добавлено "..greenColor..value.." магической брони!")	
+					end
+					
+				else
+					player:SendBroadcastMessage("Существо не имеет ауры")
+				end
+			end
+		elseif (arguments[1] == "removemagarmor" and #arguments == 2 ) then
+			local value = arguments[2]
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if GM_target:HasAura(EBS_MAGIC_DEF_AURA) then
+					local armorAura = GM_target:GetAura(EBS_MAGIC_DEF_AURA)
+					local stackAmount = armorAura:GetStackAmount()
+					if stackAmount - value  < 1 then
+						if not GM_target:ToPlayer() then
+							setNpcStats(GM_target, ROLE_STAT_ARMOR, 0);
+						end
+						GM_target:RemoveAura(EBS_MAGIC_DEF_AURA)
+						return false
+					end
+					armorAura:SetStackAmount(stackAmount - value)
+					if not GM_target:ToPlayer() then
+						setNpcStats(GM_target, ROLE_STAT_ARMOR, stackAmount - value);
+					end
+					player:SendBroadcastMessage(GM_target:GetName().." потерял "..greenColor..value.."|r магической брони!")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вы потеряли "..greenColor..value.." магической брони!")	
 					end
 					
 				else

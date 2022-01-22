@@ -79,6 +79,14 @@ end
 --[[                              Chat funcs                                 ]]
 --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 local function NPCSayFunc(player, line)
+	if string.sub(line, -1) == "!" then
+		player:GetSelectedUnit():Emote(5)
+	elseif string.sub(line, -1) == "?" then
+		player:GetSelectedUnit():Emote(6)
+	else
+		player:GetSelectedUnit():Emote(1)
+	end
+	
     player:GetSelectedUnit():SendUnitSay(line, 0);
 end
 
@@ -91,6 +99,7 @@ local function NPCEmoteFunc(player, line)
 end
 
 local function NPCYellFunc(player, line)
+	player:GetSelectedUnit():Emote(22 )
     player:GetSelectedUnit():SendUnitYell(line, 0);
 end
 
