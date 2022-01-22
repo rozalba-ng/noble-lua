@@ -8,12 +8,12 @@
 
 local function ReloadAllNPCDatabases()
     ReloadAllNPC()
-    local players = GetPlayersInWorld()
+    --[[local players = GetPlayersInWorld()
     for i = 1, #players do
         if players[i]:GetGMRank() > 0 or players[i]:GetDmLevel() >= 1 then
             players[i]:SendBroadcastMessage("Перезагрузка баз npc. Инициирована системой.")
         end
-    end
+    end]]
 end
 
 CreateLuaEvent(ReloadAllNPCDatabases, 300000, 0)
