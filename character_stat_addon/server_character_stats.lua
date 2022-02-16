@@ -126,13 +126,13 @@ function CharacterStatsHandler.SendNewStats(player,newStats)
 				return false
 			else
 				mainSum = mainSum + stat
-				if mainSum > 10 then
+				if mainSum > 8 then
 					player:Print("Значения характеристик некорректны.")
 					return false
 				end
 			end
 		else
-			if stat > 10 or stat < 0 then
+			if stat > 8 or stat < 0 then
 				player:Print("Значения характеристик некорректны.")
 				return false
 			else
