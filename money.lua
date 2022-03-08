@@ -14,6 +14,7 @@ zulhetis_faction = 1170
 brothers_faction = 1171
 blacksun_faction = 1173
 korus_faction = 1172
+zlato_faction = 1174
 
 reputation_friendly = 3000
 reputation_honored = 9000
@@ -82,6 +83,31 @@ local function countStormwindReputation(player)
 
         --	Начисление репутации
         player:SetReputation(faction, player:GetReputation(faction) + r)
+    end
+
+    local faction2
+    if player:GetQuestStatus(110210) == 6 then
+        --	Игрок выполнил квест на Златоземье
+        faction2 = zlato_faction
+    end
+    if faction2 then
+        local zone, trueZone2, r2 = player:GetZoneId(), false, 0
+        if (zone == 10179) then
+            --	Игрок в Злато
+            r2 = 10
+            trueZone2 = true
+        elseif (zone == 10237 or player:HasAura(guildzone_stormwind_aura) or zone == 1519 or zone == 10236 or zone == 10235 or zone == 10199 or zone == 10234 or zone == 10214 or zone == 10197 or zone == 10160 or zone == 10232 or zone == 10233 or zone == 12) then
+            --	Игрок играет на полигоне
+            r2 = 6
+            trueZone2 = true
+        end
+        if trueZone2 and ActionTime() then
+            --	Если время суперактива - идёт маленький бонус.
+            r2 = r2 + 5
+        end
+
+        --	Начисление репутации
+        player:SetReputation(faction2, player:GetReputation(faction2) + r2)
     end
 end
 
