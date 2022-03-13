@@ -60,7 +60,12 @@ local auraCityRoles = {
 	91150,
 	91151,
 	91152,
-	91153
+	91153,
+	91216,
+	91217,
+	91218,
+	91219,
+	91220
 }
 
 --[[	НАВЕШИВАНИЕ АУРЫ АНОНИМНОСТИ	]]--
@@ -102,15 +107,15 @@ local function WhenPlayerEnterGame( _, player )
 		player:RemoveAura( 91069 )
 		player:RemoveAura( 91068 )
 		player:RemoveAura( 91067 )
-		if ((player:GetReputation( law_faction ) >= amount_reputation_exalted) or (player:GetReputation( thiefs_faction ) >= amount_reputation_exalted)) then
-			player:AddAura( 91070, player )
-		elseif ((player:GetReputation( law_faction ) >= amount_reputation_revered) or (player:GetReputation( thiefs_faction ) >= amount_reputation_revered)) then
-			player:AddAura( 91069, player )
-		elseif ((player:GetReputation( law_faction ) >= amount_reputation_honored) or (player:GetReputation( thiefs_faction ) >= amount_reputation_honored)) then
-			player:AddAura( 91068, player )
-		elseif ((player:GetReputation( law_faction ) >= amount_reputation_friendly) or (player:GetReputation( thiefs_faction ) >= amount_reputation_friendly)) then
-			player:AddAura( 91067, player )
-		end
+--		if ((player:GetReputation( law_faction ) >= amount_reputation_exalted) or (player:GetReputation( thiefs_faction ) >= amount_reputation_exalted)) then
+--			player:AddAura( 91070, player )
+--		elseif ((player:GetReputation( law_faction ) >= amount_reputation_revered) or (player:GetReputation( thiefs_faction ) >= amount_reputation_revered)) then
+--			player:AddAura( 91069, player )
+--		elseif ((player:GetReputation( law_faction ) >= amount_reputation_honored) or (player:GetReputation( thiefs_faction ) >= amount_reputation_honored)) then
+--			player:AddAura( 91068, player )
+--		elseif ((player:GetReputation( law_faction ) >= amount_reputation_friendly) or (player:GetReputation( thiefs_faction ) >= amount_reputation_friendly)) then
+--			player:AddAura( 91067, player )
+--		end
 	end
 
 	if player:HasAura( aura.camouflage ) then
