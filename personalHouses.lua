@@ -144,7 +144,6 @@ local function gossipDoorOption(event, player, object, guid)
     player:GossipMenuAddItem(3, "Изъять доступ", 1, 4, false, nil, nil, false)
 	--Ezil: Проверка, является ли дверь 1 уровня и типом Личная, а также обновился ли квест, либо этот квест в целом не был еще ни разу начат.
 	local nextCooldownReset_time = os.date("*t")
-	nextCooldownReset_time.day = nextCooldownReset_time.day
 	if (lockedDoorArray[guid].door_level == 1 and lockedDoorArray[guid].owner_type == 0 and not player:HasQuest(DOOR_QUEST) and (not player:GetInfo("LastDoorQuest") or nextCooldownReset_time.day~=tonumber(player:GetInfo("LastDoorQuest")))) then
 		player:GossipMenuAddItem(4, "Сдать припасы", 1, 6)
 	end
@@ -162,9 +161,8 @@ end
 
 
 --Ezil:Регистрация собатия, когда игрок Сдает квест, навешивать кулдаун в сутки.
-local function OnDoorQuestReward()
+local function OnDoorQuestReward(event, player, creature, quest, opt)
 	local nextCooldownReset_time = os.date("*t")
-	nextCooldownReset_time.day = nextCooldownReset_time.day 
 	player:SetInfo("LastDoorQuest",tostring(nextCooldownReset_time.day))
 end
 RegisterCreatureEvent(DOOR_QUEST_END_NPC,34,OnDoorQuestReward)
