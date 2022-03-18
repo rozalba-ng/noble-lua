@@ -12,6 +12,9 @@ local faction_shadow_stormwind = 1163;
 local reputation_honored = 9000;
 local reputation_friendly = 3000;
 
+local DOOR_QUEST_END_NPC = 987863
+local DOOR_QUEST = 110212
+
 local payCurrency = {
     [0] = "серебра",
     [1] = "клав.",
@@ -139,7 +142,13 @@ local function gossipDoorOption(event, player, object, guid)
     end
     player:GossipMenuAddItem(3, "Дать доступ", 1, 3, false, nil, nil, false)
     player:GossipMenuAddItem(3, "Изъять доступ", 1, 4, false, nil, nil, false)
-
+	--Ezil: Проверка, является ли дверь 1 уровня и типом Личная, а также обновился ли квест, либо этот квест в целом не был еще ни разу начат.
+	local nextCooldownReset_time = os.date("*t")
+	nextCooldownReset_time.day = nextCooldownReset_time.day
+	if (lockedDoorArray[guid].door_level == 1 and lockedDoorArray[guid].owner_type == 0 and not player:HasQuest(DOOR_QUEST) and (not player:GetInfo("LastDoorQuest") or nextCooldownReset_time.day~=tonumber(player:GetInfo("LastDoorQuest")))) then
+		player:GossipMenuAddItem(4, "Сдать припасы", 1, 6)
+	end
+	------
     player:GossipMenuAddItem(4, "Отказаться от владения", 1, 26, false, "ВНИМАНИЕ! После согласия, весь ваш доступ к зданию пропадет и оно вновь станет свободным. Вы согласны?")
     player:GossipMenuAddItem(4, "Передать владение", 1, 27, true, "ВНИМАНИЕ! После согласия, весь ваш доступ к зданию перейдет к указаному игроку. Вы согласны?")
     player:GossipMenuAddItem(1, "Настройка жильцов", 1, 28)
@@ -150,6 +159,17 @@ local function gossipDoorOption(event, player, object, guid)
     player:GossipMenuAddItem(0, "Закрыть", 1, 25)
     player:GossipSendMenu(1, object, 5500) -- MenuId required for player gossip
 end
+
+
+--Ezil:Регистрация собатия, когда игрок Сдает квест, навешивать кулдаун в сутки.
+local function OnDoorQuestReward()
+	local nextCooldownReset_time = os.date("*t")
+	nextCooldownReset_time.day = nextCooldownReset_time.day 
+	player:SetInfo("LastDoorQuest",tostring(nextCooldownReset_time.day))
+end
+RegisterCreatureEvent(DOOR_QUEST_END_NPC,34,OnDoorQuestReward)
+-----
+
 
 local function gossipDoorSubOptionGive(player, guid)
     flags = lockedDoorArray[guid].allowed;
@@ -195,6 +215,12 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
         elseif (intid == 5) then
             player:SendBroadcastMessage('Оплачено до: ' .. os.date('%d.%m.%Y %H:%M:%S', lockedDoorArray[gobDBID].expTime));
             gossipDoorOption(event, player, player, gobDBID);
+		--Ezil: Обработка нажатие на кнопку Сдать припасы
+		elseif (intid == 6) then
+			player:AddQuest(DOOR_QUEST)
+			player:SendQuestTemplate(DOOR_QUEST,true)
+			
+		------
         elseif (intid == 4) then
             gossipDoorSubOptionTake(player, gobDBID);
         elseif (intid >= 10 and intid <= 16) then
