@@ -162,8 +162,10 @@ end
 
 --Ezil:Регистрация собатия, когда игрок Сдает квест, навешивать кулдаун в сутки.
 local function OnDoorQuestReward(event, player, creature, quest, opt)
-	local nextCooldownReset_time = os.date("*t")
-	player:SetInfo("LastDoorQuest",tostring(nextCooldownReset_time.day))
+	if quest:GetId() == DOOR_QUEST then
+		local nextCooldownReset_time = os.date("*t")
+		player:SetInfo("LastDoorQuest",tostring(nextCooldownReset_time.day))
+	end
 end
 RegisterCreatureEvent(DOOR_QUEST_END_NPC,34,OnDoorQuestReward)
 -----
