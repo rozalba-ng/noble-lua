@@ -664,6 +664,7 @@ local function assignDoorsData(entry)
             lockedDoorArray[doorNum].open = 0;
             lockedDoorArray[doorNum].allowed = 0;
             lockedDoorArray[doorNum].owner_guild = 0;
+			lockedDoorArray[doorNum].aura = 0;
             lockedDoorArray[doorNum].cost_prolong = doorDataArray[entry]['cost_prolong'];
             lockedDoorArray[doorNum].cost_start = doorDataArray[entry]['cost_start'];
             lockedDoorArray[doorNum].house_type = doorDataArray[entry]['house_type'];
