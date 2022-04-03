@@ -144,7 +144,7 @@ local function gossipDoorOption(event, player, object, guid)
 	
 	local nextCooldownReset_time = os.date("*t")
 	--Ezil: Проверка, находится ли игрок в гильдии к которой привязана дверь и есть ли привязанный к дверке бонус, а также обновилась ли возможность взять бонус этой ауры.
-	if (lockedDoorArray[guid].owner_guild == player:GetGuildId() and lockedDoorArray[guid].aura ~= 0 and (not player:GetInfo("LastDoorBonus_"..tostring(lockedDoorArray[guid].aura)) or nextCooldownReset_time.day~=tonumber(player:GetInfo("LastDoorBonus_"..tostring(lockedDoorArray[guid].aura))))) then
+	if (lockedDoorArray[guid].owner_guild == player:GetGuildId() and lockedDoorArray[guid].aura ~= 0 and (not player:GetInfo("LastDoorBonus_") or nextCooldownReset_time.day~=tonumber(player:GetInfo("LastDoorBonus_")))) then
 		player:GossipMenuAddItem(4, "Получить бонус предприятия", 1, 7)
 	end
 	--Ezil: Проверка, является ли дверь 1 уровня и типом Личная, а также обновился ли квест, либо этот квест в целом не был еще ни разу начат.
@@ -228,7 +228,7 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
 		elseif (intid == 7) then	
 			local nextCooldownReset_time = os.date("*t")
 			player:AddAura(lockedDoorArray[gobDBID].aura,player)
-			player:SetInfo("LastDoorBonus_"..tostring(lockedDoorArray[gobDBID].aura),tostring(nextCooldownReset_time.day))
+			player:SetInfo("LastDoorBonus_",tostring(nextCooldownReset_time.day))
 			player:GossipComplete()
 		------
         elseif (intid == 4) then
