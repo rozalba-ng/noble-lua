@@ -43,7 +43,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 						end
 					end
 				else
-					local selection = player:GetSelectedUnit()
+					local selection = player:GetSelection()
 					if mode == 2 then
 						AIO.Handle(player,"QuestBarHandlers","ShowQuest","|cffffc43b"..leftmsg..":|cffffffff "..rightmsg)
 						player:SendBroadcastMessage("|cffffc43b"..leftmsg..":|cffffffff "..rightmsg)
