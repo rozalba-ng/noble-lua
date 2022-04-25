@@ -4,8 +4,12 @@ local DRY_EFFECT_ENTRY = 530074
 local WEEED_EFFECT_ENTRY = 530075
 local ON_COLLECT_REDUCTION = 0.5
 
-local CYCLE_TIME = 1*60*60*1000
+local SHOVEL_ENTRY = 301343
+FARM_RANGE = 10
+local HOUSE_FARM_PLACE_ENTRY = 508906
 
+local CYCLE_TIME = 1*60*60*1000
+--local CYCLE_TIME = 6*1000 --DEBUG
 local PHASE_FOR_SCALE_CHANGE = 65536
 
 local placeAdditionalInfo = {
@@ -27,16 +31,64 @@ local placeAdditionalInfo = {
 		weed_size = 0.7,
 		plant_offset = {x = 0, y = 0, z = 0.7},
 		plant_size = 1
+		},
+		[HOUSE_FARM_PLACE_ENTRY] = {
+		place_type = 2,
+		dry_offset = {x = 0, y = 0, z = 0.25},
+		dry_size = 0.05,
+		weed_offset = {x = 0, y = 0, z = 0.20},
+		weed_size = 0.7,
+		plant_offset = {x = 0, y = 0, z = 0.3},
+		plant_size = 1
 		}
 }
+FarmSystem.houseGobjects = {530746,530747,530748,530749}
 
-local function GetFarmPlace(object)
-	local place = FarmSystem.places[object:GetDBTableGUIDLow()]
+FarmSystem.levelSettings = {
+		[1] = {
+		maxPlaces = 4,
+		maxAnimals = 3,
+		cost = 0,
+		},
+		[2] = {
+		maxPlaces = 6,
+		maxAnimals = 4,
+		cost = 100*100*1
+		},
+		[3] = {
+		maxPlaces = 8,
+		maxAnimals = 5,
+		cost = 100*100*1.5
+		},
+		[4] = {
+		maxPlaces = 10,
+		maxAnimals = 6,
+		cost = 100*100*2
+		},
+		[5] = {
+		maxPlaces = 12,
+		maxAnimals = 7,
+		cost = 100*100*3
+		}
+	}
+
+function FarmSystem.GetFarmPlace(place_object)
+	local place = FarmSystem.places[place_object:GetDBTableGUIDLow()]
 	return place
 end
-
-
-local function PlantCycle()
+function FarmSystem.DeleteFarmPlace(place_object)
+	local place = FarmSystem.GetFarmPlace(place_object)
+	place:DeletePlant()
+	FarmSystem.LoadVisuals(place_object)
+	WorldDBExecute("DELETE FROM `world`.`farms_places` WHERE  `place_guid`="..place.guid)
+	FarmSystem.places[place_object:GetDBTableGUIDLow()] = nil
+	place_object:RemoveFromWorld(true)
+end
+function FarmSystem.GetHouseFarm(object)
+	local house = FarmSystem.houses[object:GetDBTableGUIDLow()]
+	return house
+end
+local function Cycle()
 	for i, place in pairs(FarmSystem.places) do
 		
 		local plant = place:GetPlant()
@@ -70,17 +122,25 @@ local function PlantCycle()
 		end
 		
 	end
-	CreateLuaEvent(PlantCycle,CYCLE_TIME,1)
+	for i, animal in pairs(FarmSystem.animals) do
+		animal:UpdateCycle()
+		if animal.init_object then
+			local animal_object = animal.init_object:GetCreature()
+			FarmSystem.UpdateAnimalVisual(animal_object)
+		end
+		
+	end
+	CreateLuaEvent(Cycle,CYCLE_TIME,1)
 
 end
-PlantCycle()
+Cycle()
 local function Interface_InitFarmPlace(player, place_object, intid)
 	FarmSystem.InitNewFarmPlace(place_object)
 	player:Print("Ферма [GUID:"..place_object:GetDBTableGUIDLow().."] успешно инициализирована")
 end
 
 local function Interface_ChooseSeedToPlant(player,place_object,intid,template)
-	local place = GetFarmPlace(place_object)
+	local place = FarmSystem.GetFarmPlace(place_object)
 	
 	player:RemoveItem(template.seed_entry,1)
 	place:SeedNewPlant(template.id)
@@ -93,11 +153,14 @@ end
 local function Interface_Seed(player,place_object,intid)
 	local seedToPlantInterface = player:CreateInterface()
 	local hasAny = false
+	local place = FarmSystem.GetFarmPlace(place_object)
 	for i, template in pairs(FarmSystem.plantTemplate) do
-		if player:HasItem(template.seed_entry) then
-			seedToPlantInterface:AddRow(template.name,Interface_ChooseSeedToPlant, true,nil,template)
-			hasAny = true
-		end
+		--if player:HasItem(template.seed_entry) then]]
+			if --[[(place.type == 1 and template.type == 1) or]] place.type == 2 then
+				seedToPlantInterface:AddRow(template.name,Interface_ChooseSeedToPlant, true,nil,template)
+				hasAny = true
+			end
+		--end
 	end
 	if hasAny == false then
 		seedToPlantInterface:AddRow("Где достать семена?",Interface_SeedHelp, true)
@@ -110,7 +173,7 @@ local function Interface_Seed(player,place_object,intid)
 end
 
 local function Interface_DeletePlant(player,place_object,intid)
-	local place = GetFarmPlace(place_object)
+	local place = FarmSystem.GetFarmPlace(place_object)
 	place:DeletePlant()
 	FarmSystem.LoadVisuals(place_object)
 
@@ -118,24 +181,23 @@ end
 local function Interface_ReturnGo(player,place_object,intid)
 	local item = player:AddItem(place_object:GetEntry(),1)
 	if item then
-		local place = GetFarmPlace(place_object)
-		place:DeletePlant()
-		FarmSystem.LoadVisuals(place_object)
-		place_object:RemoveFromWorld(true)
+		FarmSystem.DeleteFarmPlace(place_object)
 	else
 		player:Print("В вашем инвентаре недостаточно места")
 	end
 end
-
+local function Interface_DeleteGo(player,place_object,intid)
+	FarmSystem.DeleteFarmPlace(place_object)
+end
 local function Interface_AddWater(player,place_object,intid)
-	local place = GetFarmPlace(place_object)
+	local place = FarmSystem.GetFarmPlace(place_object)
 	local plant = place:GetPlant()
 	plant:AddWater()
 	FarmSystem.LoadVisuals(place_object)
 end
 
 local function Interface_RemoveWeeds(player,place_object,intid)
-	local place = GetFarmPlace(place_object)
+	local place = FarmSystem.GetFarmPlace(place_object)
 	local plant = place:GetPlant()
 	plant:RemoveWeeds()
 	FarmSystem.LoadVisuals(place_object)
@@ -165,7 +227,7 @@ function Player:AddFarmLoot(loot_id)
 end
 
 local function Interface_Collect(player,place_object,intid)
-	local place = GetFarmPlace(place_object)
+	local place = FarmSystem.GetFarmPlace(place_object)
 	local plant = place:GetPlant()
 	local template = FarmSystem.plantTemplate[plant.plant_id]
 	if template.one_time == 1 then
@@ -180,7 +242,7 @@ end
 
 
 local function OnPlaceUsed(event, player, place_object)
-	local place = GetFarmPlace(place_object)
+	local place = FarmSystem.GetFarmPlace(place_object)
 	
 	
 	if place then
@@ -196,13 +258,23 @@ local function OnPlaceUsed(event, player, place_object)
 			return object
 		end
 		FarmSystem.LoadVisuals(place_object)
-		if player ~= place_object:GetOwner() then
+		local house = place:GetHouse()
+		if house then
+			if not house:HasAccess(player) then
+				return false
+			end
+		
+		elseif player ~= place_object:GetOwner() then
 			return false
 		end
 		local interface = player:CreateInterface()
 		local title = ""
 		if place.plant_id == 0 then
-			title = "Перед вами пустой горшок, пока что в нем ничего не посажено"
+			if place.type == 1 then
+				title = "Перед вами пустой горшок, пока что в нем ничего не посажено"
+			elseif place.type == 2 then
+				title = "Перед вами пустая грядка, пока что на ней ничего не посажено"
+			end
 			interface:AddRow("Посадить растение",Interface_Seed,false)
 		else
 			
@@ -239,6 +311,8 @@ local function OnPlaceUsed(event, player, place_object)
 		end
 		if place.type == 1 then
 			interface:AddPopupRow("Забрать горшок",Interface_ReturnGo,"Посаженные растения будут удалены!",true):SetIcon(5)
+		elseif place.type == 2 then
+			interface:AddPopupRow("Удалить грядку",Interface_DeleteGo,"Посаженные растения будут удалены!",true):SetIcon(5)
 		end
 		interface:AddClose()
 		interface:Send(title,place_object)
@@ -247,7 +321,7 @@ local function OnPlaceUsed(event, player, place_object)
 end
 
 local function OnPlaceClickMenu(event, player, object, sender, intid, code)
-	player:CurrentInterface():Click(intid,object)
+	player:CurrentInterface():Click(intid,object,code)
 end
 
 
@@ -268,7 +342,7 @@ function math.lerp(from, to, t)
 	return from + (to - from) * clamp(t, 0, 1)
 end
 function FarmSystem.LoadVisuals(place_object)
-	local place = GetFarmPlace(place_object)
+	local place = FarmSystem.GetFarmPlace(place_object)
 	if place == nil then
 		return false
 	end
@@ -413,10 +487,11 @@ function FarmSystem.LoadVisuals(place_object)
 
 end
 local function OnPlaceLoaded(event, place_object)
+	print("loaded new place")
 	if place_object:GetOwner() == nil then
 		return false
 	end
-	local place = GetFarmPlace(place_object)
+	local place = FarmSystem.GetFarmPlace(place_object)
 	local entry = place_object:GetEntry()
 	local info = placeAdditionalInfo[place_object:GetEntry()]
 	if place then
@@ -435,10 +510,113 @@ local function OnPlaceLoaded(event, place_object)
 	else
 		if info.place_type == 1 then
 			
-			FarmSystem.InitNewFarmPlace(place_object,1,place_object:GetOwner():GetGUIDLow())
+			FarmSystem.InitNewFarmPlace(place_object,info.place_type,place_object:GetOwner():GetGUIDLow())
 		end
 	end
 end
+
+
+
+local function Interface_AttachHouseToDoor(player,house_object,intid,door_guid_str)
+	local door_guid = tonumber(door_guid_str)
+	FarmSystem.AttachHouseToDoor(player, house_object, door_guid)
+end
+local function Interface_LevelUp(player,house_object,intid)
+	local house = FarmSystem.GetHouseFarm(house_object)
+	local newLevel = house.level+1
+	local currentCopper = player:GetCoinage()
+	local cost = FarmSystem.levelSettings[newLevel].cost
+	if currentCopper >= FarmSystem.levelSettings[newLevel].cost then
+		house:SetLevel(newLevel)
+		player:SetCoinage(currentCopper-cost)
+	else
+		player:Print("Недостаточно монет. Необходимо "..(cost/100/100).." золотых монет.")
+	end
+end
+local function Interface_UpgradeHouseMenu(player,house_object,intid)
+	local upgradeOptionsInterface = player:CreateInterface()
+	local house = FarmSystem.GetHouseFarm(house_object)
+	local newLevel = house.level+1
+	local popupText = "Цена улучшения - "..(FarmSystem.levelSettings[newLevel].cost/100/100).." золотых монет."
+	popupText = popupText.."\nСтанет доступно:"
+	popupText = popupText.."\nМакс. количество грядок - "..FarmSystem.levelSettings[newLevel].maxPlaces
+	popupText = popupText.."\nМакс. количество животных - "..FarmSystem.levelSettings[newLevel].maxAnimals
+	upgradeOptionsInterface:AddPopupRow("Улучшить ферму до "..(house.level+1).." уровня", Interface_LevelUp, popupText, true):SetIcon(5)
+	upgradeOptionsInterface:AddClose()
+	upgradeOptionsInterface:Send("Меню улучшений",house_object)
+end
+local function OnHouseUsed(event, player, house_object)
+	local house = FarmSystem.houses[house_object:GetDBTableGUIDLow()]
+	local interface = player:CreateInterface()
+	if not house then
+		if player:GetGMRank() > 1 then
+			interface:AddAskRow("[GM] Привязать к двери",Interface_AttachHouseToDoor,true):SetIcon(5)
+		end
+		interface:AddClose()
+		interface:Send("Данная ферма не привязана к дому. Обратитесь к администрации.",house_object)
+		return false
+	end
+	
+	if house.level < #FarmSystem.levelSettings and house:HasAccess(player) then
+		interface:AddRow("Улучшить ферму",Interface_UpgradeHouseMenu,false):SetIcon(5)
+	
+	end
+	
+	interface:AddClose()
+	local farmInfo = "Ферма "..house.level.." уровня\n"
+	farmInfo = farmInfo.."\nГрядок "..#house:GetPlaces().." из "..FarmSystem.levelSettings[house.level].maxPlaces
+	farmInfo = farmInfo.."\nЖивотных "..#house:GetAnimals().." из "..FarmSystem.levelSettings[house.level].maxAnimals
+	interface:Send(farmInfo,house_object)
+end
+
+local function OnHouseClickMenu(event, player, object, sender, intid, code)
+	player:CurrentInterface():Click(intid,object,code)
+end
+
+
+local function OnShovelUse(event, player, item, target)
+	local nearestFarm = nil;
+	for i, v in pairs(FarmSystem.houseGobjects) do
+		local near = player:GetNearestGameObject(FARM_RANGE,v)
+		if near and (nearestFarm == nil or player:GetDistance(near) > player:GetDistance(nearestFarm)) then
+			nearestFarm = near
+		end
+	end
+	if nearestFarm then
+		local house = FarmSystem.GetHouseFarm(nearestFarm)
+		
+		if house then
+			if house:HasAccess(player) then
+				if #house:GetPlaces() >= FarmSystem.levelSettings[house.level].maxPlaces then
+					player:Print("Вы не можете вскопать больше грядок на данном уровне фермы. Максимум - "..FarmSystem.levelSettings[house.level].maxPlaces)
+					return false
+				end
+				local x,y,z,o = player:GetLocation()
+				local mapId = player:GetMapId()
+				local pid = player:GetGUIDLow();
+				local place_object = PerformIngameSpawn( 2, HOUSE_FARM_PLACE_ENTRY, mapId, 0, x, y, z, o+0.9, true, pid, 0, 1);
+				FarmSystem.InitNewFarmPlace(place_object,2,house.gob_guid)
+				player:RemoveItem(SHOVEL_ENTRY,1)
+			else
+				player:SendNotification("Данная ферма вам не принадлежит")
+			end
+		end
+	else
+		player:SendNotification("Вы должны находиться на территории своей фермы.")
+	end
+end
+
+
+
+RegisterItemEvent(SHOVEL_ENTRY,2,OnShovelUse)
+
+for i,v in pairs(FarmSystem.houseGobjects) do
+	RegisterGameObjectGossipEvent(v,1,OnHouseUsed)
+	RegisterGameObjectGossipEvent(v,2,OnHouseClickMenu)
+end
+
+
+
 for entry,v in pairs(placeAdditionalInfo) do
 	RegisterGameObjectEvent(entry,12,OnPlaceLoaded)
 	RegisterGameObjectGossipEvent(entry,1,OnPlaceUsed)
