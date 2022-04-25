@@ -155,12 +155,12 @@ local function Interface_Seed(player,place_object,intid)
 	local hasAny = false
 	local place = FarmSystem.GetFarmPlace(place_object)
 	for i, template in pairs(FarmSystem.plantTemplate) do
-		--if player:HasItem(template.seed_entry) then]]
-			if --[[(place.type == 1 and template.type == 1) or]] place.type == 2 then
+		if player:HasItem(template.seed_entry) then
+			if (place.type == 1 and template.type == 1) or place.type == 2 then
 				seedToPlantInterface:AddRow(template.name,Interface_ChooseSeedToPlant, true,nil,template)
 				hasAny = true
 			end
-		--end
+		end
 	end
 	if hasAny == false then
 		seedToPlantInterface:AddRow("Где достать семена?",Interface_SeedHelp, true)
