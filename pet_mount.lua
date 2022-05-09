@@ -16,8 +16,11 @@ local petMountTemplateArray = {		[1200000] = 1,
 									[1200006] = 1,
 									[1200007] = 1,};
 
-local petBankArray = {		[1200032] = 1,
-	[1200033] = 1,};
+local petBankArray = {
+	[1200032] = 1,
+	[1200033] = 1,
+	[1200076] = 1,
+};
 
 local available_equip_slots = {[1] = "Седло",
                                [2] = "Флаг"};
