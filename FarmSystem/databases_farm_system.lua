@@ -74,6 +74,46 @@ AUTO_INCREMENT=1
 ;
 
 ]]
+
+sql_createHouses = [[
+CREATE TABLE IF NOT EXISTS `farms_houses` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`gob_guid` INT(11) NOT NULL DEFAULT '0',
+	`door_guid` INT(11) NOT NULL DEFAULT '0',
+	`level` INT(11) NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`) USING BTREE
+)
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB
+;
+]]
+
+local function LoadDoorsEntries()
+	FarmSystem.doors_entry = {}
+	
+	local Q = CharDBQuery("SELECT door_id FROM doors")
+	if Q then
+		repeat
+			local door_entry = Q:GetUInt32(0)
+			table.insert(FarmSystem.doors_entry, door_entry)
+
+		until not Q:NextRow()
+	end
+
+end
+local function LoadDoorOwners()
+	FarmSystem.door_owners = {}
+	
+	local Q = CharDBQuery("SELECT door_id FROM doors")
+	if Q then
+		repeat
+			local door_entry = Q:GetUInt32(0)
+			table.insert(FarmSystem.doors_entry, door_entry)
+
+		until not Q:NextRow()
+	end
+
+end
 local function LoadPlantVisual()
 	WorldDBQuery(sql_createPlantVisual)
 	FarmSystem.plant_visual = {}
@@ -167,7 +207,110 @@ local function PlantObject()
 	end
 	return plant
 end
+local function HouseObject()
+	local house = {}
+	function house:HasAccess(player)
+		local door_GUID = self.door_guid;
+		local allow_flags = lockedDoorArray[door_GUID].allowed;
+		
+		if (lockedDoorArray[door_GUID].open == 1) then
+			return true;
+		end
+		if (player:GetGUIDLow() == lockedDoorArray[door_GUID].ownerID) then
+			return true;
+		end
+		if (CharDBQuery('SELECT * FROM doors_tenants WHERE char_guid = ' .. tostring(player:GetGUIDLow()) .. ' AND door_guid = ' .. door_GUID .. ' limit 1')) then
+			return true;
+		end
+		if (bit_and(allow_flags, 8) == 8) then
+			local ownerGuildIdQuery = CharDBQuery('SELECT guildid FROM characters.guild_member WHERE guid = ' .. lockedDoorArray[door_GUID].ownerID);
+			if (ownerGuildIdQuery:GetRowCount() > 0) then
+				guildID = ownerGuildIdQuery:GetUInt32(0);
+				if (guildID == player:GetGuildId()) then
+					return true;
+				end
+			end
+		end
+		if (bit_and(allow_flags, 4) == 4) then
+			local ownerRaidIdQuery = CharDBQuery('SELECT guid FROM characters.group_member WHERE memberGuid = ' .. lockedDoorArray[door_GUID].ownerID);
+			if (ownerRaidIdQuery) then
+				if (ownerRaidIdQuery:GetRowCount() > 0) then
+					raidID = ownerRaidIdQuery:GetUInt32(0);
+					group = player:GetGroup()
+					if (group) then
+						--if(GetGUIDLow(group:GetGUID()) == raidID)then
+						if (group:GetMemberGroup(lockedDoorArray[door_GUID].ownerID) ~= nil and group:IsRaidGroup()) then
+							return true;
+						end
+					end
+				end
+			end
+		end
+		if (bit_and(allow_flags, 2) == 2) then
+			local ownerGroupIdQuery = CharDBQuery('SELECT guid, subgroup FROM characters.group_member WHERE memberGuid = ' .. lockedDoorArray[door_GUID].ownerID);
 
+			if (ownerGroupIdQuery == nil) then
+				print('Nil value error'); --leave for test
+			elseif (ownerGroupIdQuery:GetRowCount() > 0) then
+				groupID = ownerGroupIdQuery:GetUInt32(0);
+				subGroupID = ownerGroupIdQuery:GetUInt32(1);
+				group = player:GetGroup()
+				if (group) then
+					--if(GetGUIDLow(group:GetGUID()) == groupID and player:GetSubGroup() == subGroupID)then
+					if (group:GetMemberGroup(lockedDoorArray[door_GUID].ownerID) ~= nil and player:GetSubGroup() == subGroupID) then
+						return true;
+					end
+				end
+			end
+		end
+		return false;
+	end
+	function house:GetPlaces()
+		local places = {}
+		for i,place in pairs(FarmSystem.places) do
+			print(place.type)
+			print(place.bind)
+			print(house.gob_guid)
+			if place.type == 2 and place.bind == self.gob_guid then
+				print("OKAAKAKAKAK")
+				table.insert(places, place)
+			end
+		end
+		return places
+	end
+	function house:GetAnimals()
+		local animals = {}
+		for i,animal in pairs(FarmSystem.animals) do
+			if animal.house_guid == self.gob_guid then
+				table.insert(animals, animal)
+			end
+		end
+		return animals
+	end
+	function house:SetLevel(level)
+		house.level = level
+		WorldDBExecute("UPDATE `world`.`farms_houses` SET `level`='"..level.."' WHERE  `id`="..house.id)
+	end
+	return house
+end
+local function LoadHouses()
+	WorldDBQuery(sql_createHouses)
+	FarmSystem.houses = {}
+	
+	local Q = WorldDBQuery("SELECT * FROM farms_houses")
+	if Q then
+		repeat
+			local id, gob_guid, door_guid, level = Q:GetUInt32(0), Q:GetUInt32(1), Q:GetUInt32(2), Q:GetUInt32(3)
+			local house = HouseObject()
+			house["id"] = id
+			house["gob_guid"] = gob_guid
+			house["door_guid"] = door_guid
+			house["level"] = level
+			FarmSystem.houses[house.gob_guid] = house
+
+		until not Q:NextRow()
+	end
+end
 local function PlaceObject()
 	local place = {}
 	
@@ -205,6 +348,13 @@ local function PlaceObject()
 		WorldDBExecute("UPDATE `world`.`farms_places` SET `id`='0' WHERE  `place_guid`="..self.guid)
 		self.plant_id = 0
 	end
+	function place:GetHouse()
+		if self.type == 2 then
+			return FarmSystem.houses[self.bind]
+		else
+			return nil
+		end
+	end
 	
 	return place
 end
@@ -230,11 +380,36 @@ local function LoadPlants()
 	end
 end
 
+
+
 function FarmSystem.AddNewPlantToDB(plant_id)
 	WorldDBQuery("INSERT INTO `world`.`farms_plants` (`plant_id`, `current_cycle`, `is_dry`, `is_weeded`) VALUES ('"..plant_id.."', '0', '0', '0');")
 	local Q = WorldDBQuery("SELECT id FROM farms_plants ORDER BY `id` DESC LIMIT 1;")
 	return Q:GetUInt32(0)
 end
+
+function FarmSystem.AttachHouseToDoor(player, house_object, door_guid)
+
+	local Q = WorldDBQuery("SELECT id FROM gameobject WHERE guid  =  "..door_guid.."")
+	if Q then
+		local door_entry = Q:GetUInt32(0)
+		for i, v in pairs(FarmSystem.doors_entry) do
+			if door_entry == v then
+				WorldDBQuery("INSERT INTO `world`.`farms_houses` (`gob_guid`, `door_guid`, `level`) VALUES ('"..house_object:GetDBTableGUIDLow().."', '"..door_guid.."', '1');")
+				player:Print("Ферма успешно привязана к двери "..door_guid)
+				LoadHouses()
+				return false
+			end
+		end
+		player:Print("Данный объект не является дверью.")
+		return false
+	else
+		player:Print("Двери с данным гуидом не обнаружено.")
+	end
+end
+
+
+
 
 function FarmSystem.UpdatePlant(plant)
 	WorldDBExecute("UPDATE `world`.`farms_plants` SET `current_cycle`='"..plant.current_cycle.."', `is_dry`='"..plant.is_dry.."', `is_weeded`='"..plant.is_weeded.."' WHERE  `id`="..plant.id..";")
@@ -248,14 +423,14 @@ local function LoadPlaces()
 	local Q = WorldDBQuery("SELECT * FROM farms_places")
 	if Q then
 		repeat
-			local guid, id,place_type,bind_to = Q:GetUInt32(0),Q:GetUInt32(1),Q:GetUInt32(2),Q:GetUInt32(2)
+			local guid, id,place_type,bind_to = Q:GetUInt32(0),Q:GetUInt32(1),Q:GetUInt32(2),Q:GetUInt32(3)
 			local place = PlaceObject()
 			
 			place["guid"] = guid
 			place["plant_id"] = id
 			place["type"] = place_type
 			place["bind"] = bind_to
-			
+
 			FarmSystem.places[place.guid] = place
 		until not Q:NextRow()
 	end
@@ -281,5 +456,7 @@ function FarmSystem.LoadDatabases()
 	LoadPlaces()
 	LoadLoot()
 	LoadPlantVisual()
+	LoadHouses()
+	LoadDoorsEntries()
 end
 FarmSystem.LoadDatabases()

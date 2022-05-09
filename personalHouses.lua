@@ -12,6 +12,9 @@ local faction_shadow_stormwind = 1163;
 local reputation_honored = 9000;
 local reputation_friendly = 3000;
 
+local DOOR_QUEST_END_NPC = 987863
+local DOOR_QUEST = 110212
+
 local payCurrency = {
     [0] = "серебра",
     [1] = "клав.",
@@ -131,7 +134,6 @@ end
 
 local function gossipDoorOption(event, player, object, guid)
     player:GossipClearMenu() -- required for player gossip
-
     if (lockedDoorArray[guid].open == 1) then
         player:GossipMenuAddItem(4, "Запереть", 1, 1, false, nil, nil, false)
     else
@@ -139,7 +141,17 @@ local function gossipDoorOption(event, player, object, guid)
     end
     player:GossipMenuAddItem(3, "Дать доступ", 1, 3, false, nil, nil, false)
     player:GossipMenuAddItem(3, "Изъять доступ", 1, 4, false, nil, nil, false)
-
+	
+	local nextCooldownReset_time = os.date("*t")
+	--Ezil: Проверка, находится ли игрок в гильдии к которой привязана дверь и есть ли привязанный к дверке бонус, а также обновилась ли возможность взять бонус этой ауры.
+	if (lockedDoorArray[guid].owner_guild == player:GetGuildId() and lockedDoorArray[guid].aura ~= 0 and (not player:GetInfo("LastDoorBonus_") or nextCooldownReset_time.day~=tonumber(player:GetInfo("LastDoorBonus_")))) then
+		player:GossipMenuAddItem(4, "Получить бонус предприятия", 1, 7)
+	end
+	--Ezil: Проверка, является ли дверь 1 уровня и типом Личная, а также обновился ли квест, либо этот квест в целом не был еще ни разу начат.
+	if (lockedDoorArray[guid].door_level == 1 and lockedDoorArray[guid].owner_type == 0 and not player:HasQuest(DOOR_QUEST) and (not player:GetInfo("LastDoorQuest") or nextCooldownReset_time.day~=tonumber(player:GetInfo("LastDoorQuest")))) then
+		player:GossipMenuAddItem(4, "Сдать припасы", 1, 6)
+	end
+	------
     player:GossipMenuAddItem(4, "Отказаться от владения", 1, 26, false, "ВНИМАНИЕ! После согласия, весь ваш доступ к зданию пропадет и оно вновь станет свободным. Вы согласны?")
     player:GossipMenuAddItem(4, "Передать владение", 1, 27, true, "ВНИМАНИЕ! После согласия, весь ваш доступ к зданию перейдет к указаному игроку. Вы согласны?")
     player:GossipMenuAddItem(1, "Настройка жильцов", 1, 28)
@@ -150,6 +162,18 @@ local function gossipDoorOption(event, player, object, guid)
     player:GossipMenuAddItem(0, "Закрыть", 1, 25)
     player:GossipSendMenu(1, object, 5500) -- MenuId required for player gossip
 end
+
+
+--Ezil:Регистрация собатия, когда игрок Сдает квест, навешивать кулдаун в сутки.
+local function OnDoorQuestReward(event, player, creature, quest, opt)
+	if quest:GetId() == DOOR_QUEST then
+		local nextCooldownReset_time = os.date("*t")
+		player:SetInfo("LastDoorQuest",tostring(nextCooldownReset_time.day))
+	end
+end
+RegisterCreatureEvent(DOOR_QUEST_END_NPC,34,OnDoorQuestReward)
+-----
+
 
 local function gossipDoorSubOptionGive(player, guid)
     flags = lockedDoorArray[guid].allowed;
@@ -195,6 +219,18 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
         elseif (intid == 5) then
             player:SendBroadcastMessage('Оплачено до: ' .. os.date('%d.%m.%Y %H:%M:%S', lockedDoorArray[gobDBID].expTime));
             gossipDoorOption(event, player, player, gobDBID);
+		--Ezil: Обработка нажатие на кнопку Сдать припасы
+		elseif (intid == 6) then
+			player:AddQuest(DOOR_QUEST)
+			player:SendQuestTemplate(DOOR_QUEST,true)
+			
+		--Ezil: Нажатие на кнопку Получить бонус предприятия
+		elseif (intid == 7) then	
+			local nextCooldownReset_time = os.date("*t")
+			player:AddAura(lockedDoorArray[gobDBID].aura,player)
+			player:SetInfo("LastDoorBonus_",tostring(nextCooldownReset_time.day))
+			player:GossipComplete()
+		------
         elseif (intid == 4) then
             gossipDoorSubOptionTake(player, gobDBID);
         elseif (intid >= 10 and intid <= 16) then
@@ -607,6 +643,7 @@ local function assignDoorsOwners(doorNum)
         lockedDoorArray[doorNum].open = ownerData['open'];
         lockedDoorArray[doorNum].allowed = ownerData['allowed'];
         lockedDoorArray[doorNum].owner_guild = ownerData['owner_guild'];
+		lockedDoorArray[doorNum].aura = ownerData['aura'];
     end
 end
 
@@ -627,6 +664,7 @@ local function assignDoorsData(entry)
             lockedDoorArray[doorNum].open = 0;
             lockedDoorArray[doorNum].allowed = 0;
             lockedDoorArray[doorNum].owner_guild = 0;
+			lockedDoorArray[doorNum].aura = 0;
             lockedDoorArray[doorNum].cost_prolong = doorDataArray[entry]['cost_prolong'];
             lockedDoorArray[doorNum].cost_start = doorDataArray[entry]['cost_start'];
             lockedDoorArray[doorNum].house_type = doorDataArray[entry]['house_type'];
