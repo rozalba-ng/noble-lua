@@ -133,7 +133,7 @@ local function castEvent(event, player, spell, skipCheck)
 		end		
     --[[elseif (spellId == 85001) then -- GOB, управление транспортом
 		Wheel.OnGossipWheel(event, player, player)]]		
-	elseif (spellId >499000 and spellId < 509999) then -- GOB, case spell "user puts a gameobject in the world"
+	elseif (spellId >495000 and spellId < 509999) then -- GOB, case spell "user puts a gameobject in the world"
         if(player:GetPhaseMask() == 512)then
          local val = spell:GetMiscValue(0);
          player:AddItem(val);
