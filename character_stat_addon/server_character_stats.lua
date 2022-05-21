@@ -98,10 +98,15 @@ function CharacterStatsHandler.SendNewHeight(player,newHeight)
 	player:SetLuaCooldown(5,ChangeCharHeight_Cooldown)
 	if tonumber(newHeight) > 1.15 or tonumber(newHeight) < 0.85 then
 		player:Print("Некорректное значение роста")
+		return false
 	end
 	local guid = player:GetGUID()
-	
-	CharDBQuery("REPLACE INTO character_customs (char_id, height) VALUES ("..tostring(guid)..","..tostring(newHeight)..")")
+	local q_result = CharDBQuery("SELECT char_id FROM character_customs WHERE char_id ="..tostring(guid))
+	if q_result then
+		CharDBQuery("UPDATE character_customs SET height='"..tostring(newHeight).."' WHERE  char_id="..tostring(guid))
+	else
+		CharDBQuery("INSERT INTO character_customs (`char_id`, `height`, `appearance`, `features`, `state`, `notice`, `link`) VALUES ('"..tostring(guid).."', '"..tostring(newHeight).."', '', '', '', '', '');")
+	end
 	SendHeightData(player)
 	player:SetScale(newHeight)
 end

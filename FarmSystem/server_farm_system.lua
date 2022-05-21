@@ -89,6 +89,7 @@ function FarmSystem.GetHouseFarm(object)
 	return house
 end
 local function Cycle()
+	CreateLuaEvent(Cycle,CYCLE_TIME,1)
 	for i, place in pairs(FarmSystem.places) do
 		
 		local plant = place:GetPlant()
@@ -130,7 +131,7 @@ local function Cycle()
 		end
 		
 	end
-	CreateLuaEvent(Cycle,CYCLE_TIME,1)
+	
 
 end
 Cycle()
