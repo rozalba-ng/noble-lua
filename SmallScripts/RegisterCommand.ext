@@ -1,0 +1,55 @@
+function table.slice(tbl, first, last, step)
+  local sliced = {}
+
+  for i = first or 1, last or #tbl, step or 1 do
+    sliced[#sliced+1] = tbl[i]
+  end
+
+  return sliced
+end
+local funcs = {}
+
+--[[Функция регистрирующая новую команду
+----------------------------------
+Пример использования без аргументов
+
+local function OnNewCommand(player)
+	player:SendBroadcastMessage("Вы использовали команду")
+
+end
+
+
+RegisterCommand("newcommand",OnNewCommand)
+---------------------------
+
+Пример использования без аргументов
+
+local function OnNewCommandWithArgs(player,arg1,arg2)
+	player:SendBroadcastMessage("Вы использовали команду и передали в нее"..tostring(arg1).." и "..tostring(arg2))
+end
+
+
+RegisterCommand("newcommand",OnNewCommandWithArgs)
+
+]]
+function RegisterCommand(name,func) 
+	funcs[name] = func
+end
+
+
+local function OnPlayerCommandWithArg(event, player, code)
+    if(string.find(code, " "))then
+		local arguments = {}
+        local arguments = string.split(code, " ")
+		if funcs[arguments[1]] then		
+			funcs[arguments[1]](player,unpack(table.slice(arguments,2)))
+		end
+	else
+		if funcs[code] then		
+			funcs[code](player)
+		end
+	end
+end
+
+
+RegisterPlayerEvent(42, OnPlayerCommandWithArg)
