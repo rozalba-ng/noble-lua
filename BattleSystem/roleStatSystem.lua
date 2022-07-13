@@ -95,20 +95,20 @@ statNpcDoDefRoll = {
 }
 
 hpBuffAuraList = {
-    { id = 88044, bonus = 1 },
-    { id = 88039, bonus = 1 },
-    { id = 88045, bonus = 1 },
-    { id = 88071, bonus = 1 },
-    { id = 88072, bonus = 1 },
-    { id = 88046, bonus = 2 },
-    { id = 88047, bonus = 2 },
-    { id = 88048, bonus = 2 },
-    { id = 88049, bonus = 2 },
-    { id = 88074, bonus = 2 },
-    { id = 88078, bonus = 2 },
-    { id = 88073, bonus = 2 },
-    { id = 88079, bonus = 1 },
-	{ id = 91205, bonus = 1 }, -- Бонус от Мастерская. 3 часа
+    --{ id = 88044, bonus = 1 },
+    { id = 88039, bonus = 1 }, -- зелье "каменная кожа"
+    --{ id = 88045, bonus = 1 },
+    --{ id = 88071, bonus = 1 },
+    --{ id = 88072, bonus = 1 },
+    --{ id = 88046, bonus = 2 },
+    --{ id = 88047, bonus = 2 },
+    --{ id = 88048, bonus = 2 },
+    --{ id = 88049, bonus = 2 },
+    --{ id = 88074, bonus = 2 },
+    --{ id = 88078, bonus = 2 },
+    --{ id = 88073, bonus = 2 },
+    --{ id = 88079, bonus = 1 },
+	--{ id = 91205, bonus = 1 }, -- Бонус от Мастерская. 3 часа
 }
 
 local healthByType = {
