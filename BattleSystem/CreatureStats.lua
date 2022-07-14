@@ -83,7 +83,7 @@ local function loadDefaultCreatureStats(event, creature)
 end
 
 function loadAllCreatureTemplateRollStats()
-    local creatureTemplateStatsQuery = WorldDBQuery('SELECT * FROM creature_template_role_stats where 1');
+    local creatureTemplateStatsQuery = WorldDBQuery('SELECT c.* FROM creature_template_role_stats c join creature_template t on c.entry = t.entry where 1');
 
     if creatureTemplateStatsQuery then
         local creatureTemplsteStatsCount = creatureTemplateStatsQuery:GetRowCount()
@@ -114,7 +114,7 @@ function loadAllCreatureTemplateRollStats()
 end
 
 function loadAllCreatureRollStats()
-    local creatureStatsQuery = WorldDBQuery('SELECT * FROM creature_role_stats where 1');
+    local creatureStatsQuery = WorldDBQuery('SELECT * FROM creature_role_stats c join creature t ON c.guid = t.guid WHERE 1');
     if creatureStatsQuery then
         local creatureStatsCount = creatureStatsQuery:GetRowCount()
 
