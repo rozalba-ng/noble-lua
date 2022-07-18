@@ -132,6 +132,9 @@ local function countTheramoreReputation(player)
             --	Если время суперактива - идёт маленький бонус.
             r = r + 5
         end
+
+        --	Начисление репутации
+        player:SetReputation(faction, player:GetReputation(faction) + r)
     end
 end
 
