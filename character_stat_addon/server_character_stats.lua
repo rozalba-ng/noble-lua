@@ -27,8 +27,8 @@ local SOC_STATS_PER_LEVEL = 1
 local MAX_MAIN_STATS = 50
 local MAX_SOC_STATS = 50
 
-local MAX_POINTS_IN_MAIN = 20
-local MAX_POINTS_IN_SOC = 20
+local MAX_POINTS_IN_MAIN = 15
+local MAX_POINTS_IN_SOC = 15
 
 function Player:GetMaxBattleStats()
 	local currentLevel = self:GetNobleLevel()
