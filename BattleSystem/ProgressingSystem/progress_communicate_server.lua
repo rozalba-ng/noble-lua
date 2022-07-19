@@ -51,7 +51,7 @@ local function OnPlayerLogin(event,new_player)
 	for i,player in ipairs(players) do
 		local progress = GetProgressData(player)
 		player:SaveToClientInTable("players_progressing",new_player:GetName(),new_player_progress)
-		new_player:SaveToClientInTable("players_progressing",player:GetName()..i,progress)
+		new_player:SaveToClientInTable("players_progressing",player:GetName(),progress)
 		players_progress_data[player:GetName()] = progress
 	end
 	new_player:UpdateClientProgressData()
