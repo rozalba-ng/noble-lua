@@ -262,7 +262,7 @@ end
 
 
 for i, gnomeData in pairs(GNOMES) do
-    print('123')
+    --print('123')
     RegisterCreatureGossipEvent(i,1,OnGnomeClick)
 end
 local function OnGiftSelect(event, player, object, sender, intid, code, menu_id)

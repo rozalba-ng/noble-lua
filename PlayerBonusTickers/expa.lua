@@ -1,5 +1,5 @@
 local SQL_databaseCreation_CharExp = [[
-CREATE TABLE `character_noblegarden_exp` (
+CREATE TABLE IF NOT EXISTS `character_noblegarden_exp` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`add_datetime` DATETIME NULL DEFAULT NULL,
 	`char_guid` INT(11) NULL DEFAULT NULL,
@@ -18,7 +18,7 @@ local PRIMETIME_MODIFICATOR = 2
 
 local function countExpForPlayer(player)
     local exp = 0
-    local Q = CharDBQuery( "SELECT sum(exp), id FROM character_noblegarden_exp WHERE char_guid = ".. player:GetGUIDLow().." and added = 0 limit 1")
+    local Q = CharDBQuery( "SELECT sum(exp), max(id) FROM character_noblegarden_exp WHERE char_guid = ".. player:GetGUIDLow().." and added = 0 limit 1")
     if Q then
         if Q:GetUInt32(0) > 0 then
             exp = Q:GetUInt32(0)
@@ -40,7 +40,8 @@ local function addExpToPlayers()
         end
 
         if player and exp > 0 then
-            player.AddNobleXp(exp)
+            player:AddNobleXp(exp)
+            player:SendBroadcastMessage("Начислено " .. tostring(exp) .." опыта." )
         end
     end
 end

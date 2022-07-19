@@ -488,7 +488,7 @@ function FarmSystem.LoadVisuals(place_object)
 
 end
 local function OnPlaceLoaded(event, place_object)
-	print("loaded new place")
+	--print("loaded new place")
 	if place_object:GetOwner() == nil then
 		return false
 	end
