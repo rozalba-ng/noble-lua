@@ -113,6 +113,7 @@ local function countStormwindReputation(player)
 end
 
 local function countTheramoreReputation(player)
+    local faction
     if player:GetQuestStatus(110236) == 6 then
         --	Игрок выполнил квест Таверна Терамора
         faction = theramore_faction
