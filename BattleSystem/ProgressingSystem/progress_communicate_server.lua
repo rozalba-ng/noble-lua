@@ -1,25 +1,23 @@
 
-
 local AIO = AIO or require("AIO")
 
 local ProgressCommunicate = AIO.AddHandlers("ProgressCommunicate", {})
-
 
 function Player:UpdateClientProgressData()
 	AIO.Handle(self,"ProgressCommunicate","UpdateClientProgressData")
 
 end
 function Player:UpdateXPBar(currentXP)
-	self:SaveToClient("char_xp",currentXP)
-	AIO.Handle(self,"ProgressCommunicate","UpdateXPBar")
+	AIO.Handle(self,"ProgressCommunicate","UpdateXPBar",currentXP)
 end
 function Player:OnLevelUp()
 	AIO.Handle(self,"ProgressCommunicate","OnLevelUp")
 end
 function ProgressCommunicate.CallXPTable(player)
-	player:SaveToClient("xp_table",LevelingSystem.level_requirements)
+	AIO.Handle(player,"ProgressCommunicate","UpdateXPReqs",LevelingSystem.level_requirements)
 	player:UpdateXPBar(player:GetNobleXp())
 end
+
 local function GetProgressData(player)
 	local progress = {}
 	progress.level = player:GetNobleLevel()
@@ -60,3 +58,4 @@ end
 
 local PLAYER_EVENT_ON_LOGIN = 3
 RegisterPlayerEvent(PLAYER_EVENT_ON_LOGIN,OnPlayerLogin)
+
