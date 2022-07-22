@@ -120,7 +120,7 @@ local function countTheramoreReputation(player)
     end
     if faction then
         local zone, trueZone, r = player:GetZoneId(), false, 0
-        if (zone == 10429) then
+        if (zone == 10429 or zone == 15) then
             --	Игрок в Пылевых Топях
             r = 10
             trueZone = true
