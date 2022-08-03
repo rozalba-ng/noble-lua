@@ -1,28 +1,16 @@
---local AIO = AIO or require("AIO")
---
---local CheckerHandler = AIO.AddHandlers("CheckerHandler", {})
---
---function CheckerHandler.Click(player,msg)
---	local gms = GetPlayersInWorld()
---	for i= 1, #gms do
---		if gms[i]:GetGMRank() > 1 then
---			gms[i]:SendBroadcastMessage(player:GetName().." вызвал команду -- /script "..msg)
---			print(player:GetName().." вызвал команду -- /script "..msg)
---		end
---	end
---	local file = io.open("allSlashScriptLogger.txt", "a")
---	file:write(player:GetName().." вызвал команду -- /script "..msg.."\n")
---	file:close()
---end
---function CheckerHandler.Click2(player,msg)
---	local gms = GetPlayersInWorld()
---	for i= 1, #gms do
---		if gms[i]:GetGMRank() > 1 then
---			gms[i]:SendBroadcastMessage(player:GetName().." вызвал команду -- /run "..msg)
---			print(player:GetName().." вызвал команду -- /run "..msg)
---		end
---	end
---	local file = io.open("allSlashScriptLogger.txt", "a")
---	file:write(player:GetName().." вызвал команду -- /run "..msg.."\n")
---	file:close()
---end
+local AIO = AIO or require("AIO")
+
+local CheckerHandler = AIO.AddHandlers("CheckerHandler", {})
+
+function CheckerHandler.Click(player,msg)
+
+	local file = io.open("allSlashScriptLogger.txt", "a")
+	file:write(player:GetName().." вызвал команду -- /script "..msg.."\n")
+	file:close()
+end
+function CheckerHandler.Click2(player,msg)
+
+	local file = io.open("allSlashScriptLogger.txt", "a")
+	file:write(player:GetName().." вызвал команду -- /run "..msg.."\n")
+	file:close()
+end

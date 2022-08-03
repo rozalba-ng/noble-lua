@@ -15,7 +15,25 @@ Tmog_belts.names = {};
 Tmog_belts.ids = {};
 
 
-local AuraWhiteList = {};
+local AuraWhiteList = {
+	[84106] =1,
+	[84107] =1,
+	[84108] =1,
+	[84109] =1,
+	[84110] =1,
+	[84111] =1,
+	[84112] =1,
+	[84113] =1,
+	[84114] =1,
+	[84115] =1,
+	[84116] =1,
+	[84117] =1,
+	[84118] =1,
+	[84119] =1,
+	[84120] =1,
+	[84121] =1,
+	[84122] =1
+};
 
 local function UpdatePresetsAndAccessories()
 	Tmog_accessories.names = {};
