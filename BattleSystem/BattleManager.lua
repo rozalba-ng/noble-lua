@@ -14,14 +14,15 @@ WOUND_AURA = 88010
 DOUBLE_ATTACK_AURA = 88076
 DEAD_AURA = 45801
 
-local classSpells = {100203,100200,100204,100201,100202,100205,100206,100212,100207,100218,100217,100226,100227,
-	100228,100236,100240,100233,100229,100239,100215,100230,100235,100258,100259,100260,100261,
-	100241,100242,100243,100244,100245,100246,100263,100264,100265,100266,100267,100268,100269,
-	100247,100248,100249,100250,100251,100252,100270,100271,100272,100273,100274,100275,100276}
+local bonusAuras = {
+	[103084]={bonus=true,turns = 1},
+	[103013]={bonus=false,turns = 3}
+	}
+turnBasedAuraData = {}
 
 local TIMER_FOR_TURN = 60
 local TIMER_FOR_ESCAPE = 15
-local TIMER_FOR_PREPARATION = 60
+local TIMER_FOR_PREPARATION = 2
 --Cостояния персонажа
 local PState_DEAD = 0
 local PState_LIVE = 1
@@ -37,6 +38,9 @@ local BState_CLOSED = 4
 local BState_CANCELED = 5
 local BState_ESCAPING = 6 
 ---
+
+
+
 
 -- вынести
 function tcontain(table,key)
@@ -100,7 +104,8 @@ local function createBattleData()
 								winnerPlayers = {},
 								runAwayPlayers = {},				--|
 								rpMessage = "",					--|
-								oocMessage = ""					--|
+								oocMessage = "",				--|
+								currentTurn = 0
 							}
 
 	return battleTemplate
@@ -159,7 +164,30 @@ end
 
 function GetPlayerBattleTurn(player)
 	local aura = player:GetAura(TURN_AURA)
-	return aura:GetStackAmount()
+	if aura then
+		return aura:GetStackAmount()
+	else
+		return false
+	end
+end
+local tickHP = {}
+local battleTicks = {}
+local function PlayerBattleTick(eventid, delay, repeats, player)
+	
+	if not listPlayersInBattle[player:GetName()] then
+		local eventId = battleTicks[player:GetName()]
+		player:ToPlayer():SetFFA(false)
+		player:RemoveEventById(eventId)
+	else
+		if player:GetHealth() ~= tickHP[player:GetName()] then
+			updateStatePlayers(GetPlayerBattleId(player))
+			tickHP[player:GetName()] = player:GetHealth()
+		end
+	end
+	if player:HasAura(DEAD_AURA) then
+		player:SetRooted(false)
+		player:SetRooted(true)
+	end
 end
 
 
@@ -174,9 +202,10 @@ local function preparePlayerToBattle(player,battle)
 			turn = i
 		end
 	end
+	local eventId = player:RegisterEvent(PlayerBattleTick,100,0)
+	battleTicks[player:GetName()] = eventId
 	turnAura:SetStackAmount(turn)
-	local hpAura = player:AddAura(HP_AURA,player)
-	hpAura:SetStackAmount(battle.players[turn].hp)
+	player:SetFFA(true)
 end
 local function isInSameBattle(player,target)
 	if player:HasAura(IS_IN_BATTLE_AURA) then
@@ -225,6 +254,7 @@ local battleTimerList = {}
 
 local function BattleTimer(eventId, delay, repeats) 
 	local battle = battleTimerList[eventId]
+	
 	if battle and battle.state ~= BState_ESCAPING and battle.state ~= BState_CLOSED then
 		battle.players[1].flaglist.skipLastTurn = true
 		nextTurnBattle(battle.battleId)
@@ -276,6 +306,9 @@ function startBattle(battle)
 	for i = 1, #battle.players do
 		local player = GetPlayerByName(battle.players[i].name)
 		player:SetRooted(true)
+		player:SetManaRegenDisable(true)
+		player:SetHealth(player:GetMaxHealth())
+		player:ResetSpellCooldown(103500,true) --Перезарядка передышки
 		preparePlayerToBattle(player,battle)
 		playerListText = playerListText.."|Hplayer:"..battle.players[i].name.."|h"..cWhite.."["..battle.players[i].name.."]|r|h"
 		if i < #battle.players then
@@ -320,6 +353,8 @@ function endBattle(battle)
 			end
 			player:RemoveAura(DEAD_AURA)
 			player:SetRooted(false)
+			player:SetFFA(false)
+			player:SetManaRegenDisable(false)
 			AIO.Handle(player,"BM_Handlers","EndBattle")
 		end
 	end
@@ -366,17 +401,25 @@ function endBattle(battle)
 	battle.state = BState_CLOSED
 end
 local function killPlayerInBattle(battle,player)
-	
 	for i = 1, #battle.players do
 		if battle.players[i].name == player:GetName() then
-			battle.players[i].hp = 0
-			battle.players[i].state = PState_DEAD
-			player:RemoveAura(HP_AURA)
+			player:ResurrectPlayer(1)
+			player:SetHealth(1)
 			player:AddAura(DEAD_AURA,player)
-			player:RemoveAura(TURN_AURA)
-			battle.livePlayers = battle.livePlayers - 1
-			SayToBattle(player:GetName().." теряет все свои очки здоровья и выбывает из битвы!",battle)
-			table.insert(battle.diedPlayers,player:GetName())
+			player:SetRooted(false)
+			player:SetRooted(true)
+			updateStatePlayers(battle.battleId)
+			if battle.players[i].state ~= PState_DEAD then  
+				battle.players[i].state = PState_DEAD
+				battle.livePlayers = battle.livePlayers - 1
+				SayToBattle(player:GetName().." теряет все свои очки здоровья и выбывает из битвы!",battle)
+				table.insert(battle.diedPlayers,player:GetName())
+				updateStatePlayers(battle.battleId)
+				if GetPlayerBattleTurn(player) == 1 then
+					nextTurnBattle(battle.battleId)
+				end
+				player:RemoveAura(TURN_AURA)
+			end
 		end
 	end
 end
@@ -388,15 +431,38 @@ function updateStatePlayers(battleId)
 	for i = 1, #battle.players do
 		local player = GetPlayerByName(battle.players[i].name)
 		if player then 
-			player:SetRooted(true)
-			local healthAura = player:GetAura(HP_AURA)
+			--player:SetFFA(true)
+			
 			listPlayersInBattle[player:GetName()] = {}
 			listPlayersInBattle[player:GetName()] = { battleId = battle.battleId }
-			if healthAura ~= nil then
-				battle.players[i].hp = healthAura:GetStackAmount()
-				local turnAura = player:GetAura(TURN_AURA)
+			battle.players[i].hp = player:GetHealth()
+			
+			local turnAura = player:GetAura(TURN_AURA)
+			if turn == 1 then
+				player:SetPower(0,player:GetPower(0)+5)
+			end
+			if turnAura then
 				turnAura:SetStackAmount(turn)
 				turn = turn + 1
+			end
+			local aurasData = turnBasedAuraData[player:GetName()]
+			if aurasData then
+				for i,auraData in ipairs(aurasData) do
+					if auraData.bonus then
+						if  auraData.turnStart < battle.currentTurn and GetPlayerBattleTurn(player) == 1 then 
+							player:RemoveAura(auraData.id)
+							aurasData[i] = nil
+						end
+					else
+						if auraData.turns+auraData.turnStart < battle.currentTurn then
+							player:RemoveAura(auraData.id)
+							aurasData[i] = nil
+						end
+					end
+				end
+			end
+			if player:HasAura(DEAD_AURA) then
+				player:SetRooted(true)
 			end
 		end
 	end
@@ -408,13 +474,13 @@ end
 function nextTurnBattle(battleId)
 	local battle = battleList[battleId]
 	battle.players[1].flaglist.alreadyRunned = false
+	 
 	local allPlayerIsSkipping = true
 	for i = 1, #battle.players do
 		if battle.players[i].flaglist.skipLastTurn == false and battle.players[i].flaglist.offline == false and battle.players[i].state ~= PState_DEAD then
 			allPlayerIsSkipping = false
 		end
 	end
-	
 	if battle.state == BState_CLOSED then
 		return false
 	end
@@ -432,6 +498,7 @@ function nextTurnBattle(battleId)
 			table.insert(battle.players,firstPlayer)
 		end
 	end
+	battle.currentTurn = battle.currentTurn + 1
 	SetTurnTimer(battle, battle.turnTimer)
 	updateStatePlayers(battleId)
 	local firstPlayer = GetPlayerByName(battle.players[1].name)
@@ -485,8 +552,107 @@ function SayToRadius(text,player)
 	end
 end
 
+local function GetAllAllowedSpells()
+	local spells = {}
+	for _,spell in ipairs(spellsForAll) do
+		spells[spell] = true
+	end
+	for _,class in ipairs(ClassSystem.classes) do
+		for _,spell in ipairs(class.spells) do
+			spells[spell] = true
+		end
+	end
+	spells[IS_IN_BATTLE_AURA] = true
+	spells[TURN_AURA] = true
+	spells[DEAD_AURA] = true
+	return spells
+end
+
+function handlePlayerSpell(event, player, spell, skipCheck)
+	local target = spell:GetTarget()
+	if player:HasAura(IS_IN_BATTLE_AURA) then
+		if GetPlayerBattleTurn(player) == 1 then
+			if target and ((not player:HasAura(IS_IN_BATTLE_AURA) and target:HasAura(IS_IN_BATTLE_AURA)) or (player:HasAura(IS_IN_BATTLE_AURA) and not target:HasAura(IS_IN_BATTLE_AURA))) then
+				spell:Cancel()
+				player:SendBroadcastMessage("Вы не можете атаковать цель, которая находится не в вашем бою.")
+				return false
+			end
+			local battleId = listPlayersInBattle[player:GetName()].battleId
+			local battle = battleList[battleId]
+			battle.players[1].flaglist.skipLastTurn = false
+			local nextTurn = true
+			if bonusAuras[spell:GetEntry()] then
+				nextTurn = false
+			end
+			player:ResetSpellCooldown(spell:GetEntry(),true)
+			if nextTurn then
+				nextTurnBattle(battleId)
+			end
+		end
+	end
+end
+RegisterPlayerEvent( 5, handlePlayerSpell )
+function handeOnPlayerStartSpell(event, player, spell,triggered)
+	if triggered then
+		return true
+	end
+	if not player then
+		return true
+	end
+	
+	player = player:ToPlayer()
+	if not player then
+		return true
+	end
+	local target = spell:GetTarget()
+	if target and ((not player:HasAura(IS_IN_BATTLE_AURA) and target:HasAura(IS_IN_BATTLE_AURA)) or (player:HasAura(IS_IN_BATTLE_AURA) and not target:HasAura(IS_IN_BATTLE_AURA))) then
+		player:SendBroadcastMessage("Вы не можете атаковать цель, которая находится не в вашем бою.")
+		return false
+	end
+	if player:HasAura(IS_IN_BATTLE_AURA) then
+		if GetPlayerBattleTurn(player) ~= 1 then
+			player:Print("Вы не можете ходить не в свой ход")
+			return false
+		end
+		if GetAllAllowedSpells()[spell:GetEntry()] == nil then
+			print(spell:GetEntry())
+			player:Print("Вы не можете использовать данную способность или предмет в пошаговом бою.")
+			return false
+		end
+		if target then
+			if not isInSameBattle(player,target) then
+				player:Print("Вы не находитесь с целью в одном и том же ролевом бою.")
+				return false
+			end
+		end
+		
+	end
+	
+	return true
+end
+--
+RegisterPlayerEvent( 50, handeOnPlayerStartSpell )
+
+local function OnKill(event, killer, killed)
+	
+	if listPlayersInBattle[killed:GetName()] then
+		local battleId = listPlayersInBattle[killed:GetName()].battleId
+		local battle = battleList[battleId]
+		killPlayerInBattle(battle,killed)
+	end
+end
+RegisterPlayerEvent( 6, OnKill )
+
+local function OnHandDamage(event, player, target)
+	if player:HasAura(IS_IN_BATTLE_AURA) or target:HasAura(IS_IN_BATTLE_AURA) then
+		return false
+	else
+		return true
+	end
+end
+RegisterPlayerEvent(49,OnHandDamage)
 function handlePlayerRoll(success,rollType, player,target,isPotionReroll,isCrit)
-	if (not player:HasAura(IS_IN_BATTLE_AURA) and target:HasAura(IS_IN_BATTLE_AURA)) or (player:HasAura(IS_IN_BATTLE_AURA) and not target:HasAura(IS_IN_BATTLE_AURA)) then
+	--[[if (not player:HasAura(IS_IN_BATTLE_AURA) and target:HasAura(IS_IN_BATTLE_AURA)) or (player:HasAura(IS_IN_BATTLE_AURA) and not target:HasAura(IS_IN_BATTLE_AURA)) then
 		player:SendBroadcastMessage("Вы не можете атаковать цель, которая находится не в вашем бою.")
 		return false
 	end
@@ -561,7 +727,7 @@ function handlePlayerRoll(success,rollType, player,target,isPotionReroll,isCrit)
 		return true
 	
 	end
-	
+	]]
 end
 
 
@@ -603,9 +769,11 @@ local function startBattlePreparation(battle)
 	
 	battle.playersCanEnter = playersCanEnter
 	initor:SetRooted(true)
+	initor:SetManaRegenDisable(true)
 	initor:EmoteState( 45 )
 	victim:EmoteState( 45 )
 	victim:SetRooted(true)
+	victim:SetManaRegenDisable(true)
 	initor:SendBroadcastMessage(cRed.."Вы напали на "..cGreen..battle.victimName..cRed.."!"..cR.." В течение минуты к бою могут подключиться другие игроки.")
 	victim:SendBroadcastMessage(cRed.."На вас напал "..cGreen..battle.initorName..cRed.."!"..cR.." В течение минуты к бою могут подключиться другие игроки.")
 	initor:TextEmote(battle.rpMessage)
@@ -667,6 +835,7 @@ local function LetEscape(battle)
 	player:RemoveAura(TURN_AURA)
 	player:RemoveAura(IS_IN_BATTLE_AURA)
 	player:SetRooted(false)
+	player:SetManaRegenDisable(false)
 	player:EmoteState(0)
 	table.remove(battle.players,1)
 	battle.state = BState_STARTED
@@ -799,7 +968,7 @@ function BM_Handlers.PlayerAutolooseInvite(player)
 	local battle = battleList[listPlayersInBattle[player:GetName()].battleId]
 	local initor = GetPlayerByName(battle.initorName)
 	initor:SendBroadcastMessage("|cffff0000Игрок |cff00ffff" ..player:GetName().."|cffff0000 сдается без боя. |cffff0000Засчитано ролевое поражение.|r")
-	--player:SendBroadcastMessage("|cffff0000Игрок |cff00ffff" ..player:GetName().."|cffff0000 сдается без боя. |cffff0000Засчитано ролевое поражение.|r")
+	--player:SendBroadcastMessage("|cffff0000Игрок|cff00ffff" ..player:GetName().."|cffff0000 сдается без боя. |cffff0000Засчитано ролевое поражение.|r")
 	SayToRadius("|cffff0000Игрок |cff00ffff" ..player:GetName().."|cffff0000 сдается без боя. |cffff0000Засчитано ролевое поражение.|r", initor)
 	local newOccMessage = ""
 	local oocMessage = battle.oocMessage
@@ -837,7 +1006,8 @@ end
 function BM_Handlers.PlayerDeclineInvite(player)
 	local battle = battleList[listPlayersInBattle[player:GetName()].battleId]
 	local initor = GetPlayerByName(battle.initorName)
-	initor:SendBroadcastMessage(player:GetName().." отклоняет вызов боя.")
+	initor:SendBroadcastMessage(player:GetName()..
+	" отклоняет вызов боя.")
 	local newOccMessage = ""
 	local oocMessage = battle.oocMessage
 	
@@ -943,6 +1113,7 @@ function BM_Handlers.EnterInBattle(player, value)
 					if not player:IsOnVehicle() then
 						addPlayerInBattle(player,battle,battle.playersCanEnter[i].dist)
 						player:SetRooted(true)
+						player:SetManaRegenDisable(true)
 						player:EmoteState( 45 )
 						AIO.Handle(GetPlayerByName(battle.players[1].name),"BM_Handlers","CallToSendTime",player:GetName())
 						return true
@@ -995,6 +1166,8 @@ function BM_Handlers.TechnicalLeave(player)
 	player:RemoveAura(IS_IN_BATTLE_AURA)
 	player:RemoveAura(DEAD_AURA)	
 	player:SetRooted(false)
+	player:SetManaRegenDisable(false)
+	player:SetFFA(false)
 	table.remove(battle.players,pid)
 	battle.state = BState_STARTED
 	battle.escapeResistors = {}
@@ -1030,6 +1203,9 @@ local function OnPlayerLogin(event, player)
 				battle.players[i].flaglist.offline = false
 			end
 		end
+		local eventId = player:RegisterEvent(PlayerBattleTick,100,0)
+		battleTicks[player:GetName()] = eventId
+		player:SetManaRegenDisable(true)
 		AIO.Handle(player,"BM_Handlers","StartBattle")
 		updateStatePlayers(battleId)
 	else
@@ -1037,55 +1213,12 @@ local function OnPlayerLogin(event, player)
 		player:RemoveAura(TURN_AURA)
 		player:RemoveAura(DEAD_AURA)
 		player:SetRooted(false)
+		player:SetManaRegenDisable(false)
+		player:SetFFA(false)
 		player:RemoveAura(IS_IN_BATTLE_AURA)
 	end
 end
 
-
-
-local function castEvent(event, player, spell, skipCheck)
-	local spellId = spell:GetEntry();
-	if listPlayersInBattle[player:GetName()] then
-		local bid = listPlayersInBattle[player:GetName()].battleId
-		local battle = battleList[bid]
-		if (spellId == 88041) and not battle then
-			local itemLink = GetItemLink(600054,8)
-				player:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное очко здоровья!|r")
-			local nearPlayers = player:GetPlayersInRange( BATTLE_RADIUS, 0, 0 )
-			for index, nearPlayer in pairs(nearPlayers) do
-				nearPlayer:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное очко здоровья!|r")
-			end
-			player:RemoveAura(88041)
-		elseif (spellId == 88041) and battle then
-			local pid = findPlayer(battle.players,player:GetName())
-			local hpAura = player:GetAura(HP_AURA)
-			local hpCount = hpAura:GetStackAmount()
-			if hpCount < battle.players[pid].maxHp then
-				local itemLink = GetItemLink(600054,8)
-				player:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное в бою очко здоровья!|r")
-				local nearPlayers = player:GetPlayersInRange( BATTLE_RADIUS, 0, 0 )
-				for index, nearPlayer in pairs(nearPlayers) do
-					nearPlayer:SendBroadcastMessage(player:GetName().." использует "..itemLink.." и |cFF79ed21 восполняет одно потерянное в бою очко здоровья!|r")
-				end
-				hpAura:SetStackAmount(hpCount+1)
-				player:RemoveAura(88041)
-				updateStatePlayers(battle.battleId)
-			else
-				player:SendBroadcastMessage("У вас максимальное количество здоровья.")
-				player:AddItem(600054,1)
-				player:RemoveAura(88041)
-			end
-		elseif spellId ==84022 or spellId == 43671 then
-			if listPlayersInBattle[player:GetName()] then
-				local target = spell:GetTarget()
-				target:DespawnOrUnsummon()
-			end
-		elseif tcontain(classSpells,spellId) then
-			player:SendBroadcastMessage("Нарушение правил: запрещено использовать механические способности класса в ролевом бою для получения преимущества.")
-			return false
-		end
-	end
-end
 
 
 local function OnPlayerLogout(event, player)
@@ -1101,7 +1234,44 @@ local function OnPlayerLogout(event, player)
 	end
 end
 
-RegisterPlayerEvent(EVENT_ON_CAST, castEvent);
 RegisterPlayerEvent(3, OnPlayerLogin)
 RegisterPlayerEvent(4, OnPlayerLogout)
 RegisterPlayerEvent(42, OnPlayerCommandWithArg)
+
+
+
+local function InitTurnBasedAura(player,aura)
+	if not turnBasedAuraData[player:GetName()] then
+		turnBasedAuraData[player:GetName()] = {}
+	end
+	if bonusAuras[aura:GetAuraId()] then
+		local battle = battleList[GetPlayerBattleId(player)]
+		if not battle then
+			return false
+		end
+		local auraData =  {}
+		auraData.bonus = bonusAuras[aura:GetAuraId()].bonus
+		auraData.turns = bonusAuras[aura:GetAuraId()].turns
+		auraData.id = aura:GetAuraId()
+		auraData.turnStart = battle.currentTurn
+		table.insert(turnBasedAuraData[player:GetName()],auraData)
+		aura:SetMaxDuration(10000000)
+		aura:SetDuration(100000000)
+		if not auraData.bonus then
+			nextTurnBattle(battle.battleId)
+		end
+	end
+end
+
+local function OnAuraApply(event, player, aura)
+	if player and player:ToPlayer() then
+		player = player:ToPlayer()
+		if player:HasAura(IS_IN_BATTLE_AURA) then
+			InitTurnBasedAura(player,aura)
+		end
+	end
+	if aura:GetAuraId() == DEAD_AURA then
+		player:SetRooted(true)
+	end
+end
+RegisterPlayerEvent(43, OnAuraApply)

@@ -85,6 +85,7 @@ end
 function Player:SaveLevelDataToDB()
 	local guid = IntGuid(self:GetGUID())
 	local leveldata = self:GetNobleLevelData()
+	self:UpdateLevelInCore(leveldata.level)
 	if leveldata then
 		CharDBQuery("UPDATE `characters`.`character_noblegarden_leveling` SET `level`='"..leveldata.level.."', `xp`='"..leveldata.xp.."' WHERE  `guid`="..guid..";")
 	end
