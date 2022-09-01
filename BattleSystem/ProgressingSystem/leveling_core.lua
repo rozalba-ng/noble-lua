@@ -213,7 +213,7 @@ local function OnSpellCast(event, player, spell, skipCheck)
 	for i,v in pairs(expSpells) do
 		if spell:GetEntry() == i then
 			player:AddNobleXp(v)
-			print("Получено "..v.." дополнительного опыта!")
+			player:Print("Получено "..v.." дополнительного опыта!")
 		end
 	end
 end
