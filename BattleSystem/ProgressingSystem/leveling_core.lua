@@ -200,5 +200,24 @@ local function OnSetLevelCommand(player,new_level)
 		player:Print("Вы можете изменить уровень только игроку.")
 	end
 end
+
+local expSpells = {
+[91312] = 50,
+[91313] = 100,
+[91314] = 200,
+[91315] = 500,
+[91316] = 1000
+		}
+
+local function OnSpellCast(event, player, spell, skipCheck)
+	for i,v in pairs(expSpells) do
+		if spell:GetEntry() == i then
+			player:AddNobleXp(v)
+			print("Получено "..v.." дополнительного опыта!")
+		end
+	end
+end
+
+RegisterPlayerEvent(5,OnSpellCast)
 RegisterCommand("addxp",OnAddXPCommand)
 RegisterCommand("setlevel",OnSetLevelCommand)
