@@ -8,7 +8,7 @@ function loginEvent(event, player, arg2, arg3, arg4)
 end
 local function OnPlayerCommandWithArg(event, player, code)
     if(string.find(code, " "))then
-		if player:GetGMRank < 2 then
+		if player:GetGMRank() < 2 then
 			return false
 		end
         local arguments = {}

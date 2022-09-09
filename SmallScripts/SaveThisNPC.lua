@@ -30,7 +30,9 @@ function savedNpcUpdate(event, creature)
 	if savedNpc[entry] and savedNpc[entry][guid] then
 		creature:EmoteState(savedNpc[entry][guid].animation) -- Анимация
 		creature:SetScale(savedNpc[entry][guid].size) -- Размер
-		creature:Mount(savedNpc[entry][guid].mount) -- Маунт
+		if savedNpc[entry][guid].mount ~= 0 then 
+			creature:Mount(savedNpc[entry][guid].mount) -- Маунт
+		end
 		creature:SetByteValue(6+68,0,( savedNpc[entry][guid].byte1 )) -- Byte1 (Сидит/Лежит/Умер)
 		creature:SetByteValue(6+116,0,( savedNpc[entry][guid].byte2 )) -- Byte2 (Оружие)
 		if type(savedNpc[entry][guid].auras) == "table" then -- Ауры
