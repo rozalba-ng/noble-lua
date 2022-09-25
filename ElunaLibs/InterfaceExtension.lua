@@ -83,14 +83,14 @@ function Player:CreateInterface()
 			player:GossipComplete()
 		end
 	end
-	function interface:Send(menuText,sender)
+	function interface:Send(menuText,sender,menuId)
 		local player = GetPlayerByName(self.player_name)
 		player:GossipClearMenu()
 		player:GossipSetText(menuText,909808707)
 		for i,v in pairs(self.rows) do
 			player:GossipMenuAddItem(v.icon,v.msg,1,v.intid,v.code, v.popup)
 		end
-		player:GossipSendMenu(909808707,sender)
+		player:GossipSendMenu(909808707,sender,menuId)
 	end
 	interfaceList[self:GetName()] = interface
 	return interface

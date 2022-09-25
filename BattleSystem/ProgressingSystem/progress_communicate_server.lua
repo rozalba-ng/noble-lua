@@ -21,12 +21,20 @@ end
 
 function Interface_OnClassClick(player,p_player,intid,classData)
 	player:SetNobleClass(classData.id)
+	player:SetInfo("ChangeClassCooldown",os.time())
 end
 
 
 function ProgressCommunicate.CallClassChangeMenu(player)
+	local cooldownData = player:GetInfo("ChangeClassCooldown")
+	if cooldownData then
+		cooldownData = tonumber(cooldownData)
+		if cooldownData + CLASS_CHANGE_COOLDOWN_MINUTES  > os.time() then
+			player:Print("Вы не можете менять ваш класс чаще чем раз в три дня.")
+			return false
+		end
+	end
 	local gender = player:GetGender()
-	player:Print("123")
 	local classInterface = player:CreateInterface()
 	for i,class in ipairs(ClassSystem.classes) do
 		local class_name = class:GetName(gender)
@@ -79,6 +87,19 @@ local function OnPlayerLogin(event,new_player)
 	new_player:UpdateClientProgressData()
 	
 end
+
+local PLAYER_EVENT_ON_LOGIN = 3
+RegisterPlayerEvent(PLAYER_EVENT_ON_LOGIN,OnPlayerLogin)
+
+
+local function OnPlayerManaChanged(event,player,value)
+	AIO.Handle(player,"ProgressCommunicate","UpdateCurrentMana",value)
+
+	
+end
+local PLAYER_EVENT_ON_MANA_CHANGED = 51
+RegisterPlayerEvent(PLAYER_EVENT_ON_MANA_CHANGED,OnPlayerManaChanged)
+
 
 local PLAYER_EVENT_ON_LOGIN = 3
 RegisterPlayerEvent(PLAYER_EVENT_ON_LOGIN,OnPlayerLogin)

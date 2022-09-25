@@ -242,11 +242,11 @@ function CharacterStatsHandler.GetHeight(player)
 end
 
 local function OnResetCommand(player)
-	if player:GetGMRank() < 2 then
+	if player:GetGMRank() < 0 then
 		player:Print("У вас нет доступа к обнуления характеристик персонажа")
 		return false
 	end
-	local target = player:GetSelectedUnit()
+	local target = player
 	if not target then
 		target = player
 	end
