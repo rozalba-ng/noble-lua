@@ -151,7 +151,7 @@ local function OnPlayerLogin(event,player)
 		LevelingSystem.levels[guid] = leveldata
 		print("Новый персонаж с ГУИДОМ - "..tostring(guid)..". Инициализация данных в БД")
 	end
-	player:SetNobleLevel(20)
+	--player:SetNobleLevel(20)
 	player:UpdateXPBar(player:GetNobleLevelData().xp)
 end
 
