@@ -21,6 +21,35 @@ local CharacterStatsHandler = AIO.AddHandlers("CharacterStatsHandler", {})
 
 local CHAR_CHANGE_COOLDOWN_MINUTES = 60*5
 
+local BATTLE_STATS_PER_LEVEL = 1
+local SOC_STATS_PER_LEVEL = 1
+
+local MAX_MAIN_STATS = 50
+local MAX_SOC_STATS = 50
+
+local MAX_POINTS_IN_MAIN = 15
+local MAX_POINTS_IN_SOC = 15
+
+function Player:GetMaxBattleStats()
+	local currentLevel = self:GetNobleLevel()
+	if not currentLevel then
+		currentLevel = 0
+	end
+	local basePoints = 2
+	local result = basePoints + ((currentLevel-1)*BATTLE_STATS_PER_LEVEL)
+	return result
+end
+function Player:GetMaxSocStats()
+	local currentLevel = self:GetNobleLevel()
+	if not currentLevel then
+		currentLevel = 0
+	end
+	local basePoints = 2
+	local result = basePoints + ((currentLevel-1)*SOC_STATS_PER_LEVEL)
+	return result
+end
+
+
 local function SendRolestatData(player)
 	if player:GetLuaCooldown(GetCharStatInfo_Cooldown) ~= 0 then
 		player:Print("Не так быстро.")
@@ -64,8 +93,9 @@ local function SendRolestatData(player)
 	local init = player:GetRoleStat(ROLE_STAT_INIT)
 	local perc = player:GetRoleStat(ROLE_STAT_PERCEPT)
 	local data = {str,agl,int,stam,ver,will,spirit,charisma,avoid,luck,stealth,init,perc}
-	
-	AIO.Handle(player,"CharacterStatsHandler","RecieveStats",data,p_data)
+	local freeBattleStats = player:GetMaxBattleStats()-(p_data[1]+p_data[2]+p_data[3]+p_data[4]+p_data[5]+p_data[6]+p_data[7])
+	local freeSocStats = player:GetMaxSocStats()-(p_data[8]+p_data[9]+p_data[10]+p_data[11]+p_data[12]+p_data[13])
+	AIO.Handle(player,"CharacterStatsHandler","RecieveStats",data,p_data,{freeBattleStats,freeSocStats})
 end
 
 local function SendHeightData(player)
@@ -110,45 +140,8 @@ function CharacterStatsHandler.SendNewHeight(player,newHeight)
 	SendHeightData(player)
 	player:SetScale(newHeight)
 end
-
-function CharacterStatsHandler.SendNewStats(player,newStats)
-
-	if player:GetLuaCooldown(ChangeCharStatInfo_Cooldown) ~= 0 then
-		player:Print("Вы можете обновлять ваши характеристики не чаще чем раз в 5 часов.")
-		return false
-	end
-	player:SetLuaCooldown(1*60*CHAR_CHANGE_COOLDOWN_MINUTES,ChangeCharStatInfo_Cooldown)
-	local mainSum = 0
-	local socSum = 0
-	for i,stat in ipairs(newStats) do --Валидация статов
-		if tonumber(stat) == nil then
-			player:Print("Значения характеристик некорректны.")
-			return false
-		end
-		if i < 8 then
-			if stat > 5 or stat < 0 then
-				player:Print("Значения характеристик некорректны.")
-				return false
-			else
-				mainSum = mainSum + stat
-				if mainSum > 8 then
-					player:Print("Значения характеристик некорректны.")
-					return false
-				end
-			end
-		else
-			if stat > 8 or stat < 0 then
-				player:Print("Значения характеристик некорректны.")
-				return false
-			else
-				socSum = socSum + stat
-				if socSum > 15 then
-					player:Print("Значения характеристик некорректны.")
-					return false
-				end
-			end
-		end
-	end
+function Player:SetNewStatList(newStats)
+	local player = self
 	local guid = player:GetGUID()
 	local q_pointStats = CharDBQuery("SELECT * FROM character_role_stats WHERE guid = "..tostring(guid)) --Получение текущих очков сохраненных в базе
 	local p_data = {}
@@ -187,7 +180,58 @@ function CharacterStatsHandler.SendNewStats(player,newStats)
 	CharDBQuery("REPLACE INTO character_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, CHA, AVOID, LUCK, HID, INIT, PER) VALUES ("..values..")")
 	SendRolestatData(player)
 end
+function CharacterStatsHandler.SendNewStats(player,newStats)
 
+	if player:GetLuaCooldown(ChangeCharStatInfo_Cooldown) ~= 0 then
+		player:Print("Вы можете обновлять ваши характеристики не чаще чем раз в 5 часов.")
+		return false
+	end
+	player:SetLuaCooldown(1*60*CHAR_CHANGE_COOLDOWN_MINUTES,ChangeCharStatInfo_Cooldown)
+	player:SaveToClient("LastStatUpdate",os.time())
+	local mainSum = 0
+	local socSum = 0
+	for i,stat in ipairs(newStats) do --Валидация статов
+		if tonumber(stat) == nil then
+			player:Print("Значения характеристик некорректны.")
+			return false
+		end
+		if i < 8 then
+			if stat > MAX_POINTS_IN_MAIN or stat < 0 then
+				player:Print("Значения характеристик некорректны.")
+				return false
+			else
+				mainSum = mainSum + stat
+				if mainSum > MAX_MAIN_STATS then
+					player:Print("Значения характеристик некорректны.")
+					return false
+				end
+			end
+		else
+			if stat > MAX_POINTS_IN_SOC or stat < 0 then
+				player:Print("Значения характеристик некорректны.")
+				return false
+			else
+				socSum = socSum + stat
+				if socSum > MAX_SOC_STATS then
+					player:Print("Значения характеристик некорректны.")
+					return false
+				end
+			end
+		end
+	end
+	player:SetNewStatList(newStats)
+end
+
+function Player:ResetRoleStatsCooldown()
+	self:SaveToClient("LastStatUpdate",os.time()-100000000)
+	self:SetLuaCooldown(1,ChangeCharStatInfo_Cooldown)
+
+end
+
+function Player:ResetAllRoleStats()
+	self:ResetRoleStatsCooldown()
+	self:SetNewStatList({0,0,0,0,0,0,0,0,0,0,0,0,0})
+end
 
 function CharacterStatsHandler.GetStats(player)
 	SendRolestatData(player)
@@ -196,3 +240,34 @@ end
 function CharacterStatsHandler.GetHeight(player)
 	SendHeightData(player)
 end
+
+local function OnResetCommand(player)
+	if player:GetGMRank() < 2 then
+		player:Print("У вас нет доступа к обнуления характеристик персонажа")
+		return false
+	end
+	local target = player:GetSelectedUnit()
+	if not target then
+		target = player
+	end
+	if target:ToPlayer() then
+		target:ResetAllRoleStats()
+		player:Print("Характеристики "..target:GetName().." сброшены.")
+	else
+		player:Print("Вы можете сбрасывать характеристики только игроку.")
+	end
+end
+RegisterCommand("resetstats",OnResetCommand)
+
+
+
+
+
+
+
+
+
+
+
+
+

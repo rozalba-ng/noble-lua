@@ -59,7 +59,7 @@ local function OnUnitHitBySpell(event, unit, spell)
 end
 
 function Player:RescaleHP()
-	local curHp = self:GetHealth();
+	--[[local curHp = self:GetHealth();
 	local maxHp = self:GetMaxHealth();
 	local hp = 100;
 	local mapid = self:GetMapId();
@@ -79,7 +79,7 @@ function Player:RescaleHP()
 		hp = hp + (defStats* DEF_HP_MULTIPLICATOR)
 		self:SetMaxHealth(hp)
 		self:SetHealth(curHp)
-	end
+	end]]
 end
 
 function playerRescaleHpOnChangeStat(event, player, stat)

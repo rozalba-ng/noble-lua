@@ -30,8 +30,8 @@ function CharStatsInterface.SendNewStats(stats)
 	AIO.Handle("CharacterStatsHandler","SendNewStats",stats)
 end
 
-function CharacterStatsHandler.RecieveStats(player,statData,pointData)
+function CharacterStatsHandler.RecieveStats(player,statData,pointData,freeStats)
 	CharStatsInterface.stats = statData
 	CharStatsInterface.points = pointData
-	CharStatsInterface.HandleStatUpdate(statData,pointData)
+	CharStatsInterface.HandleStatUpdate(statData,pointData,freeStats)
 end

@@ -15,6 +15,7 @@ brothers_faction = 1171
 blacksun_faction = 1173
 korus_faction = 1172
 zlato_faction = 1174
+theramore_faction = 1175
 
 reputation_friendly = 3000
 reputation_honored = 9000
@@ -111,6 +112,35 @@ local function countStormwindReputation(player)
     end
 end
 
+local function countTheramoreReputation(player)
+    local faction
+    if player:GetQuestStatus(110236) == 6 then
+        --	Игрок выполнил квест Таверна Терамора
+        faction = theramore_faction
+    end
+    if faction then
+        local zone, trueZone, r = player:GetZoneId(), false, 0
+        if (zone == 10429 or zone == 15) then
+            --	Игрок в Пылевых Топях
+            r = 10
+            trueZone = true
+        elseif (false) then -- сюда потом дописать другие локации калимдора
+            --	Игрок играет на полигоне
+            r = 6
+            trueZone = true
+        end
+        if trueZone and ActionTime() then
+            --	Если время суперактива - идёт маленький бонус.
+            r = r + 5
+        end
+		--
+		--r = r * 0.75 -- УПАДОК!
+		
+        --	Начисление репутации
+        player:SetReputation(faction, player:GetReputation(faction) + r)
+    end
+end
+
 local function countZdReputation(player)
     local map, zone, trueZone, r = player:GetMapId(), player:GetZoneId(), false, 0
     if (zone == 10267) then
@@ -177,6 +207,7 @@ local function calculateBonuses()
                 countBoralusBonus(player)
                 countQueltalasReputation(player)
                 countZdReputation(player)
+                countTheramoreReputation(player)
             end
         end;
     end
