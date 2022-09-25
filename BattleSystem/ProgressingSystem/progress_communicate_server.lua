@@ -30,8 +30,9 @@ function ProgressCommunicate.CallClassChangeMenu(player)
 	if cooldownData then
 		cooldownData = tonumber(cooldownData)
 		if cooldownData + CLASS_CHANGE_COOLDOWN_MINUTES  > os.time() then
-			player:Print("Вы не можете менять ваш класс чаще чем раз в три дня.")
-			return false
+			--player:Print("Вы не можете менять ваш класс чаще чем раз в три дня.")
+			--return false
+			player:Print("Вы не можете менять ваш класс чаще, чем раз в 30 секунд.")
 		end
 	end
 	local gender = player:GetGender()

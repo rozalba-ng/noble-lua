@@ -11,7 +11,8 @@ ENGINE=InnoDB
 
 ClassSystem = ClassSystem or {}
 ClassSystem.classes = {}
-CLASS_CHANGE_COOLDOWN_MINUTES = 60*60*24*3 -- Три дня
+--CLASS_CHANGE_COOLDOWN_MINUTES = 60*60*24*3 -- Три дня
+CLASS_CHANGE_COOLDOWN_MINUTES = 30 -- 30 секунд
 local function Class(id,m_name,f_name,spells)
 	local class = {}
 	class.id = id
