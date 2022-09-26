@@ -645,14 +645,14 @@ function handeOnPlayerStartSpell(event, player, spell,triggered)
 	end
 
 	local target = spell:GetTarget()
-	if not target:ToCreature() then
-		return false
-	end
 
-	if target and player then
-		if (not player:HasAura(IS_IN_BATTLE_AURA) and target:HasAura(IS_IN_BATTLE_AURA)) or (player:HasAura(IS_IN_BATTLE_AURA) and not target:HasAura(IS_IN_BATTLE_AURA)) then
-			player:SendBroadcastMessage("Вы не можете атаковать цель, которая находится не в вашем бою.")
-			return false
+	if target then
+		local cTarget = target:ToCreature()
+		if cTarget then
+			if (not player:HasAura(IS_IN_BATTLE_AURA) and target:HasAura(IS_IN_BATTLE_AURA)) or (player:HasAura(IS_IN_BATTLE_AURA) and not target:HasAura(IS_IN_BATTLE_AURA)) then
+				player:SendBroadcastMessage("Вы не можете атаковать цель, которая находится не в вашем бою.")
+				return false
+			end
 		end
 	end
 	if player:HasAura(IS_IN_BATTLE_AURA) then
