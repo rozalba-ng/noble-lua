@@ -92,6 +92,7 @@ function Player:SaveLevelDataToDB()
 end
 
 function OnNobleLevelUp(player,new_level)
+	player:SetLevel(new_level) -- игромех левл тоже устанавливаем
 	player:Print("Поздравляем с повышением уровня до "..new_level.."! Не забудьте распределить полученные характерстики.")
 	player:AddAura(55739,player)
 	player:OnLevelUp()
@@ -106,8 +107,7 @@ function Player:AddNobleXp(count)
 		local cur_level = leveldata.level
 		if cur_xp + count >= need_for_up then
 			leveldata.level = cur_level + 1
-			leveldata.xp = (cur_xp + count) - need_for_up 
-
+			leveldata.xp = (cur_xp + count) - need_for_up
 			OnNobleLevelUp(self,leveldata.level)
 			self:AddNobleXp(0)
 		else
@@ -153,6 +153,7 @@ local function OnPlayerLogin(event,player)
 	end
 	--player:SetNobleLevel(20)
 	player:UpdateXPBar(player:GetNobleLevelData().xp)
+	player:SetLevel(player:GetNobleLevelData().level)
 end
 
 local PLAYER_EVENT_ON_LOGIN = 3
