@@ -1,4 +1,5 @@
 --[[Каждые 5 минут проверяет челочисленный]]
+local dublon = 301396;
 
 local function sendShopLetters()
 	if SocialTime() then
@@ -16,7 +17,7 @@ local function sendShopLetters()
 			local playerId = ownerData['ownerID'];
 			
 			if (playerId ~= 0 and amount > 0) then
-				SendMail('Банк Штормграда', 'Добрый день! Извольте получить ваш базовый доход от лавки ' .. door_guid .. '. С уважением, городской банк Штормграда.', playerId, 36, 61, 20, 0, 0, 600057, amount);
+				SendMail('Банк Штормграда', 'Добрый день! Извольте получить ваш доход от предприятия ' .. door_guid .. '. С уважением, городской банк.', playerId, 36, 61, 20, 0, 0, dublon, amount);
 				CharDBQuery('UPDATE doors_owners set bonus = bonus - ' .. amount .. ' where door_guid = ' .. door_guid);
 			end
 			bonusQuery:NextRow();
