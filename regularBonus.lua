@@ -17,7 +17,7 @@ local function sendShopLetters()
 			local playerId = ownerData['ownerID'];
 			
 			if (playerId ~= 0 and amount > 0) then
-				SendMail('Банк Штормграда', 'Добрый день! Извольте получить ваш доход от предприятия ' .. door_guid .. '. С уважением, городской банк.', playerId, 36, 61, 20, 0, 0, dublon, amount);
+				SendMail('Банк', 'Добрый день! Извольте получить доход от предприятия ' .. door_guid .. '. С уважением, ваш банк.', playerId, 36, 61, 20, 0, 0, dublon, amount);
 				CharDBQuery('UPDATE doors_owners set bonus = bonus - ' .. amount .. ' where door_guid = ' .. door_guid);
 			end
 			bonusQuery:NextRow();
