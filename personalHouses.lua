@@ -21,7 +21,7 @@ local reputation_friendly = 3000;
 local DOOR_QUEST_END_NPC = 987863;
 local DOOR_QUEST = 110212;
 
-local GUILD_COMMERTIAL_HOUSE_LIMIT = 4;
+local GUILD_COMMERTIAL_HOUSE_LIMIT = 1;
 
 local cost_type_theramore = 3;
 
@@ -84,7 +84,7 @@ local function canBuyFactionHouses(player, gobDBID, guild)
                 houseRegionCount = houseRegionCount + 1;
             end
         end
---        local currReputation = guildData[houseFactionsNames[regionId]]; -- текущая репутация гильдии в районе
+        local currLevel = tonumber(guildData['level']); -- текущая репутация гильдии в районе
 --        local reputationType = 'Normal';
 --
 --        if (currReputation >= houseFactions[regionId]['repExalt']) then
@@ -99,10 +99,9 @@ local function canBuyFactionHouses(player, gobDBID, guild)
 --        else
 --            reputationType = 'Hate';
 --        end
-
 --        local fieldHouseCount = 'houseCount' .. reputationType
-        if (houseRegionCount >= GUILD_COMMERTIAL_HOUSE_LIMIT) then --houseRegionCount >= houseFactions[regionId][fieldHouseCount]) then
-            player:SendBroadcastMessage("У вашей гильдии уже максимальное количество предприятий.");
+        if (houseRegionCount >= GUILD_COMMERTIAL_HOUSE_LIMIT * currLevel) then --houseRegionCount >= houseFactions[regionId][fieldHouseCount]) then
+            player:SendBroadcastMessage("У вашей гильдии уже максимальное количество предприятий. Чтобы повысить количество предприятий - повышайте уровень гильдии.");
             return false
         else
             return 1;
