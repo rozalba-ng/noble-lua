@@ -5,20 +5,32 @@ houseFactions = {}; -- массив с данными по фракциям
 local building_quest = 110000;
 local andoral_currency = 43721;
 local storm_currency = 600057;
+local kalimdor_currency = 301396;
+
 local region_stormwind = 1;
 local region_shadow_stormwind = 2;
+local region_theramore = 3;
+
 local faction_stormwind = 1162;
 local faction_shadow_stormwind = 1163;
+local faction_theramore = 1175;
+
 local reputation_honored = 9000;
 local reputation_friendly = 3000;
 
-local DOOR_QUEST_END_NPC = 987863
-local DOOR_QUEST = 110212
+local DOOR_QUEST_END_NPC = 987863;
+local DOOR_QUEST = 110212;
+
+local GUILD_COMMERTIAL_HOUSE_LIMIT = 1;
+
+local cost_type_theramore = 3;
 
 local payCurrency = {
     [0] = "серебра",
     [1] = "клав.",
-    [2] = "крон"
+    [2] = "крон",
+    [3] = "дублонов"
+
 };
 
 local doorAccessGroups = {
@@ -61,7 +73,7 @@ local function canBuyFactionHouses(player, gobDBID, guild)
     local guildId = player:GetGuildId();
     local guildDataQuery = CharDBQuery('SELECT * from guild_data where guild_id = ' .. guildId .. ' limit 1')
     if (guildDataQuery == nil) then -- сначала проверяем может ли вообще эта гильдия закупаться домами
-        player:SendBroadcastMessage("Вашей гильдии недоступна покупка зданий в этой зоне.");
+        player:SendBroadcastMessage("Вашей гильдии недоступна покупка предприятий.");
         return false
     else -- (не актуально, просто высчитываем количество зданий у гильдии) 0если может, то проверяем какая у гильдии сейчас репутация, и не достигла ли она лимита домов. Кроме того, рассчитываем коэффициент стоимости (который надо будет умножить на цену)
         local guildData = guildDataQuery:GetRow();
@@ -72,7 +84,7 @@ local function canBuyFactionHouses(player, gobDBID, guild)
                 houseRegionCount = houseRegionCount + 1;
             end
         end
---        local currReputation = guildData[houseFactionsNames[regionId]]; -- текущая репутация гильдии в районе
+        local currLevel = tonumber(guildData['level']); -- текущая репутация гильдии в районе
 --        local reputationType = 'Normal';
 --
 --        if (currReputation >= houseFactions[regionId]['repExalt']) then
@@ -87,10 +99,9 @@ local function canBuyFactionHouses(player, gobDBID, guild)
 --        else
 --            reputationType = 'Hate';
 --        end
-
 --        local fieldHouseCount = 'houseCount' .. reputationType
-        if (houseRegionCount >= 1) then --houseRegionCount >= houseFactions[regionId][fieldHouseCount]) then
-            player:SendBroadcastMessage("В этой зоне покупка дополнительных гильдейских зданий невозможна.");
+        if (houseRegionCount >= GUILD_COMMERTIAL_HOUSE_LIMIT * currLevel) then --houseRegionCount >= houseFactions[regionId][fieldHouseCount]) then
+            player:SendBroadcastMessage("У вашей гильдии уже максимальное количество предприятий. Чтобы повысить количество предприятий - повышайте уровень гильдии.");
             return false
         else
             return 1;
@@ -117,15 +128,14 @@ local function gossipDoorBuy(event, player, object, guid)
         player:GossipMenuAddItem(10, "Купить дом", 1, 22, false, "Вы желаете приобрести этот личный дом? Это будет стоить " .. lockedDoorArray[guid].cost_start .. " " .. payCurrency[lockedDoorArray[guid].cost_type]);
     end
     if (lockedDoorArray[guid].can_own_faction == 1) then
-        text = "Для покупки нужна репутация Королевство Штормград: уважение"
+        text = "Для покупки нужна репутация в Тераморе: дружелюбие"
         player:GossipMenuAddItem(10, "Купить лавку", 1, 23, false, "Вы желаете приобрести эту лавку? Это будет стоить " .. lockedDoorArray[guid].cost_start .. " " .. payCurrency[lockedDoorArray[guid].cost_type]);
     end
     if (lockedDoorArray[guid].can_own_guild == 1) then
-        if lockedDoorArray[guid].region_id ==1 then
-            --    Обращение к дворянину
-            text = "Для покупки гильдия должна быть внесена в реестр ситикрафта Штормград. По всем вопросам обращайтесь на сайт в личные сообщения по нику Розальба либо в наш дискорд, по нику rozalba#8315"
+        if lockedDoorArray[guid].region_id == region_theramore then
+            text = "Для покупки предприятия гильдия должна быть внесена в реестр экономики полигона. Для внесения гильдии в реестр обращайтесь в наш дискорд, по нику rozalba#8315 или в чат #терамор-запросы с пингом @rozalba"
         end
-        player:GossipMenuAddItem(10, "Купить гилдхолл", 1, 24, false, "Вы желаете приобрести этот гилдхолл? Это будет стоить " .. lockedDoorArray[guid].cost_start .. " " .. payCurrency[lockedDoorArray[guid].cost_type]);
+        player:GossipMenuAddItem(10, "Купить предприятие для гильдии", 1, 24, false, "Вы желаете приобрести это предприятие для гильдии? Это будет стоить " .. lockedDoorArray[guid].cost_start .. " " .. payCurrency[lockedDoorArray[guid].cost_type]);
     end
     player:GossipMenuAddItem(0, "Закрыть", 1, 25);
     player:GossipSetText( text, 23122243 )
@@ -144,13 +154,13 @@ local function gossipDoorOption(event, player, object, guid)
 	
 	local nextCooldownReset_time = os.date("*t")
 	--Ezil: Проверка, находится ли игрок в гильдии к которой привязана дверь и есть ли привязанный к дверке бонус, а также обновилась ли возможность взять бонус этой ауры.
-	if (lockedDoorArray[guid].owner_guild == player:GetGuildId() and lockedDoorArray[guid].aura ~= 0 and (not player:GetInfo("LastDoorBonus_") or nextCooldownReset_time.day~=tonumber(player:GetInfo("LastDoorBonus_")))) then
-		player:GossipMenuAddItem(4, "Получить бонус предприятия", 1, 7)
-	end
+--	if (lockedDoorArray[guid].owner_guild == player:GetGuildId() and lockedDoorArray[guid].aura ~= 0 and (not player:GetInfo("LastDoorBonus_") or nextCooldownReset_time.day~=tonumber(player:GetInfo("LastDoorBonus_")))) then
+--		player:GossipMenuAddItem(4, "Получить бонус предприятия", 1, 7)
+--	end -- rozalba: в меню двери ауры временно прибиваю, чтоб случайно не получили чего, потом можно переделать под терамор
 	--Ezil: Проверка, является ли дверь 1 уровня и типом Личная, а также обновился ли квест, либо этот квест в целом не был еще ни разу начат.
-	if (lockedDoorArray[guid].door_level == 1 and lockedDoorArray[guid].owner_type == 0 and not player:HasQuest(DOOR_QUEST) and (not player:GetInfo("LastDoorQuest") or nextCooldownReset_time.day~=tonumber(player:GetInfo("LastDoorQuest")))) then
-		player:GossipMenuAddItem(4, "Сдать припасы", 1, 6)
-	end
+--	if (lockedDoorArray[guid].door_level == 1 and lockedDoorArray[guid].owner_type == 0 and not player:HasQuest(DOOR_QUEST) and (not player:GetInfo("LastDoorQuest") or nextCooldownReset_time.day~=tonumber(player:GetInfo("LastDoorQuest")))) then
+--		player:GossipMenuAddItem(4, "Сдать припасы", 1, 6)
+--	end -- rozalba: в меню двери вырубаю пока квест двери, потом если что вернем под припасы
 	------
     player:GossipMenuAddItem(4, "Отказаться от владения", 1, 26, false, "ВНИМАНИЕ! После согласия, весь ваш доступ к зданию пропадет и оно вновь станет свободным. Вы согласны?")
     player:GossipMenuAddItem(4, "Передать владение", 1, 27, true, "ВНИМАНИЕ! После согласия, весь ваш доступ к зданию перейдет к указаному игроку. Вы согласны?")
@@ -279,6 +289,12 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
                 lockedDoorArray[gobDBID].expTime = lockedDoorArray[gobDBID].expTime + 604800;
                 saveDoorOwnerData(lockedDoorArray[gobDBID], gobDBID);
                 savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_prolong, 2)
+                player:SendBroadcastMessage("Продление аренды прошло успешно.");
+            elseif (lockedDoorArray[gobDBID].cost_type == cost_type_theramore and (player:HasItem(kalimdor_currency, lockedDoorArray[gobDBID].cost_prolong) or lockedDoorArray[gobDBID].cost_prolong == 0)) then
+                player:RemoveItem(kalimdor_currency, lockedDoorArray[gobDBID].cost_prolong);
+                lockedDoorArray[gobDBID].expTime = lockedDoorArray[gobDBID].expTime + 604800;
+                saveDoorOwnerData(lockedDoorArray[gobDBID], gobDBID);
+                savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_prolong, 3)
                 player:SendBroadcastMessage("Продление аренды прошло успешно.");
             else
                 player:SendBroadcastMessage("Недостаточно валюты для продления аренды.");
@@ -417,6 +433,14 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
                 createDoorOwnerData(lockedDoorArray[gobDBID], gobDBID);
                 savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_start, 2)
                 player:SendBroadcastMessage("Покупка прошла успешно.");
+            elseif ((lockedDoorArray[gobDBID].cost_type == cost_type_theramore and player:HasItem(kalimdor_currency, lockedDoorArray[gobDBID].cost_start)) or lockedDoorArray[gobDBID].cost_start == 0) then
+                player:RemoveItem(kalimdor_currency, lockedDoorArray[gobDBID].cost_start);
+                lockedDoorArray[gobDBID].ownerID = playerGUID;
+                lockedDoorArray[gobDBID].owner_type = 0;
+                lockedDoorArray[gobDBID].expTime = os.time() + 604800;
+                createDoorOwnerData(lockedDoorArray[gobDBID], gobDBID);
+                savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_start, cost_type_theramore)
+                player:SendBroadcastMessage("Покупка прошла успешно.");
             else
                 player:SendBroadcastMessage("Недостаточно валюты для покупки недвижимости.");
             end
@@ -429,7 +453,7 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
                 return false;
             end
             -- Достаточно ли у персонажа репутации?
-            if (lockedDoorArray[gobDBID].region_id == region_stormwind and player:GetReputation( faction_stormwind ) < reputation_honored) then
+            if (lockedDoorArray[gobDBID].region_id == region_theramore and player:GetReputation( faction_theramore ) < reputation_friendly) then
                 player:SendBroadcastMessage("У вас недостаточно репутации для приобретения этой лавки.");
                 return false;
             end
@@ -450,7 +474,7 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
                 lockedDoorArray[gobDBID].owner_type = 2;
                 lockedDoorArray[gobDBID].expTime = os.time() + 604800;
                 createDoorOwnerData(lockedDoorArray[gobDBID], gobDBID);
-                savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_start, 1)
+                savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_start, 0)
                 player:SendBroadcastMessage("Покупка прошла успешно.");
             elseif ((lockedDoorArray[gobDBID].cost_type == 1 and player:HasItem(andoral_currency, lockedDoorArray[gobDBID].cost_start)) or lockedDoorArray[gobDBID].cost_start == 0) then
                 player:RemoveItem(andoral_currency, lockedDoorArray[gobDBID].cost_start);
@@ -468,6 +492,14 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
                 createDoorOwnerData(lockedDoorArray[gobDBID], gobDBID);
                 savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_start, 2)
                 player:SendBroadcastMessage("Покупка прошла успешно.");
+            elseif ((lockedDoorArray[gobDBID].cost_type == cost_type_theramore and player:HasItem(kalimdor_currency, lockedDoorArray[gobDBID].cost_start)) or lockedDoorArray[gobDBID].cost_start == 0) then
+                player:RemoveItem(kalimdor_currency, lockedDoorArray[gobDBID].cost_start);
+                lockedDoorArray[gobDBID].ownerID = playerGUID;
+                lockedDoorArray[gobDBID].owner_type = 2;
+                lockedDoorArray[gobDBID].expTime = os.time() + 604800;
+                createDoorOwnerData(lockedDoorArray[gobDBID], gobDBID);
+                savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_start, cost_type_theramore)
+                player:SendBroadcastMessage("Покупка прошла успешно.");
             else
                 player:SendBroadcastMessage("Недостаточно валюты для покупки недвижимости.");
             end
@@ -476,7 +508,7 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
         if (intid == 24) then
             -- Можно ли вообще купить дом во владение гильдии?
             if (lockedDoorArray[gobDBID].can_own_guild ~= 1) then
-                player:SendBroadcastMessage("Это помещение нельзя выкупить во владение гильдии.");
+                player:SendBroadcastMessage("Это предприятие нельзя выкупить во владение гильдии.");
                 player:GossipComplete();
                 return false;
             end
@@ -484,7 +516,7 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
             -- Состоит ли игрок в гильдии?
             local guild = player:GetGuild();
             if (guild == nil) then
-                player:SendBroadcastMessage("Только лидеры гильдий могут покупать здания для гильдии.");
+                player:SendBroadcastMessage("Только лидеры гильдий могут покупать предприятия для гильдии.");
                 player:GossipComplete();
                 return false;
             end
@@ -492,12 +524,12 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
             -- является ли игрок лидером этой гильдии
             local guildMaster = guild:GetLeader();
             if (guildMaster == playerGUID) then
-                player:SendBroadcastMessage("Только лидеры гильдий могут покупать здания для гильдии.");
+                player:SendBroadcastMessage("Только лидеры гильдий могут покупать предприятия для гильдии.");
                 player:GossipComplete();
                 return false;
             end
 
-            -- Хватает ли у игрока прав и репутации для покупки фракционных домов?
+            -- Хватает ли у игрока прав и репутации для покупки гильдейских домов?
             local coeff = canBuyFactionHouses(player, gobDBID, guild);
             if (coeff == false) then
                 player:GossipComplete();
@@ -532,6 +564,15 @@ local function gossipSelectDoorOption(event, player, object, sender, intid, code
                 lockedDoorArray[gobDBID].owner_guild = player:GetGuildId();
                 createDoorOwnerData(lockedDoorArray[gobDBID], gobDBID);
                 savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_start, 1)
+                player:SendBroadcastMessage("Покупка прошла успешно.");
+            elseif ((lockedDoorArray[gobDBID].cost_type == cost_type_theramore and player:HasItem(kalimdor_currency, price)) or price == 0) then
+                player:RemoveItem(kalimdor_currency, price);
+                lockedDoorArray[gobDBID].ownerID = playerGUID;
+                lockedDoorArray[gobDBID].expTime = os.time() + 604800;
+                lockedDoorArray[gobDBID].owner_type = 1;
+                lockedDoorArray[gobDBID].owner_guild = player:GetGuildId();
+                createDoorOwnerData(lockedDoorArray[gobDBID], gobDBID);
+                savePaymentHistory(player, gobDBID, lockedDoorArray[gobDBID].cost_start, cost_type_theramore)
                 player:SendBroadcastMessage("Покупка прошла успешно.");
             else
                 player:SendBroadcastMessage("Недостаточно валюты для покупки недвижимости.");

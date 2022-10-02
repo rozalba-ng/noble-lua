@@ -106,9 +106,11 @@ local function playerOnEquip(event, player, item, bag, slot)
 end
 
 local function auraApplyEvent(event, unit, aura)
-	if auraListContain(hpBuffAuraList,aura:GetAuraId()) then
-		if unit:ToPlayer() then
-			unit:RegisterEvent( Rescale, 200,1)
+	if aura then
+		if auraListContain(hpBuffAuraList,aura:GetAuraId()) then
+			if unit:ToPlayer() then
+				unit:RegisterEvent( Rescale, 200,1)
+			end
 		end
 	end
 end

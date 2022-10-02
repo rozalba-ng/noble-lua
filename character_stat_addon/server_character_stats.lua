@@ -19,7 +19,7 @@ local ChangeCharStatInfo_Cooldown = 2
 local ChangeCharHeight_Cooldown = 3
 local CharacterStatsHandler = AIO.AddHandlers("CharacterStatsHandler", {})
 
-local CHAR_CHANGE_COOLDOWN_MINUTES = 60*5
+local CHAR_CHANGE_COOLDOWN_MINUTES = 1 -- 60*5 временно кулдаун делаем 1 минута
 
 local BATTLE_STATS_PER_LEVEL = 1
 local SOC_STATS_PER_LEVEL = 1
@@ -183,7 +183,8 @@ end
 function CharacterStatsHandler.SendNewStats(player,newStats)
 
 	if player:GetLuaCooldown(ChangeCharStatInfo_Cooldown) ~= 0 then
-		player:Print("Вы можете обновлять ваши характеристики не чаще чем раз в 5 часов.")
+		--player:Print("Вы можете обновлять ваши характеристики не чаще чем раз в 5 часов.")
+		player:Print("Вы можете обновлять ваши характеристики не чаще, чем раз в 1 минуту.")
 		return false
 	end
 	player:SetLuaCooldown(1*60*CHAR_CHANGE_COOLDOWN_MINUTES,ChangeCharStatInfo_Cooldown)
@@ -242,11 +243,11 @@ function CharacterStatsHandler.GetHeight(player)
 end
 
 local function OnResetCommand(player)
-	if player:GetGMRank() < 2 then
+	if player:GetGMRank() < 0 then
 		player:Print("У вас нет доступа к обнуления характеристик персонажа")
 		return false
 	end
-	local target = player:GetSelectedUnit()
+	local target = player
 	if not target then
 		target = player
 	end

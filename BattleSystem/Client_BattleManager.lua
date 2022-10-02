@@ -232,7 +232,7 @@ local btnInterrupt = CreateFrame("BUTTON", "btnInterrupt", BM_MainFrame, "UIPane
 	GameTooltip:Hide()
 	end)
 	
-	
+
 local RollButtonHolder = CreateFrame("Frame", "RollButtonHolder", BM_MainFrame)
 RollButtonHolder:SetSize(300, 170.25)
 RollButtonHolder:SetPoint("BOTTOM",-40, -108)
@@ -258,7 +258,7 @@ RollButtonHolder:SetPoint("BOTTOM",-40, -108)
   RollButtonHolder.RollStr.Icon:SetScript("OnLeave",function(self)
 	GameTooltip:Hide()
 	end)
-  
+	RollButtonHolder.RollStr:Hide()
   
 	RollButtonHolder.RollAgila = CreateFrame("Button", "RollButtonHolder.RollAgila", RollButtonHolder)  --// First button
 	RollButtonHolder.RollAgila:SetSize(38,38)
@@ -281,6 +281,7 @@ RollButtonHolder:SetPoint("BOTTOM",-40, -108)
   RollButtonHolder.RollAgila.Icon:SetScript("OnLeave",function(self)
 	GameTooltip:Hide()
 	end)
+	RollButtonHolder.RollAgila:Hide()
   
 	RollButtonHolder.RollInta = CreateFrame("Button", "RollButtonHolder.RollInta", RollButtonHolder)  --// First button
 	RollButtonHolder.RollInta:SetSize(38,38)
@@ -303,6 +304,7 @@ RollButtonHolder:SetPoint("BOTTOM",-40, -108)
    RollButtonHolder.RollInta.Icon:SetScript("OnLeave",function(self)
 	GameTooltip:Hide()
 	end)
+	RollButtonHolder.RollInta:Hide()
 	
 	RollButtonHolder.RollHeal = CreateFrame("Button", "RollButtonHolder.RollHeal", RollButtonHolder)  --// First button
 	RollButtonHolder.RollHeal:SetSize(38,38)
@@ -325,7 +327,7 @@ RollButtonHolder:SetPoint("BOTTOM",-40, -108)
   RollButtonHolder.RollHeal.Icon:SetScript("OnLeave",function(self)
 	GameTooltip:Hide()
 	end)
-	
+	RollButtonHolder.RollHeal:Hide()
 	RollButtonHolder.Run = CreateFrame("Button", "RollButtonHolder.Run", RollButtonHolder)  --// First button
 	RollButtonHolder.Run:SetSize(38,38)
 	RollButtonHolder.Run:SetPoint("CENTER",120,0)
@@ -378,7 +380,7 @@ for i=1,numButtons do
 	button.num:SetText("")
 	button.leftLabel = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	button.leftLabel:SetFont("Fonts\\MORPHEUS.TTF", 13, "OUTLINE")
-	button.leftLabel:SetPoint("RIGHT",-16,0)
+	button.leftLabel:SetPoint("RIGHT",-32,0)
 	button.leftLabel:SetText("")
 	button.centerLabel = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	button.centerLabel:SetFont("Fonts\\MORPHEUS.TTF", 13, "OUTLINE")

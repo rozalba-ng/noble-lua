@@ -9,7 +9,7 @@ function Player:SetLocalWeather( weather_type, weather_strength )
 	packet:WriteUByte( 0 )
 	packet:WriteFloat( weather_strength )
 	packet:WriteUByte( 0 )
-	
+
 	self:SendPacket( packet )
 end
 
@@ -29,18 +29,18 @@ weather.allowedTypes = {
 	{ 0x5, "Дождь" },
 	{ 0x8, "Снег" },
 	{ 0x2A, "Буря" },
-	
---[[
-	ВЗЯТО С https://elunaluaengine.github.io/Map/SetWeather.html
-	Не понятно, работает плохо, в некоторых локациях не работает вовсе, но при желании систему можно расширить, если разобраться. Наверное.
-	P.S. Возможно есть только 4 типа погоды, а остальное - плотность осадков. Но я все равно оставлю это здесь на всякий случай.
-	0, -- WEATHER_TYPE_FINE
-	1, -- WEATHER_TYPE_RAIN
-	2, -- WEATHER_TYPE_SNOW
-	3, -- WEATHER_TYPE_STORM
-	86, -- WEATHER_TYPE_THUNDERS
-	90, -- WEATHER_TYPE_BLACKRAIN
-]]
+
+	--[[
+        ВЗЯТО С https://elunaluaengine.github.io/Map/SetWeather.html
+        Не понятно, работает плохо, в некоторых локациях не работает вовсе, но при желании систему можно расширить, если разобраться. Наверное.
+        P.S. Возможно есть только 4 типа погоды, а остальное - плотность осадков. Но я все равно оставлю это здесь на всякий случай.
+        0, -- WEATHER_TYPE_FINE
+        1, -- WEATHER_TYPE_RAIN
+        2, -- WEATHER_TYPE_SNOW
+        3, -- WEATHER_TYPE_STORM
+        86, -- WEATHER_TYPE_THUNDERS
+        90, -- WEATHER_TYPE_BLACKRAIN
+    ]]
 
 }
 
@@ -62,7 +62,7 @@ weather.OnCommand = function( _, player, command )	                            -
 		elseif string.find( command, " " ) then
 			command = string.split( command, " " )
 			if command[1] == "weather" then			--	Основной функционал команды
-			
+
 				if ( weather.SAVE_ALL_WEATHER_CHANGES ) and ( command[2] == "cancel" ) then		--	Возвращение стандартной погоды
 					weather.players[player:GetName()] = nil
 					player:SendBroadcastMessage("Стандартная погода возвращена.")
@@ -74,16 +74,16 @@ weather.OnCommand = function( _, player, command )	                            -
 					end
 					return false
 				end
-																								--	Установка уникальной погоды
+				--	Установка уникальной погоды
 				command[2] = tonumber(command[2]) or 1 -- ID типа погоды из LUA таблицы weather.allowedTypes
 				if ( command[2] < 1 ) or ( command[2] > #weather.allowedTypes ) then
 					player:SendBroadcastMessage("Указан неверный ID погоды.")
 					return false
 				end
-				
+
 				local weather_type = weather.allowedTypes[command[2]][1] -- Получаем реальный ID погоды по указанному пользователем индексу из weather.allowedTypes
 				local weather_strength = tonumber(command[3]) or 5	--	Плотность осадков от 0 до 10, после становится от 0 до 1 с дрообной частью
-				
+
 				if ( weather_type == 0x0 ) or ( weather_strength <= 0 ) then	--	Если погода солнечная интенсивность осадков нужно ставить в 0
 					weather_strength = 0
 				elseif weather_strength >= 10 then
@@ -91,7 +91,7 @@ weather.OnCommand = function( _, player, command )	                            -
 				else
 					weather_strength = weather_strength * 0.1	--	Переводим введённое пользователем число в float от 0 до 1
 				end
-				
+
 				if command[4] or ( player:GetSelection() and player:GetSelection():ToPlayer() ) then
 					local target
 					if command[4] then
@@ -109,7 +109,7 @@ weather.OnCommand = function( _, player, command )	                            -
 						target:SendBroadcastMessage( player:GetName().." устанавливает вам уникальную погоду.\nИспользуйте .weather cancel чтобы вернуться к оригинальной погоде в локации." )
 					end
 					player:SendBroadcastMessage( "Погодные условия \""..(weather.allowedTypes[command[2]][2]).."\" установлены для "..target:GetName() )
-					
+
 					weather.players[target:GetName()] = { weather_type, weather_strength }
 					return false
 				end
@@ -117,16 +117,16 @@ weather.OnCommand = function( _, player, command )	                            -
 					local targets = player:GetGroup():GetMembers()
 					for i = 1, #targets do
 						targets[i]:SetLocalWeather( weather_type, weather_strength )
-						
+
 						if weather.SAVE_ALL_WEATHER_CHANGES then
 							targets[i]:SendBroadcastMessage( player:GetName().." устанавливает вам уникальную погоду.\nИспользуйте .weather cancel чтобы вернуться к оригинальной погоде в локации." )
 						end
-						
+
 						weather.players[targets[i]:GetName()] = { weather_type, weather_strength }
 					end
 				else
 					player:SetLocalWeather( weather_type, weather_strength )
-					
+
 					weather.players[player:GetName()] = { weather_type, weather_strength }
 				end
 				return false
