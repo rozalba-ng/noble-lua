@@ -49,8 +49,8 @@ local function OnGossipChargerSelectDublon(event, player, object, sender, intid,
             return false;
         end
         if (player:HasItem(veksel, num)) then
-            SendMail( "Обмен у казначея", "Приятной игры", player:GetGUIDLow(), 0, 61, 0, 0, 0, crown, crownsToAdd )
-            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОбмен проведен успешно! Выслано дублонов: |r" .. tostring(crownsToAdd));
+            SendMail( "Обмен у казначея", "Приятной игры", player:GetGUIDLow(), 0, 61, 0, 0, 0, crown, num )
+            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОбмен проведен успешно! Выслано дублонов: |r" .. tostring(num));
             player:RemoveItem(veksel, num);
             player:GossipComplete()
         else
