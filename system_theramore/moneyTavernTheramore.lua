@@ -11,7 +11,7 @@ local function sendTavernBonusesTheramore()
 	local ratusha_bonus = 0;
 	local garnizon_bonus = 0;
 	local amarosa_bonus = 0;
-	local base_bonus = 0.5;
+	local base_bonus = 0.3;
 
 	for _, player in ipairs( onlinePlayers ) do
 		if ( player:IsAFK() == false and player:GetPhaseMask() == 1) then
