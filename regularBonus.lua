@@ -31,7 +31,7 @@ local function sendOnlineLetters()
 		return false
 	end
 
-	local bonusQuery = CharDBQuery("SELECT * from character_daily_log where (standart_gift > 0 and standart_gift_done = 0) or (public_gift > 0 and public_gift_done = 0)");
+	local bonusQuery = CharDBQuery("SELECT * from character_daily_log where standart_gift > 0 and standart_gift_done = 0");
 	if (bonusQuery ~= nil) then
 		local rowCount = bonusQuery:GetRowCount();
 		local entry;
