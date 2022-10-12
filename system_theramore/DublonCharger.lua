@@ -15,16 +15,17 @@ end
 
 local function OnGossipChargerSelectDublon(event, player, object, sender, intid, code, menuid)
     local level = player:GetNobleLevel()
-    if level < 5 then
-        player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНЕТ ДОСТУПА: Нельзя обменивать дублоны, пока вы не достигли 5-го уровня! |r");
-        player:GossipComplete()
-        return false;
-    end
 
     if (intid == 2) then
         local num = tonumber(code);
         if (num > 30) then
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОШИБКА! Нельзя покупать или продавать более 30 дублонов за раз |r");
+            player:GossipComplete()
+            return false;
+        end
+
+        if level < 5 then
+            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНЕТ ДОСТУПА: Нельзя обменивать дублоны, пока вы не достигли 5-го уровня! |r");
             player:GossipComplete()
             return false;
         end
