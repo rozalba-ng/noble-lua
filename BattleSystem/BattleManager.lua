@@ -16,7 +16,7 @@ DEAD_AURA = 45801
 local POLYMORPH_AURA = 104063
 local TIMER_FOR_TURN = 60
 local TIMER_FOR_ESCAPE = 15
-local TIMER_FOR_PREPARATION = 2
+local TIMER_FOR_PREPARATION = 60
 --Cостояния персонажа
 local PState_DEAD = 0
 local PState_LIVE = 1
