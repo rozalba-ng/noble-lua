@@ -15,6 +15,7 @@ ENGINE=InnoDB
 CharDBQuery( SQL_databaseCreation_CharExp )
 
 local PRIMETIME_MODIFICATOR = 2
+local BOOSTER_SPELL_X2 = 91341
 
 local function countExpForPlayer(player)
     local exp = 0
@@ -37,6 +38,10 @@ local function addExpToPlayers()
         --	Бонусы за онлайн
         if (ActionTime()) then
             exp = exp * PRIMETIME_MODIFICATOR
+        end
+
+        if (player and player:HasAura(BOOSTER_SPELL_X2) ) then
+            exp = exp * 2
         end
 
         if player and exp > 0 then
