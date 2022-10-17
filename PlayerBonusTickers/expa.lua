@@ -40,13 +40,14 @@ local function addExpToPlayers()
             exp = exp * PRIMETIME_MODIFICATOR
         end
 
-        if (player and player:HasAura(BOOSTER_SPELL_X2) ) then
-            exp = exp * 2
-        end
-
         if player and exp > 0 then
             player:AddNobleXp(exp)
             player:SendBroadcastMessage("Начислено " .. tostring(exp) .." опыта." )
+
+            if player:HasAura(BOOSTER_SPELL_X2) then -- бустер на х2 опыта
+                player:AddNobleXp(exp)
+                player:SendBroadcastMessage("Прозорливость: Начислено дополнительно " .. tostring(exp) .." опыта." )
+            end
         end
     end
 end
