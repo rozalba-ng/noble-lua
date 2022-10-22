@@ -59,6 +59,17 @@ function ClearWhiteAuras(player)
 
 end
 
+----------------------- Ограничения на дм-ку по локациям на юзеров -------------------
+--[[
+10402 - Саруман https://noblegarden.net/account/14179
+]]
+function CanUseDmCommandOnMainPolygon(player)
+    local accountId, zone = player:GetAccountId(), player:GetZoneId();
+    if (zone == 10429 or zone == 15) and accountId == 10402 then
+        return false
+    end
+    return true
+end
 ------------------------- Агро после подчинения --------------------
 
 --[[function dmCreatureCombatStop(event, creature, diff)
@@ -321,7 +332,7 @@ RegisterPlayerGossipEvent(auraMenuId, 2, OnGossipSelectAura)
 --------------------------- Обработчик комманд ---------------------------
 
 local function OnPlayerCommandWArg(event, player, code) -- command with argument
-    if(player:GetDmLevel() > 0 or player:GetGMRank() > 0)then
+    if( (player:GetDmLevel() > 0 or player:GetGMRank() > 0) and CanUseDmCommandOnMainPolygon(player))then
         if(string.find(code, " "))then
 	    PrintError(player:GetName().."---"..code);
             local arguments = {}
