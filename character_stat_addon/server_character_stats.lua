@@ -19,7 +19,7 @@ local ChangeCharStatInfo_Cooldown = 2
 local ChangeCharHeight_Cooldown = 3
 local CharacterStatsHandler = AIO.AddHandlers("CharacterStatsHandler", {})
 
-local CHAR_CHANGE_COOLDOWN_MINUTES = 1 -- 60*5 временно кулдаун делаем 1 минута
+local CHAR_CHANGE_COOLDOWN_MINUTES = 30 -- 60*5 временно кулдаун делаем 1 минута
 
 local BATTLE_STATS_PER_LEVEL = 1
 local SOC_STATS_PER_LEVEL = 1
