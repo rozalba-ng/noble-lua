@@ -184,7 +184,7 @@ function CharacterStatsHandler.SendNewStats(player,newStats)
 
 	if player:GetLuaCooldown(ChangeCharStatInfo_Cooldown) ~= 0 then
 		--player:Print("Вы можете обновлять ваши характеристики не чаще чем раз в 5 часов.")
-		player:Print("Вы можете обновлять ваши характеристики не чаще, чем раз в 1 минуту.")
+		player:Print("Вы можете обновлять ваши характеристики не чаще, чем раз в 30 минут.")
 		return false
 	end
 	player:SetLuaCooldown(1*60*CHAR_CHANGE_COOLDOWN_MINUTES,ChangeCharStatInfo_Cooldown)
