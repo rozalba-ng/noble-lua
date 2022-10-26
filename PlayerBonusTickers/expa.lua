@@ -36,11 +36,11 @@ local function addExpToPlayers()
     for _, player in ipairs(onlinePlayers) do
         local exp = countExpForPlayer(player)
         --	Бонусы за онлайн
-        if (ActionTime()) then
+        if (ActionTime() and exp < 500 ) then -- 500 ограничение, чтобы бустовый опыт не умножался
             exp = exp * PRIMETIME_MODIFICATOR
         end
 
-        if player and exp > 0 then
+        if player and exp > 0 and exp < 1000 then -- 1000 - ограничение, чтобы бустовый опыт не умножался (с учетом модификатора за праймтайм)
             player:AddNobleXp(exp)
             player:SendBroadcastMessage("Начислено " .. tostring(exp) .." опыта." )
 
