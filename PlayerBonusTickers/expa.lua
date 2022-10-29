@@ -38,7 +38,7 @@ local function addExpToPlayers()
         local currentLevel = player:GetNobleLevel()
 
         -- с 18-го вместо опыта тикают денежки, без бустов и модификаторов
-        if currentLevel > 18 then
+        if currentLevel > 18 and exp > 0 then
             player:ModifyMoney(math.ceil(exp/2));
             player:SendBroadcastMessage("Полученный опыт конвертирован в монеты: " .. tostring(exp)  .." медных.")
             return
