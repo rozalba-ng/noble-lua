@@ -37,16 +37,10 @@ local function addExpToPlayers()
         local exp = countExpForPlayer(player)
         local currentLevel = player:GetNobleLevel()
 
-        -- с 18-го вместо опыта тикают денежки, без бустов и модификаторов
-        if currentLevel > 18 and exp > 0 then
-            player:ModifyMoney(math.ceil(exp/2));
-            player:SendBroadcastMessage("Полученный опыт конвертирован в монеты: " .. tostring(exp)  .." медных.")
-            return
-        end
-
         -- правила начисления бонусной экспы
         if exp > 500 then -- больше 500 бывает только бонусная экспа
-            if currentLevel > 14 then -- бонусное хп выше 14-го не начисляется
+            if currentLevel >= 14 then -- бонусное хп выше 14-го не начисляется
+                player:SendBroadcastMessage("Начисление бонусного опыта невозможно: персонаж выше 14-го уровня.")
                 return
             end
 
@@ -54,12 +48,20 @@ local function addExpToPlayers()
             player:SendBroadcastMessage("Начислен бонусный опыт: " .. tostring(exp) )
 
             currentLevel = player:GetNobleLevel()
-            if currentLevel > 14 then -- если после начисления левл стал выше 14-го - лишнее убираем
+            if currentLevel >= 14 then -- если после начисления левл стал выше 14-го - лишнее убираем
                 player:SetNobleLevel(14)
                 player:SendBroadcastMessage("Установлен 14 уровень персонажа: максимально допустимый за бонусный опыт.")
                 return
             end
 
+            return
+        end
+
+        -- с 18-го вместо опыта тикают денежки, без бустов и модификаторов
+        if currentLevel >= 18 and exp > 0 then
+            local money = math.ceil(exp/2)
+            player:ModifyMoney(money);
+            player:SendBroadcastMessage("Полученный опыт конвертирован в монеты: " .. tostring(money)  .." медных.")
             return
         end
 
