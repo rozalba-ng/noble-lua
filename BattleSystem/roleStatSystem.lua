@@ -606,9 +606,7 @@ function attackRoll(roller, target, spellid)
             target:RemoveAura(88042)
         end
 
-        if not handlePlayerRoll(isSuccess, stat, roller, target, isFogPotionUsed, isCrit) then
-            return false
-        end
+       
 
         if (roller:ToPlayer()) then
             if isFogPotionUsed and not isLuckPotionUsed then -- Зелье тумана
