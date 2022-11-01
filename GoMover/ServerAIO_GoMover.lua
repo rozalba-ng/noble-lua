@@ -59,29 +59,6 @@ function GOM_OpenEditAddon(player,gob)
 	AIO.Handle(player,"GOM_Handlers","GetGUID",gob:GetDBTableGUIDLow())
 
 end
-
-local function OnPlayerCommandWithArg(event, player, code)
-    if(string.find(code, " "))then -- кста, Вадик, а что это за странный кусок кода, который ничего не делает?
-        local arguments = {}
-        local arguments = string.split(code, " ")
-	elseif(code == "movego")then
-		local nearestGo = player:GetNearestGameObject(10)
-		if nearestGo then
-			if (nearestGo:GetOwner() == player) or player:GetGMRank() > 0 then
-				AIO.Handle(player,"GOM_Handlers","SetName",nearestGo:GetName())
-				AIO.Handle(player,"GOM_Handlers","GetGUID",nearestGo:GetDBTableGUIDLow())
-			else
-				player:SendBroadcastMessage("Рядом стоящий объект вам не принадлежит")
-			end
-		else
-			player:SendBroadcastMessage("Объектов в радиусе не было обнаружено")
-		end
-	elseif(code == "gathergos")then
-		GatherGosByRadius(player,5)
-	end
-end
-
-
 local function GatherGosByRadius(player,radius)
 	if radius <= 10 then
 		local gos = player:GetGameObjectsInRange(tonumber(radius))
@@ -107,6 +84,29 @@ local function GatherGosByRadius(player,radius)
 		player:Print("Некорректно задан радиус сбора игровых объектов")
 	end
 end
+local function OnPlayerCommandWithArg(event, player, code)
+    if(string.find(code, " "))then -- кста, Вадик, а что это за странный кусок кода, который ничего не делает?
+        local arguments = {}
+        local arguments = string.split(code, " ")
+	elseif(code == "movego")then
+		local nearestGo = player:GetNearestGameObject(10)
+		if nearestGo then
+			if (nearestGo:GetOwner() == player) or player:GetGMRank() > 0 then
+				AIO.Handle(player,"GOM_Handlers","SetName",nearestGo:GetName())
+				AIO.Handle(player,"GOM_Handlers","GetGUID",nearestGo:GetDBTableGUIDLow())
+			else
+				player:SendBroadcastMessage("Рядом стоящий объект вам не принадлежит")
+			end
+		else
+			player:SendBroadcastMessage("Объектов в радиусе не было обнаружено")
+		end
+	elseif(code == "gathergos")then
+		GatherGosByRadius(player,5)
+	end
+end
+
+
+
 
 
 RegisterPlayerEvent(42, OnPlayerCommandWithArg)
