@@ -76,7 +76,37 @@ local function OnPlayerCommandWithArg(event, player, code)
 		else
 			player:SendBroadcastMessage("Объектов в радиусе не было обнаружено")
 		end
+	elseif(code == "gathergos")then
+		GatherGosByRadius(player,5)
 	end
 end
+
+
+local function GatherGosByRadius(player,radius)
+	if radius <= 10 then
+		local gos = player:GetGameObjectsInRange(tonumber(radius))
+		if(player:GetGMRank() == 2 or player:GetGMRank() == 1) then
+			player:Print("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFДоступ запрещен для вашего типа аккаунта.|r")
+			return false
+		end
+		for i, gob in pairs(gos) do
+			if gob:GetOwner() == player and gob:GetPhaseMask() ~= 1024 then
+				local map = player:GetMap()
+				local entry = gob:GetEntry()
+				local item = player:AddItem(entry)
+				if(item == nil)then
+					player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет места.|r")
+					return false
+				end
+				gob:RemoveFromWorld(true)
+			end
+		
+		
+		end
+	else
+		player:Print("Некорректно задан радиус сбора игровых объектов")
+	end
+end
+
 
 RegisterPlayerEvent(42, OnPlayerCommandWithArg)
