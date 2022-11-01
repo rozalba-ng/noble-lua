@@ -85,10 +85,7 @@ local function GatherGosByRadius(player,radius)
 	end
 end
 local function OnPlayerCommandWithArg(event, player, code)
-    if(string.find(code, " "))then -- кста, Вадик, а что это за странный кусок кода, который ничего не делает?
-        local arguments = {}
-        local arguments = string.split(code, " ")
-	elseif(code == "movego")then
+    if(code == "movego")then
 		local nearestGo = player:GetNearestGameObject(10)
 		if nearestGo then
 			if (nearestGo:GetOwner() == player) or player:GetGMRank() > 0 then
