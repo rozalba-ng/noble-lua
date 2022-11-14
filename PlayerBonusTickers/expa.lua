@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `character_noblegarden_exp` (
 	`char_name` VARCHAR(255) NULL DEFAULT NULL,
 	`exp` INT(11) NULL DEFAULT NULL,
 	`added` INT(11) NULL DEFAULT NULL,
+	`comment` VARCHAR(100) NULL DEFAULT 'online',
 	PRIMARY KEY (`id`)
 )
 COLLATE='utf8_general_ci'
@@ -73,6 +74,7 @@ local function addBonusExp(player, exp)
 end
 
 local function addExp(player, exp)
+    local currentLevel = player:GetNobleLevel()
     -- с 18-го вместо опыта тикают денежки, без бустов и модификаторов
     if currentLevel >= 18 and exp > 0 then
         local money = math.ceil(exp/2)
@@ -98,10 +100,10 @@ local function addExp(player, exp)
 end
 
 local function countExpForPlayers(usersList, expTbl)
-
     local Q = CharDBQuery( "SELECT id, exp, char_guid, comment FROM character_noblegarden_exp WHERE added = 0 and char_guid in (" .. usersList .. ")")
     if Q then
-        if Q:GetUInt32(0) > 0 then
+        local rowCount = Q:GetRowCount();
+        for var = 1, rowCount, 1 do
             local ID = Q:GetUInt32(0)
             local exp = Q:GetUInt32(1)
             local charGuid = Q:GetUInt32(2)
@@ -118,24 +120,27 @@ local function countExpForPlayers(usersList, expTbl)
                     expTbl[charGuid].bonusExp = expTbl[charGuid].bonusExp + exp
                 end
             end
+            Q:NextRow();
         end
     end
+    return expTbl
 end
 
 
 local function addExpToPlayers()
     local onlinePlayers = GetPlayersInWorld(2); --[[ 2-neutral, both horde and aliance]]
     local count, usersTable, expTbl = 0, {}, {}
+    expTbl.ids = {}
 
     for _, player in ipairs(onlinePlayers) do
         count = count+1
         local guid = player:GetGUIDLow()
         table.insert(usersTable, tostring(guid))
+        expTbl[guid] = {}
         expTbl[guid].guid = guid
         expTbl[guid].exp = 0
         expTbl[guid].bonusExp = 0
         expTbl[guid].extraExp = 0
-        expTbl.ids = {}
     end
     local usersList = table.concat(usersTable, ",")
 
@@ -145,14 +150,16 @@ local function addExpToPlayers()
 
     expTbl = countExpForPlayers(usersList, expTbl)
     local idsList = table.concat(expTbl.ids, ",")
-    CharDBQuery( "UPDATE character_noblegarden_exp SET added = 1 where id in "..idsList)
+    if idsList ~= '' then
+        CharDBQuery( "UPDATE character_noblegarden_exp SET added = 1 where id in ("..idsList .. ")")
+    end
 
     for _, player in ipairs(onlinePlayers) do
-        addExp(player, expTbl[guid].exp)
-        addBonusExp(player, expTbl[guid].bonusExp)
-        addExtraExp(player, expTbl[guid].extraExp)
+        addExp(player, expTbl[player:GetGUIDLow()].exp)
+        addBonusExp(player, expTbl[player:GetGUIDLow()].bonusExp)
+        addExtraExp(player, expTbl[player:GetGUIDLow()].extraExp)
     end
 end
 
 
-CreateLuaEvent(addExpToPlayers, 300000, 0)
+CreateLuaEvent(addExpToPlayers, 240000, 0)
