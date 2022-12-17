@@ -47,9 +47,9 @@ local function sendTavernBonusesTheramore()
 		local main_tavern_bonus_ceil = math.ceil(main_tavern_bonus)
 		SendMail('Доход трактира!', 'Бонус за активность городского трактира', 82760, 36, 61, 20, 0, 0, 301396, main_tavern_bonus_ceil); -- 82760 персонаж Пакито (Самурайчик)
 	end
-	if (garnizon_bonus > 1) then
+	if (garnizon_bonus > 0) then
 		local garnizon_bonus_ceil = math.ceil(garnizon_bonus)
-		SendMail('Казна гарнизона', 'Бонус за активность гарнизона', 79762, 36, 61, 20, 0, 0, 301396, garnizon_bonus_ceil); -- 79762 персонаж Арилия  (Старк)
+		SendMail('Казна гарнизона', 'Бонус за активность гарнизона', 85977, 36, 61, 20, 0, 0, 301396, garnizon_bonus_ceil); -- 85977 персонаж Арчибальд  (Лорнсон)
 	end
 	if (amarosa_bonus > 0) then
 		local amarosa_bonus_ceil = math.ceil(amarosa_bonus)
@@ -59,10 +59,10 @@ local function sendTavernBonusesTheramore()
 		local ratusha_bonus_ceil = math.ceil(ratusha_bonus)
 		SendMail('Казна ратуши', 'Бонус за активность ратуши', 98676, 36, 61, 20, 0, 0, 301396, ratusha_bonus_ceil); -- 98676 персонаж Джайна (Розальба)
 	end
-	if (garpia_bonus > 0) then
-		local garpia_bonus_ceil = math.ceil(garpia_bonus)
-		SendMail('Доход Мертвой Гарпии', 'Бонус за активность Мертвой Гарпии', 2997, 36, 61, 20, 0, 0, 301396, garpia_bonus_ceil); -- 2997 персонаж Гук
-	end
+--	if (garpia_bonus > 0) then
+--		local garpia_bonus_ceil = math.ceil(garpia_bonus)
+--		SendMail('Доход Мертвой Гарпии', 'Бонус за активность Мертвой Гарпии', 2997, 36, 61, 20, 0, 0, 301396, garpia_bonus_ceil); -- 2997 персонаж Гук
+--	end
 	if (pirate_bonus > 0) then
 		local pirate_bonus_ceil = math.ceil(pirate_bonus)
 		SendMail('Дозод трактира', 'Бонус за активность трактира', 22059, 36, 61, 20, 0, 0, 301396, pirate_bonus_ceil); -- 22059 персонаж Оттар
