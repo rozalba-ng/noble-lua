@@ -41,7 +41,7 @@ local function sendTavernBonusesTheramore()
 				end
 			end
 		end;
-	end
+	end --//
 
 	if (main_tavern_bonus > 1) then
 		local main_tavern_bonus_ceil = math.ceil(main_tavern_bonus)
