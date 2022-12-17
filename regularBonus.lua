@@ -96,7 +96,7 @@ local function sendResGreenLetters()
 			local id = ownerData['id'];
 
 			if (playerId ~= 0 and standart_amount > 0) then
-				SendMail('Noblegarden - необычные ресурсы', 'Вчера вы проявили небывалую активность и заслужили бонус!', 36, 61, 20, 0, 0, greenRes, standart_amount); -- необычные ресурсы
+				SendMail('Noblegarden - необычные ресурсы', 'Вчера вы проявили небывалую активность и заслужили бонус!', playerId, 36, 61, 20, 0, 0, greenRes, standart_amount); -- необычные ресурсы
 				CharDBQuery('UPDATE character_daily_log set random_gift_done = 1 where id = ' .. id);
 			end
 
