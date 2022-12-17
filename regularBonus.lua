@@ -10,21 +10,21 @@ local function sendShopLetters()
 
 	local bonusQuery = CharDBQuery("SELECT * from doors_owners where bonus > 0");
 	if (bonusQuery ~= nil) then
-		local rowCount = bonusQuery:GetRowCount();	
+		local rowCount = bonusQuery:GetRowCount();
 		local entry;
 		for var=1,rowCount,1 do
 			local ownerData = bonusQuery:GetRow();
 			local door_guid = ownerData['door_guid'];
 			local amount = math.floor(ownerData['bonus']);
 			local playerId = ownerData['ownerID'];
-			
+
 			if (playerId ~= 0 and amount > 0) then
 				SendMail('Банк', 'Добрый день! Извольте получить доход от предприятия ' .. door_guid .. '. С уважением, ваш банк.', playerId, 36, 61, 20, 0, 0, dublon, amount);
 				CharDBQuery('UPDATE doors_owners set bonus = bonus - ' .. amount .. ' where door_guid = ' .. door_guid);
 			end
 			bonusQuery:NextRow();
 		end
-	end	
+	end
 end
 CreateLuaEvent(sendShopLetters, 600000, 0);
 
@@ -56,7 +56,7 @@ CreateLuaEvent(sendOnlineLetters, 600000, 0);
 
 local function sendResWhiteLetters()
 	if SocialTime() then
-		return false
+		--return false
 	end
 
 	local bonusQuery = CharDBQuery("SELECT * from character_daily_log where bonus_gift > 0 and bonus_gift_done = 0");
@@ -82,7 +82,7 @@ CreateLuaEvent(sendResWhiteLetters, 650000, 0);
 
 local function sendResGreenLetters()
 	if SocialTime() then
-		return false
+		--return false
 	end
 
 	local bonusQuery = CharDBQuery("SELECT * from character_daily_log where random_gif > 0 and random_gift_done = 0");
@@ -96,7 +96,7 @@ local function sendResGreenLetters()
 			local id = ownerData['id'];
 
 			if (playerId ~= 0 and standart_amount > 0) then
-				SendMail('Noblegarden - необычные ресурсы', 'Вчера вы проявили небывалую активность и заслужили бонус!', playerId, 36, 61, 20, 0, 0, greenRes, standart_amount); -- необычные ресурсы
+				SendMail('Noblegarden - необычные ресурсы', 'Вчера вы проявили небывалую активность и заслужили бонус!', 36, 61, 20, 0, 0, greenRes, standart_amount); -- необычные ресурсы
 				CharDBQuery('UPDATE character_daily_log set random_gift_done = 1 where id = ' .. id);
 			end
 
@@ -124,9 +124,9 @@ local function sendWeeklyLetters()
 			if (playerId ~= 0 and crowns_amount > 0 and tonumber(ownerData['log_type']) == 1) then
 				SendMail('Noblegarden - валюта', 'Еженедельное жалованье за вашу должность!', playerId, 36, 61, 20, 0, 0, dublon, crowns_amount);
 				CharDBQuery('UPDATE character_weekly_log set crowns_gift_done = 1 where id = ' .. id);
---			elseif (playerId ~= 0 and crowns_amount > 0 and tonumber(ownerData['log_type']) == 2) then
---				SendMail('Noblegarden - серебро', 'Ежедневный бонус за вашу активность на должности', playerId, 36, 61, 20, crowns_amount); -- серебро
---				CharDBQuery('UPDATE character_weekly_log set crowns_gift_done = 1 where id = ' .. id);
+				--			elseif (playerId ~= 0 and crowns_amount > 0 and tonumber(ownerData['log_type']) == 2) then
+				--				SendMail('Noblegarden - серебро', 'Ежедневный бонус за вашу активность на должности', playerId, 36, 61, 20, crowns_amount); -- серебро
+				--				CharDBQuery('UPDATE character_weekly_log set crowns_gift_done = 1 where id = ' .. id);
 			end
 
 			if (playerId ~= 0 and crowns_amount > 0) then
