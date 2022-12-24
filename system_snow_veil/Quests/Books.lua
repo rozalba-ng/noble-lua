@@ -1,8 +1,8 @@
 local quests = {
-	[1] = { --	razdacha knig na spawne
-		entry = 110279, -- quest entry
-		npc = 988014, -- kids id
-		questgiver = 988015, -- questgiver id
+	[1] = {
+		entry = 110279,
+		npc = 988014,
+		questgiver = 988015,
 		players = {},
 	},
 }
@@ -14,7 +14,7 @@ local function BooksForKidsGossip( event, player, creature, sender, intid )
 		if not quests[1].players[name] then
 			quests[1].players[name] = 0
 		end
-		if creature:GetData("Fed") and ( ( os.time() - creature:GetData("Fed") ) <= 300 ) then
+		if creature:GetData("Educated") and ( ( os.time() - creature:GetData("Educated") ) <= 300 ) then
 		--	В случае если уже отдали книгу
 			text = Roulette( "А?", "Ещё что-то?", "Спасибо ещё раз!", "<Ребёнок увлечённо листает страницы книжки>", "М?", "Ой, а у меня такая уже есть дома.." )
 		elseif player:HasQuest( quests[1].entry ) and not ( quests[1].players[name] >= 5 ) then
@@ -38,7 +38,7 @@ local function BooksForKidsGossip( event, player, creature, sender, intid )
 		else
 			player:SendAreaTriggerMessage("Роздано "..quests[1].players[name].." книг из 5.")
 		end
-		creature:SetData( "Fed", os.time() )
+		creature:SetData( "Educated", os.time() )
 		creature:CastSpell( creature, 1459, true )
 		creature:SendUnitSay( Roulette( "О, мне хотелось получить именно эту книгу!", "Спасибо! Спасибо! Спасибо!", "И что мне с ней делать? Под кресло подложить?..", "Мне уже хочется поскорее её прочесть!", "О, а там есть сказка про волка, колдуна и картонную коробку?", "А у меня для вас ничего нет...", "Нужно поскорее показать маме!", "Н-но я ещё не умею читать... Там есть картинки?" ), 0 )
 		player:GossipComplete()
