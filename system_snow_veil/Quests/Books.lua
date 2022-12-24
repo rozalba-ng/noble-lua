@@ -44,8 +44,8 @@ local function BooksForKidsGossip( event, player, creature, sender, intid )
 		player:GossipComplete()
 	end
 end
-RegisterCreatureGossipEvent( quests[1].npc, 1, Gossip_HungryBeggar ) -- GOSSIP_EVENT_ON_HELLO
-RegisterCreatureGossipEvent( quests[1].npc, 2, Gossip_HungryBeggar ) -- GOSSIP_EVENT_ON_SELECT
+RegisterCreatureGossipEvent( quests[1].npc, 1, BooksForKidsGossip ) -- GOSSIP_EVENT_ON_HELLO
+RegisterCreatureGossipEvent( quests[1].npc, 2, BooksForKidsGossip ) -- GOSSIP_EVENT_ON_SELECT
 
 local function WhenQuestAccepted_QuestGiver( event, player, creature, quest )
 	if quest:GetId() == quests[1].entry then
