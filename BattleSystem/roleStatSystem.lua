@@ -69,7 +69,7 @@ local statBaseTreshold = {
     [ROLE_STAT_STAMINA] = 0, -- стойкости
     [ROLE_STAT_VERSA] = 0, -- сноровке
     [ROLE_STAT_WILL] = 0, -- воле
-    [ROLE_STAT_SPIRIT] = 15, -- дух
+    [ROLE_STAT_SPIRIT] = 70, -- дух
     [ROLE_STAT_CHARISMA] = 15, -- харизма
     [ROLE_STAT_AVOID] = 15, -- избегание
     [ROLE_STAT_LUCK] = 15, -- удача
@@ -387,7 +387,7 @@ function attackRoll(roller, target, spellid)
                         target_name = target:GetName();
                         --                        target_def = roller:GetRoleStat(0)+roller:GetRoleStat(1)+roller:GetRoleStat(2)+(player_att/2);
                         --                        def_rand = 11;
-                        target_def = 15;
+                        target_def = 35;
                         def_rand = 2; -- в массовой битве порог на хил повыше, раж битвы
                         if ((player_att + att_rand) >= (target_def + def_rand)) then
                             result_color = "FF4DB54D"
@@ -557,7 +557,7 @@ function attackRoll(roller, target, spellid)
         local isSuccess = false;
         local isCrit = false
 
-        if (att_rand == 1) then
+        if (att_rand >= 1 and att_rand <= 5) then
             result_color = "FFFF0000"
             result_text = "критически неудачно"
             result_symbol = "X"
@@ -567,7 +567,7 @@ function attackRoll(roller, target, spellid)
                 result_symbol = ">>"
                 isSuccess = true;
             end
-        elseif (att_rand == 100 or gmToCrit[roller:GetName()]) then
+        elseif (att_rand >= 96 or gmToCrit[roller:GetName()]) then
             result_color = "FF00FF00"
             result_text = "критически удачно"
             result_symbol = "X"
@@ -804,11 +804,11 @@ function attackRoll(roller, target, spellid)
             local result_symbol = "";
             local isSuccess = false;
 
-            if (att_rand == 1) then
+            if (att_rand >= 1 and att_rand <= 5) then
                 result_color = "FFFF0000"
                 result_text = "критически неудачно"
                 result_symbol = "X"
-            elseif (att_rand == 100) then
+            elseif (att_rand >= 96) then
                 result_color = "FF00FF00"
                 result_text = "критически удачно"
                 result_symbol = "X"
