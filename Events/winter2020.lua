@@ -3,7 +3,7 @@
 
 local function Gossip_WinterPet( event, player, creature )
 	if event == 1 then
-		local text = "<Дедушка Зима прислал вам это маленькое существо.>"
+		local text = "<Это маленькое существо служит вам напоминанием о морозном Сноувейле.>"
 		if ( not player:GetData("WinterPet2020") ) or (  ( os.time() - player:GetData("WinterPet2020") ) > 60  ) then
 			player:GossipMenuAddItem( 0, "<Использовать безобидную зимнюю магию.>", 1, 1 )
 		else
@@ -19,7 +19,7 @@ local function Gossip_WinterPet( event, player, creature )
 		player:AddAura( 56137, player )
 	end
 end
-local creatures = { 1000200, 1000201, 1000202 }
+local creatures = { 1000200, 1000201, 1000202, 1000242, 1000243, 1000244 }
 for i = 1, #creatures do
 	RegisterCreatureGossipEvent( creatures[i], 1, Gossip_WinterPet ) -- GOSSIP_EVENT_ON_HELLO
 	RegisterCreatureGossipEvent( creatures[i], 2, Gossip_WinterPet ) -- GOSSIP_EVENT_ON_SELECT

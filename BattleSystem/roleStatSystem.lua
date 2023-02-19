@@ -38,7 +38,7 @@ roleCombat.menuID = 6010;
 roleCombat.diff_number = {};
 
 local statCorrespondedDef = {
-    [ROLE_STAT_STRENGTH] = ROLE_STAT_STAMINA, -- силе стойкость
+    [ROLE_STAT_STRENGTH] = ROLE_STAT_VERSA, -- силе стойкость
     [ROLE_STAT_AGLILITY] = ROLE_STAT_VERSA, -- ловкости сноровка
     [ROLE_STAT_INTELLECT] = ROLE_STAT_WILL, -- интеллекту воля
     [ROLE_STAT_STAMINA] = ROLE_STAT_STRENGTH, -- стойкости сила
@@ -69,7 +69,7 @@ local statBaseTreshold = {
     [ROLE_STAT_STAMINA] = 0, -- стойкости
     [ROLE_STAT_VERSA] = 0, -- сноровке
     [ROLE_STAT_WILL] = 0, -- воле
-    [ROLE_STAT_SPIRIT] = 15, -- дух
+    [ROLE_STAT_SPIRIT] = 100, -- дух
     [ROLE_STAT_CHARISMA] = 15, -- харизма
     [ROLE_STAT_AVOID] = 15, -- избегание
     [ROLE_STAT_LUCK] = 15, -- удача
@@ -165,7 +165,7 @@ function getDefRandByStatTypeAndTarget(stat, target)
         return 0;
     end
 
-    return math.random(20);
+    return math.random(100);
 end
 
 local function getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand)
@@ -538,16 +538,26 @@ function attackRoll(roller, target, spellid)
 
         local target_def = gettargetDefValue(stat, target);
 
-        local att_rand = math.random(20);
+        local att_rand = math.random(100);
         local def_rand = getDefRandByStatTypeAndTarget(stat, target)
-
+		
+		-- mayday begin
+		
+		if (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
+			-- stat = 0;
+			player_att = player_att/2;
+			target_def = target_def/2;
+		end
+		
+		-- mayday end	
+		
         local result_color = "";
         local result_text = "";
         local result_symbol = "";
         local isSuccess = false;
         local isCrit = false
 
-        if (att_rand == 1) then
+        if (att_rand >= 1 and att_rand <= 5) then
             result_color = "FFFF0000"
             result_text = "критически неудачно"
             result_symbol = "X"
@@ -557,7 +567,7 @@ function attackRoll(roller, target, spellid)
                 result_symbol = ">>"
                 isSuccess = true;
             end
-        elseif (att_rand == 20 or gmToCrit[roller:GetName()]) then
+        elseif (att_rand >= 96 or gmToCrit[roller:GetName()]) then
             result_color = "FF00FF00"
             result_text = "критически удачно"
             result_symbol = "X"
@@ -767,7 +777,16 @@ function attackRoll(roller, target, spellid)
 
     if (target == nil and not roller:HasAura(88011)) then -- цели нет и на кастере нет ауры "бой"
         local player_att = roller:GetRoleStat(stat);
-        local att_rand = math.random(20);
+        local att_rand = math.random(100);
+		
+		-- mayday begin
+		
+		if (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
+			-- stat = 0;
+			player_att = player_att/2;
+		end
+		
+		-- mayday end		
 
         local roller_name = ""
 
@@ -785,11 +804,11 @@ function attackRoll(roller, target, spellid)
             local result_symbol = "";
             local isSuccess = false;
 
-            if (att_rand == 1) then
+            if (att_rand >= 1 and att_rand <= 5) then
                 result_color = "FFFF0000"
                 result_text = "критически неудачно"
                 result_symbol = "X"
-            elseif (att_rand == 20) then
+            elseif (att_rand >= 96) then
                 result_color = "FF00FF00"
                 result_text = "критически удачно"
                 result_symbol = "X"

@@ -88,8 +88,10 @@ local function AnimalObject()
 end
 
 function FarmSystem.GetAnimal(animal_object)
-	if FarmSystem.animals[animal_object:GetDBTableGUIDLow()] then
-		return FarmSystem.animals[animal_object:GetDBTableGUIDLow()]
+	if animal_object then
+		if FarmSystem.animals[animal_object:GetDBTableGUIDLow()] then
+			return FarmSystem.animals[animal_object:GetDBTableGUIDLow()]
+		end
 	end
 end
 function FarmSystem.Interface_CleanAnimal(player,animal_object,intid)
