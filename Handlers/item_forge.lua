@@ -66,8 +66,22 @@ function ItemForge.OnForge(event, player, spell)
         item:SetEnchantment(allDefPlusOne[chant],slot9)
         chant = math.random(1,defNum)
         item:SetEnchantment(allDefPlusOne[chant],slot10)
-    elseif spellId == 88093 then -- дух 2 на плечи, грудь, шапку, ноги, перчи
-        item:SetEnchantment(spi2,slot9)
+    elseif spellId == 88093 then -- дух 2 на плечи, грудь, шапку, ноги, перчи //here
+        local variant = math.random(1,100)
+        if variant < 6 then
+            item:SetEnchantment(spi2,slot9)
+            item:SetEnchantment(wil1,slot10)
+        elseif variant < 11 then
+            item:SetEnchantment(spi1,slot9)
+            item:SetEnchantment(wil2,slot10)
+        elseif variant < 41 then
+            item:SetEnchantment(spi2,slot9)
+        elseif variant < 71 then
+            item:SetEnchantment(wil2,slot9)
+        else
+            item:SetEnchantment(spi1,slot9)
+            item:SetEnchantment(wil1,slot10)
+        end
     elseif spellId == 88096 then -- мощь
         local variant = math.random(1,100)
         if variant < 6 then
