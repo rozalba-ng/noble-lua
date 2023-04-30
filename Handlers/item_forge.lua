@@ -1,5 +1,25 @@
 ItemForge = {} -- перековка предмеов
 
+local forgeSpells = {
+    [88087] = 1,
+    [88088] = 1,
+    [88089] = 1,
+    [88090] = 1,
+    [88091] = 1,
+    [88092] = 1,
+    [88093] = 1,
+    [88094] = 1,
+    [88095] = 1,
+    [88096] = 1,
+    [88097] = 1,
+    [88098] = 1,
+    [88099] = 1,
+    [88100] = 1,
+    [88101] = 1,
+    [88102] = 1,
+    [88103] = 1,
+    [88104] = 1,
+    }
 local slot9 = 9
 local slot10 = 10
 
@@ -27,6 +47,14 @@ local allDefPlusOne = {sta1,ver1,wil1 }
 local defNum = 3
 local allAttackPlusOne = {str1,agi1,int1 }
 local attackNum = 3
+
+function ItemForge.CheckIsForgeSpell(spellID)
+    if forgeSpells[spellID] ~= nil then
+        return true
+    end
+
+    return false
+end
 
 function ItemForge.OnForge(event, player, spell)
     local item = spell:GetTarget();
@@ -130,5 +158,17 @@ function ItemForge.OnForge(event, player, spell)
             item:SetEnchantment(int1,slot9)
             item:SetEnchantment(wil1,slot10)
         end
+    elseif spellId == 88099  then -- табарда, воля +1
+        item:SetEnchantment(wil1,slot9)
+    elseif spellId == 88100  then -- табарда, сноровка +1
+        item:SetEnchantment(ver1,slot9)
+    elseif spellId == 88101  then -- пояс, воля +1
+        item:SetEnchantment(wil1,slot9)
+    elseif spellId == 88102  then -- пояс, сноровка +1
+        item:SetEnchantment(ver1,slot9)
+    elseif spellId == 88103  then -- рубашка, воля +1
+        item:SetEnchantment(wil1,slot9)
+    elseif spellId == 88104  then -- рубашка, сноровка +1
+        item:SetEnchantment(ver1,slot9)
     end
 end
