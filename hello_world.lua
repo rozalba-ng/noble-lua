@@ -473,7 +473,7 @@ local function OnPlayerCommand(event, player, command)
 			player:SendBroadcastMessage("skin: "..custQ:GetUInt32(0).." face: "..custQ:GetUInt32(1).." hairStyle: "..custQ:GetUInt32(2).." hairColor: "..custQ:GetUInt32(3).." facialStyle: "..custQ:GetUInt32(4));
 		end        
     elseif (string.match(command, 'areasound %d+$')) then -- Звук на область
-        if(player:GetGMRank() >= 2)then
+        if(player:GetGMRank() >= 1)then
             local sound = tonumber(string.match(command, '%d+$'));
             player:PlayDistanceSound(sound);            
         end
