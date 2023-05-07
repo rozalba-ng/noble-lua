@@ -1,5 +1,5 @@
 function GiveItemToPlayer(playerGUID)
-	local itemID = 301393
+	local itemID = 301394
 	local itemCount = 1
 	if playerGUID == UnitGUID("player") then
 		local player = GetPlayerByGUID(playerGUID)
