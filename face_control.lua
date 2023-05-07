@@ -1,14 +1,14 @@
-local INSTANCE_EVENT_ON_PLAYER_ENTER = 4;
-
-local function mapPlayerEnter(event, instance_data, map, player)
-	if(not(player:GetRace() == 1 or player:GetRace() == 2 or player:GetRace() == 3 or player:GetRace() == 7 or player:GetRace() == 8 or player:GetRace() == 9 or player:GetRace() == 10))then
-        if(player:GetTeam() == 0)then
-            player:Teleport( 571, 5720, 739, 645, 2.47 );
-        else
-            player:Teleport( 571, 5929, 562, 641, 0.22 );
-        end
-    end
-end
-
-
-RegisterMapEvent( 901, INSTANCE_EVENT_ON_PLAYER_ENTER, mapPlayerEnter)
+--local INSTANCE_EVENT_ON_PLAYER_ENTER = 4;
+--
+--local function mapPlayerEnter(event, instance_data, map, player)
+--	if(not(player:GetRace() == 1 or player:GetRace() == 2 or player:GetRace() == 3 or player:GetRace() == 7 or player:GetRace() == 8 or player:GetRace() == 9 or player:GetRace() == 10))then
+--        if(player:GetTeam() == 0)then
+--            player:Teleport( 571, 5720, 739, 645, 2.47 );
+--        else
+--            player:Teleport( 571, 5929, 562, 641, 0.22 );
+--        end
+--    end
+--end
+--
+--
+--RegisterMapEvent( 901, INSTANCE_EVENT_ON_PLAYER_ENTER, mapPlayerEnter)
