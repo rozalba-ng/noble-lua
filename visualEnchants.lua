@@ -80,7 +80,7 @@ RegisterPlayerEvent(29, function(e,p,i,b,s) setVisual(p, i) end)
 
 -- Enchant IDs
 local E = {[0] = 0, 3789, 3854, 3273, 3225, 3870, 1899, 2674, 2675, 2671, 2672, 3365, 2673, 2343, 425, 3855, 1894, 1103, 1898, 3345, 1743, 3093, 1900, 3846, 1606, 283, 1, 3265, 2, 3, 3266, 1903, 13, 26, 7, 803, 1896, 2666, 25}
-local slots = {EQUIPMENT_SLOT_MAINHAND, EQUIPMENT_SLOT_OFFHAND}
+local slots = {EQUIPMENT_SLOT_MAINHAND = EQUIPMENT_SLOT_MAINHAND, EQUIPMENT_SLOT_OFFHAND = EQUIPMENT_SLOT_OFFHAND}
 
 
 local function OnCommand( event, player, command )
