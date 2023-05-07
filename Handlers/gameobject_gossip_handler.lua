@@ -838,7 +838,7 @@ function GoMovable.onGoTeleportGossip(event, player, object)
 end
 
 function GoTeleport.assignGobjectTeleportEvents()
-	local goTeleQuery = WorldDBQuery('SELECT DISTINCT entry FROM gameobject_teleport');
+	local goTeleQuery = WorldDBQuery('SELECT DISTINCT entry FROM gameobject_teleport g WHERE EXISTS (SELECT * FROM gameobject_template gt WHERE gt.entry = g.entry)');
 	if (goTeleQuery ~= nil) then
 		local rowCount = goTeleQuery:GetRowCount();
 		local entry;
