@@ -1,14 +1,16 @@
-function ItemGiveaway()
-	item = Player:AddItem ( 301394, 1)
+local function GiveItem (event, player, command)
+	if command == "give" then
+		local isItem
+		isItem = player:HasItem(301393, 1)
+		if (isItem == true) then
+			player:SendBroadcastMessage("Yes")
+			player:RemoveItem(301393, 1)
+			player:AddItem(301394, 1)
+		else
+			player:SendBroadcastMessage("No")			
+		end
+	end
 end
 
-local function OnAddonMessage(prefix, message, channel, sender)
-    if prefix == "GiveItem" then
-        ItemGiveaway()
-    end
-end
+RegisterPlayerEvent (42, GiveItem)
 
-local frr = CreateFrame("FRAME", "MyAddonFrame")
-frr:RegisterEvent("CHAT_MSG_ADDON")
-frr:SetScript("OnEvent", OnAddonMessage)
-frr:RegisterAddonMessagePrefix("GiveItem")
