@@ -82,19 +82,20 @@ RegisterPlayerEvent(29, function(e,p,i,b,s) setVisual(p, i) end)
 local E = {[0] = 0, 3789, 3854, 3273, 3225, 3870, 1899, 2674, 2675, 2671, 2672, 3365, 2673, 2343, 425, 3855, 1894, 1103, 1898, 3345, 1743, 3093, 1900, 3846, 1606, 283, 1, 3265, 2, 3, 3266, 1903, 13, 26, 7, 803, 1896, 2666, 25}
 local slots = {EQUIPMENT_SLOT_MAINHAND, EQUIPMENT_SLOT_OFFHAND}
 
--- просто для коммита
 
 
 local function OnCommand( event, player, command )
 	if string.find( command, " " ) then
 		local command = string.split( command, " " )
-		if command[1] == "setvisual" then
-		local slot = tonumber(command[2])
-		local idvisual = tonumber(command[3])
-		local equippedItem = player:GetEquippedItemBySlot( slots[slot] )
-		setVisual( player, equippedItem, E[idvisual] )
-		end
-	end
+if command[1] == "setvisual" then
+  local slot = tonumber(command[2])
+  if slot then
+    local idvisual = tonumber(command[3])
+    local equippedItem = player:GetEquippedItemBySlot( slots[slot] )
+    if equippedItem then
+      setVisual( player, equippedItem, E[idvisual] )
+    end
+  end
 end
 
 RegisterPlayerEvent( 42, OnCommand )
