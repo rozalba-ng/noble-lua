@@ -15,9 +15,9 @@ end
 
 local function OnGossipSelect(event, player, creature, sender, intid, code)
     if intid == 1 then
-        creature:SendUnitSay(GOSSIP_GOOD_TEXT, 0)
+        creature:SendUnitSay(GOSSIP_GOODANSWER_TEXT, 0)
     elseif intid == 2 then
-        creature:SendUnitSay(GOSSIP_BAD_TEXT, 0)
+        creature:SendUnitSay(GOSSIP_BADANSWER_TEXT, 0)
     end
     creature:GossipComplete(player)
 end
