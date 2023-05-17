@@ -23,4 +23,4 @@ local function OnGossipSelect(event, player, creature, sender, intid, code)
 end
 
 RegisterCreatureGossipEvent(NPC_ID, 1, OnGossipHello)
-RegisterCreatureGossipEvent(NPC_ID, 2, OnGossipSelect)
+RegisterCreatureGossipEvent(NPC_ID, 3, OnGossipSelect)
