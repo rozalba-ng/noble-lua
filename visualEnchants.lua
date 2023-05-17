@@ -87,15 +87,13 @@ local slots = {EQUIPMENT_SLOT_MAINHAND, EQUIPMENT_SLOT_OFFHAND}
 local function OnCommand( event, player, command )
 	if string.find( command, " " ) then
 		local command = string.split( command, " " )
-if command[1] == "setvisual" then
-  local slot = tonumber(command[2])
-  if slot then
-    local idvisual = tonumber(command[3])
-    local equippedItem = player:GetEquippedItemBySlot( slots[slot] )
-    if equippedItem then
-      setVisual( player, equippedItem, E[idvisual] )
-    end
-  end
+		if command[1] == "setvisual" then
+		local slot = tonumber(command[2])
+		local idvisual = tonumber(command[3])
+		local equippedItem = player:GetEquippedItemBySlot( slots[slot] )
+		setVisual( player, equippedItem, E[idvisual] )
+		end
+	end
 end
 
 RegisterPlayerEvent( 42, OnCommand )
