@@ -36,7 +36,6 @@ quests[1].OnGossip = function( event, player, creature )
 	else
 		creature:SendChatMessageToPlayer( 12, 0, Roulette( "Кажется, он пошел туда.", "Такого не видели сегодня.", "Я его видел сегодня рядом с Райдом!" ), player )
 		player:GossipComplete()
-		creature:DespawnOrUnsummon(0)
 		
 		quests[1].players[player:GetName()] = quests[1].players[player:GetName()] + 1
 		if ( quests[1].players[player:GetName()] >= 6 ) then
