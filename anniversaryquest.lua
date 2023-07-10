@@ -4,7 +4,7 @@ local quests = {
 	[1] = { -- "Где же он?"
 		id = 110293,
 		questgiver = 12120404,
-		creature = 9930643,
+		creature = 988077,
 		players = {},
 	},
 }
