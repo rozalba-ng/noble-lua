@@ -23,7 +23,7 @@ RegisterCreatureEvent( quests[1].questgiver, 31, quests[1].OnStart ) -- CREATURE
 quests[1].OnGossip = function( event, player, creature )
 	if ( event == 1 ) then
 		local text = Roulette( "А?", "Чего надо?", "Что-то нужно?", "О, привет!" )
-		player:GossipSetText( text, 14042101 )
+		player:GossipSetText( text, 17042441 )
 		
 		if ( player:HasQuest( quests[1].id ) and quests[1].players[player:GetName()] < 9 ) then
 			player:GossipMenuAddItem( 0, "Чудесный дракончик, милый и с высунутым языком. Вспоминай!", 1, 1 )
@@ -32,7 +32,7 @@ quests[1].OnGossip = function( event, player, creature )
 			player:GossipMenuAddItem( 0, "Не подскажете, где находится Ноблик?", 1, 4 )
 		end
 		
-		player:GossipSendMenu( 14042101, creature )
+		player:GossipSendMenu( 17042441, creature )
 	else
 		creature:SendChatMessageToPlayer( 12, 0, Roulette( "Кажется, он пошел туда.", "Такого не видели сегодня.", "Я его видел сегодня рядом с Райдом!" ), player )
 		player:GossipComplete()
