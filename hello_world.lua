@@ -478,6 +478,10 @@ local function OnPlayerCommand(event, player, command)
             player:PlayDistanceSound(sound);            
         end
         return false
+    elseif (string.match(command, 'playsound %d+$')) then -- Звук себе
+        local sound = tonumber(string.match(command, '%d+$'));
+        player:PlayDistanceSound(sound, player);
+        return false
     elseif (string.match(command, 'goblever %d+ %d+$')) then -- Привязка телепорта к гошке
         if(player:GetGMRank() > 1)then
             local guid = string.match(command, '%d+ ')
