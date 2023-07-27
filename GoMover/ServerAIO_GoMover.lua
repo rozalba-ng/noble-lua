@@ -154,6 +154,8 @@ local function OnPlayerCommandWithArg(event, player, code)
 		end
 	elseif(code == "gathergos")then
 		GatherGosByRadius(player,5)
+	elseif(code == "returngos")then
+		ReturnGosByRadius(player,5)
 	end
 end
 
