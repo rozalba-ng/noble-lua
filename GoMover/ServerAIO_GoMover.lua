@@ -107,7 +107,7 @@ local function ReturnGosByRadius(player, radius)
         end
         local owners = table.concat(ownerIDs, ", ")
         local ownersList = {}
-        local Q = CharDBQuery("SELECT c.guid FROM characters.characters c WHERE c.guid in (" .. owners .. ") and c.account not in (select a.id from auth.account_access a where 1")
+        local Q = CharDBQuery("SELECT c.guid FROM characters.characters c WHERE c.guid in (" .. owners .. ") and c.account not in (select a.id from auth.account_access a where 1)")
         if Q then
             for i = 1, Q:GetRowCount() do
                 local c_guid = Q:GetUInt32(0)
