@@ -84,6 +84,61 @@ local function GatherGosByRadius(player,radius)
 		player:Print("Некорректно задан радиус сбора игровых объектов")
 	end
 end
+
+local function ReturnGosByRadius(player, radius)
+	if radius <= 10 then
+		local gos = player:GetGameObjectsInRange(tonumber(radius))
+		if not (player:GetGMRank() > 1 or player:GetDmLevel() == 5 ) then
+			player:Print("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFДоступ запрещен для вашего типа аккаунта.|r")
+			return false
+		end
+
+		local ownerIDs = {}
+		for i, gob in pairs(gos) do
+			local ownerId = gob:GetOwnerId()
+			if gob:GetPhaseMask() == 1 or ownerId == 0 then
+				table.insert(ownerIDs, ownerId)
+			end
+		end
+		if #ownerIDs == 0 then
+			player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет объектов, которые можно вернуть пользователям.|r")
+			return
+		end
+		local owners = table.concat(ownerIDs,", ")
+		local ownersList = {}
+		local Q = CharDBQuery("SELECT c.guid FROM characters.characters c WHERE c.guid in ("..owners..") and c.account not in (select a.id from auth.account_access a where 1")
+		if Q then
+			for i = 1, Q:GetRowCount() do
+				local c_guid = Q:GetUInt32(0)
+				ownersList[c_guid] = true
+				Q:NextRow()
+			end
+		else
+			player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет объектов, которые можно вернуть пользователям.|r")
+			return
+		end
+		if #ownersList == 0 then
+			player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет объектов, которые можно вернуть пользователям.|r")
+			return
+		end
+
+		for i, gob in pairs(gos) do
+			if gob:GetPhaseMask() == 1 and ownersList[gob:GetOwnerId()] ~= nil then
+				local entry = gob:GetEntry()
+				local itemGUIDlow = SendMail('Сервер', 'Возврат имущества: переносной объект', gob:GetOwnerId(), 36, 61, 20, 0, 0, entry, 1);
+				local item = player:AddItem(entry)
+				if (itemGUIDlow == nil) then
+					player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНе удалось отправить объект " .. entry .. ".|r")
+					return false
+				end
+				gob:RemoveFromWorld(true)
+			end
+		end
+	else
+		player:Print("Некорректно задан радиус сбора игровых объектов")
+	end
+end
+
 local function OnPlayerCommandWithArg(event, player, code)
     if(code == "movego")then
 		local nearestGo = player:GetNearestGameObject(10)

@@ -223,6 +223,7 @@ local function isInSameBattle(player,target)
 		return false
 	end
 
+	return false
 end
 
 
