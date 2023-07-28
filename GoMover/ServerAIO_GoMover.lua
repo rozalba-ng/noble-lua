@@ -129,14 +129,7 @@ local function ReturnGosByRadius(player, radius)
             if gob:GetPhaseMask() == 1 and ownersList[ownerId] ~= nil then
                 local entry = gob:GetEntry()
                 local itemGUIDlow = SendMail("Возврат", "Возврат имущества", ownerIdNum, 0, 61, 0, 0, 0, entry, 1)
-                if (itemGUIDlow == nil) then
-                    player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНе удалось отправить объект " .. entry .. ".|r")
-                    return
-                else
-                    player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОтправлен объект " .. entry .. " пользователю " .. ownerIdNum .. ".|r")
-                end
-
-
+                player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОтправлен объект " .. entry .. " пользователю " .. ownerIdNum .. ".|r")
                 gob:RemoveFromWorld(true)
             end
         end
