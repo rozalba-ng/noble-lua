@@ -96,7 +96,8 @@ local function ReturnGosByRadius(player, radius)
 
         local ownerIDs = {}
         for i, gob in pairs(gos) do
-            local ownerId = gob:GetOwnerId()
+            local ownerIdObj = gob:GetOwnerId()
+            local ownerId = tostring(ownerIdObj)
             if gob:GetPhaseMask() == 1 and ownerId ~= 0 then
                 table.insert(ownerIDs, tostring(ownerId))
             end
@@ -111,27 +112,31 @@ local function ReturnGosByRadius(player, radius)
         if Q then
             for i = 1, Q:GetRowCount() do
                 local c_guid = Q:GetUInt32(0)
-                ownersList[c_guid] = true
+                local str_c_guid = tostring(c_guid)
+                ownersList[str_c_guid] = str_c_guid
                 Q:NextRow()
             end
         else
             player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет объектов, которые можно вернуть пользователям.|r")
             return
         end
-        if #ownersList == 0 then
-            player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНет объектов, которые можно вернуть пользователям.|r")
-            return
-        end
 
         for i, gob in pairs(gos) do
-            if gob:GetPhaseMask() == 1 and ownersList[gob:GetOwnerId()] ~= nil then
+            local ownerIdObj = gob:GetOwnerId()
+            local ownerId = tostring(ownerIdObj)
+            local ownerIdNum = tonumber(ownerId)
+
+            if gob:GetPhaseMask() == 1 and ownersList[ownerId] ~= nil then
                 local entry = gob:GetEntry()
-                local itemGUIDlow = SendMail('Сервер', 'Возврат имущества: переносной объект', gob:GetOwnerId(), 36, 61, 20, 0, 0, entry, 1);
-                local item = player:AddItem(entry)
+                local itemGUIDlow = SendMail("Возврат", "Возврат имущества", ownerIdNum, 0, 61, 0, 0, 0, entry, 1)
                 if (itemGUIDlow == nil) then
                     player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFНе удалось отправить объект " .. entry .. ".|r")
-                    return false
+                    return
+                else
+                    player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОтправлен объект " .. entry .. " пользователю " .. ownerIdNum .. ".|r")
                 end
+
+
                 gob:RemoveFromWorld(true)
             end
         end
