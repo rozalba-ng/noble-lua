@@ -128,8 +128,13 @@ local function ReturnGosByRadius(player, radius)
 
             if gob:GetPhaseMask() == 1 and ownersList[ownerId] ~= nil then
                 local entry = gob:GetEntry()
-                local itemGUIDlow = SendMail("Возврат", "Возврат имущества", ownerIdNum, 0, 61, 0, 0, 0, entry, 1)
-                player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОтправлен объект " .. entry .. " пользователю " .. ownerIdNum .. ".|r")
+                if entry >495000 and entry < 509999 then
+                    local itemGUIDlow = SendMail("Возврат", "Возврат имущества", ownerIdNum, 0, 61, 0, 0, 0, entry, 1)
+                    player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОтправлен объект " .. entry .. " пользователю " .. ownerIdNum .. ".|r")
+                else
+                    player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500System: |r |cFF00CCFFОбъект " .. entry .. " удален из мира.|r")
+                end
+
                 gob:RemoveFromWorld(true)
             end
         end
@@ -157,9 +162,5 @@ local function OnPlayerCommandWithArg(event, player, code)
         ReturnGosByRadius(player, 5)
     end
 end
-
-
-
-
 
 RegisterPlayerEvent(42, OnPlayerCommandWithArg)
