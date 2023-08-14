@@ -1,9 +1,9 @@
 
 local quests = {
 	[1] = { --	"Честная работа: Шахта"
-		id = 110297	,
+		id = 110297,
 		questgiver = 12121971,
-		gameobject = 5094660,
+		gameobject = 530853,
 		item = 5103329,
 		players = {},
 	},
