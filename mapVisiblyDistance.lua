@@ -9,6 +9,6 @@ SetMapVisibilityRange(911,0, 400);
 SetMapVisibilityRange(2105,0, 400);
 SetMapVisibilityRange(901,0, 200);
 SetMapVisibilityRange(1,0, 150);
-SetMapVisibilityRange(13,0, 50);
+SetMapVisibilityRange(13,0, 600);
 --SetMapVisibilityRange(901,0, 400);
 SetMapVisibilityRange(533,0, 600);
