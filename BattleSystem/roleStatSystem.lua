@@ -169,10 +169,11 @@ function getDefRandByStatTypeAndTarget(stat, target)
 end
 -- getFormattedRollMessage
 local function getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand)
+    local nameColor = "4b2d4e71"
     if def_rand > 0 then
-        return string.format("%s действие %s %s %s |c%s%s|r. \n%u (%u+%u) |c%s%s|r %u+%u", attack_type, roller_name, action_type, target_name, result_color, result_text, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, def_rand);
+        return string.format("%s действие |c%s%s|r %s %s |c%s%s|r. \n%u (%u+%u) |c%s%s|r %u+%u", attack_type, nameColor, roller_name, action_type, target_name, result_color, result_text, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, def_rand);
     else
-        return string.format("%s действие %s %s %s |c%s%s|r. \n%u (%u+%u) |c%s%s|r порог %u", attack_type, roller_name, action_type, target_name, result_color, result_text, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def);
+        return string.format("%s действие |c%s%s|r %s %s |c%s%s|r. \n%u (%u+%u) |c%s%s|r порог %u", attack_type, nameColor, roller_name, action_type, target_name, result_color, result_text, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def);
     end
 end
 
