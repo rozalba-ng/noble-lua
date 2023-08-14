@@ -169,11 +169,11 @@ function getDefRandByStatTypeAndTarget(stat, target)
 end
 -- getFormattedRollMessage
 local function getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand)
-    local nameColor, targetColor = "FF00CCFF", "FF00CCFF"
+    local nameColor, targetColor = "4b2d4e71", "56819bff"
     if def_rand > 0 then
-        return string.format("|c%s%s|r использует |cFF00CCFF%s|r %s |c%s%s|r. \nРезультат: |c%s%u|r (%u+%u) |c%s%s|r %u+%u - |c%s%s|r ", nameColor, roller_name, attack_type, action_type, targetColor, target_name, result_color, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, def_rand, result_color, result_text);
+        return string.format("|c%s%s|r использует |c4b2d4e71%s|r %s |c%s%s|r. \nРезультат: |c%s%u|r (%u+%u) |c%s%s|r %u+%u - |c%s%s|r ", nameColor, roller_name, attack_type, action_type, targetColor, target_name, result_color, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, def_rand, result_color, result_text);
     else
-        return string.format("|c%s%s|r использует |cFF00CCFF%s|r %s |c%s%s|r. \nРезультат: |c%s%u|r (%u+%u) |c%s%s|r порог %u - |c%s%s|r", nameColor, roller_name, attack_type, action_type, targetColor, target_name, result_color, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, result_color, result_text);
+        return string.format("|c%s%s|r использует |c4b2d4e71%s|r %s |c%s%s|r. \nРезультат: |c%s%u|r (%u+%u) |c%s%s|r порог %u - |c%s%s|r", nameColor, roller_name, attack_type, action_type, targetColor, target_name, result_color, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, result_color, result_text);
     end
 end
 
