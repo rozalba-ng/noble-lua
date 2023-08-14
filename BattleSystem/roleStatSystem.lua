@@ -169,11 +169,11 @@ function getDefRandByStatTypeAndTarget(stat, target)
 end
 -- getFormattedRollMessage
 local function getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand)
-    local nameColor, targetColor = "56819bff", "9f81d3ff"
+    local nameColor, targetColor = "9f81d3ff", "9f81d3ff"
     if def_rand > 0 then
-        return string.format("%s действие |c%s%s|r %s |c%s%s|r |c%s%s|r. \n%u (%u+%u) |c%s%s|r %u+%u", attack_type, nameColor, roller_name, action_type, targetColor, target_name, result_color, result_text, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, def_rand);
+        return string.format("|c%s%s|r использует |ce16e18ff|r%s %s |c%s%s|r. \nРезультат: |ce16e18ff|r%u (%u+%u) |c%s%s|r %u+%u - |c%s%s|r ", nameColor, roller_name, action_type, attack_type,  targetColor, target_name, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, def_rand, result_color, result_text);
     else
-        return string.format("%s действие |c%s%s|r %s |c%s%s|r |c%s%s|r. \n%u (%u+%u) |c%s%s|r порог %u", attack_type, nameColor, roller_name, action_type, targetColor, target_name, result_color, result_text, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def);
+        return string.format("|c%s%s|r использует |ce16e18ff|r%s %s |c%s%s|r. \nРезультат: |ce16e18ff|r%u (%u+%u) |c%s%s|r порог %u - |c%s%s|r", nameColor, roller_name, action_type, attack_type, targetColor, target_name, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, result_color, result_text);
     end
 end
 
@@ -312,56 +312,56 @@ end
 
 function attackRoll(roller, target, spellid)
     local stat = 0;
-    local attack_type = "Силовое";
+    local attack_type = "Сила";
     local action_type = "против"
     if (spellid == 88005 or spellid == "1" or string.upper(spellid) == "С") then
         stat = 0;
-        attack_type = "Силовое";
+        attack_type = "Сила";
     elseif (spellid == 88006 or spellid == "2" or string.upper(spellid) == "Л") then
         stat = 1;
-        attack_type = "Ловкое";
+        attack_type = "Ловкость";
     elseif (spellid == 88007 or spellid == "3" or string.upper(spellid) == "И") then
         stat = 2;
-        attack_type = "Магическое";
+        attack_type = "Интеллект";
     elseif ((spellid == 88008 or spellid == "4" or string.upper(spellid) == "Х") and roller:ToPlayer()) then
         stat = 6;
-        attack_type = "Исцеляющее";
+        attack_type = "Дух";
         action_type = "на";
     elseif ((spellid == 91154 or spellid == "5" or string.upper(spellid) == "СТ") and roller:ToPlayer()) then
         stat = 3;
-        attack_type = "Защитное (стойкость)";
+        attack_type = "Стойкость (защита)";
         action_type = "от";
     elseif ((spellid == 91155 or spellid == "6" or string.upper(spellid) == "СН") and roller:ToPlayer()) then
         stat = 4;
-        attack_type = "Защитное (сноровка)";
+        attack_type = "Сноровка (защита)";
         action_type = "от";
     elseif ((spellid == 91156 or spellid == "7" or string.upper(spellid) == "ВО") and roller:ToPlayer()) then
         stat = 5;
-        attack_type = "Защитное (воля)";
+        attack_type = "Воля (защита)";
         action_type = "от";
     elseif ((spellid == 91157 or spellid == "8" or string.upper(spellid) == "ХА") and roller:ToPlayer()) then
         stat = 7;
-        attack_type = "Специальное (харизма)";
+        attack_type = "Харизма";
         action_type = "на";
     elseif ((spellid == 91158 or spellid == "9" or string.upper(spellid) == "ИЗ") and roller:ToPlayer()) then
         stat = 8;
-        attack_type = "Специальное (избегание)";
+        attack_type = "Избегание";
         action_type = "на";
     elseif ((spellid == 91159 or spellid == "10" or string.upper(spellid) == "УД") and roller:ToPlayer()) then
         stat = 9;
-        attack_type = "Специальное (удача)";
+        attack_type = "Удача";
         action_type = "на";
     elseif ((spellid == 91160 or spellid == "11" or string.upper(spellid) == "СК") and roller:ToPlayer()) then
         stat = 10;
-        attack_type = "Специальное (скрытность)";
+        attack_type = "Скрытность";
         action_type = "на";
     elseif ((spellid == 91161 or spellid == "12" or string.upper(spellid) == "ИН") and roller:ToPlayer()) then
         stat = 11;
-        attack_type = "Специальное (инициатива)";
+        attack_type = "Инициатива";
         action_type = "на";
     elseif ((spellid == 91162 or spellid == "13" or string.upper(spellid) == "ВО") and roller:ToPlayer()) then
         stat = 12;
-        attack_type = "Специальное (восприятие)";
+        attack_type = "Восприятие";
         action_type = "на";
     end
 
