@@ -5,6 +5,7 @@ local quests = {
 		questgiver = 12121971,
 		gameobject = 530853,
 		item = 5103329,
+		ore = 5103330,
 		players = {},
 	},
 
@@ -47,13 +48,12 @@ quests[1].OnGossip = function( event, arg1, arg2 )
 	else
 	
 		local player = arg1
-		local object = arg2
-		local ore = 5103330	
+		local object = arg2	
 		
-		if ( player:HasQuest( quests[1].id ) and player:HasItem( quests[1].item ) then
-			player:GossipComplete()
-			player:RemoveItem( quests[1].item , 1)
-            player:AddItem(ore, 1)
+		if 	player:HasQuest( quests[1].id ) and player:HasItem( quests[1].item ) then
+				player:GossipComplete()
+				player:RemoveItem( quests[1].item , 1)
+            	player:AddItem( quests[1].ore , 1)
 		end
 		
 		
