@@ -14,40 +14,14 @@ local quests = {
 
 quests[1].OnStart = function( event, player, creature, quest )
 	if ( quest:GetId() == quests[1].id ) then
-		quests[1].players[player:GetName()] = 0
-	end
-end
-RegisterCreatureEvent( quests[1].questgiver, 31, quests[1].OnStart ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
 
-quests[1].OnGossip = function( event, arg1, arg2 )
-	if event == 14 then
+RegisterCreatureEvent( quests[1].questgiver, 788, quests[1].OnStart ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
+
+quests[1].Use = function( event, arg1, arg2 )
+	if event == 118 then
 		
 		local player = arg2
 		local object = arg1
-		
-		player:GossipClearMenu()
-		
-		local text
-		if ( object:GetData("QUEST") and os.time() - object:GetData("QUEST") < 200 ) then
-			text = "<Эту жилу уже обработали.>"
-		else
-			text = Roulette( "<Жила мерцает от руды.>", "<Жила годится для обработки.>" )
-		end
-		player:GossipSetText( text, 01042101 )
-		
-		if player:HasQuest( quests[1].id ) and player:HasItem( quests[1].item ) then
-				if ( not object:GetData("QUEST") ) or ( os.time() - object:GetData("QUEST") ) > 120 then
-					player:GossipMenuAddItem( 0, "<Добыть руду.>", 1, 1 )
-				end
-
-		end
-		
-		player:GossipSendMenu( 01042101, object )
-		
-	else
-	
-		local player = arg1
-		local object = arg2	
 		
 		if 	( player:HasQuest( quests[1].id ) and player:HasItem( quests[1].item ) ) then
 				player:GossipComplete()
@@ -55,8 +29,8 @@ quests[1].OnGossip = function( event, arg1, arg2 )
             	player:AddItem( quests[1].ore , 1)
 		end
 		
-		
 	end
+	end
+		
 end
-RegisterGameObjectEvent( quests[1].gameobject, 14, quests[1].OnGossip ) -- GAMEOBJECT_EVENT_ON_USE
-RegisterGameObjectGossipEvent( quests[1].gameobject, 2, quests[1].OnGossip ) -- GOSSIP_EVENT_ON_SELECT
+RegisterGameObjectEvent( quests[1].gameobject, 118, quests[1].OnUse ) -- GAMEOBJECT_EVENT_ON_USE
