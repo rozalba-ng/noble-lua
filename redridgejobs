@@ -1,35 +1,19 @@
+local QUEST_ID = 110297
+local REQUIRED_ITEM_ID = 5103329
+local REWARD_ITEM_ID = 5103330
+local GAMEOBJECT_ID = 530853
 
-local quests = {
-	[1] = { --	"Честная работа: Шахта"
-		id = 110297,
-		questgiver = 12121971,
-		gameobject = 530853,
-		item = 5103329,
-		ore = 5103330,
-		players = {},
-	},
-
---[[	1 квест 	]]--
---	"Честная работа: Шахта"
-
-quests[1].OnStart = function( event, player, creature, quest )
-	if ( quest:GetId() == quests[1].id ) then
-
-RegisterCreatureEvent( quests[1].questgiver, 788, quests[1].OnStart ) -- CREATURE_EVENT_ON_QUEST_ACCEPT
-
-quests[1].Use = function( event, arg1, arg2 )
-	if event == 118 then
-		
-		local player = arg2
-		local object = arg1
-		
-		if 	( player:HasQuest( quests[1].id ) and player:HasItem( quests[1].item ) ) then
-				player:RemoveItem( quests[1].item , 1)
-            	player:AddItem( quests[1].ore , 1)
-		end
-		
-	end
-	end
-		
+local function OnGameObjectUse(event, player, object)
+    if event == 18 then -- Check for the right event ID (GAMEOBJECT_EVENT_ON_USE)
+        if player:HasQuest(QUEST_ID) and player:HasItem(REQUIRED_ITEM_ID) then
+            player:SendBroadcastMessage("123")
+            player:RemoveItem(REQUIRED_ITEM_ID, 1)
+            player:AddItem(REWARD_ITEM_ID, 1)
+            player:SendBroadcastMessage("You successfully used the object and received a reward!")
+        else
+            player:SendBroadcastMessage("You do not meet the requirements to use this object.")
+        end
+    end
 end
-RegisterGameObjectEvent( quests[1].gameobject, 118, quests[1].OnUse ) -- GAMEOBJECT_EVENT_ON_USE
+
+RegisterGameObjectEvent(GAMEOBJECT_ID, 18, OnGameObjectUse) -- GAMEOBJECT_EVENT_ON_USE
