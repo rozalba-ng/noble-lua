@@ -2,24 +2,16 @@ local QUEST_ID = 110297
 local REQUIRED_ITEM_ID = 5103329
 local REWARD_ITEM_ID = 5103330
 local GAMEOBJECT_ID = 530853
-local COOLDOWN_SECONDS = 120
 
 local function OnGameObjectUse(event, player, object)
     if event == 18 then -- Check for the right event ID (GAMEOBJECT_EVENT_ON_USE)
         if player:HasQuest(QUEST_ID) and player:HasItem(REQUIRED_ITEM_ID) then
-            local currentTime = os.time()
-            local lastUseTime = player:GetData(GAMEOBJECT_ID) or 0
-
-            if currentTime - lastUseTime >= COOLDOWN_SECONDS then
-                player:RemoveItem(REQUIRED_ITEM_ID, 1)
-                player:AddItem(REWARD_ITEM_ID, 1)
-                player:SetData(GAMEOBJECT_ID, currentTime)
-                player:SendBroadcastMessage("Вы успешно добыли руду!")
-            else
-                player:SendBroadcastMessage("Эту руду уже обработали.")
-            end
+            player:SendBroadcastMessage("123")
+            player:RemoveItem(REQUIRED_ITEM_ID, 1)
+            player:AddItem(REWARD_ITEM_ID, 1)
+            player:SendBroadcastMessage("You successfully used the object and received a reward!")
         else
-            player:SendBroadcastMessage("Сперва нужно получить разрешение и кирку.")
+            player:SendBroadcastMessage("You do not meet the requirements to use this object.")
         end
     end
 end
