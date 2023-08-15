@@ -1,30 +1,27 @@
-local quests = {
-    [1] = { -- "Честная работа: Шахта"
-        id = 110297,
-        questgiver = 12121971,
-        gameobject = 530853,
-        item = 5103329,
-        ore = 5103330,
-        players = {},
-    },
-}
+local QUEST_ID = 110297
+local REQUIRED_ITEM_ID = 5103329
+local REWARD_ITEM_ID = 5103330
+local GAMEOBJECT_ID = 530853
+local COOLDOWN_SECONDS = 120
 
--- OnUse event handler for the game object
-quests[1].OnUse = function(event, player, object)
-    if event == 118 then
-        if player:HasQuest(quests[1].id) and player:HasItem(quests[1].item) then
-            player:RemoveItem(quests[1].item, 1)
-            player:AddItem(quests[1].ore, 1)
+local function OnGameObjectUse(event, player, object)
+    if event == 18 then -- Check for the right event ID (GAMEOBJECT_EVENT_ON_USE)
+        if player:HasQuest(QUEST_ID) and player:HasItem(REQUIRED_ITEM_ID) then
+            local currentTime = os.time()
+            local lastUseTime = player:GetData(GAMEOBJECT_ID) or 0
+
+            if currentTime - lastUseTime >= COOLDOWN_SECONDS then
+                player:RemoveItem(REQUIRED_ITEM_ID, 1)
+                player:AddItem(REWARD_ITEM_ID, 1)
+                player:SetData(GAMEOBJECT_ID, currentTime)
+                player:SendBroadcastMessage("Вы успешно добыли руду!")
+            else
+                player:SendBroadcastMessage("Эту руду уже обработали.")
+            end
+        else
+            player:SendBroadcastMessage("Сперва нужно получить разрешение и кирку.")
         end
     end
 end
 
--- OnStart event handler for quest acceptance
-quests[1].OnQuestStart = function(event, player, creature, quest)
-    if quest:GetId() == quests[1].id then
-        RegisterGameObjectEvent(quests[1].gameobject, 118, quests[1].OnUse) -- GAMEOBJECT_EVENT_ON_USE
-    end
-end
-
--- Register the OnStart event handler for quest acceptance
-RegisterCreatureEvent(quests[1].questgiver, 788, quests[1].OnQuestStart) -- CREATURE_EVENT_ON_QUEST_ACCEPT
+RegisterGameObjectEvent(GAMEOBJECT_ID, 18, OnGameObjectUse) -- GAMEOBJECT_EVENT_ON_USE
