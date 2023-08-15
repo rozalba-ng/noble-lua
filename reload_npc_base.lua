@@ -7,6 +7,10 @@
 --
 
 local function ReloadAllNPCDatabases()
+    if SocialTime() then
+        return false
+    end
+
     ReloadAllNPC()
     --[[local players = GetPlayersInWorld()
     for i = 1, #players do
