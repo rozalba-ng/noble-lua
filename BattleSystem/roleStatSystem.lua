@@ -70,12 +70,12 @@ local statBaseTreshold = {
     [ROLE_STAT_VERSA] = 0, -- сноровке
     [ROLE_STAT_WILL] = 0, -- воле
     [ROLE_STAT_SPIRIT] = 100, -- дух
-    [ROLE_STAT_CHARISMA] = 15, -- харизма
-    [ROLE_STAT_AVOID] = 15, -- избегание
-    [ROLE_STAT_LUCK] = 15, -- удача
-    [ROLE_STAT_STEALTH] = 15, -- скрытность
-    [ROLE_STAT_INIT] = 15, -- инициатива
-    [ROLE_STAT_PERCEPT] = 15, -- восприятие
+    [ROLE_STAT_CHARISMA] = 65, -- харизма
+    [ROLE_STAT_AVOID] = 65, -- избегание
+    [ROLE_STAT_LUCK] = 65, -- удача
+    [ROLE_STAT_STEALTH] = 65, -- скрытность
+    [ROLE_STAT_INIT] = 65, -- инициатива
+    [ROLE_STAT_PERCEPT] = 65, -- восприятие
 }
 
 statNpcDoDefRoll = {
@@ -120,8 +120,8 @@ local statnames = {
     [ROLE_STAT_AGLILITY] = "Ловкость",
     [ROLE_STAT_INTELLECT] = "Интеллект",
     [ROLE_STAT_STAMINA] = "Стойкость",
-    [ROLE_STAT_VERSA] = "Сноровка",
-    [ROLE_STAT_WILL] = "Воля",
+    [ROLE_STAT_VERSA] = "Физ. защита",
+    [ROLE_STAT_WILL] = "Маг. защита",
     [ROLE_STAT_SPIRIT] = "Дух",
     [ROLE_STAT_CHARISMA] = "Харизма", -- харизма
     [ROLE_STAT_AVOID] = "Избегание", -- избегание
@@ -329,15 +329,15 @@ function attackRoll(roller, target, spellid)
         action_type = "на";
     elseif ((spellid == 91154 or spellid == "5" or string.upper(spellid) == "СТ") and roller:ToPlayer()) then
         stat = 3;
-        attack_type = "Стойкость (защита)";
+        attack_type = "Стойкость";
         action_type = "от";
     elseif ((spellid == 91155 or spellid == "6" or string.upper(spellid) == "СН") and roller:ToPlayer()) then
         stat = 4;
-        attack_type = "Сноровка (защита)";
+        attack_type = "Физическая устойчивость";
         action_type = "от";
     elseif ((spellid == 91156 or spellid == "7" or string.upper(spellid) == "ВО") and roller:ToPlayer()) then
         stat = 5;
-        attack_type = "Воля (защита)";
+        attack_type = "Магическая устойчивость";
         action_type = "от";
     elseif ((spellid == 91157 or spellid == "8" or string.upper(spellid) == "ХА") and roller:ToPlayer()) then
         stat = 7;
@@ -943,7 +943,7 @@ local function OnPlayerCommandWithArg(event, player, code)
                             end
                         end
 
-                        player:SendBroadcastMessage("Всем существам с именем " .. greenColor .. "\"" .. GM_target:GetName() .. "\"|r в радиусе 50 ярдов установлены характеристики: сила: " .. strength .. " ловкость: " .. agila .. "  инта: " .. inta .. "  стойкость: " .. stamina .. "  сноровка: " .. versa .. "  воля: " .. will .. "  здоровье: " .. hpval .. "  броня: " .. ammoval)
+                        player:SendBroadcastMessage("Всем существам с именем " .. greenColor .. "\"" .. GM_target:GetName() .. "\"|r в радиусе 50 ярдов установлены характеристики: сила: " .. strength .. " ловкость: " .. agila .. "  инта: " .. inta .. "  стойкость: " .. stamina .. "  физ.защита: " .. versa .. "  маг.защита: " .. will .. "  здоровье: " .. hpval .. "  броня: " .. ammoval)
                     else
                         player:SendBroadcastMessage("Возьмите в цель нпс, сейчас выбран игрок")
                     end
