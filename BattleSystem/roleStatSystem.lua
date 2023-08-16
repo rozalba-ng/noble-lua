@@ -70,12 +70,12 @@ local statBaseTreshold = {
     [ROLE_STAT_VERSA] = 0, -- сноровке
     [ROLE_STAT_WILL] = 0, -- воле
     [ROLE_STAT_SPIRIT] = 100, -- дух
-    [ROLE_STAT_CHARISMA] = 65, -- харизма
-    [ROLE_STAT_AVOID] = 65, -- избегание
-    [ROLE_STAT_LUCK] = 65, -- удача
-    [ROLE_STAT_STEALTH] = 65, -- скрытность
-    [ROLE_STAT_INIT] = 65, -- инициатива
-    [ROLE_STAT_PERCEPT] = 65, -- восприятие
+    [ROLE_STAT_CHARISMA] = 60, -- харизма
+    [ROLE_STAT_AVOID] = 60, -- избегание
+    [ROLE_STAT_LUCK] = 60, -- удача
+    [ROLE_STAT_STEALTH] = 60, -- скрытность
+    [ROLE_STAT_INIT] = 60, -- инициатива
+    [ROLE_STAT_PERCEPT] = 60, -- восприятие
 }
 
 statNpcDoDefRoll = {
