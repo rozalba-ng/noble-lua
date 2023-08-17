@@ -544,7 +544,7 @@ function attackRoll(roller, target, spellid)
 		
 		-- mayday begin
 		
-		if (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
+		if  roller:ToPlayer() and (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
 			-- stat = 0;
 			player_att = player_att/2;
 			target_def = target_def/2;
@@ -782,7 +782,7 @@ function attackRoll(roller, target, spellid)
 		
 		-- mayday begin
 		
-		if (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
+		if roller:ToPlayer() and (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
 			-- stat = 0;
 			player_att = player_att/2;
 		end
