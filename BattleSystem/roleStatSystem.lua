@@ -976,8 +976,12 @@ local function OnPlayerCommandWithArg(event, player, code)
                 player:SendBroadcastMessage("Выберите в цель нпс")
                 return
             end
+            if GM_target:ToCreature() then
+                player:SendBroadcastMessage("Выберите в цель - нпс")
+                return
+            end
             player:SendBroadcastMessage("Характеристики нпс-цели:")
-            getNpcStatsPrint(GM_target)
+            getNpcStatsPrint(GM_target:ToCreature())
         end
     end
 end
