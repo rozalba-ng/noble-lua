@@ -961,6 +961,23 @@ local function OnPlayerCommandWithArg(event, player, code)
                 loadAllCreatureTemplateRollStats();
                 player:SendBroadcastMessage("Статы перезагружены")
             end
+        elseif (arguments[1] == "checknpcstat") then
+            if player:GetGMRank() < 1 then
+                return
+            end
+
+            local GM_target = player:GetSelectedUnit()
+            if not GM_target then
+                player:SendBroadcastMessage("Выберите цель (нпс)")
+                return
+            end
+
+            if GM_target:ToPlayer() then
+                player:SendBroadcastMessage("Выберите в цель нпс")
+                return
+            end
+            player:SendBroadcastMessage("Характеристики нпс-цели:")
+            getNpcStatsPrint(GM_target)
         end
     end
 end

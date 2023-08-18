@@ -36,6 +36,25 @@ npcStatsTemplate = {}
 --WorldDBQuery('UPDATE creature_role_stats SET STR = ' .. STR ..', AGI = ' .. AGI .. ', INTEL = ' .. INTEL .. ', VIT = ' .. VIT .. ', DEX = ' .. DEX .. ', WILL = ' .. WILL .. ', SPI = ' .. SPI ..', HEALTH = ' .. HEALTH ..', ARMOR = ' .. ARMOR ..' where guid = ' .. guid );
 --WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',' .. STR ..', '.. AGI ..',' .. INTEL .. ', ' .. VIT .. ',' .. DEX .. ',' .. WILL .. ',' .. SPI .. ', ' .. HEALTH .. ', ' .. ARMOR .. ')');
 
+
+function getNpcStatsPrint(creature)
+    local guid = creature:GetDBTableGUIDLow();
+    local guidLow = creature:GetGUIDLow();
+
+    if guid then
+        if not npcStats[guid] then
+            player:SendBroadcastMessage("не установлены")
+            return
+        end
+        player:SendBroadcastMessage(string.format("Сила: %u", npcStats[guid][ROLE_STAT_STRENGTH]))
+        player:SendBroadcastMessage(string.format("Ловк: %u", npcStats[guid][ROLE_STAT_AGLILITY]))
+        player:SendBroadcastMessage(string.format("Инта: %u", npcStats[guid][ROLE_STAT_INTELLECT]))
+    else
+        player:SendBroadcastMessage("не установлены")
+    end
+    return
+end
+
 -- удаляем лишние статы
 function deleteRoleStatsForDeletedNpc()
     local toDeleteQuery = WorldDBQuery('SELECT guid FROM creature_role_stats crs WHERE not exists (SELECT * FROM creature c WHERE c.guid = crs.guid)');
