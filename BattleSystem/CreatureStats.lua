@@ -49,6 +49,8 @@ function getNpcStatsPrint(player, creature)
         player:SendBroadcastMessage(string.format("Сила: %u", npcStats[guid][ROLE_STAT_STRENGTH]))
         player:SendBroadcastMessage(string.format("Ловк: %u", npcStats[guid][ROLE_STAT_AGLILITY]))
         player:SendBroadcastMessage(string.format("Инта: %u", npcStats[guid][ROLE_STAT_INTELLECT]))
+        player:SendBroadcastMessage(string.format("Физ.уст: %u", npcStats[guid][ROLE_STAT_VERSA]))
+        player:SendBroadcastMessage(string.format("Маг.уст: %u", npcStats[guid][ROLE_STAT_WILL]))
     else
         player:SendBroadcastMessage("не установлены")
     end
