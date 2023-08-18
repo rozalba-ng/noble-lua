@@ -37,7 +37,7 @@ npcStatsTemplate = {}
 --WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',' .. STR ..', '.. AGI ..',' .. INTEL .. ', ' .. VIT .. ',' .. DEX .. ',' .. WILL .. ',' .. SPI .. ', ' .. HEALTH .. ', ' .. ARMOR .. ')');
 
 
-function getNpcStatsPrint(creature)
+function getNpcStatsPrint(player, creature)
     local guid = creature:GetDBTableGUIDLow();
     local guidLow = creature:GetGUIDLow();
 
