@@ -70,6 +70,12 @@ local function sendResWhiteLetters()
 			local id = ownerData['id'];
 
 			if (playerId ~= 0 and standart_amount > 0) then
+				if standart_amount > 3 then
+					SendMail('Noblegarden - дублоны', 'Поощрение за вчерашнюю ролевую активность', playerId, 36, 61, 20, 0, 0, dublon, 2);
+				elseif standart_amount > 1 then
+					SendMail('Noblegarden - ресурсы', 'Поощрение за вчерашнюю ролевую активность', playerId, 36, 61, 20, 0, 0, dublon, 1);
+				end
+
 				SendMail('Noblegarden - ресурсы', 'Поощрение за вчерашнюю ролевую активность', playerId, 36, 61, 20, 0, 0, whiteRes, standart_amount); -- обычные ресурсы
 				CharDBQuery('UPDATE character_daily_log set bonus_gift_done = 1 where id = ' .. id);
 			end
