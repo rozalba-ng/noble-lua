@@ -24,7 +24,7 @@ end
 
 local function OnCommand (event, player, command)
 	if command == "testrop" then
-		TestRop()
+		--TestRop()
 		player:SendBroadcastMassage("Успех!") 
 	end
 end
