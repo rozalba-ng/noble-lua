@@ -18,6 +18,15 @@ function TestRop()
             end
         end
     else
-        print("Ошибка")
+        player:SendBroadcastMassage("Ошибка!") 
     end
 end
+
+local function OnCommand (event, player, command)
+	if command == "testrop" then
+		TestRop()
+		player:SendBroadcastMassage("Успех!") 
+	end
+end
+
+RegisterPlayerEvent (42, OnCommand)
