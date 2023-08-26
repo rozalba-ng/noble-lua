@@ -6,7 +6,10 @@ DEATH_SOLDER_AURA = 88053
 EBS_ARMOR_AURA = 88050
 EBS_ENERGY_AURA = 88060
 EBS_PHYSICS_DEF_AURA = 102050 
-EBS_MAGIC_DEF_AURA = 102051 
+EBS_MAGIC_DEF_AURA = 102051
+-- Новые ауры
+EBS_FOCUS_AURA = 95009
+-- Конец новых аур
 
 EBS_Auras = {	{	id = 88061,
 					name = "Усталость",},
@@ -15,9 +18,134 @@ EBS_Auras = {	{	id = 88061,
 				{	id = 88063,
 					name = "Усилиение",},
 				{	id = 88064,
-					name = "Переодический урон",}
-			}	
+					name = "Периодический урон",}
+			}
 
+-- Новые статы
+EBS_AuraStats = {	{	id = 95001,
+						name = "Физическая сила",},
+					{	id = 95002,
+						name = "Мастерство",},
+					{	id = 95003,
+						name = "Учёность",},
+					{	id = 95004,
+						name = "Мудрость",},
+					{	id = 95005,
+						name = "Атака",},
+					{	id = 95006,
+						name = "Защита",},
+					{	id = 95007,
+						name = "Дальний бой",},
+					{	id = 95008,
+						name = "Магия",},
+					{	id = 95010,
+						name = "Живучесть",},
+					{	id = 95011,
+						name = "Мана",},
+					{	id = 95018,
+						name = "Мощь",},
+					{	id = 95023,
+						name = "Незаметность",},
+					{	id = 95048,
+						name = "Удача",}				
+				}
+
+-- Новые дебаффы
+EBS_AuraDebuffs = {	{	id = 95019,
+						name = "Холод",},
+					{	id = 95020,
+						name = "Жар",},
+					{	id = 95024,
+						name = "Сон",},
+					{	id = 95025,
+						name = "Оглушение",},
+					{	id = 95026,
+						name = "Обездвиживание",},
+					{	id = 95027,
+						name = "Замешательство",},
+					{	id = 95031,
+						name = "Безумие",},
+					{	id = 95033,
+						name = "Разрушение брони",},
+					{	id = 95034,
+						name = "Уязвимость к магии",},
+					{	id = 95035,
+						name = "Уязвимость к природе",},
+					{	id = 95036,
+						name = "Уязвимость ко Тьме",},
+					{	id = 95037,
+						name = "Уязвимость к Скверне",},
+					{	id = 95038,
+						name = "Уязвимость к огню",},
+					{	id = 95039,
+						name = "Уязвимость к ветру",},
+					{	id = 95040,
+						name = "Уязвимость к земле",},
+					{	id = 95041,
+						name = "Уязвимость к воде",},
+					{	id = 95042,
+						name = "Уязвимость ко льду",},
+					{	id = 95043,
+						name = "Уязвимость к крови",},
+					{	id = 95044,
+						name = "Уязвимость к молнии",},
+					{	id = 95047,
+						name = "Буян",},
+					{	id = 95054,
+						name = "Антимагия",}
+				}
+				
+-- Новые баффы
+EBS_AuraBuffs = {	{	id = 95012,
+						name = "Усиление (скорость)",},
+					{	id = 95013,
+						name = "Усиление (атака)",},
+					{	id = 95014,
+						name = "Усиление (защита)",},
+					{	id = 95015,
+						name = "Усиление (дальний бой)",},
+					{	id = 95016,
+						name = "Усиление (точность)",},
+					{	id = 95028,
+						name = "Абсолютная неуязвимость",},
+					{	id = 95029,
+						name = "Неуязвимость (магия)",},
+					{	id = 95030,
+						name = "Неуязвимость (физич.)",},
+					{	id = 95032,
+						name = "Исступление",}
+				}
+
+-- Новые травмы
+EBS_AuraHarm = {	{	id = 95021,
+						name = "Лёгкая рана",},
+					{	id = 95022,
+						name = "Тяжёлая рана",},
+					{	id = 95049,
+						name = "Перелом руки",},
+					{	id = 95050,
+						name = "Перелом ноги",},
+					{	id = 95051,
+						name = "Перелом челюсти",},
+					{	id = 95052,
+						name = "Кровопотеря",},
+					{	id = 95053,
+						name = "Немота",}
+				}
+
+-- Новые действия
+EBS_AuraActions = {	{	id = 95017,
+						name = "Действие",},
+					{	id = 95045,
+						name = "Нейтрализация",},
+					{	id = 95046,
+						name = "Провокация",},
+					{	id = 95055,
+						name = "Подкрепление",},
+					{	id = 95056,
+						name = "Метка охотника",}
+				}
+-- Конец новых ауров
 
 EBS = {}
 EBS.OpenBattles = {}
@@ -543,6 +671,108 @@ local function OnPlayerCommandWithArg(event, player, code)
 					player:SendBroadcastMessage("Существо не имеет ауры")
 				end
 			end
+-- Добавить фокус
+		elseif (arguments[1] == "setfocus" and #arguments == 2 ) then
+			local value = arguments[2]
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if tonumber(value) == 0 then
+					GM_target:RemoveAura(EBS_FOCUS_AURA)
+					return false
+				end
+				if GM_target:HasAura(EBS_FOCUS_AURA) then
+					local focusAura = GM_target:GetAura(EBS_FOCUS_AURA)
+					focusAura:SetStackAmount(value)
+					player:SendBroadcastMessage(GM_target:GetName().." установлено "..greenColor..value.." очков фокуса")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вам установлено "..greenColor..value.." очков фокуса")
+					end
+					
+				else
+					local focusAura = GM_target:AddAura(EBS_FOCUS_AURA,GM_target)
+					focusAura:SetStackAmount(value)
+					player:SendBroadcastMessage(GM_target:GetName().." установлено "..greenColor..value.." очков фокуса")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вам установлено "..greenColor..value.." очков фокуса")
+					end
+					
+				end
+			end
+		elseif (arguments[1] == "addfocus" and #arguments == 2 ) then
+			local value = arguments[2]
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if GM_target:HasAura(EBS_FOCUS_AURA) then
+					local focusAura = GM_target:GetAura(EBS_FOCUS_AURA)
+					local stackAmount = focusAura:GetStackAmount()
+					focusAura:SetStackAmount(stackAmount + value)
+					player:SendBroadcastMessage(GM_target:GetName().." добавлено "..greenColor..value.."|r очков фокуса!")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вам добавлено "..greenColor..value.." очков фокуса!")	
+					end
+					
+				else
+					player:SendBroadcastMessage("Существо не имеет ауры")
+				end
+			end
+		elseif (arguments[1] == "removefocus" and #arguments == 2 ) then
+			local value = arguments[2]
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if GM_target:HasAura(EBS_FOCUS_AURA) then
+					local focusAura = GM_target:GetAura(EBS_FOCUS_AURA)
+					local stackAmount = focusAura:GetStackAmount()
+					if stackAmount - value  < 1 then
+						GM_target:RemoveAura(EBS_FOCUS_AURA)
+						return false
+					end
+					focusAura:SetStackAmount(stackAmount - value)
+					player:SendBroadcastMessage(GM_target:GetName().." потерял "..greenColor..value.."|r очков фокуса!")
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("Вы потеряли "..greenColor..value.." очков фокуса!")	
+					end
+					
+				else
+					player:SendBroadcastMessage("Существо не имеет ауры")
+				end
+			end
+-- Конец добавления фокуса
 		elseif (arguments[1] == "seten" and #arguments == 2 ) then
 			local value = arguments[2]
 			local GM_target = player:GetSelectedUnit()
@@ -700,7 +930,6 @@ local function OnPlayerCommandWithArg(event, player, code)
 					
 					player:SendBroadcastMessage("На "..player:GetName().." наложен эффект "..purple.."\""..EBS_Auras[statusId].name.."\"|r мощностью "..redColor..value.."|r")
 				end
-				
 			end
 		elseif (arguments[1] == "removestatus" and #arguments == 2 ) then
 			local statusId = tonumber(arguments[2])
@@ -726,6 +955,356 @@ local function OnPlayerCommandWithArg(event, player, code)
 				
 				player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_Auras[statusId].name.."\"")
 			end
+-- Добавить новые статы
+		elseif (arguments[1] == "setaurastats" and #arguments == 3 ) then
+			local value = arguments[3]
+			local aurastatsId = tonumber(arguments[2])
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if tonumber(value) == 0 then
+					GM_target:RemoveAura(EBS_AuraStats[aurastatsId].id)
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("С вас снят эффект "..purple.."\""..EBS_AuraStats[aurastatsId].name.."\"")
+					end
+					
+					player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_AuraStats[aurastatsId].name.."\"")
+					return false
+				end
+				if GM_target:HasAura(EBS_AuraStats[aurastatsId].id) then
+					local aura = GM_target:GetAura(EBS_AuraStats[aurastatsId].id)
+					aura:SetStackAmount(value)
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("На вас установлен эффект "..purple.."\""..EBS_AuraStats[aurastatsId].name.."\"|r мощностью "..redColor..value.."|r")
+					end
+					
+					player:SendBroadcastMessage("На "..player:GetName().." установлен эффект "..purple.."\""..EBS_AuraStats[aurastatsId].name.."\"|r мощностью "..redColor..value.."|r")
+				else
+					local energyAura = GM_target:AddAura(EBS_AuraStats[aurastatsId].id,GM_target)
+					energyAura:SetStackAmount(value)
+					
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("На вас наложен эффект "..purple.."\""..EBS_AuraStats[aurastatsId].name.."\"|r мощностью "..redColor..value.."|r")
+					end
+					
+					player:SendBroadcastMessage("На "..player:GetName().." наложен эффект "..purple.."\""..EBS_AuraStats[aurastatsId].name.."\"|r мощностью "..redColor..value.."|r")
+				end
+			end
+		elseif (arguments[1] == "removeaurastats" and #arguments == 2 ) then
+			local aurastatsId = tonumber(arguments[2])
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				GM_target:RemoveAura(EBS_AuraStats[aurastatsId].id)
+				if GM_target:ToPlayer() then
+					GM_target:SendBroadcastMessage("С вас снят эффект "..purple.."\""..EBS_AuraStats[aurastatsId].name.."\"")
+				end
+				player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_AuraStats[aurastatsId].name.."\"")
+			end
+-- Конец добавления новых статов
+
+-- Добавить новые дебаффы
+		elseif (arguments[1] == "setdebuff" and #arguments == 3 ) then
+			local value = arguments[3]
+			local auradebuffId = tonumber(arguments[2])
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if tonumber(value) == 0 then
+					GM_target:RemoveAura(EBS_AuraDebuffs[auradebuffId].id)
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("С вас снят эффект "..purple.."\""..EBS_AuraDebuffs[auradebuffId].name.."\"")
+					end
+					
+					player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_AuraDebuffs[auradebuffId].name.."\"")
+					return false
+				end
+				if GM_target:HasAura(EBS_AuraDebuffs[auradebuffId].id) then
+					local aura = GM_target:GetAura(EBS_AuraDebuffs[auradebuffId].id)
+					aura:SetStackAmount(value)
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("На вас установлен эффект "..purple.."\""..EBS_AuraDebuffs[auradebuffId].name.."\"|r мощностью "..redColor..value.."|r")
+					end
+					
+					player:SendBroadcastMessage("На "..player:GetName().." установлен эффект "..purple.."\""..EBS_AuraDebuffs[auradebuffId].name.."\"|r мощностью "..redColor..value.."|r")
+				else
+					local energyAura = GM_target:AddAura(EBS_AuraDebuffs[auradebuffId].id,GM_target)
+					energyAura:SetStackAmount(value)
+					
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("На вас наложен эффект "..purple.."\""..EBS_AuraDebuffs[auradebuffId].name.."\"|r мощностью "..redColor..value.."|r")
+					end
+					
+					player:SendBroadcastMessage("На "..player:GetName().." наложен эффект "..purple.."\""..EBS_AuraDebuffs[auradebuffId].name.."\"|r мощностью "..redColor..value.."|r")
+				end
+			end
+		elseif (arguments[1] == "removedebuff" and #arguments == 2 ) then
+			local auradebuffId = tonumber(arguments[2])
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				GM_target:RemoveAura(EBS_AuraDebuffs[auradebuffId].id)
+				if GM_target:ToPlayer() then
+					GM_target:SendBroadcastMessage("С вас снят эффект "..purple.."\""..EBS_AuraDebuffs[auradebuffId].name.."\"")
+				end
+				player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_AuraDebuffs[auradebuffId].name.."\"")
+			end
+-- Конец добавления новых дебаффов
+
+-- Добавить новые баффы
+		elseif (arguments[1] == "setbuff" and #arguments == 3 ) then
+			local value = arguments[3]
+			local aurabuffId = tonumber(arguments[2])
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if tonumber(value) == 0 then
+					GM_target:RemoveAura(EBS_AuraBuffs[aurabuffId].id)
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("С вас снят эффект "..purple.."\""..EBS_AuraBuffs[aurabuffId].name.."\"")
+					end
+					
+					player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_AuraBuffs[aurabuffId].name.."\"")
+					return false
+				end
+				if GM_target:HasAura(EBS_AuraBuffs[aurabuffId].id) then
+					local aura = GM_target:GetAura(EBS_AuraBuffs[aurabuffId].id)
+					aura:SetStackAmount(value)
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("На вас установлен эффект "..purple.."\""..EBS_AuraBuffs[aurabuffId].name.."\"|r мощностью "..redColor..value.."|r")
+					end
+					
+					player:SendBroadcastMessage("На "..player:GetName().." установлен эффект "..purple.."\""..EBS_AuraBuffs[aurabuffId].name.."\"|r мощностью "..redColor..value.."|r")
+				else
+					local energyAura = GM_target:AddAura(EBS_AuraBuffs[aurabuffId].id,GM_target)
+					energyAura:SetStackAmount(value)
+					
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("На вас наложен эффект "..purple.."\""..EBS_AuraBuffs[aurabuffId].name.."\"|r мощностью "..redColor..value.."|r")
+					end
+					
+					player:SendBroadcastMessage("На "..player:GetName().." наложен эффект "..purple.."\""..EBS_AuraBuffs[aurabuffId].name.."\"|r мощностью "..redColor..value.."|r")
+				end
+			end
+		elseif (arguments[1] == "removebuff" and #arguments == 2 ) then
+			local aurabuffId = tonumber(arguments[2])
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				GM_target:RemoveAura(EBS_AuraBuffs[aurabuffId].id)
+				if GM_target:ToPlayer() then
+					GM_target:SendBroadcastMessage("С вас снят эффект "..purple.."\""..EBS_AuraBuffs[aurabuffId].name.."\"")
+				end
+				player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_AuraBuffs[aurabuffId].name.."\"")
+			end
+-- Конец добавления новых баффов
+
+-- Добавить новые раны
+		elseif (arguments[1] == "setharm" and #arguments == 3 ) then
+			local value = arguments[3]
+			local auraharmId = tonumber(arguments[2])
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if tonumber(value) == 0 then
+					GM_target:RemoveAura(EBS_AuraHarm[auraharmId].id)
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("С вас снят эффект "..purple.."\""..EBS_AuraHarm[auraharmId].name.."\"")
+					end
+					
+					player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_AuraHarm[auraharmId].name.."\"")
+					return false
+				end
+				if GM_target:HasAura(EBS_AuraHarm[auraharmId].id) then
+					local aura = GM_target:GetAura(EBS_AuraHarm[auraharmId].id)
+					aura:SetStackAmount(value)
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("На вас установлен эффект "..purple.."\""..EBS_AuraHarm[auraharmId].name.."\"|r мощностью "..redColor..value.."|r")
+					end
+					
+					player:SendBroadcastMessage("На "..player:GetName().." установлен эффект "..purple.."\""..EBS_AuraHarm[auraharmId].name.."\"|r мощностью "..redColor..value.."|r")
+				else
+					local energyAura = GM_target:AddAura(EBS_AuraHarm[auraharmId].id,GM_target)
+					energyAura:SetStackAmount(value)
+					
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("На вас наложен эффект "..purple.."\""..EBS_AuraHarm[auraharmId].name.."\"|r мощностью "..redColor..value.."|r")
+					end
+					
+					player:SendBroadcastMessage("На "..player:GetName().." наложен эффект "..purple.."\""..EBS_AuraHarm[auraharmId].name.."\"|r мощностью "..redColor..value.."|r")
+				end
+			end
+		elseif (arguments[1] == "removeharm" and #arguments == 2 ) then
+			local auraharmId = tonumber(arguments[2])
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				GM_target:RemoveAura(EBS_AuraHarm[auraharmId].id)
+				if GM_target:ToPlayer() then
+					GM_target:SendBroadcastMessage("С вас снят эффект "..purple.."\""..EBS_AuraHarm[auraharmId].name.."\"")
+				end
+				player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_AuraHarm[auraharmId].name.."\"")
+			end
+-- Конец добавления новых ран
+
+-- Добавить новые действия
+		elseif (arguments[1] == "setactions" and #arguments == 3 ) then
+			local value = arguments[3]
+			local auraactionsId = tonumber(arguments[2])
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				if tonumber(value) == 0 then
+					GM_target:RemoveAura(EBS_AuraActions[auraactionsId].id)
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("С вас снят эффект "..purple.."\""..EBS_AuraActions[auraactionsId].name.."\"")
+					end
+					
+					player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_AuraActions[auraactionsId].name.."\"")
+					return false
+				end
+				if GM_target:HasAura(EBS_AuraActions[auraactionsId].id) then
+					local aura = GM_target:GetAura(EBS_AuraActions[auraactionsId].id)
+					aura:SetStackAmount(value)
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("На вас установлен эффект "..purple.."\""..EBS_AuraActions[auraactionsId].name.."\"|r мощностью "..redColor..value.."|r")
+					end
+					
+					player:SendBroadcastMessage("На "..player:GetName().." установлен эффект "..purple.."\""..EBS_AuraActions[auraactionsId].name.."\"|r мощностью "..redColor..value.."|r")
+				else
+					local energyAura = GM_target:AddAura(EBS_AuraActions[auraactionsId].id,GM_target)
+					energyAura:SetStackAmount(value)
+					
+					if GM_target:ToPlayer() then
+						GM_target:SendBroadcastMessage("На вас наложен эффект "..purple.."\""..EBS_AuraActions[auraactionsId].name.."\"|r мощностью "..redColor..value.."|r")
+					end
+					
+					player:SendBroadcastMessage("На "..player:GetName().." наложен эффект "..purple.."\""..EBS_AuraActions[auraactionsId].name.."\"|r мощностью "..redColor..value.."|r")
+				end
+			end
+		elseif (arguments[1] == "removeactions" and #arguments == 2 ) then
+			local auraactionsId = tonumber(arguments[2])
+			local GM_target = player:GetSelectedUnit()
+			local targetCreature = GM_target:ToCreature()
+			local targetPlayer = GM_target:ToPlayer()
+			local IsInSameRaidWith
+			if targetPlayer then
+				IsInSameRaidWith = player:IsInSameRaidWith(targetPlayer)
+			end
+			local playerGroup = player:GetGroup()
+			local isLeader
+			if playerGroup then
+				isLeader = playerGroup:IsLeader(player:GetGUID())
+			end
+			
+			if player:GetGMRank() > 0 or (player:GetDmLevel() > 0 and targetCreature and targetCreature:GetOwner() == player) or (player:GetDmLevel() > 0 and IsInSameRaidWith and isLeader)then
+				GM_target:RemoveAura(EBS_AuraActions[auraactionsId].id)
+				if GM_target:ToPlayer() then
+					GM_target:SendBroadcastMessage("С вас снят эффект "..purple.."\""..EBS_AuraActions[auraactionsId].name.."\"")
+				end
+				player:SendBroadcastMessage("С "..player:GetName().." снят эффект "..purple.."\""..EBS_AuraActions[auraactionsId].name.."\"")
+			end
+-- Конец добавления новых действий
+
 		end
 		
 		
@@ -749,6 +1328,7 @@ local function OnPlayerCommandWithArg(event, player, code)
 			GM_target:RemoveAura(EBS_HP_AURA)
 			GM_target:RemoveAura(EBS_ARMOR_AURA)
 			GM_target:RemoveAura(EBS_ENERGY_AURA)
+			GM_target:RemoveAura(EBS_FOCUS_AURA)
 
 			if not GM_target:ToPlayer() then
 				setNpcStats(GM_target, ROLE_STAT_HEALTH, 0)

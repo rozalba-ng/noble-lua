@@ -107,12 +107,13 @@ local function gossipSelectPetMount(event, player, object, sender, intid, code, 
     if(creatorGUID == plGUID)then
         if (intid == 1 ) then
 			player:Dismount();
-			if(player:IsMounted() or player:HasAura(IS_IN_BATTLE_AURA) or listPlayersInBattle[player:GetName()] or player:IsInCombat() or phase > 1)then
+			if(player:IsMounted() or player:HasAura(IS_IN_BATTLE_AURA) or listPlayersInBattle[player:GetName()] or player:IsInCombat())then
 				player:GossipComplete()
 				player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500Пока вы не можете совершить данное действие (вы в бою, на другом маунте или в фазе). |cFF00CCFF|r");
 			else
 				local horse = PerformIngameSpawn( 1, entry+10000, map:GetMapId(), 0, object:GetX(), object:GetY(), object:GetZ()+0.2, object:GetO(), false, 0, 0, phase);
 				if(horse:IsInWorld())then
+					horse:SetPhaseMask(phase)
 					player:CastSpell(horse, 84022, true);
 					object:DespawnOrUnsummon();
 					if(petMountDataArray[pguidLow])then

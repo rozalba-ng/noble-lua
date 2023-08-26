@@ -16,6 +16,8 @@ blacksun_faction = 1173
 korus_faction = 1172
 zlato_faction = 1174
 theramore_faction = 1175
+brando_faction = 1177
+krasnogor_faction = 1179
 
 reputation_friendly = 3000
 reputation_honored = 9000
@@ -194,6 +196,32 @@ local function countQueltalasReputation(player)
     end
 end
 
+local function CountBrandoReputation(player)
+    local map = player:GetMapId()
+    local rep = 10
+    if (map == 9010) then
+        --	Игрок в Параисо
+        if ActionTime() then
+            --	Если время суперактива - идёт маленький бонус.
+            rep = rep + 5
+        end
+        player:SetReputation(brando_faction, player:GetReputation(brando_faction) + rep)
+    end
+end
+
+local function CountKrasnogorReputation(player)
+    local map, zone = player:GetMapId(), player:GetZoneId()
+    local rep = 10
+    if (map == 901 and (zone == 10197 or zone == 44)) then
+        --	Игрок в Красногорье
+        if ActionTime() then
+            --	Если время суперактива - идёт маленький бонус.
+            rep = rep + 10
+        end
+        player:SetReputation(krasnogor_faction, player:GetReputation(krasnogor_faction) + rep)
+    end
+end
+
 --[[Every 15 minutes runs script of online bonuses for all players in world]]
 local function calculateBonuses()
     local onlinePlayers = GetPlayersInWorld(2); --[[ 2-neutral, both horde and aliance]]
@@ -208,6 +236,8 @@ local function calculateBonuses()
                 countQueltalasReputation(player)
                 countZdReputation(player)
                 countTheramoreReputation(player)
+                CountBrandoReputation(player)
+                CountKrasnogorReputation(player)
             end
         end;
     end

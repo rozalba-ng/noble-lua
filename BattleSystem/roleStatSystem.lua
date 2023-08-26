@@ -70,12 +70,12 @@ local statBaseTreshold = {
     [ROLE_STAT_VERSA] = 0, -- сноровке
     [ROLE_STAT_WILL] = 0, -- воле
     [ROLE_STAT_SPIRIT] = 100, -- дух
-    [ROLE_STAT_CHARISMA] = 15, -- харизма
-    [ROLE_STAT_AVOID] = 15, -- избегание
-    [ROLE_STAT_LUCK] = 15, -- удача
-    [ROLE_STAT_STEALTH] = 15, -- скрытность
-    [ROLE_STAT_INIT] = 15, -- инициатива
-    [ROLE_STAT_PERCEPT] = 15, -- восприятие
+    [ROLE_STAT_CHARISMA] = 60, -- харизма
+    [ROLE_STAT_AVOID] = 60, -- избегание
+    [ROLE_STAT_LUCK] = 60, -- удача
+    [ROLE_STAT_STEALTH] = 60, -- скрытность
+    [ROLE_STAT_INIT] = 60, -- инициатива
+    [ROLE_STAT_PERCEPT] = 60, -- восприятие
 }
 
 statNpcDoDefRoll = {
@@ -120,8 +120,8 @@ local statnames = {
     [ROLE_STAT_AGLILITY] = "Ловкость",
     [ROLE_STAT_INTELLECT] = "Интеллект",
     [ROLE_STAT_STAMINA] = "Стойкость",
-    [ROLE_STAT_VERSA] = "Сноровка",
-    [ROLE_STAT_WILL] = "Воля",
+    [ROLE_STAT_VERSA] = "Физ. защита",
+    [ROLE_STAT_WILL] = "Маг. защита",
     [ROLE_STAT_SPIRIT] = "Дух",
     [ROLE_STAT_CHARISMA] = "Харизма", -- харизма
     [ROLE_STAT_AVOID] = "Избегание", -- избегание
@@ -167,12 +167,13 @@ function getDefRandByStatTypeAndTarget(stat, target)
 
     return math.random(100);
 end
-
+-- getFormattedRollMessage
 local function getFormattedRollMessage(attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand)
+    local nameColor, targetColor = "56819bff", "56819bff"
     if def_rand > 0 then
-        return string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r %u+%u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def, def_rand);
+        return string.format("|c%s%s|r использует |c56819bff%s|r %s |c%s%s|r. \nРезультат: |c%s%u|r (%u+%u) |c%s%s|r %u+%u - |c%s%s|r ", nameColor, roller_name, attack_type, action_type, targetColor, target_name, result_color, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, def_rand, result_color, result_text);
     else
-        return string.format("%s действие %s %s %s |c%s%s|r. \n(%u+%u |c%s%s|r порог %u)", attack_type, roller_name, action_type, target_name, result_color, result_text, player_att, att_rand, result_color, result_symbol, target_def);
+        return string.format("|c%s%s|r использует |c56819bff%s|r %s |c%s%s|r. \nРезультат: |c%s%u|r (%u+%u) |c%s%s|r порог %u - |c%s%s|r", nameColor, roller_name, attack_type, action_type, targetColor, target_name, result_color, (player_att + att_rand), player_att, att_rand, result_color, result_symbol, target_def, result_color, result_text);
     end
 end
 
@@ -311,56 +312,56 @@ end
 
 function attackRoll(roller, target, spellid)
     local stat = 0;
-    local attack_type = "Силовое";
+    local attack_type = "Сила";
     local action_type = "против"
     if (spellid == 88005 or spellid == "1" or string.upper(spellid) == "С") then
         stat = 0;
-        attack_type = "Силовое";
+        attack_type = "Сила";
     elseif (spellid == 88006 or spellid == "2" or string.upper(spellid) == "Л") then
         stat = 1;
-        attack_type = "Ловкое";
+        attack_type = "Ловкость";
     elseif (spellid == 88007 or spellid == "3" or string.upper(spellid) == "И") then
         stat = 2;
-        attack_type = "Магическое";
+        attack_type = "Интеллект";
     elseif ((spellid == 88008 or spellid == "4" or string.upper(spellid) == "Х") and roller:ToPlayer()) then
         stat = 6;
-        attack_type = "Исцеляющее";
+        attack_type = "Дух";
         action_type = "на";
     elseif ((spellid == 91154 or spellid == "5" or string.upper(spellid) == "СТ") and roller:ToPlayer()) then
         stat = 3;
-        attack_type = "Защитное (стойкость)";
+        attack_type = "Стойкость";
         action_type = "от";
     elseif ((spellid == 91155 or spellid == "6" or string.upper(spellid) == "СН") and roller:ToPlayer()) then
         stat = 4;
-        attack_type = "Защитное (сноровка)";
+        attack_type = "Физическая устойчивость";
         action_type = "от";
     elseif ((spellid == 91156 or spellid == "7" or string.upper(spellid) == "ВО") and roller:ToPlayer()) then
         stat = 5;
-        attack_type = "Защитное (воля)";
+        attack_type = "Магическая устойчивость";
         action_type = "от";
     elseif ((spellid == 91157 or spellid == "8" or string.upper(spellid) == "ХА") and roller:ToPlayer()) then
         stat = 7;
-        attack_type = "Специальное (харизма)";
+        attack_type = "Харизма";
         action_type = "на";
     elseif ((spellid == 91158 or spellid == "9" or string.upper(spellid) == "ИЗ") and roller:ToPlayer()) then
         stat = 8;
-        attack_type = "Специальное (избегание)";
+        attack_type = "Избегание";
         action_type = "на";
     elseif ((spellid == 91159 or spellid == "10" or string.upper(spellid) == "УД") and roller:ToPlayer()) then
         stat = 9;
-        attack_type = "Специальное (удача)";
+        attack_type = "Удача";
         action_type = "на";
     elseif ((spellid == 91160 or spellid == "11" or string.upper(spellid) == "СК") and roller:ToPlayer()) then
         stat = 10;
-        attack_type = "Специальное (скрытность)";
+        attack_type = "Скрытность";
         action_type = "на";
     elseif ((spellid == 91161 or spellid == "12" or string.upper(spellid) == "ИН") and roller:ToPlayer()) then
         stat = 11;
-        attack_type = "Специальное (инициатива)";
+        attack_type = "Инициатива";
         action_type = "на";
     elseif ((spellid == 91162 or spellid == "13" or string.upper(spellid) == "ВО") and roller:ToPlayer()) then
         stat = 12;
-        attack_type = "Специальное (восприятие)";
+        attack_type = "Восприятие";
         action_type = "на";
     end
 
@@ -543,11 +544,12 @@ function attackRoll(roller, target, spellid)
 		
 		-- mayday begin
 		
-		if (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
-			-- stat = 0;
+		if  roller:ToPlayer() and (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
 			player_att = player_att/2;
-			target_def = target_def/2;
-		end
+        end
+        if  target:ToPlayer() and (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
+            target_def = target_def/2;
+        end
 		
 		-- mayday end	
 		
@@ -781,7 +783,7 @@ function attackRoll(roller, target, spellid)
 		
 		-- mayday begin
 		
-		if (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
+		if roller:ToPlayer() and (spellid == 88005 or spellid == 88006 or spellid == 88007 or spellid == 88008 or spellid == 91154 or spellid == 91155 or spellid == 91156 or spellid == "1" or spellid == "2" or spellid == "3" or spellid == "4" or spellid == "5" or spellid == "6" or spellid == "7" or string.upper(spellid) == "С" or string.upper(spellid) == "Л" or string.upper(spellid) == "И" or string.upper(spellid) == "Х" or string.upper(spellid) == "СТ" or string.upper(spellid) == "СН" or string.upper(spellid) == "ВО") then
 			-- stat = 0;
 			player_att = player_att/2;
 		end
@@ -942,7 +944,7 @@ local function OnPlayerCommandWithArg(event, player, code)
                             end
                         end
 
-                        player:SendBroadcastMessage("Всем существам с именем " .. greenColor .. "\"" .. GM_target:GetName() .. "\"|r в радиусе 50 ярдов установлены характеристики: сила: " .. strength .. " ловкость: " .. agila .. "  инта: " .. inta .. "  стойкость: " .. stamina .. "  сноровка: " .. versa .. "  воля: " .. will .. "  здоровье: " .. hpval .. "  броня: " .. ammoval)
+                        player:SendBroadcastMessage("Всем существам с именем " .. greenColor .. "\"" .. GM_target:GetName() .. "\"|r в радиусе 50 ярдов установлены характеристики: сила: " .. strength .. " ловкость: " .. agila .. "  инта: " .. inta .. "  стойкость: " .. stamina .. "  физ.защита: " .. versa .. "  маг.защита: " .. will .. "  здоровье: " .. hpval .. "  броня: " .. ammoval)
                     else
                         player:SendBroadcastMessage("Возьмите в цель нпс, сейчас выбран игрок")
                     end
@@ -960,6 +962,28 @@ local function OnPlayerCommandWithArg(event, player, code)
                 loadAllCreatureTemplateRollStats();
                 player:SendBroadcastMessage("Статы перезагружены")
             end
+        elseif (arguments[1] == "checknpcstat") then
+            if player:GetGMRank() < 1 then
+                return
+            end
+
+            local GM_target = player:GetSelectedUnit()
+            if not GM_target then
+                player:SendBroadcastMessage("Выберите цель (нпс)")
+                return
+            end
+
+            if GM_target:ToPlayer() then
+                player:SendBroadcastMessage("Выберите в цель нпс")
+                return
+            end
+            local targ = GM_target:ToCreature()
+            if not targ then
+                player:SendBroadcastMessage("Выберите в цель - нпс")
+                return
+            end
+            player:SendBroadcastMessage("Характеристики нпс-цели:")
+            getNpcStatsPrint(player, targ)
         end
     end
 end

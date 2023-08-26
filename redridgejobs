@@ -1,0 +1,19 @@
+local QUEST_ID = 110297
+local REQUIRED_ITEM_ID = 5103329
+local REWARD_ITEM_ID = 5103330
+local GAMEOBJECT_ID = 530853
+
+local function OnGameObjectUse(event, player, object)
+    if event == 18 then -- Check for the right event ID (GAMEOBJECT_EVENT_ON_USE)
+        if player:HasQuest(QUEST_ID) and player:HasItem(REQUIRED_ITEM_ID) then
+            player:SendBroadcastMessage("123")
+            player:RemoveItem(REQUIRED_ITEM_ID, 1)
+            player:AddItem(REWARD_ITEM_ID, 1)
+            player:SendBroadcastMessage("You successfully used the object and received a reward!")
+        else
+            player:SendBroadcastMessage("You do not meet the requirements to use this object.")
+        end
+    end
+end
+
+RegisterGameObjectEvent(GAMEOBJECT_ID, 18, OnGameObjectUse) -- GAMEOBJECT_EVENT_ON_USE

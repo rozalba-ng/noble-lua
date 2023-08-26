@@ -473,10 +473,14 @@ local function OnPlayerCommand(event, player, command)
 			player:SendBroadcastMessage("skin: "..custQ:GetUInt32(0).." face: "..custQ:GetUInt32(1).." hairStyle: "..custQ:GetUInt32(2).." hairColor: "..custQ:GetUInt32(3).." facialStyle: "..custQ:GetUInt32(4));
 		end        
     elseif (string.match(command, 'areasound %d+$')) then -- Звук на область
-        if(player:GetGMRank() >= 2)then
+        if(player:GetGMRank() >= 1)then
             local sound = tonumber(string.match(command, '%d+$'));
             player:PlayDistanceSound(sound);            
         end
+        return false
+    elseif (string.match(command, 'playsound %d+$')) then -- Звук себе
+        local sound = tonumber(string.match(command, '%d+$'));
+        player:PlayDistanceSound(sound, player);
         return false
     elseif (string.match(command, 'goblever %d+ %d+$')) then -- Привязка телепорта к гошке
         if(player:GetGMRank() > 1)then

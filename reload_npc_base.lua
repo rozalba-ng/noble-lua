@@ -6,8 +6,13 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local function ReloadAllNPCDatabases()
-    ReloadAllNPC()
+function ReloadAllNPCDatabases()
+	if SocialTime() then
+		return false	
+	else
+		ReloadAllNPC()
+	end
+	
     --[[local players = GetPlayersInWorld()
     for i = 1, #players do
         if players[i]:GetGMRank() > 0 or players[i]:GetDmLevel() >= 1 then
