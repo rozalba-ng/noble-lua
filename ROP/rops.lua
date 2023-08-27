@@ -1,32 +1,32 @@
+-- Разобраться с AIO
 local AIO = AIO or require("AIO")
+local ROPHandlers = AIO.AddHandlers("ROPHandlers", {})
 
-local GET_ROPS = "SELECT id, char_id, title, nop FROM character_nops"
-local GET_CHAR_ID = "SELECT guid FROM characters"
+local GET_INFO = "SELECT character_nops.id, character_nops.char_id, character_nops.title, character_nops.nop FROM character_nops LEFT JOIN characters ON character_nops.char_id = characters.guid WHERE characters.guid = "
 
-function TestRop()
-	local results = queryDatabase(GET_ROPS)
+function TestRop(player)
+	local playerGuid = player:GetGUIDLow()
+    local result = CharDBQuery(GET_INFO ..playerGuid)
+    if result then
+		
+		local id = result:GetUInt32(0)
+		local char_id = result:GetUInt32(1)
+		local title = result:GetString(2)
+		local nop = result:GetString(3)
 	
-	if results then
-        for _, row in ipairs(results) do
-            local id = row.id
-            local char_id = row.char_id
-            local title = row.title
-            local nop = row.nop
-
-            if nop == 2501 then
-                print(string.format("id: %d, char_id: %d, title: %s, nop: %d", id, char_id, title, nop))
-            end
-        end
+		player:SendBroadcastMessage(id)
+		player:SendBroadcastMessage(char_id)
+		player:SendBroadcastMessage(title)
+		player:SendBroadcastMessage(nop)
     else
-        player:SendBroadcastMassage("Ошибка!") 
+        player:SendBroadcastMessage("У персонажа нет РОПов!")
     end
 end
 
-local function OnCommand (event, player, command)
-	if command == "testrop" then
-		--TestRop()
-		player:SendBroadcastMassage("Успех!") 
-	end
+local function OnCommand(event, player, command)
+    if command == "rops" then
+        TestRop(player)
+    end
 end
 
-RegisterPlayerEvent (42, OnCommand)
+RegisterPlayerEvent(42, OnCommand)
