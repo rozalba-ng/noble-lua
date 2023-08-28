@@ -6,8 +6,8 @@ local GET_INFO = "SELECT character_nops.id, character_nops.char_id, character_no
 
 function SendTargetROPs(player, target)
 	local target = player:GetSelectedUnit()
-    local targetGuid = target:GetGUIDLow()
-    local result = CharDBQuery(GET_INFO ..targetGuid)
+    local target = target:GetGUIDLow()
+    local result = CharDBQuery(GET_INFO ..target)
 	local rowCount = result:GetRowCount()
     if result then
 		local ropsd = ropsd or {}
@@ -34,7 +34,6 @@ function SendROPs(player)
     local playerGuid = player:GetGUIDLow()
     local result = CharDBQuery(GET_INFO ..playerGuid)
 	local rowCount = result:GetRowCount()
-	print(result[1])
     if result then
 		local rops = rops or {}
 		for i = 1, rowCount do		
