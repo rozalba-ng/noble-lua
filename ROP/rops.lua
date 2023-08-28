@@ -65,8 +65,8 @@ end
 
 RegisterPlayerEvent(42, OnCommand)
 
-local function OnLogin(event, player)
-	SendROPs(player)
+local function OnLogin(event, player, target)
+    SendROPs(player)
 	SendTargetROPs(player, target)
 end
 
