@@ -5,8 +5,10 @@ local ROPHandler = AIO.AddHandlers("ROPHandler", {})
 local GET_INFO = "SELECT character_nops.id, character_nops.char_id, character_nops.title, character_nops.nop FROM character_nops LEFT JOIN characters ON character_nops.char_id = characters.guid WHERE characters.guid = "
 
 function SendTargetROPs(player, target)
-	local target = "" or player:GetSelectedUnit()
+	local target = player:GetSelectedUnit() or 1
+	print("target: " ..target)
     local targetGuid = target:GetGUIDLow()
+	print("targetGuid: " ..targetGuid)
     local result = CharDBQuery(GET_INFO ..targetGuid)
 	local rowCount = result:GetRowCount()
     if result then
