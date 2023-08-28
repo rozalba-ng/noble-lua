@@ -51,7 +51,6 @@ end
 local function OnCommand(event, player, command)
     if command == "rops" then
         SendROPs(player)
-		SendTargetROPs(player)
     end
 end
 
@@ -62,3 +61,11 @@ local function OnLogin(event, player)
 end
 
 RegisterPlayerEvent(3, OnLogin)
+
+local function OnTargetCommand(event, player, command)
+    if command == "ropsd" then
+        SendTargetROPs(player)
+    end
+end
+
+RegisterPlayerEvent(42, OnTargetCommand)
