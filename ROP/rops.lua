@@ -70,4 +70,4 @@ local function OnLogin(event, player)
 	SendTargetROPs(player, target)
 end
 
-RegisterPlayerEvent(3, OnCommand)
+RegisterPlayerEvent(3, OnLogin)
