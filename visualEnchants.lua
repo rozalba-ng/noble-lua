@@ -1,7 +1,3 @@
-local chance = 0.25
-
--- Do not edit anything below
-
 local charactersSQL = [[
 CREATE TABLE IF NOT EXISTS `custom_item_enchant_visuals` (
     `iguid` INT(10) UNSIGNED NOT NULL COMMENT 'item DB guid',
@@ -82,23 +78,33 @@ RegisterPlayerEvent(29, function(e,p,i,b,s) setVisual(p, i) end)
 local E = {[0] = 0, 3789, 3854, 3273, 3225, 3870, 1899, 2674, 2675, 2671, 2672, 3365, 2673, 2343, 425, 3855, 1894, 1103, 1898, 3345, 1743, 3093, 1900, 3846, 1606, 283, 1, 3265, 2, 3, 3266, 1903, 13, 26, 7, 803, 1896, 2666, 25}
 local slots = {EQUIPMENT_SLOT_MAINHAND = EQUIPMENT_SLOT_MAINHAND, EQUIPMENT_SLOT_OFFHAND = EQUIPMENT_SLOT_OFFHAND}
 
-
-local function OnCommand( event, player, command )
-	if string.find( command, " " ) then
-		local command = string.split( command, " " )
-		if command[1] == "setvisual" then
-		local slot = tonumber(command[2])
-		local idvisual = tonumber(command[3])
-		local equippedItem = player:GetEquippedItemBySlot( slots[slot] )
-		setVisual( player, equippedItem, E[idvisual] )
-		end
-	end
+local function OnCommand(event, player, command)
+    local _, _, cmd, slot, enchantment = string.find(command, "(%S+)%s(%d+)%s(%d+)")
+    
+    if cmd == "setvisual" and slot and enchantment then
+        slot = tonumber(slot)
+        enchantment = tonumber(enchantment)
+        
+        if (slot == 1 or slot == 2) and E[enchantment] then
+            local equippedItem = nil
+            
+            if slot == 1 then
+                equippedItem = player:GetEquippedItemBySlot(EQUIPMENT_SLOT_MAINHAND)
+            elseif slot == 2 then
+                equippedItem = player:GetEquippedItemBySlot(EQUIPMENT_SLOT_OFFHAND)
+            end
+            
+            if equippedItem then
+                setVisual(player, equippedItem, E[enchantment]) 
+            else
+                player:SendBroadcastMessage("В руке нет оружия для установки зачарования.")
+            end
+        elseif not E[enchantment] then
+            player:SendBroadcastMessage("Недопустимый номер зачарования.")
+        else
+            player:SendBroadcastMessage("Недопустимый слот руки.")
+        end
+    end
 end
 
-RegisterPlayerEvent( 42, OnCommand )
-
-
-
-
-
-
+RegisterPlayerEvent(42, OnCommand)
