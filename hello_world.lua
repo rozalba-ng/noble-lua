@@ -173,8 +173,8 @@ function checkBrw1Donations(player)
     local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='brw_mount_1'");
     if(result ~= nil) then
 
-        if((player:HasItem(mount_raptor_id) or player:HasSpell(mount_raptor_id)) == false) then
-            local added = player:AddItem(mount_raptor_id);
+        if((player:HasItem(brw_mount_1) or player:HasSpell(brw_mount_1)) == false) then
+            local added = player:AddItem(brw_mount_1);
             if(added == nil)then
                 SendMail( "Джунглевый раптор", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_1, 1 )
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник отправлен по почте. Приятной игры!");
@@ -189,8 +189,8 @@ function checkBrw2Donations(player)
     local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='brw_mount_2'");
     if(result ~= nil) then
 
-        if((player:HasItem(mount_raptor_id) or player:HasSpell(mount_raptor_id)) == false) then
-            local added = player:AddItem(mount_raptor_id);
+        if((player:HasItem(brw_mount_2) or player:HasSpell(brw_mount_2)) == false) then
+            local added = player:AddItem(brw_mount_2);
             if(added == nil)then
                 SendMail( "Джунглевый раптор", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_2, 1 )
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник отправлен по почте. Приятной игры!");
@@ -205,8 +205,8 @@ function checkBrw3Donations(player)
     local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='brw_mount_3'");
     if(result ~= nil) then
 
-        if((player:HasItem(mount_raptor_id) or player:HasSpell(mount_raptor_id)) == false) then
-            local added = player:AddItem(mount_raptor_id);
+        if((player:HasItem(brw_mount_3) or player:HasSpell(brw_mount_3)) == false) then
+            local added = player:AddItem(brw_mount_3);
             if(added == nil)then
                 SendMail( "Джунглевый раптор", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_3, 1 )
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник отправлен по почте. Приятной игры!");
@@ -221,8 +221,8 @@ function checkBrw4Donations(player)
     local result = AuthDBQuery("SELECT * FROM donations WHERE accountId = "..accountId .." and donateType='brw_mount_4'");
     if(result ~= nil) then
 
-        if((player:HasItem(mount_raptor_id) or player:HasSpell(mount_raptor_id)) == false) then
-            local added = player:AddItem(mount_raptor_id);
+        if((player:HasItem(brw_mount_4) or player:HasSpell(brw_mount_4)) == false) then
+            local added = player:AddItem(brw_mount_4);
             if(added == nil)then
                 SendMail( "Джунглевый раптор", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_4, 1 )
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник отправлен по почте. Приятной игры!");
