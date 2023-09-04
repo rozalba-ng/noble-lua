@@ -176,7 +176,7 @@ function checkBrw1Donations(player)
         if((player:HasItem(brw_mount_1) or player:HasSpell(brw_mount_1)) == false) then
             local added = player:AddItem(brw_mount_1);
             if(added == nil)then
-                SendMail( "Джунглевый раптор", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_1, 1 )
+                SendMail( "Боевой конь Орды", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_1, 1 )
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник отправлен по почте. Приятной игры!");
             else
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентарь добавлен выбранный вами ездовой спутник. Приятной игры!");
@@ -192,7 +192,7 @@ function checkBrw2Donations(player)
         if((player:HasItem(brw_mount_2) or player:HasSpell(brw_mount_2)) == false) then
             local added = player:AddItem(brw_mount_2);
             if(added == nil)then
-                SendMail( "Джунглевый раптор", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_2, 1 )
+                SendMail( "Боевой волк Альянса", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_2, 1 )
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник отправлен по почте. Приятной игры!");
             else
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентарь добавлен выбранный вами ездовой спутник. Приятной игры!");
@@ -208,7 +208,7 @@ function checkBrw3Donations(player)
         if((player:HasItem(brw_mount_3) or player:HasSpell(brw_mount_3)) == false) then
             local added = player:AddItem(brw_mount_3);
             if(added == nil)then
-                SendMail( "Джунглевый раптор", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_3, 1 )
+                SendMail( "Парадный конь Альянса", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_3, 1 )
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник отправлен по почте. Приятной игры!");
             else
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентарь добавлен выбранный вами ездовой спутник. Приятной игры!");
@@ -224,7 +224,7 @@ function checkBrw4Donations(player)
         if((player:HasItem(brw_mount_4) or player:HasSpell(brw_mount_4)) == false) then
             local added = player:AddItem(brw_mount_4);
             if(added == nil)then
-                SendMail( "Джунглевый раптор", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_4, 1 )
+                SendMail( "Навьюченный мул", "Мы не смогли разместить спутника в вашем инвентаре. Приятной игры!", player:GetGUIDLow(), 0, 61, 0, 0, 0, brw_mount_4, 1 )
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентаре нет места. Выбранный вами ездовой спутник отправлен по почте. Приятной игры!");
             else
                 player:SendBroadcastMessage("|cFF00CC99|r |cFFFFA500В инвентарь добавлен выбранный вами ездовой спутник. Приятной игры!");
