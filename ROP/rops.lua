@@ -69,11 +69,11 @@ end
 RegisterPlayerEvent(42, OnTargetCommand)
 
 local ropDistance = 20
-ROPHandler.PrintROPs = function(title)
+ROPHandler.PrintROPs = function(player, title)
 	local nearPlayers = player:GetPlayersInRange(ropDistance)
 	local playerName = player:GetName()
 	if nearPlayers then
-		for i = i, #nearPlayers do
+		for i = 1, #nearPlayers do
 			nearPlayers[i]:SendBroadcastMessage(playerName.. " использует [" ..title.. "]!")
 		end
 	end
