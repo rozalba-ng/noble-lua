@@ -69,7 +69,7 @@ end
 RegisterPlayerEvent(42, OnTargetCommand)
 
 local ropDistance = 20
-ROPHandler.PrintROPs = function(player, title)
+ROPHandler.PrintROPs = function(title)
 	local nearPlayers = player:GetPlayersInRange(ropDistance)
 	local playerName = player:GetName()
 	if nearPlayers then
