@@ -77,4 +77,6 @@ ROPHandler.PrintROPs = function(player, title)
 			nearPlayers[i]:SendBroadcastMessage(playerName.. " использует [" ..title.. "]!")
 		end
 	end
+	player:SendBroadcastMessage(playerName.. " использует [" ..title.. "]!")
+	return false
 end
