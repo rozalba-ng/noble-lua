@@ -68,15 +68,41 @@ end
 
 RegisterPlayerEvent(42, OnTargetCommand)
 
+local function CheckTitleOwnershipInDatabase(player, title)
+    local query = "SELECT COUNT(*) FROM character_nops WHERE char_id = " .. player:GetGUIDLow() .. " AND title = " .. CharDBEscape(title)
+    local result = CharDBQuery(query)
+
+    if result then
+        local count = result:GetUInt32(0)
+        if count > 0 then
+            return true
+        end
+    end
+
+    return false
+end
+
 local ropDistance = 20
 ROPHandler.PrintROPs = function(player, title)
-	local nearPlayers = player:GetPlayersInRange(ropDistance)
-	local playerName = player:GetName()
-	if nearPlayers then
-		for i = 1, #nearPlayers do
-			nearPlayers[i]:SendBroadcastMessage(playerName.. " использует [" ..title.. "]!")
-		end
-	end
-	player:SendBroadcastMessage(playerName.. " использует [" ..title.. "]!")
-	return false
+    local playerName = player:GetName()
+
+    -- Проверяем, принадлежит ли title персонажу
+    if not CheckTitleOwnershipInDatabase(player, title) then
+        return false
+    end
+
+    local nearPlayers = player:GetPlayersInRange(ropDistance)
+
+    if nearPlayers then
+        for i = 1, #nearPlayers do
+            nearPlayers[i]:SendBroadcastMessage(playerName .. " использует [" .. title .. "]!")
+        end
+    end
+
+    player:SendBroadcastMessage(playerName .. " использует [" .. title .. "]!")
+    return false
+end
+
+local function GetTitleFromClient(title)
+	AIO.Handle("ROPHandler", "PrintROPs", title)
 end
