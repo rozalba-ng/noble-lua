@@ -70,8 +70,8 @@ RegisterPlayerEvent(42, OnTargetCommand)
 
 local ropDistance = 20
 ROPHandler.PrintROPs = function(player, title)
-	local checkQuery = "SELECT COUNT(*) FROM character_nops WHERE char_id = " .. player:GetGUIDLow() .. " AND title = " .. CharDBEscape(title)
-	local checkResult = CharDBQuery(checkQuery)
+	local checkQuery = "SELECT COUNT(*) FROM character_nops WHERE char_id = ? AND title = ?"
+	local checkResult = CharDBQuery(checkQuery, player:GetGUIDLow(), title)
 	if checkResult then
 		local countROP = checkResult:GetUInt32(0)
 		if countROP > 0 then
@@ -79,15 +79,12 @@ ROPHandler.PrintROPs = function(player, title)
 			local playerName = player:GetName()
 			if nearPlayers then
 				for i = 1, #nearPlayers do
-					nearPlayers[i]:SendBroadcastMessage(playerName.. " использует [" ..title.. "]!")
+					nearPlayers[i]:SendBroadcastMessage(playerName .. " использует [" .. title .. "]!")
 				end
 			end
-			player:SendBroadcastMessage(playerName.. " использует [" ..title.. "]!")
-			return false
-		else
-			return false
+			player:SendBroadcastMessage(playerName .. " использует [" .. title .. "]!")
+			return true
 		end
-	else
-		return false
 	end
+	return false
 end
