@@ -68,20 +68,6 @@ end
 
 RegisterPlayerEvent(42, OnTargetCommand)
 
---[[ local function CheckTitleOwnershipInDatabase(player, title)
-    local query = "SELECT COUNT(*) FROM character_nops WHERE char_id = " .. player:GetGUIDLow() .. " AND title = " .. CharDBEscape(title)
-    local result = CharDBQuery(query)
-
-    if result then
-        local count = result:GetUInt32(0)
-        if count > 0 then
-            return true
-        end
-    end
-
-    return false
-end ]]
-
 local ropDistance = 20
 ROPHandler.PrintROPs = function(player, title)
 	local nearPlayers = player:GetPlayersInRange(ropDistance)
@@ -92,7 +78,3 @@ ROPHandler.PrintROPs = function(player, title)
 		end
 	end
 end
-
---[[ local function GetTitleFromClient(title)
-	AIO.Handle("ROPHandler", "PrintROPs", title)
-end ]]
