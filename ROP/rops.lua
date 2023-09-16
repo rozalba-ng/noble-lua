@@ -70,8 +70,8 @@ RegisterPlayerEvent(42, OnTargetCommand)
 
 local ropDistance = 20
 ROPHandler.PrintROPs = function(player, title)
-	local checkQuery = "SELECT COUNT(*) FROM character_nops WHERE char_id = ? AND title = ?"
-	local checkResult = CharDBQuery(checkQuery, player:GetGUIDLow(), title)
+	local checkQuery = "SELECT COUNT(*) FROM character_nops WHERE char_id = " .. player:GetGUIDLow() .. " AND title = " .. title
+	local checkResult = CharDBQuery(checkQuery)
 	if checkResult then
 		local countROP = checkResult:GetUInt32(0)
 		if countROP > 0 then
