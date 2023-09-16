@@ -80,3 +80,7 @@ ROPHandler.PrintROPs = function(player, title)
 	player:SendBroadcastMessage(playerName.. " использует [" ..title.. "]!")
 	return false
 end
+
+local function GetVarData(title)
+	AIO.Handle("ROPHandler", "PrintROPs", title)
+end
