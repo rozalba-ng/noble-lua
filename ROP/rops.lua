@@ -68,7 +68,7 @@ end
 
 RegisterPlayerEvent(42, OnTargetCommand)
 
-local function CheckTitleOwnershipInDatabase(player, title)
+--[[ local function CheckTitleOwnershipInDatabase(player, title)
     local query = "SELECT COUNT(*) FROM character_nops WHERE char_id = " .. player:GetGUIDLow() .. " AND title = " .. CharDBEscape(title)
     local result = CharDBQuery(query)
 
@@ -80,29 +80,19 @@ local function CheckTitleOwnershipInDatabase(player, title)
     end
 
     return false
-end
+end ]]
 
 local ropDistance = 20
 ROPHandler.PrintROPs = function(player, title)
-    local playerName = player:GetName()
-
-    -- Проверяем, принадлежит ли title персонажу
-    if not CheckTitleOwnershipInDatabase(player, title) then
-        return false
-    end
-
-    local nearPlayers = player:GetPlayersInRange(ropDistance)
-
-    if nearPlayers then
-        for i = 1, #nearPlayers do
-            nearPlayers[i]:SendBroadcastMessage(playerName .. " использует [" .. title .. "]!")
-        end
-    end
-
-    player:SendBroadcastMessage(playerName .. " использует [" .. title .. "]!")
-    return false
+	local nearPlayers = player:GetPlayersInRange(ropDistance)
+	local playerName = player:GetName()
+	if nearPlayers then
+		for i = 1, #nearPlayers do
+			nearPlayers[i]:SendBroadcastMessage(playerName.. " использует [" ..title.. "]!")
+		end
+	end
 end
 
-local function GetTitleFromClient(title)
+--[[ local function GetTitleFromClient(title)
 	AIO.Handle("ROPHandler", "PrintROPs", title)
-end
+end ]]
