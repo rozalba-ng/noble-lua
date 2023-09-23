@@ -96,7 +96,7 @@ local function OnCommand(event, player, command)
             
             if equippedItem then
                 setVisual(player, equippedItem, E[enchantment])
-                player:SendBroadcastMessage("Зачарование установлено на " .. slot .. "1-й слот.")
+                player:SendBroadcastMessage("Зачарование установлено на " .. slot .. "-й слот.")
             else
                 player:SendBroadcastMessage("В руке нет оружия для установки зачарования.")
             end
