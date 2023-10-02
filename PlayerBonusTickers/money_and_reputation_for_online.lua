@@ -223,7 +223,7 @@ local function CountKrasnogorReputation(player)
     end
 end
 
-local function CountKrasnogorReputation(player)
+local function CountHordeReputation(player)
     local map, zone = player:GetMapId(), player:GetZoneId()
     local rep = 10
     if (map == 901 and (zone == 3)) then
@@ -252,6 +252,7 @@ local function calculateBonuses()
                 countTheramoreReputation(player)
                 CountBrandoReputation(player)
                 CountKrasnogorReputation(player)
+                CountHordeReputation(player)
             end
         end;
     end
