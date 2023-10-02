@@ -18,6 +18,7 @@ zlato_faction = 1174
 theramore_faction = 1175
 brando_faction = 1177
 krasnogor_faction = 1179
+horde_faction = 1166
 
 reputation_friendly = 3000
 reputation_honored = 9000
@@ -219,6 +220,19 @@ local function CountKrasnogorReputation(player)
             rep = rep + 10
         end
         player:SetReputation(krasnogor_faction, player:GetReputation(krasnogor_faction) + rep)
+    end
+end
+
+local function CountKrasnogorReputation(player)
+    local map, zone = player:GetMapId(), player:GetZoneId()
+    local rep = 10
+    if (map == 901 and (zone == 3)) then
+        --	Игрок в Бесплодных
+        if ActionTime() then
+            --	Если время суперактива - идёт маленький бонус.
+            rep = rep + 10
+        end
+        player:SetReputation(horde_faction, player:GetReputation(horde_faction) + rep)
     end
 end
 
