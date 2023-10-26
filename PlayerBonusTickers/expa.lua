@@ -143,7 +143,7 @@ local function countExpForPlayers(usersList, expTbl)
                 elseif comment == EXTRA_COMMENT then
                     expTbl[charGuid].extraExp = expTbl[charGuid].extraExp + exp
                 elseif comment == REWARD_COMMENT then
-                    expTbl[charGuid].extraExp = expTbl[charGuid].extraExp + exp
+                    expTbl[charGuid].rewardExp = expTbl[charGuid].rewardExp + exp
                 else
                     expTbl[charGuid].bonusExp = expTbl[charGuid].bonusExp + exp
                 end
