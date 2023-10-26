@@ -20,6 +20,7 @@ local BOOSTER_SPELL_X2 = 91341
 
 local ONLINE_COMMENT = 'online' -- используется для начислений за онлайн, действуют модификаторы и множители
 local EXTRA_COMMENT = 'extra' -- используется для начислений при дополнительном опыте или пеерносе - можификаторы не действуют, предел 14 левл
+local REWARD_COMMENT = 'reward'-- используется для наградных награждений, до 20-го уровня включительно
 -- для остальных бонусов предел 18-й левл, так что для опыта за прошлые полигоны всегда надо ставить коммент extra
 
 local function addExtraExp(player, exp)
@@ -73,6 +74,31 @@ local function addBonusExp(player, exp)
 
 end
 
+local function addRewardExp(player, exp)
+    if exp == 0 then
+        return
+    end
+
+    local currentLevel = player:GetNobleLevel()
+
+    if currentLevel >= 20 then -- бонусное хп выше 20-го не начисляется
+        player:SendBroadcastMessage("Начисление наградного опыта невозможно: персонаж выше 20-го уровня.")
+        return
+    end
+
+    player:AddNobleXp(exp)
+    player:SendBroadcastMessage("Начислен наградной опыт: " .. tostring(exp) )
+
+    currentLevel = player:GetNobleLevel()
+    if currentLevel >= 20 then -- если после начисления левл стал выше 14-го - лишнее убираем
+        player:SetNobleLevel(20)
+        player:SendBroadcastMessage("Установлен 20 уровень персонажа: максимально допустимый за наградной опыт.")
+        return
+    end
+
+    return
+end
+
 local function addExp(player, exp)
     local currentLevel = player:GetNobleLevel()
     -- с 18-го вместо опыта тикают денежки, без бустов и модификаторов
@@ -116,6 +142,8 @@ local function countExpForPlayers(usersList, expTbl)
                     expTbl[charGuid].exp = expTbl[charGuid].exp + exp
                 elseif comment == EXTRA_COMMENT then
                     expTbl[charGuid].extraExp = expTbl[charGuid].extraExp + exp
+                elseif comment == REWARD_COMMENT then
+                    expTbl[charGuid].extraExp = expTbl[charGuid].extraExp + exp
                 else
                     expTbl[charGuid].bonusExp = expTbl[charGuid].bonusExp + exp
                 end
@@ -141,6 +169,7 @@ local function addExpToPlayers()
         expTbl[guid].exp = 0
         expTbl[guid].bonusExp = 0
         expTbl[guid].extraExp = 0
+        expTbl[guid].rewardExp = 0
     end
     local usersList = table.concat(usersTable, ",")
 
@@ -158,6 +187,7 @@ local function addExpToPlayers()
         addExp(player, expTbl[player:GetGUIDLow()].exp)
         addBonusExp(player, expTbl[player:GetGUIDLow()].bonusExp)
         addExtraExp(player, expTbl[player:GetGUIDLow()].extraExp)
+        addRewardExp(player, expTbl[player:GetGUIDLow()].rewardExp)
     end
 end
 
