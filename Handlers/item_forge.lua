@@ -19,6 +19,14 @@ local forgeSpells = {
     [88102] = 1,
     [88103] = 1,
     [88104] = 1,
+    [88105] = 1,
+    [88106] = 1,
+    [88107] = 1,
+    [88108] = 1,
+    [88109] = 1,
+    [88110] = 1,
+    [88111] = 1,
+    [88112] = 1,
     }
 local slot9 = 9
 local slot10 = 10
@@ -170,5 +178,25 @@ function ItemForge.OnForge(event, player, spell)
         item:SetEnchantment(wil1,slot9)
     elseif spellId == 88104  then -- рубашка, сноровка +1
         item:SetEnchantment(ver1,slot9)
+    elseif spellId == 88105  then -- грудь и др +3
+        item:SetEnchantment(str2,slot9)
+        item:SetEnchantment(str1,slot10)
+    elseif spellId == 88106  then -- грудь и др +3
+        item:SetEnchantment(agi2,slot9)
+        item:SetEnchantment(agi1,slot10)
+    elseif spellId == 88107  then -- грудь и др +3
+        item:SetEnchantment(int2,slot9)
+        item:SetEnchantment(int1,slot10)
+    elseif spellId == 88108  then -- грудь и др +3
+        item:SetEnchantment(spi2,slot9)
+        item:SetEnchantment(spi1,slot10)
+    elseif spellId == 88109  then -- оружие +1
+        item:SetEnchantment(str1,slot9)
+    elseif spellId == 88110  then -- оружие +1
+        item:SetEnchantment(agi1,slot9)
+    elseif spellId == 88111  then -- оружие +1
+        item:SetEnchantment(int1,slot9)
+    elseif spellId == 88112  then -- оружие +1
+        item:SetEnchantment(spi1,slot9)
     end
 end
