@@ -26,6 +26,13 @@ local function castEvent(event, player, spell, skipCheck)
     elseif (ItemForge.CheckIsForgeSpell(spellId)) then -- перековка
         ItemForge.OnForge(event, player, spell)
         return false;
+    elseif (ItemSet.CheckIsItemSetSpell(spellId)) then -- перековка
+        local itemSetResult = ItemSet.OnForge(event, player, spell)
+        if itemSetResult == false then
+            ItemSet.OnError(event, player, spell)
+        end
+
+        return false;
     elseif (spellId == 91095) then -- обшаривание карманов
         local zone = player:GetZoneId();
 

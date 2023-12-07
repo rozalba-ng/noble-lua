@@ -19,6 +19,7 @@ theramore_faction = 1175
 brando_faction = 1177
 krasnogor_faction = 1179
 horde_faction = 1166
+westfall_faction = 1180
 
 reputation_friendly = 3000
 reputation_honored = 9000
@@ -223,6 +224,19 @@ local function CountKrasnogorReputation(player)
     end
 end
 
+local function CountWestfallReputation(player)
+    local map, zone = player:GetMapId(), player:GetZoneId()
+    local rep = 10
+    if (map == 901 and zone == 10214) then
+        --	Игрок в Западном Крае
+        if ActionTime() then
+            --	Если время суперактива - идёт маленький бонус.
+            rep = rep + 10
+        end
+        player:SetReputation(westfall_faction, player:GetReputation(westfall_faction) + rep)
+    end
+end
+
 local function CountHordeReputation(player)
     local map, zone = player:GetMapId(), player:GetZoneId()
     local rep = 10
@@ -253,6 +267,7 @@ local function calculateBonuses()
                 CountBrandoReputation(player)
                 CountKrasnogorReputation(player)
                 CountHordeReputation(player)
+                CountWestfallReputation(player)
             end
         end;
     end

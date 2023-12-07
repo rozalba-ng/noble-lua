@@ -27,6 +27,8 @@ local forgeSpells = {
     [88110] = 1,
     [88111] = 1,
     [88112] = 1,
+    [88113] = 1,
+    [88114] = 1,
     }
 local slot9 = 9
 local slot10 = 10
@@ -198,5 +200,12 @@ function ItemForge.OnForge(event, player, spell)
         item:SetEnchantment(int1,slot9)
     elseif spellId == 88112  then -- оружие +1
         item:SetEnchantment(spi1,slot9)
+    elseif spellId == 88113 or spellId == 88114 then -- кольцо и оружие хаос +1 рандомный стат (на оружие может прокнуть +2)
+        local chant = math.random(1,allNum)
+        item:SetEnchantment(allStatsPlusOne[chant],slot9)
+        local variant = math.random(1,100)
+        if spellId == 88114 and variant < 6 then
+            item:SetEnchantment(allStatsPlusOne[chant],slot10)
+        end
     end
 end
