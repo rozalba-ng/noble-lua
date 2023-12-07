@@ -19,7 +19,7 @@ theramore_faction = 1175
 brando_faction = 1177
 krasnogor_faction = 1179
 horde_faction = 1166
-westfall_faction = 1180
+westfall_faction = 1138
 
 reputation_friendly = 3000
 reputation_honored = 9000
