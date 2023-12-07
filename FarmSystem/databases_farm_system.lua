@@ -135,7 +135,7 @@ local function LoadPlantVisual()
 	end
 end
 local function LoadLoot()
-	WorldDBQuery(sql_createLoot)
+	--WorldDBQuery(sql_createLoot)
 	FarmSystem.loot = {}
 	
 	local Q = WorldDBQuery("SELECT * FROM farms_plant_loot")
