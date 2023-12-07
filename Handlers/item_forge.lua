@@ -267,7 +267,7 @@ function ItemSet.OnForge(event, player, spell)
 
     local itemCountQuery = CharDBQuery('SELECT * FROM item_instance WHERE itemEntry = ' .. itemEntry);
     if itemCountQuery then
-        local itemsCount = toDeleteQuery:GetRowCount()
+        local itemsCount = itemCountQuery:GetRowCount()
 
         if itemsCount ~= 1 then
             player:SendBroadcastMessage("|cffff0000 Частью сета можно делать только предметы, существующие в единственном экземпляре.")
