@@ -1,9 +1,9 @@
 function loginEvent(event, player, arg2, arg3, arg4)
 	local query = CharDBQuery("SELECT * FROM characters.dd_chars WHERE name = '"..player:GetName().."'")
 	if query then
-		player:AddAura(88033,player)
+		player:AddAura(88119,player)
 	else
-		player:RemoveAura(88033)
+		player:RemoveAura(88119)
 	end
 end
 local function OnPlayerCommandWithArg(event, player, code)
@@ -17,19 +17,19 @@ local function OnPlayerCommandWithArg(event, player, code)
 			local name = arguments[2]
 			local query = CharDBQuery("SELECT * FROM characters.dd_chars WHERE name = '"..name.."'")
 			if query then
-				player:SendBroadcastMessage("Игрок "..name.." УЖЕ добавлен в список участников Пылевых топей.")
+				player:SendBroadcastMessage("Игрок "..name.." УЖЕ добавлен в список участников Западного Края.")
 			else
-				player:SendBroadcastMessage("Игрок "..name.." успешно ДОБАВЛЕН в список участников Пылевых топей!")
+				player:SendBroadcastMessage("Игрок "..name.." успешно ДОБАВЛЕН в список участников Западного Края!")
 				CharDBExecute("INSERT INTO `characters`.`dd_chars` (`name`) VALUES ('"..name.."');")
 			end
 		elseif (arguments[1] == "removefrompolygon" and #arguments == 2 ) then
 			local name = arguments[2]
 			local query = WorldDBQuery("SELECT * FROM characters.dd_chars WHERE name = '"..name.."'")
 			if query then
-				player:SendBroadcastMessage("Игрок "..name.." успешно ИСКЛЮЧЕН из списка участников Пылевых топей!")
+				player:SendBroadcastMessage("Игрок "..name.." успешно ИСКЛЮЧЕН из списка участников Западного Края!")
 				CharDBExecute("DELETE FROM `characters`.`dd_chars` WHERE  `name`='"..name.."' LIMIT 1;")
 			else
-				player:SendBroadcastMessage("Игрок "..name.." НЕ НАХОДИТСЯ в списке участников Пылевых топей.")
+				player:SendBroadcastMessage("Игрок "..name.." НЕ НАХОДИТСЯ в списке участников Западного Края.")
 			end
 		end
 	end
