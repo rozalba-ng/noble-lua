@@ -191,6 +191,8 @@ function CharacterStatsHandler.SendNewStats(player,newStats)
 	player:SaveToClient("LastStatUpdate",os.time())
 	local mainSum = 0
 	local socSum = 0
+	local currentLevel = player:GetNobleLevel()
+	local canHave = currentLevel+1
 	for i,stat in ipairs(newStats) do --Валидация статов
 		if tonumber(stat) == nil then
 			player:Print("Значения характеристик некорректны.")
@@ -202,7 +204,7 @@ function CharacterStatsHandler.SendNewStats(player,newStats)
 				return false
 			else
 				mainSum = mainSum + stat
-				if mainSum > MAX_MAIN_STATS then
+				if mainSum > MAX_MAIN_STATS or mainSum > canHave then
 					player:Print("Значения характеристик некорректны.")
 					return false
 				end
@@ -213,7 +215,7 @@ function CharacterStatsHandler.SendNewStats(player,newStats)
 				return false
 			else
 				socSum = socSum + stat
-				if socSum > MAX_SOC_STATS then
+				if socSum > MAX_SOC_STATS or mainSum > canHave then
 					player:Print("Значения характеристик некорректны.")
 					return false
 				end
