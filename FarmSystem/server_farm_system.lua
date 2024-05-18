@@ -42,7 +42,7 @@ local placeAdditionalInfo = {
 		plant_size = 1
 		}
 }
-FarmSystem.houseGobjects = {530746,530747,530748,530749}
+FarmSystem.houseGobjects = {530746,530747,530748,530749,530901 }
 
 FarmSystem.levelSettings = {
 		[1] = {
