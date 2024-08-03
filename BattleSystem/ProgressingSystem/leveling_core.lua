@@ -228,8 +228,8 @@ local expSpells = {
 }
 
 local lvlSpellsItems = {
-	[91461] = {10, 5105659},
-	[91462] = {15, 5105660}
+	[91461] = {10, 5105658},
+	[91462] = {15, 5105659}
 }
 
 local function OnSpellCast(event, player, spell, skipCheck)
