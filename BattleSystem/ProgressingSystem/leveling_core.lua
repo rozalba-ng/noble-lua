@@ -63,25 +63,29 @@ function Player:GetNobleLevelData()
 		return LevelingSystem.levels[guid]
 	end
 end
+
 function Player:GetNobleLevel()
 	local leveldata = self:GetNobleLevelData()
 	if leveldata then
 		return leveldata.level
 	end
 end
+
 function Player:GetNobleXp()
 	local leveldata = self:GetNobleLevelData()
 	if leveldata then
 		return leveldata.xp
 	end
 end
+
 function GetXPForNextLevel(cur_level)
 	if cur_level >= 20 then
 		return 10000000000
 	else
-		return LevelingSystem.level_requirements[cur_level+1] 
+		return LevelingSystem.level_requirements[cur_level+1]
 	end
 end
+
 function Player:SaveLevelDataToDB()
 	local guid = IntGuid(self:GetGUID())
 	local leveldata = self:GetNobleLevelData()
@@ -118,12 +122,11 @@ function Player:AddNobleXp(count)
 		end
 		self:SaveLevelDataToDB()
 		self:UpdateXPBar(self:GetNobleLevelData().xp)
-		
 	end
 end
+
 function Player:SetNobleLevel(new_level)
 	local leveldata = self:GetNobleLevelData()
-	
 	if leveldata then
 		local oldLevel = leveldata.level
 		leveldata.level = new_level
@@ -139,6 +142,18 @@ function Player:SetNobleLevel(new_level)
 		self:ResetRoleStatsCooldown()
 	end
 end
+
+function Player:UpToNobleLevel(new_level, used_item_id)
+	local oldLevel = self:GetNobleLevel()
+	if new_level <= oldLevel then
+		self:Print("Ваш текущий уровень выше предлагаемого книгой.")
+		self:AddItem(used_item_id)
+	else
+		self:SetNobleLevel(new_level)
+		self:Print("Получен " .. new_level .. " уровень.")
+	end
+end
+
 local function OnPlayerLogin(event,player)
 	local guid = IntGuid(player:GetGUID())
 	local q_result = CharDBQuery("SELECT guid FROM character_noblegarden_leveling WHERE guid ="..tostring(guid))
@@ -205,18 +220,29 @@ local function OnSetLevelCommand(player,new_level)
 end
 
 local expSpells = {
-[91312] = 50,
-[91313] = 100,
-[91314] = 200,
-[91315] = 500,
-[91316] = 1000
-		}
+	[91312] = 50,
+	[91313] = 100,
+	[91314] = 200,
+	[91315] = 500,
+	[91316] = 1000
+}
+
+local lvlSpellsItems = {
+	[91461] = {10, 5105658},
+	[91462] = {15, 5105659}
+}
 
 local function OnSpellCast(event, player, spell, skipCheck)
-	for i,v in pairs(expSpells) do
-		if spell:GetEntry() == i then
-			player:AddNobleXp(v)
-			player:Print("Получено "..v.." дополнительного опыта!")
+	for id, exp in pairs(expSpells) do
+		if spell:GetEntry() == id then
+			player:AddNobleXp(exp)
+			player:Print("Получено " .. exp .. " дополнительного опыта!")
+		end
+	end
+	for id, info in pairs(lvlSpellsItems) do
+        local level, item = info[1], info[2]
+		if spell:GetEntry() == id then
+			player:UpToNobleLevel(level, item)
 		end
 	end
 end
