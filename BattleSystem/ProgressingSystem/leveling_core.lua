@@ -146,7 +146,7 @@ end
 function Player:UpToNobleLevel(new_level, used_item_id)
 	local oldLevel = self:GetNobleLevel()
 	if new_level <= oldLevel then
-		self:Print("Ваш текущий уровень выше, предлагаемого книгой.")
+		self:Print("Ваш текущий уровень выше предлагаемого книгой.")
 		self:AddItem(used_item_id)
 	else
 		self:SetNobleLevel(new_level)
