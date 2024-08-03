@@ -29,7 +29,15 @@ local forgeSpells = {
     [88112] = 1,
     [88113] = 1,
     [88114] = 1,
-    }
+    [88127] = 1,
+    [88128] = 1,
+    [88129] = 1,
+    [88130] = 1,
+    [88131] = 1,
+    [88132] = 1,
+    [88133] = 1,
+    [88134] = 1,
+}
 local slot9 = 9
 local slot10 = 10
 
@@ -57,6 +65,8 @@ local allDefPlusOne = {sta1,ver1,wil1 }
 local defNum = 3
 local allAttackPlusOne = {str1,agi1,int1 }
 local attackNum = 3
+local mainStatsPlusOne = {str1,agi1,spi1,int1}
+local mainStatsNum = 4
 
 function ItemForge.CheckIsForgeSpell(spellID)
     if forgeSpells[spellID] ~= nil then
@@ -207,6 +217,26 @@ function ItemForge.OnForge(event, player, spell)
         if spellId == 88114 and variant < 6 then
             item:SetEnchantment(allStatsPlusOne[chant],slot10)
         end
+    elseif spellId >= 88127 and spellId <= 88130 then
+        -- наручи +2
+        local enchantments = {
+            [88127] = str2,
+            [88128] = agi2,
+            [88129] = spi2,
+            [88130] = int2
+        }
+        item:SetEnchantment(enchantments[spellId], slot9)
+    elseif spellId >= 88131 and spellId <= 88134 then
+        -- оружие +1 и одна случайная +1
+        local enchantments = {
+            [88131] = str1,
+            [88132] = agi1,
+            [88133] = spi1,
+            [88134] = int1
+        }
+        item:SetEnchantment(enchantments[spellId], slot9)
+        local variant = math.random(1, mainStatsNum)
+        item:SetEnchantment(mainStatsPlusOne[variant], slot10)
     end
 end
 
