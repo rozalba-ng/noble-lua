@@ -106,7 +106,7 @@ local function Creature_Gossip( event, player, creature, sender, intid )
 				end
 				player:AddAura( player:GetData("ChangingSocialRole_Selected"), player )
 			--	Обновление записи в базе данных
-				CharDBQuery("REPLACE INTO character_citycraft_config ( character_guid, city_class, allow_role_change ) values ("..player:GetGUIDLow()..", "..tonumber(role)..", 1)")
+				CharDBQuery("REPLACE INTO character_citycraft_config ( character_guid, city_class ) values ("..player:GetGUIDLow()..", "..tonumber(role)..")")
 			--	Подчищаем кеш, выводим уведомление.
 				player:SetData( "ChangingSocialRole", nil )
 				player:SetData( "ChangingSocialRole_Selected", nil )
