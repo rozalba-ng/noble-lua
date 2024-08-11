@@ -11,7 +11,7 @@ carryPlayerArray.available = {
                                 };
 
 function OnGossipCarryPlayer(event, player, object)
-	player:GossipClearMenu() -- required for player gossip    
+	player:GossipClearMenu() -- required for player gossip
     player:GossipMenuAddItem(1, "Подняться на плечо "..object:GetName(), 1, 1, false, "Вас будут нести.")
     player:GossipMenuAddItem(1, "Выход", 1, 2, false, nil, nil, false)
     player:GossipSendMenu(1, player, carryPlayerMenuId) -- MenuId required for player gossip
@@ -21,7 +21,7 @@ local function OnGossipSelectCarryPlayer(event, player, object, sender, intid, c
     if (intid == 1) then
         local carrierName = carryPlayerArray[player:GetGUIDLow()];
         local carrier = GetPlayerByName( carrierName )
-        
+
         local race = player:GetRace();
         local gender = player:GetGender();
         if(carryPlayerArray.available[race][gender] ~= nil and player:GetDistance( carrier ) < 15)then
@@ -32,7 +32,7 @@ local function OnGossipSelectCarryPlayer(event, player, object, sender, intid, c
             carrier:AddAura(carryPlayerArray.available[race][gender], carrier);
             player:CastSpell(carrier, 43671);
         end
-        
+
         carryPlayerArray[player:GetGUIDLow()] = nil;
         player:GossipComplete()
     elseif (intid == 2) then
@@ -86,7 +86,7 @@ local function OnPlayerCommandWithArg(event, player, code)
 		elseif (arguments[1] == "addtagitem") then -- custom text enchantment - занимаем 5 и 6 слот чантов (если считать с 0 то 4 и 5, т.е. SOCK_ENCHANTMENT_SLOT_3 и BONUS_ENCHANTMENT_SLOT)
 			if #arguments < 5 then
 				local entry = tonumber(arguments[2])
-				if (player:GetGMRank() > 1 and entry > 2110896) then -- 2110896 - с этого ID начинаются созданные мастерами итемы	
+				if (player:GetGMRank() > 1 and entry > 2110896) then -- 2110896 - с этого ID начинаются созданные мастерами итемы
 					if (entry == 2110926 or entry == 2110924 or entry == 2110923 or entry == 2110922 or entry == 2110921) then
 						player:SendBroadcastMessage("Forbidden - excluded item id");
 						return false;
@@ -122,8 +122,8 @@ local function OnPlayerCommandWithArg(event, player, code)
 				player:SendBroadcastMessage(colors[colorId]..text)
 				return false
 			end
-		
-	 elseif (arguments[1] == "molemachineanim" and #arguments == 3 ) then
+
+	    elseif (arguments[1] == "molemachineanim" and #arguments == 3 ) then
             local animation = tonumber(arguments[2])
             local is_state = tonumber(arguments[3])
             if(animation)then
@@ -139,8 +139,12 @@ local function OnPlayerCommandWithArg(event, player, code)
                         end
                         return false;
                     end
-                end 
-            end            
+                end
+            end
+        elseif (arguments[1] == "target") then
+            player:Print("Now we set target "..arguments[2])
+            local target_to_select = arguments[2]
+            player:SetSelection(target_to_select)
         end
     end
     if(code == "carry")then
@@ -184,7 +188,7 @@ local function OnPlayerCommandWithArg(event, player, code)
                             if(passenger:ToCreature() and passenger:GetEntry() == 990003)then
                                 passenger:Delete();
                             end
-                        else                            
+                        else
                             robot:CastSpell( player, 43671 );
                             return false;
                         end
@@ -195,7 +199,7 @@ local function OnPlayerCommandWithArg(event, player, code)
         end
         robot:Delete();
         return false;
-    elseif(code == "squirstop")then  
+    elseif(code == "squirstop")then
         local minion = player:GetCharmGUID()
         if(minion)then
             local map = player:GetMap();
@@ -206,7 +210,7 @@ local function OnPlayerCommandWithArg(event, player, code)
                 return false;
             end
         end
-    elseif(code == "molestop")then  
+    elseif(code == "molestop")then
         local minion = player:GetCharmGUID()
         if(minion)then
             local map = player:GetMap();
@@ -229,16 +233,16 @@ local function OnPlayerCommandWithArg(event, player, code)
                     local gameobjects = player:GetNearObjects( 10, 32 );
                     for index, nearGO in pairs(gameobjects) do
                         nearGO:MoveGameObject(nearGO:GetX() + dif_x, nearGO:GetY() + dif_y, nearGO:GetZ() + dif_z, nearGO:GetO());
-                    end	
+                    end
                     for index, nearUT in pairs(units) do
                         nearUT:NearTeleport(nearUT:GetX() + dif_x, nearUT:GetY() + dif_y, nearUT:GetZ() + dif_z + 0.1, nearUT:GetO());
-                    end                    
+                    end
                 end
                 molemachine:RemoveAura(38586);
                 return false;
             end
         end
-    elseif(code == "searchmount")then  
+    elseif(code == "searchmount")then
 	local count = 0;
         for index, mount in pairs(mountDataArray) do
             if(mount.owner_id == player:GetGUIDLow())then
@@ -250,7 +254,7 @@ local function OnPlayerCommandWithArg(event, player, code)
                     player:SendBroadcastMessage("Местоположение транспорта отмечено на карте.");
                 end
             end
-        end  
+        end
         return false;
 	elseif (code == "leavephase") then
 		player:RemoveAura(CREATIVE_PHASE_AURA)
