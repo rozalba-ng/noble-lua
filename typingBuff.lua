@@ -1,6 +1,7 @@
-local SayBuffId = 84011
-local YellBuffId = 84012
-local EmoteBuffId = 84013
+-- Custom buffs which are not break down.
+local SayBuffId = 84127
+local YellBuffId = 84128
+local EmoteBuffId = 84129
 
 function ApplyBuff(player, buffId)
     player:AddAura(buffId, player)
@@ -10,7 +11,7 @@ function RemoveBuff(player, buffId)
     player:RemoveAura(buffId)
 end
 
-function ChatBuffs(event, player, command, message)
+function ChatBuffs(event, player, command, _)
     if string.find(command, " ") then
         local _, _, cmd, arg = string.find(command, "(%S+)%s+(.*)")
 		if cmd == "typingsay" then
@@ -42,9 +43,3 @@ function ChatBuffs(event, player, command, message)
 end
 
 RegisterPlayerEvent(42, ChatBuffs)
-
-
-
-
-
-
