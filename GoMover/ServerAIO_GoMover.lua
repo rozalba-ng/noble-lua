@@ -143,8 +143,30 @@ local function ReturnGosByRadius(player, radius)
     end
 end
 
+local function GetGameObjectByGUIDLow(player, guidLow)
+    -- Query the world database to get the entry ID for the game object with the specified GUID
+    local query = WorldDBQuery("SELECT id FROM gameobject WHERE guid = " .. guidLow)
+    if query then
+        local entry = query:GetUInt32(0)
+        local mapID = player:GetMapId()
+        local instanceID = player:GetInstanceId()
+
+        -- Use the existing GetGameObject function
+        local go = GetGameObject(guidLow, entry, mapID, instanceID)
+        return go
+    else
+        return nil
+    end
+end
+
 local function OnPlayerCommandWithArg(event, player, code)
-    if (code == "movego") then
+    local args = {}
+    for word in string.gmatch(code, "%S+") do
+        table.insert(args, word)
+    end
+
+    local command = args[1]
+    if (command == "movego") then
         local nearestGo = player:GetNearestGameObject(10)
         if nearestGo then
             if (nearestGo:GetOwner() == player) or player:GetGMRank() > 0 then
@@ -156,9 +178,26 @@ local function OnPlayerCommandWithArg(event, player, code)
         else
             player:SendBroadcastMessage("Объектов в радиусе не было обнаружено")
         end
-    elseif (code == "gathergos") then
+    elseif command == "movegoid" then
+        local guidLow = tonumber(args[2])
+        if guidLow then
+            local go = GetGameObjectByGUIDLow(player, guidLow)
+            if go then
+                if (go:GetOwner() == player) or player:GetGMRank() > 0 then
+                    AIO.Handle(player, "GOM_Handlers", "SetName", go:GetName())
+                    AIO.Handle(player, "GOM_Handlers", "GetGUID", go:GetDBTableGUIDLow())
+                else
+                    player:SendBroadcastMessage("Этот объект вам не принадлежит")
+                end
+            else
+                player:SendBroadcastMessage("Объект с указанным ID не найден")
+            end
+        else
+            player:SendBroadcastMessage("Неверный ID объекта")
+        end
+    elseif (command == "gathergos") then
         GatherGosByRadius(player, 5)
-    elseif (code == "returngos") then
+    elseif (command == "returngos") then
         ReturnGosByRadius(player, 5)
     end
 end
