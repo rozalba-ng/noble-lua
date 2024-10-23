@@ -162,7 +162,7 @@ local function GetLastGameObjectAddedByPlayer(player)
     local playerGUID = player:GetGUIDLow()
 
     -- Query the world database to get the last game object added by the player
-    local query = WorldDBQuery("SELECT guid, id FROM gameobject WHERE owner_id = " .. playerGUID .. " ORDER BY spawn_time DESC LIMIT 1")
+    local query = WorldDBQuery("SELECT guid, id FROM gameobject WHERE owner_id = " .. playerGUID .. " ORDER BY spawntimesecs DESC LIMIT 1")
     if query then
         local guidLow = query:GetUInt32(0)
         local entry = query:GetUInt32(1)
