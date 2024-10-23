@@ -151,13 +151,31 @@ local function GetGameObjectByGUIDLow(player, guidLow)
         local mapID = player:GetMapId()
         local instanceID = player:GetInstanceId()
 
-        -- Use the existing GetGameObject function
         local go = GetGameObject(guidLow, entry, mapID, instanceID)
         return go
     else
         return nil
     end
 end
+
+local function GetLastGameObjectAddedByPlayer(player)
+    local playerGUID = player:GetGUIDLow()
+
+    -- Query the world database to get the last game object added by the player
+    local query = WorldDBQuery("SELECT guid, id FROM gameobject WHERE owner_id = " .. playerGUID .. " ORDER BY spawn_time DESC LIMIT 1")
+    if query then
+        local guidLow = query:GetUInt32(0)
+        local entry = query:GetUInt32(1)
+        local mapID = player:GetMapId()
+        local instanceID = player:GetInstanceId()
+
+        local go = GetGameObject(guidLow, entry, mapID, instanceID)
+        return go
+    else
+        return nil
+    end
+end
+
 
 local function OnPlayerCommandWithArg(event, player, code)
     local args = {}
@@ -194,6 +212,18 @@ local function OnPlayerCommandWithArg(event, player, code)
             end
         else
             player:SendBroadcastMessage("Неверный ID объекта")
+        end
+    elseif command == "movegolast" then
+        local go = GetLastGameObjectAddedByPlayer(player)
+        if go then
+            if (go:GetOwner() == player) or player:GetGMRank() > 0 then
+                AIO.Handle(player, "GOM_Handlers", "SetName", go:GetName())
+                AIO.Handle(player, "GOM_Handlers", "GetGUID", go:GetDBTableGUIDLow())
+            else
+                player:SendBroadcastMessage("Этот объект вам не принадлежит")
+            end
+        else
+            player:SendBroadcastMessage("Вы не добавляли объекты или объект не найден")
         end
     elseif (command == "gathergos") then
         GatherGosByRadius(player, 5)
