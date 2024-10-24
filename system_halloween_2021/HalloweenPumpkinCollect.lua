@@ -44,8 +44,7 @@ local function OnPumpkinClick(event, player, object)
 			return false
 		end
 		local item = player:AddItem(entry)
-		
-		if item and count > 0then
+		if item and count > 0 then
 			count = count - 1
 			player:SetInfo("HalloweenLanternCount",tostring(count))
 			player:Print("|cffff7588Вы подносите фонарь к тыкве и та всыхивает зеленым пламенем. Из пепла вы достаете|r "..item:GetItemLink())
