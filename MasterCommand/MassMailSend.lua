@@ -25,7 +25,7 @@ local function GetGUIDsByNames(playerList)
 end
 
 local function OnMassMailSendCommand(player,playerNames,itemID)
-    if(player:GetGMRank() < 3)then
+    if(player:GetGMRank() < 2)then
         player:Print("Недостаточный ГМ уровень.")
         return
     end
