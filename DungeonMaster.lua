@@ -444,6 +444,22 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                 local DMcreature = player:GetTargetCreature();
                 if(DMcreature:GetOwner() == player or player:GetGMRank() >= 1)then
                     local target = GetPlayerByName( arguments[2] )
+                    local targetIdentifier = arguments[2] -- number - NPC guid. string - character name.
+                    local target
+                    if tonumber(targetIdentifier) then
+                        local guid = tonumber(targetIdentifier)
+                        target = GetCreatureByGUID(guid)
+                        if not target then
+                            player:SendBroadcastMessage("ОШИБКА: NPC с таким GUID не найден.")
+                            return false
+                        end
+                    else
+                        target = GetPlayerByName(targetIdentifier)
+                        if not target then
+                            player:SendBroadcastMessage("ОШИБКА: Игрок с таким именем не найден.")
+                            return false
+                        end
+                    end
                     if(target)then
                         attackRoll(DMcreature, target, arguments[3])
                     else
