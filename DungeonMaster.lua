@@ -440,17 +440,20 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                     player:SendBroadcastMessage("ОШИБКА: NPC Вам не принадлежит.")
                     return false;
                 end
+            elseif (arguments[1] == "savenpcfortargeting") then
+                player.lastSavedTargetedNpc = player:GetTargetCreature()
             elseif (arguments[1] == "npcroll" and #arguments == 3) then
                 local DMcreature = player:GetTargetCreature();
                 if(DMcreature:GetOwner() == player or player:GetGMRank() >= 1)then
-                    local target = GetPlayerByName( arguments[2] )
+                    local target
+                    if (arguments[2] == 'npc') then
+                        target = player.lastSavedTargetedNpc
+                    else
+                        target = GetPlayerByName( arguments[2] )
+                    end
                     if not target then
-                        local map = player:GetMap();
-                        local npc = map:GetWorldObject(tonumber(arguments[2]));
-                        if not target then
-                            player:SendBroadcastMessage("ОШИБКА: Цель не найдена.")
-                            return false
-                        end
+                        player:SendBroadcastMessage("ОШИБКА: Цель не найдена.")
+                        return false
                     end
                     attackRoll(DMcreature, target, arguments[3])
                     return false;
