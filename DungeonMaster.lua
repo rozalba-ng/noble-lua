@@ -446,7 +446,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                     local target = GetPlayerByName( arguments[2] )
                     if not target then
                         local map = player:GetMap();
-                        local npc = map:GetWorldObject(guid);
+                        local npc = map:GetWorldObject(tonumber(arguments[2]));
                         if not target then
                             player:SendBroadcastMessage("ОШИБКА: Цель не найдена.")
                             return false
