@@ -442,6 +442,8 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                 end
             elseif (arguments[1] == "savenpcfortargeting") then
                 player.lastSavedTargetedNpc = player:GetTargetCreature()
+                player:SendBroadcastMessage("Сохранён противник!")
+                
             elseif (arguments[1] == "npcroll" and #arguments == 3) then
                 local DMcreature = player:GetTargetCreature();
                 if(DMcreature:GetOwner() == player or player:GetGMRank() >= 1)then
