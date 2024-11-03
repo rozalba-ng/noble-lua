@@ -442,12 +442,12 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                 end
             elseif (arguments[1] == "savenpcfortargeting") then
                 local target = player:GetTargetCreature()
-                local playerGuid = player:GetGUIDLow();
+                local player_guid = player:GetGUIDLow();
                 local npc_guid = target:GetDBTableGUIDLow()
                 local mapId = player:GetMapId();
                 local npc_entry = target:GetEntry()
                 CharDBQuery("INSERT INTO characters.gmTargetedNpc (player_guid, npc_guid, mapId, entry) " ..
-              "VALUES (" .. playerGuid .. ", " .. npc_guid .. ", " .. mapId .. ", " .. npc_entry .. ") " ..
+              "VALUES (" .. player_guid .. ", " .. npc_guid .. ", " .. mapId .. ", " .. npc_entry .. ") " ..
               "ON DUPLICATE KEY UPDATE " ..
               "npc_guid = VALUES(npc_guid), " ..
               "mapId = VALUES(mapId), " ..
@@ -467,7 +467,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                         local npc_guid = charQ:GetUInt32(1)
                         local map_id = charQ:GetUInt32(2)
                         local npc_entry = charQ:GetUInt32(3)
-                        target = GetCreature(guid,entry,mapid)
+                        target = GetCreature(npc_guid,npc_entry,map_id)
                     else
                         target = GetPlayerByName( arguments[2] )
                     end
