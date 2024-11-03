@@ -446,12 +446,12 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                 local npc_guid = target:GetDBTableGUIDLow()
                 local mapId = player:GetMapId();
                 local npc_entry = target:GetEntry()
-                CharDBQuery("INSERT INTO characters.gmTargetedNpc (player_guid, npc_guid, mapId, entry)
-                VALUES(" .. playerGuid.. ", " .. npc_guid .. ", " .. mapId .. ", " .. npc_entry .. ")
-                ON DUPLICATE KEY UPDATE
-                    npc_guid = VALUES(npc_guid),
-                    mapId = VALUES(mapId),
-                    entry = VALUES(entry);")
+                CharDBQuery("INSERT INTO characters.gmTargetedNpc (player_guid, npc_guid, mapId, entry) " ..
+              "VALUES (" .. playerGuid .. ", " .. npc_guid .. ", " .. mapId .. ", " .. npc_entry .. ") " ..
+              "ON DUPLICATE KEY UPDATE " ..
+              "npc_guid = VALUES(npc_guid), " ..
+              "mapId = VALUES(mapId), " ..
+              "entry = VALUES(entry);")
                 player:SendBroadcastMessage("Сохранён противник!")
                 return false
             elseif (arguments[1] == "npcroll" and #arguments == 3) then
