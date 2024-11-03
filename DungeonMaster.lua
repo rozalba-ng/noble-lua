@@ -475,7 +475,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                         player:SendBroadcastMessage("ОШИБКА: Цель не найдена.")
                         return false
                     end
-                    attackRoll(DMcreature, target, arguments[3])
+                    attackRoll(DMcreature, target, arguments[3], player)
                     return false;
                 else
                     player:SendBroadcastMessage("ОШИБКА: NPC Вам не принадлежит.")
