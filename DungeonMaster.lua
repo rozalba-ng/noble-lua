@@ -441,15 +441,33 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                     return false;
                 end
             elseif (arguments[1] == "savenpcfortargeting") then
-                player.lastSavedTargetedNpc = player:GetTargetCreature()
+                local target = player:GetTargetCreature()
+                local playerGuid = player:GetGUIDLow();
+                local npc_guid = target:GetDBTableGUIDLow()
+                local mapId = player:GetMapId();
+                local npc_entry = target:GetEntry()
+                CharDBQuery("INSERT INTO characters.gmTargetedNpc (player_guid, npc_guid, mapId, entry)
+                VALUES(" .. playerGuid.. ", " .. npc_guid .. ", " .. mapId .. ", " .. npc_entry .. ")
+                ON DUPLICATE KEY UPDATE
+                    npc_guid = VALUES(npc_guid),
+                    mapId = VALUES(mapId),
+                    entry = VALUES(entry);")
                 player:SendBroadcastMessage("Сохранён противник!")
-                
+                return false
             elseif (arguments[1] == "npcroll" and #arguments == 3) then
                 local DMcreature = player:GetTargetCreature();
                 if(DMcreature:GetOwner() == player or player:GetGMRank() >= 1)then
                     local target
                     if (arguments[2] == 'npc') then
-                        target = player.lastSavedTargetedNpc
+                        local charQ = CharDBQuery("SELECT * FROM characters.gmTargetedNpc WHERE player_guid = " .. player:GetGUIDLow())
+                        if not charQ then
+                            player:SendBroadcastMessage("ОШИБКА: Цель не найдена.")
+                            return false
+                        end
+                        local npc_guid = charQ:GetUInt32(1)
+                        local map_id = charQ:GetUInt32(2)
+                        local npc_entry = charQ:GetUInt32(3)
+                        target = creature = GetCreature(guid,entry,mapid)
                     else
                         target = GetPlayerByName( arguments[2] )
                     end
