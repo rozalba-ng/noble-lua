@@ -467,7 +467,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
                         local npc_guid = charQ:GetUInt32(1)
                         local map_id = charQ:GetUInt32(2)
                         local npc_entry = charQ:GetUInt32(3)
-                        target = creature = GetCreature(guid,entry,mapid)
+                        target = GetCreature(guid,entry,mapid)
                     else
                         target = GetPlayerByName( arguments[2] )
                     end
