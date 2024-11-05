@@ -34,19 +34,25 @@ local function extractName(arguments)
 	return name
 end
 
-local function getModelCreature(entry)
+-- As model is chosen on a client side, we cannot get which one is there.
+-- But if allowSeveralModels is true, we will just use the first non-zero.
+function GetModelCreature(entry, allowSeveralModels)
 	local creatureQ = WorldDBQuery("SELECT modelid1, modelid2, modelid3, modelid4"..
 		"FROM world.creature_template"..
 		"WHERE entry = "..entry)
 	local modelId = {creatureQ:GetUInt32(0), creatureQ:GetUInt32(1), creatureQ:GetUInt32(2), creatureQ:GetUInt32(3)}
 	local singleModel = 0
-	for _, model in ipairs(modelId) do
-		if model ~= 0 then
-			-- Sometimes we set same values for all the models.
-			if singleModel ~= 0 and singleModel ~= model then
-				return nil;
-			singleModel = model
-	end
+	for _, model in ipairs(models) do
+		model = math.abs(model)
+        if model ~= 0 then
+            if allowSeveralModels then
+                return model
+            elseif singleModel ~= 0 and singleModel ~= model then
+                return nil
+            end
+            singleModel = model
+        end
+    end
 	return singleModel
 end
 
@@ -118,7 +124,7 @@ local function OnPlayerCommandWithArg(event, player, code)
 		end
 		local creatureId = target:GetGUIDLow()
 		local templateId = target:GetEntry()
-		local modelId = getModelCreature(templateId)
+		local modelId = GetModelCreature(templateId, false)
 		if not modelId then
 			player:SendBroadcastMessage("Можно переодевать только неписей с единственной моделькой.")
 			return false
@@ -172,7 +178,7 @@ local function OnPlayerCommandWithArg(event, player, code)
 			--ReloadCreatureOutfitByEntry(dispId)
 		end
 		local updateCreatureTemplateQuery = WorldDBQuery("UPDATE world.creature_template"..
-		"SET modelid1 = ".. dispId .. ", modelid2 = 0, modelid3 = 0, modelid4 = 0"
+		"SET modelid1 = ".. -dispId .. ", modelid2 = 0, modelid3 = 0, modelid4 = 0"
 		"WHERE entry = " .. templateId)
 		-- ReloadCreatureOutfitByEntry()
 		-- ReloadCreatureTemplateByEntry(templateId)
