@@ -150,7 +150,7 @@ local function OnPlayerCommand(event, player,command)
 			return false
 		end
 		player:SendBroadcastMessage("templateId: "..templateId.." modelId: "..modelId)
-		return
+		return false
 		local transmogQuery = WorldDBQuery("SELECT head, shoulders, body, chest, waist, legs, feet, wrists, hands, back, tabard"..
 			"FROM world.creature_template_outfits"..
 			"WHERE entry=".. modelId
