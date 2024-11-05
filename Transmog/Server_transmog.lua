@@ -149,6 +149,8 @@ local function OnPlayerCommand(event, player,command)
 			player:SendBroadcastMessage("Не получилось найти модель непися.")
 			return false
 		end
+		player:SendBroadcastMessage("templateId: "..templateId.." modelId: "..modelId)
+		return
 		local transmogQuery = WorldDBQuery("SELECT head, shoulders, body, chest, waist, legs, feet, wrists, hands, back, tabard"..
 			"FROM world.creature_template_outfits"..
 			"WHERE entry=".. modelId
