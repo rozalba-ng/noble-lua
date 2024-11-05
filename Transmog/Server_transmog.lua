@@ -151,21 +151,21 @@ local function OnPlayerCommand(event, player,command)
 		end
 		player:SendBroadcastMessage("templateId: "..templateId.." modelId: "..modelId)
 		return false
-		local transmogQuery = WorldDBQuery("SELECT head, shoulders, body, chest, waist, legs, feet, wrists, hands, back, tabard"..
-			"FROM world.creature_template_outfits"..
-			"WHERE entry=".. modelId
-		)
-		Handlers.TransmogItem(player, 0, appearenceQuery:GetUInt32(0))
-		Handlers.TransmogItem(player, 2, appearenceQuery:GetUInt32(1))
-		Handlers.TransmogItem(player, 3, appearenceQuery:GetUInt32(2))
-		Handlers.TransmogItem(player, 4, appearenceQuery:GetUInt32(3))
-		Handlers.TransmogItem(player, 5, appearenceQuery:GetUInt32(4))
-		Handlers.TransmogItem(player, 6, appearenceQuery:GetUInt32(5))
-		Handlers.TransmogItem(player, 7, appearenceQuery:GetUInt32(6))
-		Handlers.TransmogItem(player, 8, appearenceQuery:GetUInt32(7))
-		Handlers.TransmogItem(player, 9, appearenceQuery:GetUInt32(8))
-		Handlers.TransmogItem(player, 14, appearenceQuery:GetUInt32(9))
-		Handlers.TransmogItem(player, 18, appearenceQuery:GetUInt32(10))
+		-- local transmogQuery = WorldDBQuery("SELECT head, shoulders, body, chest, waist, legs, feet, wrists, hands, back, tabard"..
+		-- 	"FROM world.creature_template_outfits"..
+		-- 	"WHERE entry=".. modelId
+		-- )
+		-- Handlers.TransmogItem(player, 0, appearenceQuery:GetUInt32(0))
+		-- Handlers.TransmogItem(player, 2, appearenceQuery:GetUInt32(1))
+		-- Handlers.TransmogItem(player, 3, appearenceQuery:GetUInt32(2))
+		-- Handlers.TransmogItem(player, 4, appearenceQuery:GetUInt32(3))
+		-- Handlers.TransmogItem(player, 5, appearenceQuery:GetUInt32(4))
+		-- Handlers.TransmogItem(player, 6, appearenceQuery:GetUInt32(5))
+		-- Handlers.TransmogItem(player, 7, appearenceQuery:GetUInt32(6))
+		-- Handlers.TransmogItem(player, 8, appearenceQuery:GetUInt32(7))
+		-- Handlers.TransmogItem(player, 9, appearenceQuery:GetUInt32(8))
+		-- Handlers.TransmogItem(player, 14, appearenceQuery:GetUInt32(9))
+		-- Handlers.TransmogItem(player, 18, appearenceQuery:GetUInt32(10))
 	end
 end
 
