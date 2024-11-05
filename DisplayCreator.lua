@@ -178,7 +178,7 @@ local function OnPlayerCommandWithArg(event, player, code)
 			--ReloadCreatureOutfitByEntry(dispId)
 		end
 		local updateCreatureTemplateQuery = WorldDBQuery("UPDATE world.creature_template"..
-		"SET modelid1 = ".. -dispId .. ", modelid2 = 0, modelid3 = 0, modelid4 = 0"
+		"SET modelid1 = ".. -dispId .. ", modelid2 = 0, modelid3 = 0, modelid4 = 0"..
 		"WHERE entry = " .. templateId)
 		-- ReloadCreatureOutfitByEntry()
 		-- ReloadCreatureTemplateByEntry(templateId)
