@@ -46,12 +46,9 @@ function GetModelCreature(entry, allowSeveralModels)
 	local npc = creatureQ:GetRow()
 	local singleModel = 0
 	for _, model in pairs(npc) do
-		print(model)
 		model = math.abs(model)
-		print("after abs ".. model)
         if model ~= 0 then
             if allowSeveralModels then
-				print("returning "..model)
                 return model
             elseif singleModel ~= 0 and singleModel ~= model then
                 return nil
