@@ -139,15 +139,18 @@ local function OnPlayerCommand(event, player,command)
 		end
 	elseif (string.match(command,'copyoutfit')) then
 		local target = player:GetSelection()
-		if target:ToPlayer() then
-			player:SendBroadcastMessage("Трансмоги можно брать только у неписей!")
-			return
+		if target == nil then
+			player:SendBroadcastMessage("Выберите НПС в цель!")
+			return false
+		elseif target:ToPlayer() then
+			player:SendBroadcastMessage("Трансмоги можно брать только у НПС!")
+			return false
 		end
 		local templateId = target:GetEntry()
 		player:SendBroadcastMessage("templateId: "..templateId)
 		local modelId = GetModelCreature(templateId, true)
 		if not modelId then
-			player:SendBroadcastMessage("Не получилось найти модель непися.")
+			player:SendBroadcastMessage("Не получилось найти модель НПС.")
 			return false
 		end
 		player:SendBroadcastMessage(" modelId: "..modelId)
