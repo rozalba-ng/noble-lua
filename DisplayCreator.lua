@@ -37,9 +37,12 @@ end
 -- As model is chosen on a client side, we cannot get which one is there.
 -- But if allowSeveralModels is true, we will just use the first non-zero.
 function GetModelCreature(entry, allowSeveralModels)
-	local creatureQ = WorldDBQuery("SELECT modelid1, modelid2, modelid3, modelid4"..
-		"FROM world.creature_template"..
-		"WHERE entry = "..entry)
+	local creatureQ = WorldDBQuery(string.format(
+		[[
+			SELECT modelid1, modelid2, modelid3, modelid4 
+			FROM world.creature_template 
+			WHERE entry = %d"
+		]], entry))
 	local modelId = {creatureQ:GetUInt32(0), creatureQ:GetUInt32(1), creatureQ:GetUInt32(2), creatureQ:GetUInt32(3)}
 	local singleModel = 0
 	for _, model in ipairs(models) do
