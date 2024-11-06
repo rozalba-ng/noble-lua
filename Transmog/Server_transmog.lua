@@ -158,10 +158,15 @@ local function OnPlayerCommand(event, player,command)
 			FROM world.creature_template_outfits
 			WHERE entry = %d 
 		]], modelId))
+		if not transmogQuery then
+			player:SendBroadcastMessage("Нельзя забрать трансмог у НПС с кастомной моделькой.")
+			return false
+		end
 		local mog = transmogQuery:GetRow()
 		local set = string.format([[
 			%d#%d#%d#%d#%d#%d#%d#%d#%d#%d#%d
-		]],mog.head,mog.shoulders,mog.back,mog.chest,mog.body,mog.tabard,mog.wrists,mog.hands,mog.waist,mog.legs,mog.feet)
+		]], mog.head, mog.shoulders, mog.back, mog.chest, mog.body,
+		mog.tabard, mog.wrists, mog.hands, mog.waist, mog.legs, mog.feet)
 		Handlers.TransmogSet(player, set, 0)
 	end
 end
