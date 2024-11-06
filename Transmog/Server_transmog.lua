@@ -144,12 +144,13 @@ local function OnPlayerCommand(event, player,command)
 			return
 		end
 		local templateId = target:GetEntry()
+		player:SendBroadcastMessage("templateId: "..templateId)
 		local modelId = GetModelCreature(templateId, true)
 		if not modelId then
 			player:SendBroadcastMessage("Не получилось найти модель непися.")
 			return false
 		end
-		player:SendBroadcastMessage("templateId: "..templateId.." modelId: "..modelId)
+		player:SendBroadcastMessage(" modelId: "..modelId)
 		return false
 		-- local transmogQuery = WorldDBQuery("SELECT head, shoulders, body, chest, waist, legs, feet, wrists, hands, back, tabard"..
 		-- 	"FROM world.creature_template_outfits"..
