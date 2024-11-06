@@ -41,7 +41,7 @@ function GetModelCreature(entry, allowSeveralModels)
 		[[
 			SELECT modelid1, modelid2, modelid3, modelid4 
 			FROM creature_template 
-			WHERE entry = %d"
+			WHERE entry = %d
 		]], entry)
 
 	print(query);
