@@ -159,17 +159,10 @@ local function OnPlayerCommand(event, player,command)
 			WHERE entry = %d 
 		]], modelId))
 		local mog = transmogQuery:GetRow()
-		Handlers.TransmogItem(player, 0, mog.head)
-		Handlers.TransmogItem(player, 2, mog.shoulders)
-		Handlers.TransmogItem(player, 3, mog.body)
-		Handlers.TransmogItem(player, 4, mog.chest)
-		Handlers.TransmogItem(player, 5, mog.waist)
-		Handlers.TransmogItem(player, 6, mog.legs)
-		Handlers.TransmogItem(player, 7, mog.feet)
-		Handlers.TransmogItem(player, 8, mog.wrists)
-		Handlers.TransmogItem(player, 9, mog.hands)
-		Handlers.TransmogItem(player, 14, mog.back)
-		Handlers.TransmogItem(player, 18, mog.tabard)
+		local set = string.format([[
+			%d#%d#%d#%d#%d#%d#%d#%d#%d#%d#%d
+		]],mog.head,mog.shoulders,mog.back,mog.chest,mog.body,mog.tabard,mog.wrists,mog.hands,mog.waist,mog.legs,mog.feet)
+		Handlers.TransmogSet(player, set, 0)
 	end
 end
 
