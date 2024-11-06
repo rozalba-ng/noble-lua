@@ -949,6 +949,7 @@ function TransmogSet(player,code, state)
                 if transmogrified then
                     
                     local entry = tonumber(ids[i])
+                    print(Transmog_ItemSetID[i].." : "..entry)
                     if checkOnBlacklist(player,ids[i]) then
                         return false
                     end
