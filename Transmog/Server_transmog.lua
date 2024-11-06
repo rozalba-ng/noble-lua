@@ -158,7 +158,7 @@ local function OnPlayerCommand(event, player,command)
 			FROM world.creature_template_outfits
 			WHERE entry = %d 
 		]], modelId))
-		local mog = transmogQuery.GetRow()
+		local mog = transmogQuery:GetRow()
 		Handlers.TransmogItem(player, 0, mog.head)
 		Handlers.TransmogItem(player, 2, mog.shoulders)
 		Handlers.TransmogItem(player, 3, mog.body)
