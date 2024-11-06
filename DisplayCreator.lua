@@ -40,10 +40,12 @@ function GetModelCreature(entry, allowSeveralModels)
 	local creatureQ = WorldDBQuery(string.format(
 		[[
 			SELECT modelid1, modelid2, modelid3, modelid4 
-			FROM creature_template 
+			FROM world.creature_template 
 			WHERE entry = %d
 		]], entry))
-	
+	print(creatureQ:GetInt32(0), creatureQ:GetInt64(0), creatureQ:GetString(0))
+	local row = creatureQ:GetRow()
+	print(row.modelid1)
 	local modelId = {creatureQ:GetInt32(0), creatureQ:GetInt32(1), creatureQ:GetInt32(2), creatureQ:GetInt32(3)}
 	local singleModel = 0
 	for _, model in ipairs(models) do
