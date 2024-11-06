@@ -147,29 +147,29 @@ local function OnPlayerCommand(event, player,command)
 			return false
 		end
 		local templateId = target:GetEntry()
-		player:SendBroadcastMessage("templateId: "..templateId)
 		local modelId = GetModelCreature(templateId, true)
 		if not modelId then
 			player:SendBroadcastMessage("Не получилось найти модель НПС.")
 			return false
 		end
-		player:SendBroadcastMessage(" modelId: "..modelId)
-		return false
-		-- local transmogQuery = WorldDBQuery("SELECT head, shoulders, body, chest, waist, legs, feet, wrists, hands, back, tabard"..
-		-- 	"FROM world.creature_template_outfits"..
-		-- 	"WHERE entry=".. modelId
-		-- )
-		-- Handlers.TransmogItem(player, 0, appearenceQuery:GetUInt32(0))
-		-- Handlers.TransmogItem(player, 2, appearenceQuery:GetUInt32(1))
-		-- Handlers.TransmogItem(player, 3, appearenceQuery:GetUInt32(2))
-		-- Handlers.TransmogItem(player, 4, appearenceQuery:GetUInt32(3))
-		-- Handlers.TransmogItem(player, 5, appearenceQuery:GetUInt32(4))
-		-- Handlers.TransmogItem(player, 6, appearenceQuery:GetUInt32(5))
-		-- Handlers.TransmogItem(player, 7, appearenceQuery:GetUInt32(6))
-		-- Handlers.TransmogItem(player, 8, appearenceQuery:GetUInt32(7))
-		-- Handlers.TransmogItem(player, 9, appearenceQuery:GetUInt32(8))
-		-- Handlers.TransmogItem(player, 14, appearenceQuery:GetUInt32(9))
-		-- Handlers.TransmogItem(player, 18, appearenceQuery:GetUInt32(10))
+		local transmogQuery = WorldDBQuery(string.format(
+		[[
+			SELECT head, shoulders, body, chest, waist, legs, feet, wrists, hands, back, tabard
+			FROM world.creature_template_outfits
+			WHERE entry = %d 
+		]], modelId))
+		local mog = transmogQuery.GetRow()
+		Handlers.TransmogItem(player, 0, mog.head)
+		Handlers.TransmogItem(player, 2, mog.shoulders)
+		Handlers.TransmogItem(player, 3, mog.body)
+		Handlers.TransmogItem(player, 4, mog.chest)
+		Handlers.TransmogItem(player, 5, mog.waist)
+		Handlers.TransmogItem(player, 6, mog.legs)
+		Handlers.TransmogItem(player, 7, mog.feet)
+		Handlers.TransmogItem(player, 8, mog.wrists)
+		Handlers.TransmogItem(player, 9, mog.hands)
+		Handlers.TransmogItem(player, 14, mog.back)
+		Handlers.TransmogItem(player, 18, mog.tabard)
 	end
 end
 
