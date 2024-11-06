@@ -43,12 +43,9 @@ function GetModelCreature(entry, allowSeveralModels)
 			FROM world.creature_template 
 			WHERE entry = %d
 		]], entry))
-	print(creatureQ:GetInt32(0), creatureQ:GetInt64(0), creatureQ:GetString(0))
-	local row = creatureQ:GetRow()
-	print(row.modelid1)
-	local modelId = {creatureQ:GetInt32(0), creatureQ:GetInt32(1), creatureQ:GetInt32(2), creatureQ:GetInt32(3)}
+	local npc = creatureQ:GetRow()
 	local singleModel = 0
-	for _, model in ipairs(models) do
+	for _, model in ipairs(npc) do
 		model = math.abs(model)
         if model ~= 0 then
             if allowSeveralModels then
