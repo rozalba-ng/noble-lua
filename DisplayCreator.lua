@@ -45,7 +45,7 @@ function GetModelCreature(entry, allowSeveralModels)
 		]], entry))
 	local npc = creatureQ:GetRow()
 	local singleModel = 0
-	for _, model in ipairs(npc) do
+	for _, model in pairs(npc) do
 		print(model)
 		model = math.abs(model)
 		print("after abs ".. model)
