@@ -28,6 +28,11 @@ local function ReloadGoPreview()
 		modelDataList[modelData.entry] = modelData
 		gob_pathes_query:NextRow()
 	end
+	if modelDataList[517958] then
+		print(modelDataList[517958].entry, modelDataList[517958].path, modelDataList[517958].)
+	else
+		print("Cannot find 517958.")
+	end
 	local gob_category_query = WorldDBQuery(GET_CATEGORIES)
 	for i = 1, gob_category_query:GetRowCount() do
 		local item_entry, _category, _subcategory, _taglist = gob_category_query:GetInt32(0), gob_category_query:GetString(1),gob_category_query:GetString(2),gob_category_query:GetString(3)
@@ -40,6 +45,9 @@ local function ReloadGoPreview()
 		item.gob_entry = q_item_info:GetInt32(2)
 		item.model_data = modelDataList[item.gob_entry]
 		item.category = data
+		if item_entry == 517958 then
+			print("found 517958")
+		end
 		if item.model_data then
 			table.insert(shopCache,item)
 		end
