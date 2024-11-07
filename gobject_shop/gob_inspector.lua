@@ -29,7 +29,7 @@ local function ReloadGoPreview()
 		gob_pathes_query:NextRow()
 	end
 	if modelDataList[517958] then
-		print(modelDataList[517958].entry, modelDataList[517958].path, modelDataList[517958].)
+		print(modelDataList[517958].entry, modelDataList[517958].path)
 	else
 		print("Cannot find 517958.")
 	end
