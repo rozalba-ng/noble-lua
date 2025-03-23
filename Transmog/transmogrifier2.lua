@@ -919,7 +919,7 @@ function TransmogSet(player,code, state)
 		local ids = splitter(code,"#")
 		if state == nil or state ~= 1 then
             for i = 1, #Transmog_ItemSetID-3 do
-                if ids[i] == 0 then
+                if tonumber(ids[i]) == 0 then
                     ids[i]  = 44724
                 end
                 local transmogrified = player:GetItemByPos(INVENTORY_SLOT_BAG_0, Transmog_ItemSetID[i]-1)
@@ -942,7 +942,7 @@ function TransmogSet(player,code, state)
             end
         elseif state == 1 then
             for i = 1, #Transmog_ItemSetID do
-                if ids[i] == 0 then
+                if tonumber(ids[i]) == 0 then
                     ids[i]  = 44724
                 end
                 local transmogrified = player:GetItemByPos(INVENTORY_SLOT_BAG_0, Transmog_ItemSetID[i]-1)

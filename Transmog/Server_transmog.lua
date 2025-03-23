@@ -137,6 +137,37 @@ local function OnPlayerCommand(event, player,command)
 			UpdatePresetsAndAccessories()
 			player:SendBroadcastMessage("Успешна")
 		end
+	elseif (string.match(command,'copyoutfit')) then
+		local target = player:GetSelection()
+		if target == nil then
+			player:SendBroadcastMessage("Выберите НПС в цель!")
+			return false
+		elseif target:ToPlayer() then
+			player:SendBroadcastMessage("Трансмоги можно брать только у НПС!")
+			return false
+		end
+		local templateId = target:GetEntry()
+		local modelId = GetModelCreature(templateId, true)
+		if not modelId then
+			player:SendBroadcastMessage("Не получилось найти модель НПС.")
+			return false
+		end
+		local transmogQuery = WorldDBQuery(string.format(
+		[[
+			SELECT head, shoulders, body, chest, waist, legs, feet, wrists, hands, back, tabard
+			FROM world.creature_template_outfits
+			WHERE entry = %d 
+		]], modelId))
+		if not transmogQuery then
+			player:SendBroadcastMessage("Нельзя забрать трансмог у НПС с кастомной моделькой.")
+			return false
+		end
+		local mog = transmogQuery:GetRow()
+		local set = string.format([[
+			%d#%d#%d#%d#%d#%d#%d#%d#%d#%d#%d
+		]], mog.head, mog.shoulders, mog.back, mog.chest, mog.body,
+		mog.tabard, mog.wrists, mog.hands, mog.waist, mog.legs, mog.feet)
+		Handlers.TransmogSet(player, set, 0)
 	end
 end
 
