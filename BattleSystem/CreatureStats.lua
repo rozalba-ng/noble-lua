@@ -44,8 +44,8 @@ statDbNames = {
     [ROLE_STAT_VERSA] = "DEX",
     [ROLE_STAT_WILL] = "WILL",
     [ROLE_STAT_SPIRIT] = "SPI",
-    [ROLE_STAT_HEALTH] = "HEALTH", -- Р С‘Р Р…Р С‘РЎвЂ Р С‘Р В°РЎвЂљР С‘Р Р†Р В°
-    [ROLE_STAT_ARMOR] = "ARMOR", -- Р Р†Р С•РЎРѓР С—РЎР‚Р С‘РЎРЏРЎвЂљР С‘Р Вµ
+    [ROLE_STAT_HEALTH] = "HEALTH", -- РёРЅРёС†РёР°С‚РёРІР°
+    [ROLE_STAT_ARMOR] = "ARMOR", -- РІРѕСЃРїСЂРёСЏС‚РёРµ
     [ROLE_STAT_ENERGY] = "ENERGY",
     [ROLE_STAT_PHARMOR] = "PHARMOR",
     [ROLE_STAT_MAGARMOR] = "MAGARMOR",
@@ -69,21 +69,21 @@ function getNpcStatsPrint(player, creature)
 
     if guid then
         if not npcStats[guid] then
-            player:SendBroadcastMessage("РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅС‹")
+            player:SendBroadcastMessage("не установлены")
             return
         end
-        player:SendBroadcastMessage(string.format("РЎРёР»Р°: %u", npcStats[guid][ROLE_STAT_STRENGTH]))
-        player:SendBroadcastMessage(string.format("Р›РѕРІРє: %u", npcStats[guid][ROLE_STAT_AGLILITY]))
-        player:SendBroadcastMessage(string.format("РРЅС‚Р°: %u", npcStats[guid][ROLE_STAT_INTELLECT]))
-        player:SendBroadcastMessage(string.format("Р¤РёР·.СѓСЃС‚: %u", npcStats[guid][ROLE_STAT_VERSA]))
-        player:SendBroadcastMessage(string.format("РњР°Рі.СѓСЃС‚: %u", npcStats[guid][ROLE_STAT_WILL]))
+        player:SendBroadcastMessage(string.format("Сила: %u", npcStats[guid][ROLE_STAT_STRENGTH]))
+        player:SendBroadcastMessage(string.format("Ловк: %u", npcStats[guid][ROLE_STAT_AGLILITY]))
+        player:SendBroadcastMessage(string.format("Инта: %u", npcStats[guid][ROLE_STAT_INTELLECT]))
+        player:SendBroadcastMessage(string.format("Физ.уст: %u", npcStats[guid][ROLE_STAT_VERSA]))
+        player:SendBroadcastMessage(string.format("Маг.уст: %u", npcStats[guid][ROLE_STAT_WILL]))
     else
-        player:SendBroadcastMessage("РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅС‹")
+        player:SendBroadcastMessage("не установлены")
     end
     return
 end
 
--- РЎС“Р Т‘Р В°Р В»РЎРЏР ВµР С Р В»Р С‘РЎв‚¬Р Р…Р С‘Р Вµ РЎРѓРЎвЂљР В°РЎвЂљРЎвЂ№
+-- СѓРґР°Р»СЏРµРј Р»РёС€РЅРёРµ СЃС‚Р°С‚С‹
 function deleteRoleStatsForDeletedNpc()
     local toDeleteQuery = WorldDBQuery('SELECT guid FROM creature_role_stats crs WHERE not exists (SELECT * FROM creature c WHERE c.guid = crs.guid)');
     if toDeleteQuery then
@@ -104,7 +104,7 @@ local function loadDefaultCreatureStats(event, creature)
     local entry = creature:GetEntry()
     local guid = creature:GetDBTableGUIDLow()
 
-    -- If the live npcStats for this GUID havenвЂ™t been set yet, load them from the template.
+    -- If the live npcStats for this GUID haven’t been set yet, load them from the template.
     if not npcStats[guid] and npcStatsTemplate[entry] then
         setNpcStats(creature, ROLE_STAT_STRENGTH,   npcStatsTemplate[entry][ROLE_STAT_STRENGTH])
         setNpcStats(creature, ROLE_STAT_AGLILITY,   npcStatsTemplate[entry][ROLE_STAT_AGLILITY])
@@ -131,7 +131,7 @@ local function loadDefaultCreatureStats(event, creature)
             creature:RemoveAura(auraConstant)
             if statVal == nil then
                 print("WARNING: " .. statName .. " is nil for creature GUID " .. tostring(guid))
-            elseif tonumber(statVal) < 0 then
+            elseif tonumber(statVal) <= 0 then
                 print("WARNING: " .. statName .. " is negative (" .. tostring(statVal) .. ") for creature GUID " .. tostring(guid))
             elseif tonumber(statVal) >= 256 then
                 print("WARNING: " .. statName .. " is out of expected range (" .. tostring(statVal) .. ") for creature GUID " .. tostring(guid))
@@ -149,6 +149,7 @@ local function loadDefaultCreatureStats(event, creature)
         applyAura(ROLE_STAT_PHARMOR,   EBS_PHARMOR_AURA,  "Physical Armor")
         applyAura(ROLE_STAT_MAGARMOR,  EBS_MAGARMOR_AURA, "Magical Armor")
         applyAura(ROLE_STAT_BRON,      EBS_BRON_AURA,     "Bron")
+        applyAura(ROLE_STAT_DAMAGE,      EBS_DAMAGE_AURA,     "Damage")
         applyAura(ROLE_STAT_HASTE,     EBS_HASTE_AURA,    "Haste")
         applyAura(ROLE_STAT_POWER,     EBS_POWER_AURA,    "Power")
         applyAura(ROLE_STAT_ATAKA,     EBS_ATAKA_AURA,    "Ataka")
