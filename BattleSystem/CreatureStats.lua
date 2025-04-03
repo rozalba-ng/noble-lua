@@ -14,9 +14,27 @@ ROLE_STAT_INIT = 11;
 ROLE_STAT_PERCEPT = 12;
 ROLE_STAT_HEALTH = 100;
 ROLE_STAT_ARMOR = 101;
+ROLE_STAT_ENERGY = 102;
+ROLE_STAT_PHARMOR = 103;
+ROLE_STAT_MAGARMOR = 104;
+ROLE_STAT_BRON = 105;
+ROLE_STAT_DAMAGE = 106;
+ROLE_STAT_HASTE = 107;
+ROLE_STAT_POWER = 108;
+ROLE_STAT_ATAKA = 109;
+
 
 EBS_HP_AURA = 88038
-EBS_ARMOR_AURA = 88050
+EBS_ARMOR_AURA = 88050 
+EBS_ENERGY_AURA = 88060
+EBS_PHARMOR_AURA = 102050
+EBS_MAGARMOR_AURA = 102051
+EBS_BRON_AURA = 95014
+EBS_DAMAGE_AURA = 95013
+EBS_POWER_AURA = 95018
+EBS_ATAKA_AURA = 95005
+EBS_HASTE_AURA = 95012
+
 
 statDbNames = {
     [ROLE_STAT_STRENGTH] = "STR",
@@ -26,8 +44,17 @@ statDbNames = {
     [ROLE_STAT_VERSA] = "DEX",
     [ROLE_STAT_WILL] = "WILL",
     [ROLE_STAT_SPIRIT] = "SPI",
-    [ROLE_STAT_HEALTH] = "HEALTH", -- инициатива
-    [ROLE_STAT_ARMOR] = "ARMOR", -- восприятие
+    [ROLE_STAT_HEALTH] = "HEALTH", -- Р С‘Р Р…Р С‘РЎвЂ Р С‘Р В°РЎвЂљР С‘Р Р†Р В°
+    [ROLE_STAT_ARMOR] = "ARMOR", -- Р Р†Р С•РЎРѓР С—РЎР‚Р С‘РЎРЏРЎвЂљР С‘Р Вµ
+    [ROLE_STAT_ENERGY] = "ENERGY",
+    [ROLE_STAT_PHARMOR] = "PHARMOR",
+    [ROLE_STAT_MAGARMOR] = "MAGARMOR",
+    [ROLE_STAT_BRON] = "BRON",
+    [ROLE_STAT_DAMAGE] = "DAMAGE",
+    [ROLE_STAT_HASTE] = "HASTE",
+    [ROLE_STAT_POWER] = "POWER",
+    [ROLE_STAT_ATAKA] = "ATAKA",
+
 }
 
 npcStats = {}
@@ -36,28 +63,27 @@ npcStatsTemplate = {}
 --WorldDBQuery('UPDATE creature_role_stats SET STR = ' .. STR ..', AGI = ' .. AGI .. ', INTEL = ' .. INTEL .. ', VIT = ' .. VIT .. ', DEX = ' .. DEX .. ', WILL = ' .. WILL .. ', SPI = ' .. SPI ..', HEALTH = ' .. HEALTH ..', ARMOR = ' .. ARMOR ..' where guid = ' .. guid );
 --WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',' .. STR ..', '.. AGI ..',' .. INTEL .. ', ' .. VIT .. ',' .. DEX .. ',' .. WILL .. ',' .. SPI .. ', ' .. HEALTH .. ', ' .. ARMOR .. ')');
 
-
 function getNpcStatsPrint(player, creature)
     local guid = creature:GetDBTableGUIDLow();
     local guidLow = creature:GetGUIDLow();
 
     if guid then
         if not npcStats[guid] then
-            player:SendBroadcastMessage("не установлены")
+            player:SendBroadcastMessage("РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅС‹")
             return
         end
-        player:SendBroadcastMessage(string.format("Сила: %u", npcStats[guid][ROLE_STAT_STRENGTH]))
-        player:SendBroadcastMessage(string.format("Ловк: %u", npcStats[guid][ROLE_STAT_AGLILITY]))
-        player:SendBroadcastMessage(string.format("Инта: %u", npcStats[guid][ROLE_STAT_INTELLECT]))
-        player:SendBroadcastMessage(string.format("Физ.уст: %u", npcStats[guid][ROLE_STAT_VERSA]))
-        player:SendBroadcastMessage(string.format("Маг.уст: %u", npcStats[guid][ROLE_STAT_WILL]))
+        player:SendBroadcastMessage(string.format("РЎРёР»Р°: %u", npcStats[guid][ROLE_STAT_STRENGTH]))
+        player:SendBroadcastMessage(string.format("Р›РѕРІРє: %u", npcStats[guid][ROLE_STAT_AGLILITY]))
+        player:SendBroadcastMessage(string.format("РРЅС‚Р°: %u", npcStats[guid][ROLE_STAT_INTELLECT]))
+        player:SendBroadcastMessage(string.format("Р¤РёР·.СѓСЃС‚: %u", npcStats[guid][ROLE_STAT_VERSA]))
+        player:SendBroadcastMessage(string.format("РњР°Рі.СѓСЃС‚: %u", npcStats[guid][ROLE_STAT_WILL]))
     else
-        player:SendBroadcastMessage("не установлены")
+        player:SendBroadcastMessage("РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅС‹")
     end
     return
 end
 
--- удаляем лишние статы
+-- РЎС“Р Т‘Р В°Р В»РЎРЏР ВµР С Р В»Р С‘РЎв‚¬Р Р…Р С‘Р Вµ РЎРѓРЎвЂљР В°РЎвЂљРЎвЂ№
 function deleteRoleStatsForDeletedNpc()
     local toDeleteQuery = WorldDBQuery('SELECT guid FROM creature_role_stats crs WHERE not exists (SELECT * FROM creature c WHERE c.guid = crs.guid)');
     if toDeleteQuery then
@@ -75,67 +101,120 @@ function deleteRoleStatsForDeletedNpc()
 end
 
 local function loadDefaultCreatureStats(event, creature)
-    local entry = creature:GetEntry();
-    local guid = creature:GetDBTableGUIDLow();
+    local entry = creature:GetEntry()
+    local guid = creature:GetDBTableGUIDLow()
+
+    -- If the live npcStats for this GUID havenвЂ™t been set yet, load them from the template.
     if not npcStats[guid] and npcStatsTemplate[entry] then
-        setNpcStats(creature, ROLE_STAT_STRENGTH, npcStatsTemplate[entry][ROLE_STAT_STRENGTH])
-        setNpcStats(creature, ROLE_STAT_AGLILITY, npcStatsTemplate[entry][ROLE_STAT_AGLILITY])
-        setNpcStats(creature, ROLE_STAT_INTELLECT, npcStatsTemplate[entry][ROLE_STAT_INTELLECT])
-        setNpcStats(creature, ROLE_STAT_STAMINA, npcStatsTemplate[entry][ROLE_STAT_STAMINA])
-        setNpcStats(creature, ROLE_STAT_VERSA, npcStatsTemplate[entry][ROLE_STAT_VERSA])
-        setNpcStats(creature, ROLE_STAT_WILL, npcStatsTemplate[entry][ROLE_STAT_WILL])
-        setNpcStats(creature, ROLE_STAT_HEALTH, npcStatsTemplate[entry][ROLE_STAT_HEALTH])
-        setNpcStats(creature, ROLE_STAT_ARMOR, npcStatsTemplate[entry][ROLE_STAT_ARMOR])
+        setNpcStats(creature, ROLE_STAT_STRENGTH,   npcStatsTemplate[entry][ROLE_STAT_STRENGTH])
+        setNpcStats(creature, ROLE_STAT_AGLILITY,   npcStatsTemplate[entry][ROLE_STAT_AGLILITY])
+        setNpcStats(creature, ROLE_STAT_INTELLECT,  npcStatsTemplate[entry][ROLE_STAT_INTELLECT])
+        setNpcStats(creature, ROLE_STAT_STAMINA,    npcStatsTemplate[entry][ROLE_STAT_STAMINA])
+        setNpcStats(creature, ROLE_STAT_VERSA,      npcStatsTemplate[entry][ROLE_STAT_VERSA])
+        setNpcStats(creature, ROLE_STAT_WILL,       npcStatsTemplate[entry][ROLE_STAT_WILL])
+        setNpcStats(creature, ROLE_STAT_HEALTH,     npcStatsTemplate[entry][ROLE_STAT_HEALTH])
+        setNpcStats(creature, ROLE_STAT_ARMOR,      npcStatsTemplate[entry][ROLE_STAT_ARMOR]) -- Previous version
+        setNpcStats(creature, ROLE_STAT_ENERGY,     npcStatsTemplate[entry][ROLE_STAT_ENERGY])
+        setNpcStats(creature, ROLE_STAT_PHARMOR,    npcStatsTemplate[entry][ROLE_STAT_PHARMOR])
+        setNpcStats(creature, ROLE_STAT_MAGARMOR,   npcStatsTemplate[entry][ROLE_STAT_MAGARMOR])
+        setNpcStats(creature, ROLE_STAT_BRON,       npcStatsTemplate[entry][ROLE_STAT_BRON])
+        setNpcStats(creature, ROLE_STAT_DAMAGE,     npcStatsTemplate[entry][ROLE_STAT_DAMAGE])
+        setNpcStats(creature, ROLE_STAT_HASTE,      npcStatsTemplate[entry][ROLE_STAT_HASTE])
+        setNpcStats(creature, ROLE_STAT_POWER,      npcStatsTemplate[entry][ROLE_STAT_POWER])
+        setNpcStats(creature, ROLE_STAT_ATAKA,      npcStatsTemplate[entry][ROLE_STAT_ATAKA])
     end
 
     if npcStats[guid] then
-        creature:RemoveAura(EBS_HP_AURA)
-        if tonumber(npcStats[guid][ROLE_STAT_HEALTH]) ~= nil and tonumber(npcStats[guid][ROLE_STAT_HEALTH]) > 0 then
-            local hpAura = creature:AddAura(EBS_HP_AURA, creature)
-            hpAura:SetStackAmount(npcStats[guid][ROLE_STAT_HEALTH])
+        -- Helper to remove an aura, log the current value, and then add the aura if the value is valid.
+        local function applyAura(statConstant, auraConstant, statName)
+            local statVal = npcStats[guid][statConstant]
+            creature:RemoveAura(auraConstant)
+            if statVal == nil then
+                print("WARNING: " .. statName .. " is nil for creature GUID " .. tostring(guid))
+            elseif tonumber(statVal) < 0 then
+                print("WARNING: " .. statName .. " is negative (" .. tostring(statVal) .. ") for creature GUID " .. tostring(guid))
+            elseif tonumber(statVal) >= 256 then
+                print("WARNING: " .. statName .. " is out of expected range (" .. tostring(statVal) .. ") for creature GUID " .. tostring(guid))
+            else
+                local auraObj = creature:AddAura(auraConstant, creature)
+                auraObj:SetStackAmount(statVal)
+                --print("Applied " .. statName .. " aura with value " .. tostring(statVal) .. " for creature GUID " .. tostring(guid))
+            end
         end
 
-        creature:RemoveAura(EBS_ARMOR_AURA)
-        if tonumber(npcStats[guid][ROLE_STAT_ARMOR]) ~= nil and tonumber(npcStats[guid][ROLE_STAT_ARMOR]) > 0 then
-            local ammoAura = creature:AddAura(EBS_ARMOR_AURA, creature)
-            ammoAura:SetStackAmount(npcStats[guid][ROLE_STAT_ARMOR])
-        end
+        -- Process each aura stat.
+        applyAura(ROLE_STAT_HEALTH,    EBS_HP_AURA,       "Health")
+        applyAura(ROLE_STAT_ARMOR,     EBS_ARMOR_AURA,    "Armor")
+        applyAura(ROLE_STAT_ENERGY,    EBS_ENERGY_AURA,   "Energy")
+        applyAura(ROLE_STAT_PHARMOR,   EBS_PHARMOR_AURA,  "Physical Armor")
+        applyAura(ROLE_STAT_MAGARMOR,  EBS_MAGARMOR_AURA, "Magical Armor")
+        applyAura(ROLE_STAT_BRON,      EBS_BRON_AURA,     "Bron")
+        applyAura(ROLE_STAT_HASTE,     EBS_HASTE_AURA,    "Haste")
+        applyAura(ROLE_STAT_POWER,     EBS_POWER_AURA,    "Power")
+        applyAura(ROLE_STAT_ATAKA,     EBS_ATAKA_AURA,    "Ataka")
+    else
+        print("WARNING: npcStats for GUID " .. tostring(guid) .. " is missing, cannot apply auras.")
     end
 end
+        
 
 function loadAllCreatureTemplateRollStats()
-    local creatureTemplateStatsQuery = WorldDBQuery('SELECT c.* FROM creature_template_role_stats c join creature_template t on c.entry = t.entry where 1');
+    local creatureTemplateStatsQuery = WorldDBQuery('SELECT c.* FROM creature_template_role_stats c join creature_template t on c.entry = t.entry where 1')
 
     if creatureTemplateStatsQuery then
-        local creatureTemplsteStatsCount = creatureTemplateStatsQuery:GetRowCount()
+        local creatureTemplateStatsCount = creatureTemplateStatsQuery:GetRowCount()
 
-        for i = 1, creatureTemplsteStatsCount do
-
+        for i = 1, creatureTemplateStatsCount do
             local entry = tonumber(creatureTemplateStatsQuery:GetString(0))
             if not npcStatsTemplate[entry] then
                 npcStatsTemplate[entry] = {}
             end
 
-            npcStatsTemplate[entry][ROLE_STAT_STRENGTH] = tonumber(creatureTemplateStatsQuery:GetString(1));
-            npcStatsTemplate[entry][ROLE_STAT_AGLILITY] = tonumber(creatureTemplateStatsQuery:GetString(2));
-            npcStatsTemplate[entry][ROLE_STAT_INTELLECT] = tonumber(creatureTemplateStatsQuery:GetString(3));
-            npcStatsTemplate[entry][ROLE_STAT_STAMINA] = tonumber(creatureTemplateStatsQuery:GetString(4));
-            npcStatsTemplate[entry][ROLE_STAT_VERSA] = tonumber(creatureTemplateStatsQuery:GetString(5));
-            npcStatsTemplate[entry][ROLE_STAT_WILL] = tonumber(creatureTemplateStatsQuery:GetString(6));
-            npcStatsTemplate[entry][ROLE_STAT_SPIRIT] = tonumber(creatureTemplateStatsQuery:GetString(7));
-            npcStatsTemplate[entry][ROLE_STAT_HEALTH] = tonumber(creatureTemplateStatsQuery:GetString(8));
-            npcStatsTemplate[entry][ROLE_STAT_ARMOR] = tonumber(creatureTemplateStatsQuery:GetString(9));
-            -- Регаем ивенты на все заранее настроенные нпс
+            -- Helper to load a stat and log if missing or suspicious.
+            local function loadStat(index, statConstant, statName)
+                local statVal = tonumber(creatureTemplateStatsQuery:GetString(index))
+                if statVal == nil then
+                    --print("WARNING: Missing " .. statName .. " for entry " .. tostring(entry) .. " (db column " .. index .. ")")
+                elseif statVal < 0 then
+                    --print("INFO: " .. statName .. " for entry " .. tostring(entry) .. " is non-positive: " .. tostring(statVal))
+                elseif statVal >= 256 then
+                    --print("WARNING: " .. statName .. " for entry " .. tostring(entry) .. " is unexpectedly high: " .. tostring(statVal))
+                end
+                npcStatsTemplate[entry][statConstant] = statVal
+            end
+
+            loadStat(1, ROLE_STAT_STRENGTH,   "Strength")
+            loadStat(2, ROLE_STAT_AGLILITY,   "Agility")
+            loadStat(3, ROLE_STAT_INTELLECT,  "Intellect")
+            loadStat(4, ROLE_STAT_STAMINA,    "Stamina")
+            loadStat(5, ROLE_STAT_VERSA,      "Versatility")
+            loadStat(6, ROLE_STAT_WILL,       "Will")
+            loadStat(7, ROLE_STAT_SPIRIT,     "Spirit")
+            loadStat(8, ROLE_STAT_HEALTH,     "Health")
+            loadStat(9, ROLE_STAT_ARMOR,      "Armor")         -- Previous version
+            loadStat(10, ROLE_STAT_ENERGY,    "Energy")
+            loadStat(11, ROLE_STAT_PHARMOR,   "Physical Armor")
+            loadStat(12, ROLE_STAT_MAGARMOR,  "Magical Armor")
+            loadStat(13, ROLE_STAT_BRON,      "Bron")
+            loadStat(14, ROLE_STAT_DAMAGE,    "Damage")
+            loadStat(15, ROLE_STAT_HASTE,     "Haste")
+            loadStat(16, ROLE_STAT_POWER,     "Power")
+            loadStat(17, ROLE_STAT_ATAKA,     "Ataka")
+
+            -- Register the event so the creature will have its stats applied.
             RegisterCreatureEvent(entry, 5, loadDefaultCreatureStats)
 
             creatureTemplateStatsQuery:NextRow()
         end
+    else
+        print("ERROR: creatureTemplateStatsQuery is nil.")
     end
-    creatureTemplateStatsQuery = nil;
+
+    creatureTemplateStatsQuery = nil
 end
 
 function loadAllCreatureRollStats()
-    local creatureStatsQuery = WorldDBQuery('SELECT * FROM creature_role_stats c join creature t ON c.guid = t.guid WHERE 1');
+    local creatureStatsQuery = WorldDBQuery('SELECT c.guid, c.STR, c.AGI, c.INTEL, c.VIT, c.DEX, c.WILL, c.SPI, c.HEALTH, c.ARMOR, c.ENERGY, c.PHARMOR, c.MAGARMOR, c.BRON, c.DAMAGE, c.HASTE, c.POWER, c.ATAKA FROM creature_role_stats c JOIN creature t ON c.guid = t.guid WHERE 1');
     if creatureStatsQuery then
         local creatureStatsCount = creatureStatsQuery:GetRowCount()
 
@@ -153,7 +232,16 @@ function loadAllCreatureRollStats()
             npcStats[guid][ROLE_STAT_WILL] = tonumber(creatureStatsQuery:GetString(6));
             npcStats[guid][ROLE_STAT_SPIRIT] = tonumber(creatureStatsQuery:GetString(7));
             npcStats[guid][ROLE_STAT_HEALTH] = tonumber(creatureStatsQuery:GetString(8));
-            npcStats[guid][ROLE_STAT_ARMOR] = tonumber(creatureStatsQuery:GetString(9));
+            npcStats[guid][ROLE_STAT_ARMOR] = tonumber(creatureStatsQuery:GetString(9)); -- Prev. ver.
+            
+            npcStats[guid][ROLE_STAT_ENERGY] = tonumber(creatureStatsQuery:GetString(10));
+            npcStats[guid][ROLE_STAT_PHARMOR] = tonumber(creatureStatsQuery:GetString(11));
+            npcStats[guid][ROLE_STAT_MAGARMOR] = tonumber(creatureStatsQuery:GetString(12));
+            npcStats[guid][ROLE_STAT_BRON] = tonumber(creatureStatsQuery:GetString(13));
+            npcStats[guid][ROLE_STAT_DAMAGE] = tonumber(creatureStatsQuery:GetString(14));
+            npcStats[guid][ROLE_STAT_HASTE] = tonumber(creatureStatsQuery:GetString(15));
+            npcStats[guid][ROLE_STAT_POWER] = tonumber(creatureStatsQuery:GetString(16));
+            npcStats[guid][ROLE_STAT_ATAKA] = tonumber(creatureStatsQuery:GetString(17));
 
             creatureStatsQuery:NextRow()
         end
@@ -191,7 +279,7 @@ function setNpcStats(creature, stat, value)
         if(guidQ ~= nil) then
             WorldDBQuery('UPDATE creature_role_stats SET ' .. statDbNames[stat] ..' = ' .. value .. ' where guid = ' .. guid );
         else
-            WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR) VALUES (' .. guid ..',0,0,0,0,0,0,0,0,0)');
+            WorldDBQuery('INSERT INTO creature_role_stats (guid, STR, AGI, INTEL, VIT, DEX, WILL, SPI, HEALTH, ARMOR, ENERGY, PHARMOR, MAGARMOR, BRON, DAMAGE, HASTE, POWER, ATAKA) VALUES (' .. guid ..',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)');
             WorldDBQuery('UPDATE creature_role_stats SET ' .. statDbNames[stat] ..' = ' .. value .. ' where guid = ' .. guid );
         end
     else
