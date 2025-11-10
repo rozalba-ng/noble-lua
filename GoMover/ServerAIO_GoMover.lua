@@ -176,6 +176,10 @@ local function GetLastGameObjectAddedByPlayer(player)
     end
 end
 
+local function playerOwnsGo(player, go)
+    local owner = go:GetOwner()
+    return (owner == player) or (player:GetGMRank() > 0) or (owner == 4294967295)
+end
 
 local function OnPlayerCommandWithArg(event, player, code)
     local args = {}
@@ -187,7 +191,7 @@ local function OnPlayerCommandWithArg(event, player, code)
     if (command == "movego") then
         local nearestGo = player:GetNearestGameObject(10)
         if nearestGo then
-            if (nearestGo:GetOwner() == player) or player:GetGMRank() > 0 then
+            if playerOwnsGo(player, nearestGo) then
                 AIO.Handle(player, "GOM_Handlers", "SetName", nearestGo:GetName())
                 AIO.Handle(player, "GOM_Handlers", "GetGUID", nearestGo:GetDBTableGUIDLow())
             else
@@ -201,7 +205,7 @@ local function OnPlayerCommandWithArg(event, player, code)
         if guidLow then
             local go = GetGameObjectByGUIDLow(player, guidLow)
             if go then
-                if (go:GetOwner() == player) or player:GetGMRank() > 0 then
+                if playerOwnsGo(player, go) then
                     AIO.Handle(player, "GOM_Handlers", "SetName", go:GetName())
                     AIO.Handle(player, "GOM_Handlers", "GetGUID", go:GetDBTableGUIDLow())
                 else
@@ -216,7 +220,7 @@ local function OnPlayerCommandWithArg(event, player, code)
     elseif command == "movegolast" then
         local go = GetLastGameObjectAddedByPlayer(player)
         if go then
-            if (go:GetOwner() == player) or player:GetGMRank() > 0 then
+            if playerOwnsGo(player, go) then
                 AIO.Handle(player, "GOM_Handlers", "SetName", go:GetName())
                 AIO.Handle(player, "GOM_Handlers", "GetGUID", go:GetDBTableGUIDLow())
             else

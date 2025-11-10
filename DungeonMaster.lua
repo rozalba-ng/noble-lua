@@ -542,7 +542,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 				for var=1,rowCount,1 do	
 					local targuid = tostring(gobjects[var]:GetDBTableGUIDLow());
 					if( targuid == guidLow) then
-						if((gobjects[var]:GetOwner() == player or player:GetGMRank() > 0) and gobSize >= 0.05 and gobSize <= 3)then
+						if((gobjects[var]:GetOwner() == player or player:GetGMRank() > 0 or gobjects[var]:GetOwner() == 4294967295) and gobSize >= 0.05 and gobSize <= 3)then
 							local map = player:GetMap();	
 							local gob = gobjects[var];
 							gob:SetGoScale(gobSize);
@@ -801,7 +801,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 				for var=1,rowCount,1 do	
 					local targuid = tostring(gobjects[var]:GetGUIDLow());
 					if( targuid == guidLow) then
-						if(gobjects[var]:GetOwner() == player or player:GetGMRank() > 0 )then
+						if(gobjects[var]:GetOwner() == player or player:GetGMRank() > 0 or gobjects[var]:GetOwner() == 4294967295)then
 							local map = player:GetMap();	
 							local gob = gobjects[var];
 							gob:RemoveFromWorld(true)
@@ -843,7 +843,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 				for var=1,rowCount,1 do	
 					local targuid = tostring(gobjects[var]:GetGUIDLow());
 					if( targuid == guidLow) then
-						if(gobjects[var]:GetOwner() == player or player:GetGMRank() > 0 )then
+						if(gobjects[var]:GetOwner() == player or player:GetGMRank() > 0 or gobjects[var]:GetOwner() == 4294967295) then
 							local map = player:GetMap();	
 							local gob = gobjects[var];
 							gob:RemoveFromWorld(true)
@@ -1014,7 +1014,7 @@ local function OnPlayerCommandWArg(event, player, code) -- command with argument
 					if (player:GetGMRank() > 1) then	
 						player:SendBroadcastMessage('GUID: '..gobjects[var]:GetDBTableGUIDLow()..' ['..gobjects[var]:GetName()..']');				
 						--player:SendBroadcastMessage('ID: '..gobjects[var]:GetGUIDLow()..' ['..gobjects[var]:GetName()..'] (account: '..gobjects[var]:GetOwner():GetAccountName()..')');
-					elseif(gobjects[var]:GetOwner() == player )then
+					elseif (gobjects[var]:GetOwner() == player) then
 						player:SendBroadcastMessage('GUID: '..gobjects[var]:GetDBTableGUIDLow()..' ['..gobjects[var]:GetName()..']');
 					end
 				end

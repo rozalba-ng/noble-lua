@@ -91,7 +91,7 @@ function GoMovable.onCustomSignGOSSIP(event,player,gob)
 	if signQuery ~= nil then
 		if player:HasQuest(110000) then
 			local owner = gob:GetOwner();
-			if (owner == player) then
+			if (owner == player or owner == 4294967295) then
 				local guid = gob:GetGUID();
 				PlayerBuild.targetgobject[player:GetGUIDLow()] = guid
 				GoMovable.OnGossipMovable(event, player, player)
@@ -132,9 +132,9 @@ function GoMovable.OnGossipMovable(event, player, object)
 
 	player:GossipClearMenu() -- required for player gossip
 	player:GossipMenuAddItem(1, "Переместить объект", 1, 1, false, nil, nil, false)
-
 	player:GossipMenuAddItem(1, "Интерфейс перемещение объекта", 1, 101, false, nil, nil, false)
 	player:GossipMenuAddItem(1, "Забрать объект", 1, 2, false, "Забрать объект?")
+	player:GossipMenuAddItem(1, "Сделать объект общим", 1, 301, false, "Сделать объект общим?")
 
 	if(gob:GetEntry() > 500050 and gob:GetEntry() < 500100) then
 		player:GossipMenuAddItem(1, "Изменить текст", 1, 11, true,"Вы дейтвительно хотите изменить текст? Весь старый текст будет удален.")
@@ -169,6 +169,15 @@ function GoMovable.formTargetGob(player)
 	return gob;
 end
 
+local function GoMovable.ShareGo(guidLow)
+    local guidLow = go:GetDBTableGUIDLow()
+    if not guidLow then
+        print("[ShareGo] Ошибка: не удалось получить GUIDLow объекта.")
+        return
+    end
+    WorldDBExecute("UPDATE gameobject SET owner_id = 4294967295 WHERE guid = " .. guidLow)
+end
+
 -- обработка выбора пункта меню в gossip при взаимодействии с gameobject movable (переносной объект)
 function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid, code, menuid)
 	-- case 1 - открыть вложенное меню для перемещения объекта
@@ -180,6 +189,13 @@ function GoMovable.OnGossipSelectGoMovable(event, player, object, sender, intid,
 		local gobGUID = PlayerBuild.targetgobject[player:GetGUIDLow()];
 		local gob = map:GetWorldObject(gobGUID)
 		GOM_OpenEditAddon(player,gob)
+		player:GossipComplete()
+		--Сделать объект общим
+	elseif (intid == 301) then
+		local map = player:GetMap();
+		local gobGUID = PlayerBuild.targetgobject[player:GetGUIDLow()];
+		local gob = map:GetWorldObject(gobGUID)
+		GoMovable.ShareGo(gobGUID)
 		player:GossipComplete()
 		-- case 2 - забрать объект
 	elseif (intid == 2) then
